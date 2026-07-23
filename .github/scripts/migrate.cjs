@@ -2,100 +2,93 @@ const fs = require('fs');
 const path = require('path');
 const { Client } = require('pg');
 
-// Disable strict TLS authorization check for self-signed certificates in poolers/proxies
+// Suppress TLS warning for Supabase self-signed intermediaries
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 const rawDbUrl = process.env.SUPABASE_DB_URL;
-const sqlPath = process.env.MIGRATION_SQL_PATH || 'supabase/migrations/20260724000000_init_schema.sql';
+const sqlPath =
+  process.env.MIGRATION_SQL_PATH ||
+  'supabase/migrations/20260724000000_init_schema.sql';
 
 if (!rawDbUrl) {
-  console.error('Missing SUPABASE_DB_URL secret');
+  console.error('ERROR: SUPABASE_DB_URL secret is not set.');
   process.exit(1);
 }
 
 const sql = fs.readFileSync(path.resolve(process.cwd(), sqlPath), 'utf8');
 
-function getCandidateUrls(inputUrl) {
-  const candidates = [];
+/**
+ * Normalise a Supabase connection string so the username matches the host type:
+ *   Direct host  (db.<ref>.supabase.co)  --> username = "postgres"
+ *   Pooler host  (*.pooler.supabase.com) --> username = "postgres.<ref>"
+ * Also strips sslmode/ssl query params that interfere with pg's ssl option.
+ */
+function normaliseUrl(raw) {
+  let parsed;
   try {
-    const url1 = new URL(inputUrl);
-    url1.searchParams.delete('sslmode');
-    url1.searchParams.delete('ssl');
-    
-    // Extract project reference
-    let projectRef = '';
-    const hostParts = url1.hostname.split('.');
-    if (url1.hostname.startsWith('db.') && hostParts.length >= 3) {
-      projectRef = hostParts[1];
-    } else if (url1.username.includes('.')) {
-      projectRef = url1.username.split('.')[1];
-    }
-
-    // Direct DB connection host (db.<ref>.supabase.co) requires username 'postgres'
-    if (url1.hostname.startsWith('db.')) {
-      const directUrl = new URL(url1.toString());
-      directUrl.username = 'postgres';
-      candidates.push(directUrl);
-    }
-
-    // Pooler connection host (*.pooler.supabase.com) requires username 'postgres.<ref>'
-    if (projectRef) {
-      const poolerUrl = new URL(url1.toString());
-      poolerUrl.username = `postgres.${projectRef}`;
-      candidates.push(poolerUrl);
-    }
-
-    // Include raw parsed URL as fallback candidate
-    candidates.push(url1);
-
-  } catch (e) {
-    return [{ toString: () => inputUrl, hostname: '' }];
+    parsed = new URL(raw);
+  } catch (_) {
+    return raw;
   }
-  return candidates;
+
+  parsed.searchParams.delete('sslmode');
+  parsed.searchParams.delete('ssl');
+  parsed.searchParams.delete('pgbouncer');
+  parsed.searchParams.delete('uselibpqcompat');
+
+  const hostname = parsed.hostname;
+
+  // Direct host: db.<ref>.supabase.co -- MUST use username "postgres"
+  const directMatch = hostname.match(/^db\.([^.]+)\.supabase\.co$/i);
+  if (directMatch) {
+    parsed.username = 'postgres';
+    console.log('Detected direct host. Username corrected to: postgres');
+    return parsed.toString();
+  }
+
+  // Pooler host: *.pooler.supabase.com -- username must be "postgres.<ref>"
+  const poolerMatch = hostname.match(/\.pooler\.supabase\.com$/i);
+  if (poolerMatch) {
+    const userParts = parsed.username.split('.');
+    const projectRef = userParts.length >= 2 ? userParts[1] : userParts[0];
+    if (projectRef) {
+      parsed.username = 'postgres.' + projectRef;
+      console.log('Detected pooler host. Username corrected to: postgres.' + projectRef);
+    }
+    return parsed.toString();
+  }
+
+  console.log('Using connection URL as-is for host: ' + hostname);
+  return parsed.toString();
 }
 
+const connectionString = normaliseUrl(rawDbUrl);
+
+let hostname = '';
+try {
+  hostname = new URL(connectionString).hostname;
+} catch (_) {}
+
+const client = new Client({
+  connectionString,
+  ssl: {
+    rejectUnauthorized: false,
+    ...(hostname ? { servername: hostname } : {}),
+  },
+});
+
 (async () => {
-  const candidates = getCandidateUrls(rawDbUrl);
-  let lastError = null;
-  let client = null;
-
-  for (const candidate of candidates) {
-    const connStr = candidate.toString();
-    const hostname = candidate.hostname || '';
-    
-    const testClient = new Client({
-      connectionString: connStr,
-      ssl: {
-        rejectUnauthorized: false,
-        ...(hostname ? { servername: hostname } : {}),
-      },
-    });
-
-    try {
-      await testClient.connect();
-      client = testClient;
-      lastError = null;
-      break; // Successfully connected!
-    } catch (err) {
-      lastError = err;
-      await testClient.end().catch(() => {});
-    }
-  }
-
-  if (!client || lastError) {
-    console.error('migration failed:', lastError ? (lastError.message || lastError) : 'Unable to connect to database');
-    process.exit(1);
-  }
-
   try {
+    await client.connect();
+    console.log('Connected to database.');
     await client.query('BEGIN');
     await client.query(sql);
     await client.query('COMMIT');
-    console.log('migration applied successfully');
+    console.log('Migration applied successfully.');
     process.exit(0);
   } catch (err) {
     await client.query('ROLLBACK').catch(() => {});
-    console.error('migration execution failed:', err.message || err);
+    console.error('Migration failed:', err.message || err);
     process.exit(1);
   } finally {
     await client.end().catch(() => {});
