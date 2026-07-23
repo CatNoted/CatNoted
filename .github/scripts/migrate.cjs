@@ -15,31 +15,79 @@ if (!rawDbUrl) {
 
 const sql = fs.readFileSync(path.resolve(process.cwd(), sqlPath), 'utf8');
 
-let hostname = '';
-let cleanedDbUrl = rawDbUrl;
+function getCandidateUrls(inputUrl) {
+  const candidates = [];
+  try {
+    const url1 = new URL(inputUrl);
+    url1.searchParams.delete('sslmode');
+    url1.searchParams.delete('ssl');
+    
+    // Extract project reference
+    let projectRef = '';
+    const hostParts = url1.hostname.split('.');
+    if (url1.hostname.startsWith('db.') && hostParts.length >= 3) {
+      projectRef = hostParts[1];
+    } else if (url1.username.includes('.')) {
+      projectRef = url1.username.split('.')[1];
+    }
 
-try {
-  const parsedUrl = new URL(rawDbUrl);
-  hostname = parsedUrl.hostname;
-  // Remove sslmode params to prevent pg-connection-string from overriding rejectUnauthorized
-  parsedUrl.searchParams.delete('sslmode');
-  parsedUrl.searchParams.delete('ssl');
-  cleanedDbUrl = parsedUrl.toString();
-} catch (e) {
-  // Fallback if rawDbUrl is not standard URL
+    // Direct DB connection host (db.<ref>.supabase.co) requires username 'postgres'
+    if (url1.hostname.startsWith('db.')) {
+      const directUrl = new URL(url1.toString());
+      directUrl.username = 'postgres';
+      candidates.push(directUrl);
+    }
+
+    // Pooler connection host (*.pooler.supabase.com) requires username 'postgres.<ref>'
+    if (projectRef) {
+      const poolerUrl = new URL(url1.toString());
+      poolerUrl.username = `postgres.${projectRef}`;
+      candidates.push(poolerUrl);
+    }
+
+    // Include raw parsed URL as fallback candidate
+    candidates.push(url1);
+
+  } catch (e) {
+    return [{ toString: () => inputUrl, hostname: '' }];
+  }
+  return candidates;
 }
 
-const client = new Client({
-  connectionString: cleanedDbUrl,
-  ssl: {
-    rejectUnauthorized: false,
-    ...(hostname ? { servername: hostname } : {}),
-  },
-});
-
 (async () => {
+  const candidates = getCandidateUrls(rawDbUrl);
+  let lastError = null;
+  let client = null;
+
+  for (const candidate of candidates) {
+    const connStr = candidate.toString();
+    const hostname = candidate.hostname || '';
+    
+    const testClient = new Client({
+      connectionString: connStr,
+      ssl: {
+        rejectUnauthorized: false,
+        ...(hostname ? { servername: hostname } : {}),
+      },
+    });
+
+    try {
+      await testClient.connect();
+      client = testClient;
+      lastError = null;
+      break; // Successfully connected!
+    } catch (err) {
+      lastError = err;
+      await testClient.end().catch(() => {});
+    }
+  }
+
+  if (!client || lastError) {
+    console.error('migration failed:', lastError ? (lastError.message || lastError) : 'Unable to connect to database');
+    process.exit(1);
+  }
+
   try {
-    await client.connect();
     await client.query('BEGIN');
     await client.query(sql);
     await client.query('COMMIT');
@@ -47,7 +95,7 @@ const client = new Client({
     process.exit(0);
   } catch (err) {
     await client.query('ROLLBACK').catch(() => {});
-    console.error('migration failed:', err.message || err);
+    console.error('migration execution failed:', err.message || err);
     process.exit(1);
   } finally {
     await client.end().catch(() => {});
