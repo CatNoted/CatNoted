@@ -12,9 +12,22 @@ if (!dbUrl) {
 
 const sql = fs.readFileSync(path.resolve(process.cwd(), sqlPath), 'utf8');
 
+let hostname = '';
+try {
+  const parsedUrl = new URL(dbUrl);
+  hostname = parsedUrl.hostname;
+} catch (e) {
+  // Fallback if dbUrl is not standard URL
+}
+
 const client = new Client({
   connectionString: dbUrl,
-  ssl: { rejectUnauthorized: false },
+  ssl: hostname ? {
+    rejectUnauthorized: false,
+    servername: hostname,
+  } : {
+    rejectUnauthorized: false,
+  },
 });
 
 (async () => {
