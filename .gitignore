@@ -1,0 +1,59 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build & Bundler Outputs
+dist/
+build/
+.output/
+out/
+
+# Caches
+.vite/
+.turbo/
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+
+# Operating System Files
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+
+# IDE & Code Editors
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.suo
+*.sw?
+
+# TypeScript Build Info
+*.tsbuildinfo
+
+# Testing
+coverage/
+
+# Deployment Caches
+.vercel
+.netlify
+
+# Local VFS & Temporary Files
+.tmp
+*.tmp
+catnoted_vfs*
