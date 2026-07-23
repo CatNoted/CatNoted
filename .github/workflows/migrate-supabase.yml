@@ -1,0 +1,23 @@
+name: Migrate Supabase Schema
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+      MIGRATION_SQL_PATH: supabase/migrations/20260724000000_init_schema.sql
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install pg@8.11.3 --no-audit --no-fund --silent
+      - run: node .github/scripts/migrate.cjs
