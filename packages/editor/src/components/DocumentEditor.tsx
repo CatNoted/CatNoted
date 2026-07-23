@@ -158,8 +158,111 @@ export const DocumentEditor: React.FC = () => {
                   onChange={(val) => updateBlockContent(block.id, val)}
                   onEnter={() => handleCreateBlock(block.id)}
                   onBackspace={() => handleBackspaceBlock(block.id, index)}
+                  onSetType={(type, props) => updateBlockType(block.id, type as any, props)}
+                  onAddWidget={() => handleAddWidget(block.id)}
                   focusOnMount={isFocused}
                 />
+              )}
+
+              {/* --- Bullet list --- */}
+              {block.type === 'bullet' && (
+                <div className="flex items-start gap-2">
+                  <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-zinc-500 flex-shrink-0" />
+                  <TextBlock
+                    id={block.id}
+                    content={block.content}
+                    onChange={(val) => updateBlockContent(block.id, val)}
+                    onEnter={() => handleCreateBlock(block.id)}
+                    onBackspace={() => handleBackspaceBlock(block.id, index)}
+                    onSetType={(type, props) => updateBlockType(block.id, type as any, props)}
+                    onAddWidget={() => handleAddWidget(block.id)}
+                    focusOnMount={isFocused}
+                  />
+                </div>
+              )}
+
+              {/* --- Ordered list --- */}
+              {block.type === 'ordered' && (
+                <div className="flex items-start gap-2">
+                  <span className="mt-0.5 text-xs font-medium text-slate-400 dark:text-zinc-500 flex-shrink-0 w-4 text-right">
+                    {index + 1}.
+                  </span>
+                  <TextBlock
+                    id={block.id}
+                    content={block.content}
+                    onChange={(val) => updateBlockContent(block.id, val)}
+                    onEnter={() => handleCreateBlock(block.id)}
+                    onBackspace={() => handleBackspaceBlock(block.id, index)}
+                    onSetType={(type, props) => updateBlockType(block.id, type as any, props)}
+                    onAddWidget={() => handleAddWidget(block.id)}
+                    focusOnMount={isFocused}
+                  />
+                </div>
+              )}
+
+              {/* --- To-do / checkbox --- */}
+              {block.type === 'todo' && (
+                <div className="flex items-start gap-2">
+                  <input
+                    type="checkbox"
+                    checked={!!block.properties?.checked}
+                    onChange={(e) =>
+                      updateBlockType(block.id, 'todo' as any, {
+                        ...block.properties,
+                        checked: e.target.checked,
+                      })
+                    }
+                    className="mt-1 w-3.5 h-3.5 rounded border-slate-300 dark:border-zinc-600 accent-indigo-500 flex-shrink-0 cursor-pointer"
+                  />
+                  <TextBlock
+                    id={block.id}
+                    content={block.content}
+                    onChange={(val) => updateBlockContent(block.id, val)}
+                    onEnter={() => handleCreateBlock(block.id)}
+                    onBackspace={() => handleBackspaceBlock(block.id, index)}
+                    onSetType={(type, props) => updateBlockType(block.id, type as any, props)}
+                    onAddWidget={() => handleAddWidget(block.id)}
+                    focusOnMount={isFocused}
+                  />
+                </div>
+              )}
+
+              {/* --- Quote --- */}
+              {block.type === 'quote' && (
+                <div className="flex gap-3">
+                  <div className="w-0.5 bg-indigo-400 dark:bg-indigo-500 rounded-full flex-shrink-0 self-stretch" />
+                  <TextBlock
+                    id={block.id}
+                    content={block.content}
+                    onChange={(val) => updateBlockContent(block.id, val)}
+                    onEnter={() => handleCreateBlock(block.id)}
+                    onBackspace={() => handleBackspaceBlock(block.id, index)}
+                    onSetType={(type, props) => updateBlockType(block.id, type as any, props)}
+                    onAddWidget={() => handleAddWidget(block.id)}
+                    focusOnMount={isFocused}
+                  />
+                </div>
+              )}
+
+              {/* --- Code block --- */}
+              {block.type === 'code' && (
+                <div className="rounded-lg bg-slate-900 dark:bg-zinc-950 border border-slate-700 dark:border-zinc-800 px-4 py-3">
+                  <textarea
+                    value={block.content}
+                    onChange={(e) => updateBlockContent(block.id, e.target.value)}
+                    placeholder="// Code here..."
+                    rows={3}
+                    className="w-full bg-transparent resize-none border-none outline-none focus:ring-0 p-0 text-xs font-mono text-emerald-300 placeholder-slate-600 leading-relaxed"
+                    style={{ minHeight: '3rem' }}
+                  />
+                </div>
+              )}
+
+              {/* --- Divider --- */}
+              {block.type === 'divider' && (
+                <div className="py-2">
+                  <hr className="border-slate-200 dark:border-zinc-700" />
+                </div>
               )}
 
               {block.type === 'widget' && (

@@ -1,4 +1,4 @@
-export type BlockType = 'text' | 'heading' | 'list' | 'image' | 'widget';
+export type BlockType = 'text' | 'heading' | 'list' | 'image' | 'widget' | 'bullet' | 'ordered' | 'todo' | 'quote' | 'code' | 'divider';
 
 export interface BlockProperties {
   // Heading properties
