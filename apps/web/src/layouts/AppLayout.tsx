@@ -15,7 +15,10 @@ import {
   X,
   MessageSquare,
   GripVertical,
-  Minus
+  Minus,
+  Search,
+  SearchX,
+  ChevronRight
 } from 'lucide-react';
 
 export type ActiveMode = 'doc' | 'canvas' | 'graph' | 'settings';
@@ -31,6 +34,7 @@ interface AppLayoutProps {
 
 import { requestLlmWidget } from '@catnoted/agent-runtime';
 import { useDocumentStore } from '@catnoted/editor';
+import { parseDocumentGraph } from '@catnoted/graph';
 
 // ── Floating panel position & size constants ────────────────────────────
 const PANEL_DEFAULT_WIDTH = 380;
@@ -51,6 +55,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   const [messages, setMessages] = useState<Array<{ sender: 'user' | 'agent'; text: string }>>([
     { sender: 'agent', text: "Hello! I am your Space Agent. What would you like to build or note down today?" }
   ]);
+
+  // ── Search State ────────────────────────────────────────────────────
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // ── Floating panel state ────────────────────────────────────────────
   const [isAgentOpen, setIsAgentOpen] = useState(false);
@@ -169,6 +177,48 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     downloadAnchor.remove();
   };
 
+  // Cache parsed graph nodes based on block updates, not search query
+  const parsedGraphNodes = React.useMemo(() => {
+    return parseDocumentGraph(blocks).nodes;
+  }, [blocks]);
+
+  // Search filtering logic
+  const searchResults = React.useMemo(() => {
+    if (!searchQuery.trim()) return [];
+
+    const query = searchQuery.toLowerCase();
+    const results: Array<{ id: string; type: string; content: string; icon: React.ElementType }> = [];
+
+    // Search in headings / text
+    blocks.forEach(block => {
+      if ((block.type === 'heading' || block.type === 'text') && block.content.toLowerCase().includes(query)) {
+        results.push({
+          id: block.id,
+          type: block.type,
+          content: block.content,
+          icon: block.type === 'heading' ? FileText : FileText
+        });
+      }
+    });
+
+    // Search in graph nodes (pages/tags)
+    parsedGraphNodes.forEach(node => {
+      if (node.label.toLowerCase().includes(query) && node.id !== 'root-doc-node') {
+        // Prevent exact duplicates if we already found the block
+        if (!results.some(r => r.content.includes(node.label.replace(/[📄#]/g, '').trim()))) {
+          results.push({
+            id: node.id,
+            type: node.type,
+            content: node.label,
+            icon: node.type === 'page' ? FileText : Network
+          });
+        }
+      }
+    });
+
+    return results;
+  }, [blocks, parsedGraphNodes, searchQuery]);
+
   // Import widgets catalog and insert them into Yjs store
   const handleImportWidgets = (e: React.ChangeEvent<HTMLInputElement>) => {
     const fileReader = new FileReader();
@@ -208,6 +258,20 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             </div>
 
             <nav className="flex flex-col gap-3 w-full px-2">
+              <button
+                onClick={() => setIsSearchOpen(!isSearchOpen)}
+                title="Search Workspace"
+                className={`w-full py-3 rounded-xl flex items-center justify-center transition-all duration-200 ${
+                  isSearchOpen
+                    ? 'bg-indigo-50 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 font-semibold shadow-sm shadow-indigo-500/10 dark:shadow-indigo-500/5'
+                    : 'text-slate-400 dark:text-zinc-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10'
+                }`}
+              >
+                <Search className="w-5 h-5" />
+              </button>
+
+              <div className="w-8 h-px bg-slate-200 dark:bg-zinc-800 mx-auto my-1 rounded-full" />
+
               {[
                 { id: 'doc', icon: FileText, label: 'Doc Mode' },
                 { id: 'canvas', icon: Layout, label: 'Canvas' },
@@ -215,11 +279,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 { id: 'settings', icon: Settings, label: 'Settings' }
               ].map(item => {
                 const Icon = item.icon;
-                const isActive = activeMode === item.id;
+                const isActive = activeMode === item.id && !isSearchOpen;
                 return (
                   <button
                     key={item.id}
-                    onClick={() => onModeChange(item.id as ActiveMode)}
+                    onClick={() => {
+                      onModeChange(item.id as ActiveMode);
+                      setIsSearchOpen(false);
+                    }}
                     title={item.label}
                     className={`w-full py-3 rounded-xl flex items-center justify-center transition-all duration-200 ${
                       isActive 
@@ -247,6 +314,82 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               US
             </div>
           </div>
+        </aside>
+      )}
+
+      {/* Pane 1.5: Expandable Search Sidebar Panel */}
+      {!zenMode && (
+        <aside
+          className={`h-full border-r border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950/50 flex flex-col transition-all duration-300 overflow-hidden ${isSearchOpen ? 'w-72' : 'w-0 border-r-0'}`}
+        >
+          {isSearchOpen && (
+            <div className="flex flex-col h-full w-72 min-w-[18rem]">
+              <div className="h-14 px-4 border-b border-slate-200 dark:border-zinc-800 flex items-center shrink-0">
+                <div className="relative w-full flex items-center">
+                  <Search className="w-4 h-4 text-slate-400 dark:text-zinc-500 absolute left-2.5" />
+                  <input
+                    autoFocus
+                    type="text"
+                    placeholder="Search documents & nodes..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-9 pr-8 py-2 rounded-lg border-none bg-white dark:bg-zinc-900 text-sm text-slate-800 dark:text-zinc-200 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-indigo-500/50 dark:focus:ring-indigo-400/50 shadow-sm"
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-2 p-1 text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-2">
+                {searchQuery.trim() === '' ? (
+                  <div className="h-full flex flex-col items-center justify-center text-center p-6 text-slate-400 dark:text-zinc-500">
+                    <Search className="w-12 h-12 mb-3 opacity-20" />
+                    <p className="text-sm">Type to search across documents, headings, and canvas nodes.</p>
+                  </div>
+                ) : searchResults.length === 0 ? (
+                  <div className="h-full flex flex-col items-center justify-center text-center p-6 text-slate-400 dark:text-zinc-500">
+                    <SearchX className="w-12 h-12 mb-3 opacity-20" />
+                    <p className="text-sm">No results found for "{searchQuery}".</p>
+                  </div>
+                ) : (
+                  <ul className="space-y-1">
+                    {searchResults.map((result, idx) => (
+                      <li key={`${result.id}-${idx}`}>
+                        <button
+                          className="w-full flex items-start gap-3 p-2.5 rounded-lg text-left hover:bg-white dark:hover:bg-zinc-900 hover:shadow-sm transition-all group"
+                          onClick={() => {
+                            // On click, typically navigate or focus block
+                            // For this prompt, it's enough to render the list.
+                            setIsSearchOpen(false);
+                            onModeChange('doc');
+                          }}
+                        >
+                          <div className="mt-0.5 w-6 h-6 rounded bg-slate-100 dark:bg-zinc-800 flex items-center justify-center shrink-0">
+                            <result.icon className="w-3.5 h-3.5 text-slate-500 dark:text-zinc-400" />
+                          </div>
+                          <div className="flex-1 overflow-hidden">
+                            <p className="text-sm font-medium text-slate-700 dark:text-zinc-300 truncate">
+                              {result.content}
+                            </p>
+                            <p className="text-[10px] text-slate-400 dark:text-zinc-500 uppercase tracking-wider mt-0.5 font-semibold">
+                              {result.type}
+                            </p>
+                          </div>
+                          <ChevronRight className="w-4 h-4 text-slate-300 dark:text-zinc-700 opacity-0 group-hover:opacity-100 transition-opacity mt-1" />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+          )}
         </aside>
       )}
 
