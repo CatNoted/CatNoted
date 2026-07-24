@@ -4,19 +4,36 @@ import { CanvasElement } from '@catnoted/shared';
 import { useCanvasViewport } from '../hooks/useCanvasViewport.js';
 import { CanvasCard } from './CanvasCard.js';
 import { ConnectorLine } from './ConnectorLine.js';
+import { Minimap } from './Minimap.js';
+import { Trash2 } from 'lucide-react';
 
-// Sync layout with the same shared Y.Doc
 export const ycanvas = ydoc.getMap<CanvasElement>('canvas');
 
 export const InfiniteCanvas: React.FC = () => {
   const { blocks } = useDocumentStore();
   const [elements, setElements] = useState<Record<string, CanvasElement>>({});
+
+  // Selection state
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  // Custom connector drawing states
+  const [activeConnectorStart, setActiveConnectorStart] = useState<string | null>(null);
+  const [connectorMousePos, setConnectorMousePos] = useState<{ x: number; y: number } | null>(null);
+
+  // Marquee selection states
+  const [marqueeStart, setMarqueeStart] = useState<{ x: number; y: number } | null>(null);
+  const [marqueeEnd, setMarqueeEnd] = useState<{ x: number; y: number } | null>(null);
+
+  // Drag states
   const activeDragId = useRef<string | null>(null);
-  const dragStartOffset = useRef({ x: 0, y: 0 });
+  const dragStartCoords = useRef<Record<string, { x: number; y: number }>>({});
+  const dragStartMouse = useRef({ x: 0, y: 0 });
 
   const {
     pan,
     scale,
+    setPan,
+    setScale,
     handleMouseDown,
     handleMouseMove,
     handleMouseUp,
@@ -63,46 +80,266 @@ export const InfiniteCanvas: React.FC = () => {
     });
   }, [blocks]);
 
-  const handleCardDragStart = (e: React.MouseEvent, id: string) => {
-    e.stopPropagation();
-    activeDragId.current = id;
-    const elem = elements[id] || { x: 0, y: 0 };
-    // Adjust drag initial offset considering zoom scale
-    dragStartOffset.current = {
-      x: e.clientX - elem.x * scale,
-      y: e.clientY - elem.y * scale
+  // Handle keyboard Delete / Backspace to remove selected elements or custom connectors
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        const activeElement = document.activeElement;
+        if (activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA' || activeElement.getAttribute('contenteditable') === 'true')) {
+          return;
+        }
+        if (selectedIds.length > 0) {
+          ydoc.transact(() => {
+            selectedIds.forEach(id => {
+              if (ycanvas.has(id)) {
+                const elem = ycanvas.get(id);
+                if (elem && elem.type === 'connector') {
+                  ycanvas.delete(id);
+                }
+              }
+            });
+          });
+          setSelectedIds([]);
+        }
+      } else if (e.key === 'Escape') {
+        setSelectedIds([]);
+        setActiveConnectorStart(null);
+        setConnectorMousePos(null);
+        setMarqueeStart(null);
+        setMarqueeEnd(null);
+      }
     };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedIds]);
+
+  // Handle starting a connection drag
+  const handleStartConnector = (e: React.MouseEvent, fromId: string) => {
+    e.stopPropagation();
+    setActiveConnectorStart(fromId);
+
+    // Convert client coordinates to canvas coordinates
+    const canvasX = (e.clientX - pan.x) / scale;
+    const canvasY = (e.clientY - pan.y) / scale;
+    setConnectorMousePos({ x: canvasX, y: canvasY });
   };
 
-  const handleGlobalMouseMove = (e: React.MouseEvent) => {
-    // If panning canvas
-    handleMouseMove(e);
-
-    // If dragging card
-    if (activeDragId.current) {
-      const id = activeDragId.current;
-      const newX = (e.clientX - dragStartOffset.current.x) / scale;
-      const newY = (e.clientY - dragStartOffset.current.y) / scale;
-
-      const current = ycanvas.get(id);
-      if (current) {
-        ycanvas.set(id, {
-          ...current,
-          x: Math.round(newX),
-          y: Math.round(newY)
-        });
+  // Drag select toggle
+  const handleSelectToggle = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    if (e.shiftKey) {
+      setSelectedIds(prev => {
+        if (prev.includes(id)) {
+          return prev.filter(item => item !== id);
+        } else {
+          return [...prev, id];
+        }
+      });
+    } else {
+      if (!selectedIds.includes(id)) {
+        setSelectedIds([id]);
       }
     }
   };
 
-  const handleGlobalMouseUp = () => {
+  const handleCardDragStart = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    activeDragId.current = id;
+
+    let targetDragIds = [...selectedIds];
+    if (!targetDragIds.includes(id)) {
+      if (e.shiftKey) {
+        targetDragIds = [...targetDragIds, id];
+        setSelectedIds(targetDragIds);
+      } else {
+        targetDragIds = [id];
+        setSelectedIds(targetDragIds);
+      }
+    }
+
+    dragStartMouse.current = { x: e.clientX, y: e.clientY };
+    const coords: Record<string, { x: number; y: number }> = {};
+    targetDragIds.forEach(dragId => {
+      const elem = elements[dragId];
+      if (elem) {
+        coords[dragId] = { x: elem.x, y: elem.y };
+      }
+    });
+    dragStartCoords.current = coords;
+  };
+
+  const handleGlobalMouseMove = (e: React.MouseEvent) => {
+    // If drawing custom connector
+    if (activeConnectorStart) {
+      const canvasX = (e.clientX - pan.x) / scale;
+      const canvasY = (e.clientY - pan.y) / scale;
+      setConnectorMousePos({ x: canvasX, y: canvasY });
+      return;
+    }
+
+    // If drawing marquee selection
+    if (marqueeStart) {
+      const canvasX = (e.clientX - pan.x) / scale;
+      const canvasY = (e.clientY - pan.y) / scale;
+      setMarqueeEnd({ x: canvasX, y: canvasY });
+      return;
+    }
+
+    // If dragging card(s)
+    if (activeDragId.current) {
+      const deltaX = (e.clientX - dragStartMouse.current.x) / scale;
+      const deltaY = (e.clientY - dragStartMouse.current.y) / scale;
+
+      ydoc.transact(() => {
+        Object.keys(dragStartCoords.current).forEach(id => {
+          const start = dragStartCoords.current[id];
+          const current = ycanvas.get(id);
+          if (current && start) {
+            ycanvas.set(id, {
+              ...current,
+              x: Math.round(start.x + deltaX),
+              y: Math.round(start.y + deltaY)
+            });
+          }
+        });
+      });
+      return;
+    }
+
+    // Otherwise, pan canvas
+    handleMouseMove(e);
+  };
+
+  const handleGlobalMouseUp = (e: React.MouseEvent) => {
+    // 1. If drawing custom connector
+    if (activeConnectorStart) {
+      const canvasX = (e.clientX - pan.x) / scale;
+      const canvasY = (e.clientY - pan.y) / scale;
+
+      // Find if we dropped onto any other card
+      let targetCardId: string | null = null;
+      blocks.forEach(block => {
+        const elem = elements[block.id];
+        if (elem && block.id !== activeConnectorStart) {
+          const w = elem.width || 260;
+          const h = elem.height || 120;
+          if (
+            canvasX >= elem.x &&
+            canvasX <= elem.x + w &&
+            canvasY >= elem.y &&
+            canvasY <= elem.y + h
+          ) {
+            targetCardId = block.id;
+          }
+        }
+      });
+
+      if (targetCardId) {
+        const connId = `connector-${activeConnectorStart}-${targetCardId}`;
+        ydoc.transact(() => {
+          ycanvas.set(connId, {
+            id: connId,
+            type: 'connector',
+            x: 0,
+            y: 0,
+            width: 0,
+            height: 0,
+            zIndex: 1,
+            rotation: 0,
+            connector: {
+              id: connId,
+              from: activeConnectorStart,
+              to: targetCardId as string,
+              type: 'bezier'
+            }
+          });
+        });
+      }
+
+      setActiveConnectorStart(null);
+      setConnectorMousePos(null);
+      return;
+    }
+
+    // 2. If marquee selection
+    if (marqueeStart && marqueeEnd) {
+      const left = Math.min(marqueeStart.x, marqueeEnd.x);
+      const right = Math.max(marqueeStart.x, marqueeEnd.x);
+      const top = Math.min(marqueeStart.y, marqueeEnd.y);
+      const bottom = Math.max(marqueeStart.y, marqueeEnd.y);
+
+      const newlySelected: string[] = [];
+      blocks.forEach(block => {
+        const elem = elements[block.id];
+        if (elem) {
+          const w = elem.width || 260;
+          const h = elem.height || 120;
+          const cardLeft = elem.x;
+          const cardRight = elem.x + w;
+          const cardTop = elem.y;
+          const cardBottom = elem.y + h;
+
+          const isIntersecting = !(
+            cardLeft > right ||
+            cardRight < left ||
+            cardTop > bottom ||
+            cardBottom < top
+          );
+
+          if (isIntersecting) {
+            newlySelected.push(block.id);
+          }
+        }
+      });
+
+      if (e.shiftKey) {
+        setSelectedIds(prev => {
+          const combined = new Set([...prev, ...newlySelected]);
+          return Array.from(combined);
+        });
+      } else {
+        setSelectedIds(newlySelected);
+      }
+
+      setMarqueeStart(null);
+      setMarqueeEnd(null);
+      return;
+    }
+
+    // 3. Normal mouse up
     handleMouseUp();
     activeDragId.current = null;
   };
 
+  const handleBackgroundMouseDown = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget || (e.target as HTMLElement).classList.contains('bg-repeat')) {
+      if (e.shiftKey) {
+        const canvasX = (e.clientX - pan.x) / scale;
+        const canvasY = (e.clientY - pan.y) / scale;
+        setMarqueeStart({ x: canvasX, y: canvasY });
+        setMarqueeEnd({ x: canvasX, y: canvasY });
+      } else {
+        setSelectedIds([]);
+        handleMouseDown(e);
+      }
+    }
+  };
+
+  const deleteConnector = (id: string) => {
+    ydoc.transact(() => {
+      if (ycanvas.has(id)) {
+        ycanvas.delete(id);
+      }
+    });
+  };
+
+  const customConnectors = Object.values(elements).filter(
+    el => el.type === 'connector' && el.connector
+  );
+
   return (
     <div
-      onMouseDown={handleMouseDown}
+      onMouseDown={handleBackgroundMouseDown}
       onMouseMove={handleGlobalMouseMove}
       onMouseUp={handleGlobalMouseUp}
       onWheel={handleWheel}
@@ -129,7 +366,7 @@ export const InfiniteCanvas: React.FC = () => {
       {/* Infinite Canvas Content Viewport */}
       <div style={transformStyle} className="absolute inset-0 pointer-events-none">
         
-        {/* Draw SVG Connectors between sequential cards */}
+        {/* Draw SVG Connectors between sequential cards (Default Mindmap skeleton) */}
         {blocks.map((block, index) => {
           if (index === 0) return null;
           const prevBlock = blocks[index - 1];
@@ -141,14 +378,94 @@ export const InfiniteCanvas: React.FC = () => {
           return (
             <ConnectorLine
               key={`conn-${prevBlock.id}-${block.id}`}
-              startX={startElem.x + 120}
-              startY={startElem.y + 60}
-              endX={endElem.x + 120}
-              endY={endElem.y}
+              startX={startElem.x + (startElem.width || 240)}
+              startY={startElem.y + (startElem.height || 120) / 2}
+              endX={endElem.x}
+              endY={endElem.y + (endElem.height || 120) / 2}
               label={`Next Block`}
             />
           );
         })}
+
+        {/* Draw Custom User-dragged Connectors */}
+        {customConnectors.map(elem => {
+          const conn = elem.connector;
+          if (!conn) return null;
+          const sourceElem = elements[conn.from];
+          const targetElem = elements[conn.to];
+
+          if (!sourceElem || !targetElem) return null;
+
+          const startX = sourceElem.x + (sourceElem.width || 260);
+          const startY = sourceElem.y + (sourceElem.height || 120) / 2;
+          const endX = targetElem.x;
+          const endY = targetElem.y + (targetElem.height || 120) / 2;
+
+          const midX = (startX + endX) / 2;
+          const midY = (startY + endY) / 2;
+
+          return (
+            <React.Fragment key={elem.id}>
+              <ConnectorLine
+                startX={startX}
+                startY={startY}
+                endX={endX}
+                endY={endY}
+                label={conn.label}
+              />
+              {/* Floating connector delete trigger */}
+              <div
+                style={{
+                  left: midX,
+                  top: midY,
+                  transform: 'translate(-50%, -50%)',
+                }}
+                className="absolute pointer-events-auto z-30"
+              >
+                <button
+                  onClick={() => deleteConnector(elem.id)}
+                  className="w-5 h-5 rounded-full bg-red-500 hover:bg-red-600 border border-white dark:border-zinc-950 flex items-center justify-center text-white text-[10px] shadow-sm cursor-pointer transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+                  title="Delete Connection"
+                  aria-label="Delete this connection line"
+                  type="button"
+                >
+                  <Trash2 className="w-3 h-3" />
+                </button>
+              </div>
+            </React.Fragment>
+          );
+        })}
+
+        {/* Temporary connector being drawn by the user */}
+        {activeConnectorStart && connectorMousePos && (() => {
+          const sourceElem = elements[activeConnectorStart];
+          if (!sourceElem) return null;
+          const startX = sourceElem.x + (sourceElem.width || 260);
+          const startY = sourceElem.y + (sourceElem.height || 120) / 2;
+
+          return (
+            <ConnectorLine
+              startX={startX}
+              startY={startY}
+              endX={connectorMousePos.x}
+              endY={connectorMousePos.y}
+              label="Connecting..."
+            />
+          );
+        })()}
+
+        {/* Selection Marquee Box */}
+        {marqueeStart && marqueeEnd && (
+          <div
+            style={{
+              left: Math.min(marqueeStart.x, marqueeEnd.x),
+              top: Math.min(marqueeStart.y, marqueeEnd.y),
+              width: Math.abs(marqueeEnd.x - marqueeStart.x),
+              height: Math.abs(marqueeEnd.y - marqueeStart.y),
+            }}
+            className="absolute border-2 border-dashed border-amber-500 bg-amber-500/10 rounded-sm pointer-events-none z-50"
+          />
+        )}
 
         {/* Draw Draggable Cards */}
         {blocks.map(block => {
@@ -161,10 +478,61 @@ export const InfiniteCanvas: React.FC = () => {
                 block={block}
                 canvasElem={elem}
                 onDragStart={handleCardDragStart}
+                onStartConnector={handleStartConnector}
+                isSelected={selectedIds.includes(block.id)}
+                onSelectToggle={handleSelectToggle}
               />
             </div>
           );
         })}
+      </div>
+
+      {/* Minimap Navigation Widget */}
+      <div className="absolute bottom-6 right-6 z-40">
+        <Minimap
+          elements={elements}
+          pan={pan}
+          scale={scale}
+          onPanChange={setPan}
+        />
+      </div>
+
+      {/* Floating Zoom Controls */}
+      <div className="absolute bottom-6 left-6 z-40 bg-white/90 dark:bg-zinc-900/90 backdrop-blur border border-slate-200 dark:border-zinc-800 rounded-xl px-2.5 py-1.5 flex items-center gap-2 shadow-md">
+        <button
+          onClick={() => setScale((s: number) => Math.max(0.3, s - 0.1))}
+          className="p-1 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg text-slate-500 dark:text-zinc-400 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-amber-500 transition-colors"
+          title="Zoom Out"
+          aria-label="Zoom Out"
+          type="button"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 12h-15" /></svg>
+        </button>
+        <span className="text-xs font-mono font-medium text-slate-600 dark:text-zinc-300 min-w-[3.5rem] text-center">
+          {Math.round(scale * 100)}%
+        </span>
+        <button
+          onClick={() => setScale((s: number) => Math.min(2.5, s + 0.1))}
+          className="p-1 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg text-slate-500 dark:text-zinc-400 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-amber-500 transition-colors"
+          title="Zoom In"
+          aria-label="Zoom In"
+          type="button"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+        </button>
+        <div className="w-[1px] h-4 bg-slate-200 dark:bg-zinc-800 mx-1" />
+        <button
+          onClick={() => {
+            setPan({ x: 100, y: 100 });
+            setScale(1);
+          }}
+          className="p-1 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg text-slate-500 dark:text-zinc-400 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-amber-500 transition-colors text-xs font-mono"
+          title="Reset Viewport"
+          aria-label="Reset Viewport"
+          type="button"
+        >
+          Reset
+        </button>
       </div>
     </div>
   );
