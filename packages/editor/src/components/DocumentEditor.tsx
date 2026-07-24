@@ -57,14 +57,14 @@ export const DocumentEditor: React.FC = () => {
         return (
           <div 
             key={block.id} 
-            className="group flex items-start gap-0 px-4 py-0.5 rounded-lg transition-all hover:bg-black/5 dark:hover:bg-zinc-800 hover:shadow-sm hover:ring-1 hover:ring-slate-200/60 dark:hover:ring-zinc-700/60"
+            className="group flex items-start gap-0 px-4 py-0.5 rounded-lg transition-all hover:bg-slate-50 dark:hover:bg-zinc-900/50"
           >
             {/* Left Block Controls - fixed width gutter, never overlaps content */}
             <div className="w-14 flex-shrink-0 flex items-start justify-end gap-0.5 pt-[3px] opacity-0 group-hover:opacity-100 transition-opacity">
               <button
                 onClick={() => handleCreateBlock(block.id)}
                 title="Add block below"
-                className="p-1 hover:bg-slate-200 dark:hover:bg-zinc-700 rounded text-slate-500 hover:text-black dark:hover:text-white"
+                className="p-1 hover:bg-slate-200 dark:hover:bg-zinc-700 rounded text-slate-400 hover:text-slate-700 dark:hover:text-zinc-200"
               >
                 <Plus className="w-3.5 h-3.5" />
               </button>
@@ -73,7 +73,7 @@ export const DocumentEditor: React.FC = () => {
                 <button
                   onClick={() => setActiveMenuId(activeMenuId === block.id ? null : block.id)}
                   title="Block settings"
-                  className="p-1 hover:bg-slate-200 dark:hover:bg-zinc-700 rounded text-slate-500 hover:text-black dark:hover:text-white"
+                  className="p-1 hover:bg-slate-200 dark:hover:bg-zinc-700 rounded text-slate-400 hover:text-slate-700 dark:hover:text-zinc-200"
                 >
                   <MoreVertical className="w-3.5 h-3.5" />
                 </button>
