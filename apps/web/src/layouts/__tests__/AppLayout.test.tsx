@@ -38,7 +38,7 @@ describe('AppLayout Sidebar Integration Tests', () => {
     await new Promise(resolve => setTimeout(resolve, 50));
 
     // Verify Sidebar Headers and Layout Sections are rendered
-    expect(container.innerHTML).toContain('Workspace Library');
+    expect(container.innerHTML).toContain('CatNoted Space');
     expect(container.innerHTML).toContain('Recent Documents');
     expect(container.innerHTML).toContain('Page Tree');
     expect(container.innerHTML).toContain('Pages');

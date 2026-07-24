@@ -321,6 +321,9 @@ const App: React.FC = () => {
         zenMode={isZenMode}
         activePage={activePage}
         onPageSelect={setActivePage}
+        pageTitle={pageTitle}
+        userEmail={userEmail}
+        onAuthTrigger={() => setIsAuthOpen(true)}
       >
         {renderContent()}
       </AppLayout>
