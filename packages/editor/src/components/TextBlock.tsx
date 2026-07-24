@@ -4,6 +4,7 @@ import { SlashCommandMenu, buildSlashCommands } from './SlashCommandMenu.js';
 
 interface TextBlockProps {
   id: string;
+  type?: string;
   content: string;
   onChange: (value: string) => void;
   onEnter: () => void;
@@ -15,6 +16,7 @@ interface TextBlockProps {
 
 export const TextBlock: React.FC<TextBlockProps> = ({
   content,
+  type,
   onChange,
   onEnter,
   onBackspace,

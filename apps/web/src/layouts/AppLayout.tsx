@@ -62,11 +62,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   children,
   activePage = 'root-doc-node',
   onPageSelect,
-  pageTitle,
-  userEmail,
-  onAuthTrigger
+  pageTitle: _pageTitle,
+  userEmail: _userEmail,
+  onAuthTrigger: _onAuthTrigger
 }) => {
-  const { blocks, addBlock, updateBlockType } = useDocumentStore();
+  const { blocks, addBlock, updateBlockType, pages, createPage, deletePage, renamePage } = useDocumentStore(activePage);
+  console.log(pages);
 
   // Parse document graph nodes
   const graphData = React.useMemo(() => {
@@ -166,59 +167,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       ...prev,
       [section]: !prev[section]
     }));
-  };
-
-  // Sidebar width and collapse states
-  const [sidebarWidth, setSidebarWidth] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('catnoted:sidebar-width');
-      return saved ? parseInt(saved, 10) : 256;
-    }
-    return 256;
-  });
-
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('catnoted:sidebar-collapsed');
-      return saved === 'true';
-    }
-    return false;
-  });
-
-  const [isSidebarResizing, setIsSidebarResizing] = useState(false);
-  const [currentWorkspace, setCurrentWorkspace] = useState('CatNoted Space');
-  const [isWorkspaceDropdownOpen, setIsWorkspaceDropdownOpen] = useState(false);
-
-  const sidebarRef = useRef<HTMLDivElement>(null);
-
-  const startSidebarResize = useCallback((mouseDownEvent: React.MouseEvent) => {
-    mouseDownEvent.preventDefault();
-    setIsSidebarResizing(true);
-
-    const startWidth = sidebarWidth;
-    const startX = mouseDownEvent.clientX;
-
-    const doResize = (mouseMoveEvent: MouseEvent) => {
-      const delta = mouseMoveEvent.clientX - startX;
-      const newWidth = Math.max(160, Math.min(480, startWidth + delta));
-      setSidebarWidth(newWidth);
-      localStorage.setItem('catnoted:sidebar-width', newWidth.toString());
-    };
-
-    const stopResize = () => {
-      setIsSidebarResizing(false);
-      document.removeEventListener('mousemove', doResize);
-      document.removeEventListener('mouseup', stopResize);
-    };
-
-    document.addEventListener('mousemove', doResize);
-    document.addEventListener('mouseup', stopResize);
-  }, [sidebarWidth]);
-
-  const handleToggleSidebar = () => {
-    const nextCollapsed = !isSidebarCollapsed;
-    setIsSidebarCollapsed(nextCollapsed);
-    localStorage.setItem('catnoted:sidebar-collapsed', String(nextCollapsed));
   };
 
   const [chatInput, setChatInput] = useState('');
@@ -618,8 +566,17 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
             {/* Collapsible Page Tree Section */}
             <div>
-              <div className="px-2 mb-2 text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
-                <span>Page Tree</span>
+              <div className="px-2 mb-2 flex items-center justify-between">
+                <div className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
+                  <span>Page Tree</span>
+                </div>
+                <button onClick={() => {
+                    const title = prompt('Enter page title', 'Untitled');
+                    if (title && createPage) {
+                        const newId = createPage(title);
+                        if (onPageSelect) onPageSelect(newId);
+                    }
+                }} className="text-xs text-indigo-500 hover:text-indigo-600 font-semibold cursor-pointer px-1">+ Add</button>
               </div>
 
               <div className="space-y-1.5">
@@ -634,31 +591,48 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                       {sectionsExpanded.pages ? <FolderOpen className="w-3.5 h-3.5 text-indigo-500" /> : <Folder className="w-3.5 h-3.5 text-indigo-500" />}
                       <span>Pages</span>
                     </span>
-                    <span className="text-[9px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full">{pageNodes.length}</span>
+                    <span className="text-[9px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full">{Object.keys(pages || {}).length}</span>
                   </button>
                   {sectionsExpanded.pages && (
                     <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-150 dark:border-zinc-800 ml-3.5">
-                      {pageNodes.map(node => {
+                      {Object.values(pages || {}).map((node: any) => {
                         const isActive = activePage === node.id;
-                        const displayLabel = node.label.startsWith('📁 ') || node.label.startsWith('📄 ')
-                          ? node.label.slice(2)
-                          : node.label;
+                        const displayLabel = node.title || 'Untitled';
                         return (
-                          <li key={node.id}>
-                            <button
-                              onClick={() => {
-                                if (onPageSelect) onPageSelect(node.id);
-                                onModeChange('doc');
-                              }}
-                              className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
-                                isActive
-                                  ? 'bg-slate-100 dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 font-medium'
-                                  : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
-                              }`}
-                            >
-                              <FileText className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 shrink-0" />
-                              <span className="truncate text-xs">{displayLabel}</span>
-                            </button>
+                          <li key={node.id} className="group">
+                            <div className={`w-full text-left px-2 py-1 rounded-md flex items-center justify-between transition-colors ${
+                              isActive
+                                ? 'bg-slate-100 dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 font-medium'
+                                : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
+                            }`}>
+                              <button
+                                onClick={() => {
+                                  if (onPageSelect) onPageSelect(node.id);
+                                  onModeChange('doc');
+                                }}
+                                className="flex-1 truncate flex items-center gap-2"
+                              >
+                                <FileText className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 shrink-0" />
+                                <span className="truncate text-xs">{displayLabel}</span>
+                              </button>
+
+                              <div className="opacity-0 group-hover:opacity-100 flex gap-1">
+                                <button onClick={() => {
+                                  const newTitle = prompt('Rename page', displayLabel);
+                                  if (newTitle && renamePage) renamePage(node.id, newTitle);
+                                }} className="text-slate-400 hover:text-indigo-500">
+                                  <span className="text-[10px] font-bold">R</span>
+                                </button>
+                                <button onClick={() => {
+                                  if (confirm('Delete page?')) {
+                                    if (deletePage) deletePage(node.id);
+                                    if (onPageSelect && activePage === node.id) onPageSelect('root-doc-node');
+                                  }
+                                }} className="text-slate-400 hover:text-red-500">
+                                  <span className="text-[10px] font-bold">X</span>
+                                </button>
+                              </div>
+                            </div>
                           </li>
                         );
                       })}
@@ -707,10 +681,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                               </button>
                             </li>
                           );
-                        })}
-                      </ul>
-                    )}
-                  </div>
+                        })
+                      )}
+                    </ul>
+                  )}
+                </div>
 
                 {/* 3. Widgets Category */}
                 <div>
@@ -755,66 +730,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     </ul>
                   )}
                 </div>
-
-                  {/* 3. Widgets Category */}
-                  <div>
-                    <button
-                      onClick={() => toggleSection('widgets')}
-                      className="w-full flex items-center justify-between px-2 py-1 hover:bg-slate-50 dark:hover:bg-zinc-800/40 rounded-md text-xs font-medium text-slate-500 dark:text-zinc-400"
-                    >
-                      <span className="flex items-center gap-1.5">
-                        {sectionsExpanded.widgets ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
-                        <Cpu className="w-3.5 h-3.5 text-emerald-500" />
-                        <span>Widgets</span>
-                      </span>
-                      <span className="text-[10px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full">{widgetNodes.length}</span>
-                    </button>
-                    {sectionsExpanded.widgets && (
-                      <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-100 dark:border-zinc-800/60 ml-3.5">
-                        {widgetNodes.length === 0 ? (
-                          <span className="block px-2 py-1 text-[11px] text-slate-400 dark:text-zinc-500 italic">No widgets found</span>
-                        ) : (
-                          widgetNodes.map(node => {
-                            const isActive = activePage === node.id;
-                            return (
-                              <li key={node.id}>
-                                <button
-                                  onClick={() => {
-                                    if (onPageSelect) onPageSelect(node.id);
-                                    onModeChange('doc');
-                                  }}
-                                  className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
-                                    isActive
-                                      ? 'bg-indigo-50/80 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-medium'
-                                      : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
-                                  }`}
-                                >
-                                  <Cpu className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 shrink-0" />
-                                  <span className="truncate text-xs">{node.label}</span>
-                                </button>
-                              </li>
-                            );
-                          })
-                        )}
-                      </ul>
-                    )}
-                  </div>
-
-                </div>
               </div>
             </div>
-          </aside>
-
-          {/* Interactive Resize Handle */}
-          <div
-            onMouseDown={startSidebarResize}
-            className={`absolute top-0 right-[-3px] w-[6px] h-full cursor-col-resize z-50 transition-colors ${
-              isSidebarResizing
-                ? 'bg-indigo-500 dark:bg-indigo-400 opacity-100'
-                : 'hover:bg-slate-300 dark:hover:bg-zinc-800 hover:opacity-100 opacity-0'
-            }`}
-          />
-        </div>
+          </div>
+        </aside>
       )}
 
       {/* Resize Handle for Workspace Sidebar */}

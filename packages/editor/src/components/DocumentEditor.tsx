@@ -12,7 +12,7 @@ import {
   Heading3, 
   AlignLeft, 
   Cpu, 
-  MoreVertical 
+  MoreVertical, GripVertical
 } from 'lucide-react';
 
 export const DocumentEditor: React.FC = () => {
@@ -21,13 +21,69 @@ export const DocumentEditor: React.FC = () => {
     addBlock, 
     updateBlockContent, 
     updateBlockType, 
-    deleteBlock 
+    deleteBlock,
+    moveBlock
   } = useDocumentStore();
 
   const [focusBlockId, setFocusBlockId] = useState<string | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+  const [draggedBlockId, setDraggedBlockId] = useState<string | null>(null);
+  const [dragOverBlockId, setDragOverBlockId] = useState<string | null>(null);
+
+
+  const handleDragStart = (e: React.DragEvent, id: string) => {
+    setDraggedBlockId(id);
+    e.dataTransfer.effectAllowed = 'move';
+    // Transparent image to hide default drag ghost
+    const img = new Image();
+    img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+    e.dataTransfer.setDragImage(img, 0, 0);
+  };
+
+  const handleDragOver = (e: React.DragEvent, id: string) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    if (dragOverBlockId !== id) {
+      setDragOverBlockId(id);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent, id: string) => {
+    e.preventDefault();
+    setDragOverBlockId(null);
+    if (draggedBlockId && draggedBlockId !== id) {
+      // Reorder blocks by moving draggedBlockId before/after id
+      // Since store.ts doesn't have an explicit reorderBlock function,
+      // we can simulate it by getting the current block, deleting it, and inserting it at the new index.
+      const fromIndex = blocks.findIndex(b => b.id === draggedBlockId);
+      const toIndex = blocks.findIndex(b => b.id === id);
+
+      if (fromIndex !== -1 && toIndex !== -1) {
+        const blockToMove = blocks[fromIndex];
+        deleteBlock(draggedBlockId);
+
+        // Use addBlock or custom logic. addBlock creates a new ID.
+        // We really need a moveBlock function in store.ts.
+        moveBlock(fromIndex, toIndex);
+      }
+    }
+    setDraggedBlockId(null);
+  };
 
   const handleCreateBlock = (afterId: string) => {
+    const block = blocks.find(b => b.id === afterId);
+    if (block && (block.type === 'bullet' || block.type === 'ordered' || block.type === 'todo')) {
+      if (block.content.trim() === '') {
+        // Convert to text block if empty
+        updateBlockType(block.id, 'text', {});
+        return;
+      } else {
+        // Create another list block of the same type
+        const newId = addBlock(afterId, block.type as any, '');
+        setFocusBlockId(newId);
+        return;
+      }
+    }
     const newId = addBlock(afterId, 'text', '');
     setFocusBlockId(newId);
   };
@@ -57,10 +113,14 @@ export const DocumentEditor: React.FC = () => {
         return (
           <div 
             key={block.id} 
-            className="group flex items-start gap-0 px-4 py-0.5 rounded-lg transition-all hover:bg-slate-50/80 dark:hover:bg-zinc-900/30 hover:shadow-sm hover:ring-1 hover:ring-slate-100 dark:hover:ring-zinc-800/60"
+            draggable
+            onDragStart={(e) => handleDragStart(e, block.id)}
+            onDragOver={(e) => handleDragOver(e, block.id)}
+            onDrop={(e) => handleDrop(e, block.id)}
+            className={`group flex items-start gap-0 px-4 py-0.5 rounded-lg transition-all hover:bg-slate-50/80 dark:hover:bg-zinc-900/30 hover:shadow-sm hover:ring-1 hover:ring-slate-100 dark:hover:ring-zinc-800/60 ${dragOverBlockId === block.id ? "border-t-2 border-indigo-500" : ""}`}
           >
             {/* Left Block Controls - fixed width gutter, never overlaps content */}
-            <div className="w-10 flex-shrink-0 flex items-start justify-end gap-0.5 pt-[4px] opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className={`w-10 flex-shrink-0 flex items-start justify-end gap-0.5 pt-[6px] transition-opacity ${activeMenuId === block.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
               <button
                 type="button"
                 onClick={() => handleCreateBlock(block.id)}
@@ -75,9 +135,9 @@ export const DocumentEditor: React.FC = () => {
                   type="button"
                   onClick={() => setActiveMenuId(activeMenuId === block.id ? null : block.id)}
                   title="Block settings"
-                  className="p-0.5 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                  className="p-0.5 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors cursor-grab active:cursor-grabbing"
                 >
-                  <MoreVertical className="w-3 h-3" />
+                  <GripVertical className="w-3 h-3" />
                 </button>
 
                 {activeMenuId === block.id && (
@@ -144,6 +204,7 @@ export const DocumentEditor: React.FC = () => {
               {block.type === 'heading' && (
                 <HeadingBlock
                   id={block.id}
+                  type={block.type}
                   content={block.content}
                   level={block.properties?.level || 2}
                   onChange={(val) => updateBlockContent(block.id, val)}
@@ -158,6 +219,7 @@ export const DocumentEditor: React.FC = () => {
               {block.type === 'text' && (
                 <TextBlock
                   id={block.id}
+                  type={block.type}
                   content={block.content}
                   onChange={(val) => updateBlockContent(block.id, val)}
                   onEnter={() => handleCreateBlock(block.id)}
@@ -171,9 +233,10 @@ export const DocumentEditor: React.FC = () => {
               {/* --- Bullet list --- */}
               {block.type === 'bullet' && (
                 <div className="flex items-start gap-2">
-                  <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-zinc-500 flex-shrink-0" />
+                  <span className="mt-[11px] w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-zinc-500 flex-shrink-0" />
                   <TextBlock
                     id={block.id}
+                    type={block.type}
                     content={block.content}
                     onChange={(val) => updateBlockContent(block.id, val)}
                     onEnter={() => handleCreateBlock(block.id)}
@@ -193,6 +256,7 @@ export const DocumentEditor: React.FC = () => {
                   </span>
                   <TextBlock
                     id={block.id}
+                    type={block.type}
                     content={block.content}
                     onChange={(val) => updateBlockContent(block.id, val)}
                     onEnter={() => handleCreateBlock(block.id)}
@@ -220,6 +284,7 @@ export const DocumentEditor: React.FC = () => {
                   />
                   <TextBlock
                     id={block.id}
+                    type={block.type}
                     content={block.content}
                     onChange={(val) => updateBlockContent(block.id, val)}
                     onEnter={() => handleCreateBlock(block.id)}
@@ -237,6 +302,7 @@ export const DocumentEditor: React.FC = () => {
                   <div className="w-0.5 bg-indigo-400 dark:bg-indigo-500 rounded-full flex-shrink-0 self-stretch" />
                   <TextBlock
                     id={block.id}
+                    type={block.type}
                     content={block.content}
                     onChange={(val) => updateBlockContent(block.id, val)}
                     onEnter={() => handleCreateBlock(block.id)}

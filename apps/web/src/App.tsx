@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { AppLayout, ActiveMode } from './layouts/AppLayout.js';
 import { DocumentEditor, useDocumentStore } from '@catnoted/editor';
 import { InfiniteCanvas } from '@catnoted/canvas';
-import { GraphView, parseDocumentGraph } from '@catnoted/graph';
+import { GraphView } from '@catnoted/graph';
 import { ydoc } from '@catnoted/editor';
 import * as Y from 'yjs';
 import {
@@ -28,21 +28,9 @@ const App: React.FC = () => {
   const [isZenMode, setIsZenMode] = useState<boolean>(false);
   const [activePage, setActivePage] = useState<string>('root-doc-node');
 
-  const { blocks, updateBlockContent } = useDocumentStore();
+  const { pages, renamePage } = useDocumentStore(activePage);
 
-  const graphData = React.useMemo(() => {
-    return parseDocumentGraph(blocks);
-  }, [blocks]);
-
-  const mainHeading = blocks.find(b => b.type === 'heading' && b.properties?.level === 1);
-  const docTitle = mainHeading?.content || 'Untitled Document';
-
-  const activePageNode = graphData.nodes.find(n => n.id === activePage);
-  const pageTitle = activePage === 'root-doc-node'
-    ? docTitle
-    : (activePageNode
-        ? (activePageNode.label.startsWith('📁 ') || activePageNode.label.startsWith('📄 ') ? activePageNode.label.slice(2) : activePageNode.label)
-        : activePage);
+  const pageTitle = pages?.[activePage]?.title || 'Workspace';
 
   // Title inline editing state
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -57,20 +45,7 @@ const App: React.FC = () => {
   const handleSaveTitle = () => {
     setIsEditingTitle(false);
     if (editTitleValue.trim()) {
-      if (activePage === 'root-doc-node') {
-        if (mainHeading) {
-          updateBlockContent(mainHeading.id, editTitleValue);
-        } else {
-          const firstBlock = blocks[0];
-          if (firstBlock) {
-            updateBlockContent(firstBlock.id, editTitleValue);
-          }
-        }
-      } else {
-        if (mainHeading) {
-          updateBlockContent(mainHeading.id, editTitleValue);
-        }
-      }
+      renamePage(activePage, editTitleValue.trim());
     }
   };
   
