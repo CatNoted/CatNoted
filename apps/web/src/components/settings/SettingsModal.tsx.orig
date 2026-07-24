@@ -15,7 +15,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   onPassphraseChange
 }) => {
   const [activeTab, setActiveTab] = useState<'byok' | 'sync'>('byok');
-  
+
   // API Keys state
   const [openaiKey, setOpenaiKey] = useState(() => localStorage.getItem('byok_openai_key') || '');
   const [geminiKey, setGeminiKey] = useState(() => localStorage.getItem('byok_gemini_key') || '');
@@ -23,7 +23,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const [ollamaUrl, setOllamaUrl] = useState(() => localStorage.getItem('byok_ollama_url') || 'http://localhost:11434');
 
   const [saveSuccess, setSaveSuccess] = useState(false);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     return () => {
@@ -50,14 +50,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   return (
     <div className="fixed inset-0 bg-slate-900/50 dark:bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-3xl w-full max-w-lg p-6 shadow-2xl relative flex flex-col h-[520px]">
-        
+
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-100 dark:border-zinc-800 pb-3">
           <div className="flex items-center gap-2">
             <Settings className="w-5 h-5 text-indigo-500" />
             <h2 className="font-bold text-base text-slate-800 dark:text-zinc-50">Settings & Keys</h2>
           </div>
-          <button 
+          <button
             onClick={onClose}
             className="p-1 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 transition-colors"
           >
@@ -93,14 +93,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
         {/* Tab Contents */}
         <div className="flex-1 overflow-y-auto py-4">
-          
+
           {/* TAB 1: BYOK KEYS */}
           {activeTab === 'byok' && (
             <form onSubmit={handleSaveKeys} className="space-y-4">
               <p className="text-[10px] text-slate-400 mb-4">
                 Enter your own LLM API keys. These keys are stored encrypted in your local browser storage and never touch CatNoted servers.
               </p>
-              
+
               <div>
                 <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">OpenAI API Key</label>
                 <input
@@ -187,7 +187,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
               <div className="border border-slate-100 dark:border-zinc-850 p-4 rounded-2xl space-y-3">
                 <h4 className="font-semibold text-xs">Sync Network Connection Status</h4>
-                
+
                 <div className="flex justify-between text-[10px]">
                   <span className="text-slate-400">Local-First Storage (VFS):</span>
                   <span className="font-semibold text-emerald-500">Active (IndexedDB)</span>
