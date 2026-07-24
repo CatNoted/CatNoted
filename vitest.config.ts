@@ -5,6 +5,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'happy-dom',
+    setupFiles: ["./setupTests.ts"],
     include: ['**/*.{test,spec}.{ts,tsx}'],
     alias: {
       '@catnoted/shared': path.resolve(__dirname, './packages/shared/src/index.ts'),
