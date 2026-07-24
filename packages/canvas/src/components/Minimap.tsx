@@ -100,7 +100,7 @@ export const Minimap: React.FC<MinimapProps> = ({
         ref={minimapRef}
         onMouseDown={handleMouseDown}
         style={{ width: minimapWidth, height: minimapHeight }}
-        className="bg-white/85 dark:bg-zinc-950/85 border border-slate-200 dark:border-zinc-800 rounded-xl relative overflow-hidden shadow-md cursor-crosshair select-none backdrop-blur-sm"
+        className="bg-white/75 dark:bg-zinc-950/75 border border-slate-200/40 dark:border-zinc-800/40 rounded-2xl relative overflow-hidden shadow-lg shadow-slate-200/5 dark:shadow-none cursor-crosshair select-none backdrop-blur-md transition-all duration-200"
       >
         {/* Dynamic mini representations of cards */}
         {elementList.map(el => {
@@ -115,10 +115,10 @@ export const Minimap: React.FC<MinimapProps> = ({
               style={{
                 left: mx,
                 top: my,
-                width: Math.max(4, mw),
-                height: Math.max(3, mh),
+                width: Math.max(6, mw),
+                height: Math.max(4, mh),
               }}
-              className="absolute bg-slate-300 dark:bg-zinc-800 border border-slate-400/20 dark:border-zinc-700/50 rounded-sm"
+              className="absolute bg-slate-200 dark:bg-zinc-800 border border-slate-300/10 dark:border-zinc-700/25 rounded-md shadow-sm transition-all duration-200"
             />
           );
         })}
@@ -131,7 +131,7 @@ export const Minimap: React.FC<MinimapProps> = ({
             width: viewWidth,
             height: viewHeight,
           }}
-          className="absolute border-2 border-amber-500 bg-amber-500/10 rounded-lg pointer-events-none transition-[left,top,width,height] duration-75"
+          className="absolute border-2 border-indigo-500 bg-indigo-500/10 rounded-xl pointer-events-none transition-[left,top,width,height] duration-75"
         />
       </div>
     </div>

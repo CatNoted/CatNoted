@@ -57,14 +57,16 @@ export const DocumentEditor: React.FC = () => {
         return (
           <div 
             key={block.id} 
-            className="group flex items-start gap-0 px-4 py-0.5 rounded-lg transition-all hover:bg-black/5 dark:hover:bg-zinc-800 hover:shadow-sm hover:ring-1 hover:ring-slate-200/60 dark:hover:ring-zinc-700/60"
+            className="group flex items-start gap-0 px-4 py-0.5 rounded-lg transition-colors duration-150 hover:bg-slate-50 dark:hover:bg-zinc-900/40"
           >
             {/* Left Block Controls - fixed width gutter, never overlaps content */}
-            <div className="w-14 flex-shrink-0 flex items-start justify-end gap-0.5 pt-[3px] opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className={`w-14 flex-shrink-0 flex items-start justify-end gap-0.5 pt-[3px] transition-opacity duration-150 ${
+              activeMenuId === block.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+            }`}>
               <button
                 onClick={() => handleCreateBlock(block.id)}
                 title="Add block below"
-                className="p-1 hover:bg-slate-200 dark:hover:bg-zinc-700 rounded text-slate-500 hover:text-black dark:hover:text-white"
+                className="p-1 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded text-slate-400 hover:text-slate-800 dark:hover:text-zinc-200"
               >
                 <Plus className="w-3.5 h-3.5" />
               </button>
@@ -73,7 +75,7 @@ export const DocumentEditor: React.FC = () => {
                 <button
                   onClick={() => setActiveMenuId(activeMenuId === block.id ? null : block.id)}
                   title="Block settings"
-                  className="p-1 hover:bg-slate-200 dark:hover:bg-zinc-700 rounded text-slate-500 hover:text-black dark:hover:text-white"
+                  className="p-1 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded text-slate-400 hover:text-slate-800 dark:hover:text-zinc-200"
                 >
                   <MoreVertical className="w-3.5 h-3.5" />
                 </button>
@@ -262,8 +264,8 @@ export const DocumentEditor: React.FC = () => {
 
               {/* --- Divider --- */}
               {block.type === 'divider' && (
-                <div className="py-2">
-                  <hr className="border-slate-200 dark:border-zinc-700" />
+                <div className="py-4 flex items-center justify-center">
+                  <div className="w-full h-[1px] bg-slate-200/60 dark:bg-zinc-800/60" />
                 </div>
               )}
 

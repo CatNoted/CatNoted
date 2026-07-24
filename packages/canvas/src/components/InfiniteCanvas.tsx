@@ -498,35 +498,35 @@ export const InfiniteCanvas: React.FC = () => {
       </div>
 
       {/* Floating Zoom Controls */}
-      <div className="absolute bottom-6 left-6 z-40 bg-white/90 dark:bg-zinc-900/90 backdrop-blur border border-slate-200 dark:border-zinc-800 rounded-xl px-2.5 py-1.5 flex items-center gap-2 shadow-md">
+      <div className="absolute bottom-6 left-6 z-40 bg-white/75 dark:bg-zinc-900/75 backdrop-blur-md border border-slate-200/40 dark:border-zinc-800/40 rounded-2xl px-3 py-1.5 flex items-center gap-3 shadow-lg shadow-slate-200/5 dark:shadow-none transition-all duration-200">
         <button
           onClick={() => setScale((s: number) => Math.max(0.3, s - 0.1))}
-          className="p-1 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg text-slate-500 dark:text-zinc-400 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-amber-500 transition-colors"
+          className="p-1 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg text-slate-400 hover:text-indigo-600 dark:text-zinc-500 dark:hover:text-indigo-400 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 transition-colors"
           title="Zoom Out"
           aria-label="Zoom Out"
           type="button"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 12h-15" /></svg>
         </button>
-        <span className="text-xs font-mono font-medium text-slate-600 dark:text-zinc-300 min-w-[3.5rem] text-center">
+        <span className="text-xs font-mono font-semibold text-slate-600 dark:text-zinc-300 min-w-[3.5rem] text-center">
           {Math.round(scale * 100)}%
         </span>
         <button
           onClick={() => setScale((s: number) => Math.min(2.5, s + 0.1))}
-          className="p-1 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg text-slate-500 dark:text-zinc-400 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-amber-500 transition-colors"
+          className="p-1 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg text-slate-400 hover:text-indigo-600 dark:text-zinc-500 dark:hover:text-indigo-400 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 transition-colors"
           title="Zoom In"
           aria-label="Zoom In"
           type="button"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
         </button>
-        <div className="w-[1px] h-4 bg-slate-200 dark:bg-zinc-800 mx-1" />
+        <div className="w-[1px] h-4 bg-slate-200/60 dark:bg-zinc-800/60 mx-1" />
         <button
           onClick={() => {
             setPan({ x: 100, y: 100 });
             setScale(1);
           }}
-          className="p-1 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg text-slate-500 dark:text-zinc-400 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-amber-500 transition-colors text-xs font-mono"
+          className="p-1 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg text-slate-400 hover:text-indigo-600 dark:text-zinc-500 dark:hover:text-indigo-400 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 transition-colors text-xs font-mono font-semibold"
           title="Reset Viewport"
           aria-label="Reset Viewport"
           type="button"
