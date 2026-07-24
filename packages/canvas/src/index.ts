@@ -4,3 +4,7 @@ export { CanvasCard } from './components/CanvasCard.js';
 export { ConnectorLine } from './components/ConnectorLine.js';
 export { Minimap } from './components/Minimap.js';
 export * from './components/InfiniteCanvas.js';
+export { CanvasToolbar } from './components/CanvasToolbar.js';
+export { CanvasProperties } from './components/CanvasProperties.js';
+export { ResizeHandles } from './components/ResizeHandles.js';
+export { GenericShape } from './components/GenericShape.js';
