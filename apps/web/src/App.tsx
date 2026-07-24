@@ -8,7 +8,6 @@ import * as Y from 'yjs';
 import {
   Share2,
   Edit2,
-  ChevronRight,
   BookOpen,
   LayoutGrid
 } from 'lucide-react';
@@ -221,20 +220,20 @@ const App: React.FC = () => {
       <header className="h-14 px-6 border-b border-slate-200/50 dark:border-zinc-800/50 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md flex items-center justify-between z-20 shrink-0 w-full select-none">
         {/* Left: Breadcrumbs + Inline Editable Title */}
         <div className="flex items-center gap-2 max-w-[40%]">
-          <span className="text-xs text-slate-400 dark:text-zinc-500 hover:text-slate-600 dark:hover:text-zinc-300 transition-colors">Workspace</span>
-          <ChevronRight className="w-3.5 h-3.5 text-slate-300 dark:text-zinc-700 shrink-0" />
+          <span className="text-sm font-medium text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200 transition-colors cursor-pointer">Workspace</span>
+          <span className="text-slate-300 dark:text-zinc-600 font-light select-none">/</span>
 
           {activePage !== 'root-doc-node' && (
             <>
               <button
                 type="button"
                 onClick={() => setActivePage('root-doc-node')}
-                className="text-xs text-slate-400 dark:text-zinc-500 hover:text-indigo-550 transition-colors shrink-0 font-medium"
+                className="text-sm font-medium text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200 transition-colors shrink-0"
                 title="Back to root note"
               >
                 Root
               </button>
-              <ChevronRight className="w-3.5 h-3.5 text-slate-300 dark:text-zinc-700 shrink-0" />
+              <span className="text-slate-300 dark:text-zinc-600 font-light select-none">/</span>
             </>
           )}
 
