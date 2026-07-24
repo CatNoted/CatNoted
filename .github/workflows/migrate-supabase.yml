@@ -21,7 +21,7 @@ jobs:
           node-version: 22
       - name: Configure Supabase DB URL for GHA Pooler Routing
         run: |
-          POOLED_URL=$(echo "${{ secrets.SUPABASE_DB_URL }}" | sed -e 's/db.vhuchnycqhprthmdsont.supabase.co:5432/aws-0-ap-northeast-2.pooler.supabase.com:6543/')
+          POOLED_URL=$(echo "${{ secrets.SUPABASE_DB_URL }}" | sed -e 's/db.vhuchnycqhprthmdsont.supabase.co:5432/aws-0-ap-southeast-1.pooler.supabase.com:6543/')
           echo "SUPABASE_DB_URL=$POOLED_URL" >> $GITHUB_ENV
       - run: npm install pg@8.11.3 --no-audit --no-fund --silent
       - run: node .github/scripts/migrate.cjs
