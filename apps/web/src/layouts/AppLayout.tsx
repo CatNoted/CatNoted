@@ -31,6 +31,7 @@ interface AppLayoutProps {
 
 import { requestLlmWidget } from '@catnoted/agent-runtime';
 import { useDocumentStore } from '@catnoted/editor';
+import { Sidebar } from '../components/Sidebar';
 
 // ── Floating panel position & size constants ────────────────────────────
 const PANEL_DEFAULT_WIDTH = 380;
@@ -199,7 +200,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-zinc-100">
       
-      {/* Pane 1: Left Sidebar (Navigation) - Hidden in Zen Mode */}
+      {/* Pane 1: Left Rail (Navigation) - Hidden in Zen Mode */}
       {!zenMode && (
         <aside className="w-16 flex flex-col items-center justify-between py-4 border-r border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 z-10 shrink-0">
           <div className="flex flex-col items-center gap-6 w-full">
@@ -248,6 +249,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             </div>
           </div>
         </aside>
+      )}
+
+      {/* Pane 1b: Second Sidebar (Pages/Recent) - Hidden in Zen Mode */}
+      {!zenMode && (
+        <Sidebar onModeChange={onModeChange} />
       )}
 
       {/* Pane 2: Middle Panel (Main Workspace) — now takes full remaining width */}
