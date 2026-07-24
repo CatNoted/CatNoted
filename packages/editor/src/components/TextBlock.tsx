@@ -11,6 +11,7 @@ interface TextBlockProps {
   onSetType: (type: string, properties?: Record<string, unknown>) => void;
   onAddWidget: () => void;
   focusOnMount?: boolean;
+  blockType?: string;
 }
 
 export const TextBlock: React.FC<TextBlockProps> = ({
@@ -21,6 +22,7 @@ export const TextBlock: React.FC<TextBlockProps> = ({
   onSetType,
   onAddWidget,
   focusOnMount = false,
+  blockType,
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -114,7 +116,50 @@ export const TextBlock: React.FC<TextBlockProps> = ({
 
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      onEnter();
+      if (blockType === 'bullet') {
+        const textarea = textareaRef.current;
+        if (textarea) {
+          const start = textarea.selectionStart;
+          const end = textarea.selectionEnd;
+
+          const textBefore = content.substring(0, start);
+          const textAfter = content.substring(end);
+
+          const lastNewline = textBefore.lastIndexOf('\n');
+          const nextNewline = textAfter.indexOf('\n');
+
+          const currentLineStart = lastNewline === -1 ? 0 : lastNewline + 1;
+          const currentLineEnd = nextNewline === -1 ? content.length : start + nextNewline;
+
+          const currentLineText = content.substring(currentLineStart, currentLineEnd);
+
+          if (currentLineText.trim() === '') {
+            // Current line is empty, so we breakout
+            let cleanedContent = content;
+            if (lastNewline !== -1) {
+              cleanedContent = content.substring(0, lastNewline) + textAfter;
+            } else {
+              cleanedContent = textAfter;
+            }
+
+            onChange(cleanedContent);
+            onEnter();
+          } else {
+            // Insert a newline at cursor position
+            const newContent = textBefore + '\n' + textAfter;
+            onChange(newContent);
+
+            // Move the cursor to the next line in the next frame
+            setTimeout(() => {
+              if (textareaRef.current) {
+                textareaRef.current.selectionStart = textareaRef.current.selectionEnd = start + 1;
+              }
+            }, 0);
+          }
+        }
+      } else {
+        onEnter();
+      }
     } else if (e.key === 'Backspace') {
       if (slashActive) {
         // If query is empty (just typed '/'), close the menu
