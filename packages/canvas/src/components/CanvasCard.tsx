@@ -37,9 +37,9 @@ export const CanvasCard: React.FC<CanvasCardProps> = ({
           onSelectToggle(e, block.id);
         }
       }}
-      className={`absolute bg-white dark:bg-zinc-900 border rounded-2xl shadow-sm hover:shadow-md transition-all select-none flex flex-col ${
+      className={`absolute group bg-white dark:bg-zinc-900 border rounded-2xl shadow-sm hover:shadow-md transition-all select-none flex flex-col ${
         isSelected
-          ? 'border-amber-500 ring-2 ring-amber-500/30 shadow-amber-500/10'
+          ? 'border-indigo-500 ring-2 ring-indigo-500/30 shadow-indigo-500/10'
           : 'border-slate-200 dark:border-zinc-800'
       }`}
     >
@@ -50,12 +50,12 @@ export const CanvasCard: React.FC<CanvasCardProps> = ({
           if (target.closest('button, input, textarea')) return;
           onDragStart(e, block.id);
         }}
-        className="h-8 cursor-grab active:cursor-grabbing border-b border-slate-100 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-900/50 rounded-t-2xl flex items-center px-3 justify-between"
+        className="h-8 cursor-grab active:cursor-grabbing border-b border-slate-100 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-900/50 rounded-t-2xl flex items-center px-3 justify-between group-hover:bg-slate-100 dark:group-hover:bg-zinc-800/80 transition-colors"
       >
-        <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">{block.type} card</span>
+        <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">{block.type}</span>
         <div className="flex items-center gap-1.5">
           {isSelected && (
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
           )}
           <div className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-zinc-700" />
         </div>
@@ -95,20 +95,24 @@ export const CanvasCard: React.FC<CanvasCardProps> = ({
           e.stopPropagation();
           onStartConnector(e, block.id);
         }}
-        className="absolute right-[-8px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-amber-500 bg-zinc-950 hover:bg-amber-500 hover:scale-125 transition-all cursor-crosshair z-20 flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+        className={`absolute right-[-8px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-indigo-500 bg-white dark:bg-zinc-950 hover:bg-indigo-500 hover:scale-125 transition-all cursor-crosshair z-20 flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
+          isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+        }`}
         title="Drag to connect"
         aria-label={`Drag connector from ${block.content || 'this card'}`}
         type="button"
       >
-        <div className="w-1.5 h-1.5 rounded-full bg-amber-500 hover:bg-zinc-950" />
+        <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 hover:bg-white dark:hover:bg-zinc-950" />
       </button>
 
       {/* Connector Handle Port - Left Side (Target node port / helpful visual aid) */}
       <div
-        className="absolute left-[-8px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border border-zinc-700 bg-zinc-900 z-20 flex items-center justify-center pointer-events-none"
+        className={`absolute left-[-8px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-indigo-200 dark:border-indigo-900 bg-white dark:bg-zinc-900 z-20 flex items-center justify-center pointer-events-none transition-opacity ${
+          isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+        }`}
         aria-hidden="true"
       >
-        <div className="w-1 h-1 rounded-full bg-zinc-500" />
+        <div className="w-1.5 h-1.5 rounded-full bg-indigo-200 dark:bg-indigo-900" />
       </div>
     </div>
   );

@@ -23,18 +23,21 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
   const colors = ['bg-white', 'bg-red-100', 'bg-orange-100', 'bg-amber-100', 'bg-green-100', 'bg-emerald-100', 'bg-cyan-100', 'bg-blue-100', 'bg-indigo-100', 'bg-violet-100', 'bg-purple-100', 'bg-fuchsia-100', 'bg-pink-100', 'bg-rose-100'];
 
   return (
-    <div className="absolute top-6 right-6 z-40 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border border-slate-200/50 dark:border-zinc-800/60 rounded-2xl p-3 flex flex-col gap-4 shadow-lg shadow-black/5 w-56">
-      <div className="text-xs font-mono font-semibold text-slate-500 uppercase tracking-widest border-b border-slate-100 dark:border-zinc-800 pb-2">Properties</div>
+    <div className="absolute top-6 right-6 z-40 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-slate-200/60 dark:border-zinc-800/60 rounded-2xl p-4 flex flex-col gap-5 shadow-xl shadow-slate-200/20 dark:shadow-black/20 w-64 animate-in fade-in slide-in-from-right-4 duration-200">
+      <div className="text-[10px] font-mono font-semibold text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-zinc-800 pb-2 flex items-center justify-between">
+        <span>Properties</span>
+        <span className="bg-indigo-50 dark:bg-indigo-950 text-indigo-500 px-1.5 py-0.5 rounded text-[9px]">{element.type}</span>
+      </div>
 
       {/* Fill Color */}
-      <div className="flex flex-col gap-2">
-        <span className="text-xs text-slate-600 dark:text-zinc-400 font-medium flex items-center gap-1"><Palette className="w-3 h-3" /> Fill Color</span>
+      <div className="flex flex-col gap-2.5">
+        <span className="text-xs text-slate-500 dark:text-zinc-400 font-medium flex items-center gap-1.5"><Palette className="w-3.5 h-3.5" /> Fill Color</span>
         <div className="flex flex-wrap gap-1.5">
           {colors.map(color => (
             <button
               key={color}
               onClick={() => handleUpdate({ color })}
-              className={`w-5 h-5 rounded-md border border-slate-200 dark:border-zinc-700 ${color.replace('bg-', 'bg-').replace('-100', '-100 dark:bg-opacity-20')} hover:scale-110 transition-transform ${element.color === color ? 'ring-2 ring-indigo-500' : ''}`}
+              className={`w-6 h-6 rounded-md border border-slate-200 dark:border-zinc-700 ${color.replace('bg-', 'bg-').replace('-100', '-100 dark:bg-opacity-20')} hover:scale-110 transition-transform ${element.color === color ? 'ring-2 ring-indigo-500 ring-offset-1 ring-offset-white dark:ring-offset-zinc-900' : ''}`}
               title={color}
               aria-label={`Set color to ${color}`}
               type="button"
@@ -44,24 +47,26 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
       </div>
 
       {/* Border Options */}
-      <div className="flex flex-col gap-2">
-        <span className="text-xs text-slate-600 dark:text-zinc-400 font-medium flex items-center gap-1"><Square className="w-3 h-3" /> Border</span>
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col gap-2.5">
+        <span className="text-xs text-slate-500 dark:text-zinc-400 font-medium flex items-center gap-1.5"><Square className="w-3.5 h-3.5" /> Border</span>
+        <div className="flex items-center gap-1 bg-slate-100 dark:bg-zinc-800/50 p-1 rounded-lg w-fit">
           <button
             onClick={() => handleUpdate({ borderStyle: 'solid' })}
-            className={`p-1.5 rounded border ${element.borderStyle === 'solid' ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+            className={`p-1.5 rounded-md flex items-center justify-center transition-colors ${element.borderStyle === 'solid' ? 'bg-white dark:bg-zinc-700 shadow-sm text-indigo-600 dark:text-indigo-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+            title="Solid"
           >
             <Square className="w-4 h-4" />
           </button>
           <button
             onClick={() => handleUpdate({ borderStyle: 'dashed' })}
-            className={`p-1.5 rounded border ${element.borderStyle === 'dashed' ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+            className={`p-1.5 rounded-md flex items-center justify-center transition-colors ${element.borderStyle === 'dashed' ? 'bg-white dark:bg-zinc-700 shadow-sm text-indigo-600 dark:text-indigo-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+            title="Dashed"
           >
             <CircleDashed className="w-4 h-4" />
           </button>
           <button
             onClick={() => handleUpdate({ borderStyle: 'none' })}
-            className={`p-1.5 rounded border text-xs font-medium ${!element.borderStyle || element.borderStyle === 'none' ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+            className={`p-1.5 rounded-md text-xs font-medium px-3 transition-colors ${!element.borderStyle || element.borderStyle === 'none' ? 'bg-white dark:bg-zinc-700 shadow-sm text-indigo-600 dark:text-indigo-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
           >
             None
           </button>
@@ -69,10 +74,10 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
       </div>
 
       {/* Opacity */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2.5">
         <div className="flex items-center justify-between">
-          <span className="text-xs text-slate-600 dark:text-zinc-400 font-medium">Opacity</span>
-          <span className="text-xs text-slate-500">{Math.round((element.opacity ?? 1) * 100)}%</span>
+          <span className="text-xs text-slate-500 dark:text-zinc-400 font-medium">Opacity</span>
+          <span className="text-xs font-mono text-slate-400 bg-slate-100 dark:bg-zinc-800 px-1.5 rounded">{Math.round((element.opacity ?? 1) * 100)}%</span>
         </div>
         <input
           type="range"
@@ -81,45 +86,47 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
           step="0.1"
           value={element.opacity ?? 1}
           onChange={(e) => handleUpdate({ opacity: parseFloat(e.target.value) })}
-          className="w-full accent-indigo-500"
+          className="w-full accent-indigo-500 h-1.5 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer"
         />
       </div>
 
       {/* Alignment */}
-      <div className="flex flex-col gap-2">
-        <span className="text-xs text-slate-600 dark:text-zinc-400 font-medium">Text Align</span>
-        <div className="flex items-center gap-1 bg-slate-100 dark:bg-zinc-800 p-1 rounded-lg w-fit">
-          <button
-            onClick={() => handleUpdate({ textAlign: 'left' })}
-            className={`p-1 rounded ${element.textAlign === 'left' ? 'bg-white dark:bg-zinc-700 shadow-sm text-indigo-600' : 'text-slate-500 hover:text-slate-700'}`}
-          >
-            <AlignLeft className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => handleUpdate({ textAlign: 'center' })}
-            className={`p-1 rounded ${!element.textAlign || element.textAlign === 'center' ? 'bg-white dark:bg-zinc-700 shadow-sm text-indigo-600' : 'text-slate-500 hover:text-slate-700'}`}
-          >
-            <AlignCenter className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => handleUpdate({ textAlign: 'right' })}
-            className={`p-1 rounded ${element.textAlign === 'right' ? 'bg-white dark:bg-zinc-700 shadow-sm text-indigo-600' : 'text-slate-500 hover:text-slate-700'}`}
-          >
-            <AlignRight className="w-4 h-4" />
-          </button>
+      {element.type !== 'frame' && (
+        <div className="flex flex-col gap-2.5">
+          <span className="text-xs text-slate-500 dark:text-zinc-400 font-medium">Text Align</span>
+          <div className="flex items-center gap-1 bg-slate-100 dark:bg-zinc-800/50 p-1 rounded-lg w-fit">
+            <button
+              onClick={() => handleUpdate({ textAlign: 'left' })}
+              className={`p-1.5 rounded-md transition-colors ${element.textAlign === 'left' ? 'bg-white dark:bg-zinc-700 shadow-sm text-indigo-600 dark:text-indigo-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+            >
+              <AlignLeft className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => handleUpdate({ textAlign: 'center' })}
+              className={`p-1.5 rounded-md transition-colors ${!element.textAlign || element.textAlign === 'center' ? 'bg-white dark:bg-zinc-700 shadow-sm text-indigo-600 dark:text-indigo-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+            >
+              <AlignCenter className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => handleUpdate({ textAlign: 'right' })}
+              className={`p-1.5 rounded-md transition-colors ${element.textAlign === 'right' ? 'bg-white dark:bg-zinc-700 shadow-sm text-indigo-600 dark:text-indigo-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+            >
+              <AlignRight className="w-4 h-4" />
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Nudge Controls */}
-      <div className="flex flex-col gap-2 pt-2 border-t border-slate-100 dark:border-zinc-800">
-        <span className="text-xs text-slate-600 dark:text-zinc-400 font-medium">Nudge</span>
+      <div className="flex flex-col gap-2.5 pt-3 border-t border-slate-100 dark:border-zinc-800/80">
+        <span className="text-xs text-slate-500 dark:text-zinc-400 font-medium">Nudge</span>
         <div className="grid grid-cols-3 gap-1 w-fit self-center">
           <div />
-          <button onClick={() => handleNudge(0, -10)} className="p-1 bg-slate-100 dark:bg-zinc-800 rounded hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-500" type="button"><ArrowUp className="w-3 h-3" /></button>
+          <button onClick={() => handleNudge(0, -10)} className="p-1.5 bg-slate-100 dark:bg-zinc-800/80 rounded-md hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-500 transition-colors" type="button"><ArrowUp className="w-3.5 h-3.5" /></button>
           <div />
-          <button onClick={() => handleNudge(-10, 0)} className="p-1 bg-slate-100 dark:bg-zinc-800 rounded hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-500" type="button"><ArrowLeft className="w-3 h-3" /></button>
-          <button onClick={() => handleNudge(0, 10)} className="p-1 bg-slate-100 dark:bg-zinc-800 rounded hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-500" type="button"><ArrowDown className="w-3 h-3" /></button>
-          <button onClick={() => handleNudge(10, 0)} className="p-1 bg-slate-100 dark:bg-zinc-800 rounded hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-500" type="button"><ArrowRight className="w-3 h-3" /></button>
+          <button onClick={() => handleNudge(-10, 0)} className="p-1.5 bg-slate-100 dark:bg-zinc-800/80 rounded-md hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-500 transition-colors" type="button"><ArrowLeft className="w-3.5 h-3.5" /></button>
+          <button onClick={() => handleNudge(0, 10)} className="p-1.5 bg-slate-100 dark:bg-zinc-800/80 rounded-md hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-500 transition-colors" type="button"><ArrowDown className="w-3.5 h-3.5" /></button>
+          <button onClick={() => handleNudge(10, 0)} className="p-1.5 bg-slate-100 dark:bg-zinc-800/80 rounded-md hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-500 transition-colors" type="button"><ArrowRight className="w-3.5 h-3.5" /></button>
         </div>
       </div>
     </div>
