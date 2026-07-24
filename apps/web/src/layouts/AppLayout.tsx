@@ -44,7 +44,7 @@ interface AppLayoutProps {
   onCreatePage?: () => void;
 }
 
-import { requestLlmWidget } from '@catnoted/agent-runtime';
+import { requestLlmWidget, SandboxFrame } from '@catnoted/agent-runtime';
 import { useDocumentStore } from '@catnoted/editor';
 import { parseDocumentGraph } from '@catnoted/graph';
 
@@ -178,7 +178,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   };
 
   const [chatInput, setChatInput] = useState('');
-  const [messages, setMessages] = useState<Array<{ sender: 'user' | 'agent'; text: string }>>([
+  const [messages, setMessages] = useState<Array<{ sender: 'user' | 'agent'; text: string; code?: string; editProposal?: string }>>([
     { sender: 'agent', text: "Hello! I am your Space Agent. What would you like to build or note down today?" }
   ]);
 
@@ -337,7 +337,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     document.addEventListener('mouseup', handleUp);
   }, [panelSize, panelPos]);
 
-  const handleSendMessage = async (e: React.FormEvent) => {
+    const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!chatInput.trim()) return;
 
@@ -345,15 +345,31 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     setMessages(prev => [...prev, { sender: 'user', text: userMsg }]);
     setChatInput('');
 
-    try {
-      const response = await requestLlmWidget(userMsg);
-      setMessages(prev => [...prev, { sender: 'agent', text: response.text }]);
+    // Read current page blocks for context
+    const currentPageId = activePage || 'root-doc-node';
+    const pageBlocks = blocks.filter(b => b.parentId === currentPageId || (!b.parentId && currentPageId === 'root-doc-node'));
+    const contextStr = JSON.stringify(pageBlocks.map(b => ({ type: b.type, content: b.content })));
+    const enrichedPrompt = `Context: ${contextStr}
 
-      const newBlockId = addBlock(null, 'widget', '');
-      updateBlockType(newBlockId, 'widget', {
-        widgetId: `ai-widget-${Math.random().toString(36).substring(2, 6)}`,
-        srcDoc: response.code
-      });
+User Request: ${userMsg}`;
+
+    try {
+      const response = await requestLlmWidget(enrichedPrompt);
+      // Wait, let's extract code and text properly
+      const newAgentMsg: { sender: 'agent', text: string, code?: string, editProposal?: string } = { sender: 'agent', text: response.text };
+
+      // If it's an edit proposal (which we'll mock in client.ts), let's say it returns it in 'text' or 'code' differently.
+      // For now, let's assume code is always returned. But wait, if it's not a widget?
+      if (response.code) {
+        if (response.code.includes('PROPOSED_EDIT:')) {
+          newAgentMsg.editProposal = response.code.replace('PROPOSED_EDIT:', '').trim();
+          newAgentMsg.text = "I propose the following edit based on your request:";
+        } else {
+          newAgentMsg.code = response.code;
+        }
+      }
+
+      setMessages(prev => [...prev, newAgentMsg]);
     } catch (error) {
       setMessages(prev => [...prev, { sender: 'agent', text: 'Failed to request LLM widget sandbox compiles.' }]);
     }
@@ -873,22 +889,63 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 {messages.map((msg, index) => (
                   <div 
                     key={index} 
-                    className={`flex gap-2 max-w-[85%] ${msg.sender === 'user' ? 'ml-auto flex-row-reverse' : ''}`}
+                    className={`flex flex-col gap-2 max-w-[85%] ${msg.sender === 'user' ? 'ml-auto items-end' : 'items-start'}`}
                   >
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0 ${
-                      msg.sender === 'user' 
-                        ? 'bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300' 
-                        : 'bg-indigo-100 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400'
-                    }`}>
-                      {msg.sender === 'user' ? <User className="w-3.5 h-3.5" /> : <Bot className="w-3.5 h-3.5" />}
+                    <div className={`flex gap-2 ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}>
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0 ${
+                        msg.sender === 'user'
+                          ? 'bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300'
+                          : 'bg-indigo-100 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400'
+                      }`}>
+                        {msg.sender === 'user' ? <User className="w-3.5 h-3.5" /> : <Bot className="w-3.5 h-3.5" />}
+                      </div>
+                      <div className={`p-3 rounded-2xl text-xs leading-relaxed ${
+                        msg.sender === 'user'
+                          ? 'bg-indigo-600 text-white rounded-tr-none shadow-sm shadow-indigo-600/20'
+                          : 'bg-slate-100 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-200 rounded-tl-none border border-transparent dark:border-zinc-700/40'
+                      }`}>
+                        {msg.text}
+                      </div>
                     </div>
-                    <div className={`p-3 rounded-2xl text-xs leading-relaxed ${
-                      msg.sender === 'user'
-                        ? 'bg-indigo-600 text-white rounded-tr-none shadow-sm shadow-indigo-600/20'
-                        : 'bg-slate-100 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-200 rounded-tl-none border border-transparent dark:border-zinc-700/40'
-                    }`}>
-                      {msg.text}
-                    </div>
+                    {msg.code && (
+                      <div className="w-full mt-1 border border-indigo-200 dark:border-indigo-500/30 rounded-xl overflow-hidden shadow-sm bg-white dark:bg-zinc-900">
+                        <div className="h-[150px] w-full">
+                          <SandboxFrame srcDoc={msg.code} theme={isDarkMode ? 'dark' : 'light'} height="150px" />
+                        </div>
+                        <div className="p-2 border-t border-indigo-100 dark:border-indigo-500/20 bg-slate-50 dark:bg-zinc-800/50 flex justify-end">
+                          <button
+                            onClick={() => {
+                              const newBlockId = addBlock(null, 'widget', '');
+                              updateBlockType(newBlockId, 'widget', {
+                                widgetId: `ai-widget-${Math.random().toString(36).substring(2, 6)}`,
+                                srcDoc: msg.code!
+                              });
+                            }}
+                            className="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-md text-[10px] font-semibold transition-colors"
+                          >
+                            Insert Widget
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                    {msg.editProposal && (
+                      <div className="w-full mt-1 border border-emerald-200 dark:border-emerald-500/30 rounded-xl overflow-hidden shadow-sm bg-emerald-50/50 dark:bg-emerald-900/10">
+                        <div className="p-3 text-xs text-slate-700 dark:text-zinc-300 whitespace-pre-wrap font-mono">
+                          {msg.editProposal}
+                        </div>
+                        <div className="p-2 border-t border-emerald-100 dark:border-emerald-500/20 flex justify-end">
+                          <button
+                            onClick={() => {
+                              // Just append the proposed edit as a text block
+                              addBlock(null, 'text', msg.editProposal!);
+                            }}
+                            className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-md text-[10px] font-semibold transition-colors"
+                          >
+                            Append to Document
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
