@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { AppLayout, ActiveMode } from './layouts/AppLayout.js';
-import { DocumentEditor } from '@catnoted/editor';
+import { DocumentEditor, useDocumentStore } from '@catnoted/editor';
 import { InfiniteCanvas } from '@catnoted/canvas';
-import { GraphView } from '@catnoted/graph';
+import { GraphView, parseDocumentGraph } from '@catnoted/graph';
 import { ydoc } from '@catnoted/editor';
 import * as Y from 'yjs';
 
@@ -19,6 +19,23 @@ const App: React.FC = () => {
   const [activeMode, setActiveMode] = useState<ActiveMode>('doc');
   const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
   const [isZenMode, setIsZenMode] = useState<boolean>(false);
+  const [activePage, setActivePage] = useState<string>('root-doc-node');
+
+  const { blocks } = useDocumentStore();
+
+  const graphData = React.useMemo(() => {
+    return parseDocumentGraph(blocks);
+  }, [blocks]);
+
+  const mainHeading = blocks.find(b => b.type === 'heading' && b.properties?.level === 1);
+  const docTitle = mainHeading?.content || 'Untitled Document';
+
+  const activePageNode = graphData.nodes.find(n => n.id === activePage);
+  const pageTitle = activePage === 'root-doc-node'
+    ? docTitle
+    : (activePageNode
+        ? (activePageNode.label.startsWith('📁 ') || activePageNode.label.startsWith('📄 ') ? activePageNode.label.slice(2) : activePageNode.label)
+        : activePage);
   
   // E2EE Sync credentials
   const [passphrase, setPassphrase] = useState('super-secret-default-passphrase');
@@ -111,7 +128,18 @@ const App: React.FC = () => {
             {/* Document Topbar */}
             <div className="flex items-center justify-between px-10 py-4 border-b border-slate-100 dark:border-zinc-800/60">
               <div>
-                <h1 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-zinc-50">Untitled Document</h1>
+                <h1 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-zinc-50 flex items-center gap-2">
+                  {activePage !== 'root-doc-node' && (
+                    <button
+                      onClick={() => setActivePage('root-doc-node')}
+                      className="text-xs px-2 py-1 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-500 rounded-md transition-colors mr-1"
+                      title="Back to root note"
+                    >
+                      ← Root
+                    </button>
+                  )}
+                  {pageTitle}
+                </h1>
                 <p className="text-[11px] text-slate-400 dark:text-zinc-500 mt-0.5 flex items-center gap-1.5">
                   Linear Editor &middot; E2EE Sync:
                   <span className="text-indigo-500 font-mono font-semibold">AES-GCM-256</span>
@@ -176,6 +204,8 @@ const App: React.FC = () => {
         isDarkMode={isDarkMode}
         onToggleTheme={() => setIsDarkMode(!isDarkMode)}
         zenMode={isZenMode}
+        activePage={activePage}
+        onPageSelect={setActivePage}
       >
         {renderContent()}
       </AppLayout>
