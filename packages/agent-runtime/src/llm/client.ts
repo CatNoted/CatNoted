@@ -152,6 +152,7 @@ export async function requestLlmWidget(prompt: string, config?: LLMConfig): Prom
     }
   }
 
+
   const cleanPrompt = prompt.toLowerCase();
   let selectedCode = WIDGET_TEMPLATES.todo;
   let widgetName = 'Quick Tasks Todo';
@@ -162,13 +163,17 @@ export async function requestLlmWidget(prompt: string, config?: LLMConfig): Prom
   } else if (cleanPrompt.includes('kalkulator') || cleanPrompt.includes('calc') || cleanPrompt.includes('math')) {
     selectedCode = WIDGET_TEMPLATES.calculator;
     widgetName = 'Mini Calculator';
+  } else if (cleanPrompt.includes('edit') || cleanPrompt.includes('rewrite') || cleanPrompt.includes('propose')) {
+    // Return a mock proposed edit
+    selectedCode = `PROPOSED_EDIT: Here is an improved version of the document based on your request.\n- Organized bullet points\n- Refined tone\n- Corrected typos`;
+    widgetName = 'Document Edit';
   }
 
   return new Promise(resolve => {
     setTimeout(() => {
       resolve({
         code: selectedCode,
-        text: `Space Agent (Mock Mode): Successfully compiled a secure HTML/JS widget for "${widgetName}".`
+        text: `Space Agent: I have processed your request for "${widgetName}".`
       });
     }, 800);
   });

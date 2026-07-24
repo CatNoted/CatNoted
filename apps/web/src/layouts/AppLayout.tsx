@@ -46,7 +46,7 @@ interface AppLayoutProps {
   onCreatePage?: () => void;
 }
 
-import { requestLlmWidget } from '@catnoted/agent-runtime';
+import { requestLlmWidget, SandboxFrame } from '@catnoted/agent-runtime';
 import { useDocumentStore } from '@catnoted/editor';
 import { parseDocumentGraph } from '@catnoted/graph';
 
@@ -180,7 +180,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   };
 
   const [chatInput, setChatInput] = useState('');
-  const [messages, setMessages] = useState<Array<{ sender: 'user' | 'agent'; text: string }>>([
+  const [messages, setMessages] = useState<Array<{ sender: 'user' | 'agent'; text: string; code?: string; editProposal?: string }>>([
     { sender: 'agent', text: "Hello! I am your Space Agent. What would you like to build or note down today?" }
   ]);
 
@@ -365,7 +365,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     [panelSize, panelPos],
   );
 
-  const handleSendMessage = async (e: React.FormEvent) => {
+    const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!chatInput.trim()) return;
 
@@ -998,6 +998,45 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     >
                       {msg.text}
                     </div>
+                    {msg.code && (
+                      <div className="w-full mt-1 border border-indigo-200 dark:border-indigo-500/30 rounded-xl overflow-hidden shadow-sm bg-white dark:bg-zinc-900">
+                        <div className="h-[150px] w-full">
+                          <SandboxFrame srcDoc={msg.code} theme={isDarkMode ? 'dark' : 'light'} height="150px" />
+                        </div>
+                        <div className="p-2 border-t border-indigo-100 dark:border-indigo-500/20 bg-slate-50 dark:bg-zinc-800/50 flex justify-end">
+                          <button
+                            onClick={() => {
+                              const newBlockId = addBlock(null, 'widget', '');
+                              updateBlockType(newBlockId, 'widget', {
+                                widgetId: `ai-widget-${Math.random().toString(36).substring(2, 6)}`,
+                                srcDoc: msg.code!
+                              });
+                            }}
+                            className="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-md text-[10px] font-semibold transition-colors"
+                          >
+                            Insert Widget
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                    {msg.editProposal && (
+                      <div className="w-full mt-1 border border-emerald-200 dark:border-emerald-500/30 rounded-xl overflow-hidden shadow-sm bg-emerald-50/50 dark:bg-emerald-900/10">
+                        <div className="p-3 text-xs text-slate-700 dark:text-zinc-300 whitespace-pre-wrap font-mono">
+                          {msg.editProposal}
+                        </div>
+                        <div className="p-2 border-t border-emerald-100 dark:border-emerald-500/20 flex justify-end">
+                          <button
+                            onClick={() => {
+                              // Just append the proposed edit as a text block
+                              addBlock(null, 'text', msg.editProposal!);
+                            }}
+                            className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-md text-[10px] font-semibold transition-colors"
+                          >
+                            Append to Document
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
