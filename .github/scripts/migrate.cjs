@@ -3,13 +3,6 @@ const path = require('path');
 const dns = require('dns');
 const { Client } = require('pg');
 
-let poolerIp = '52.77.146.31';
-dns.resolve4('aws-0-ap-southeast-1.pooler.supabase.com', (err, addresses) => {
-  if (!err && addresses && addresses[0]) {
-    poolerIp = addresses[0];
-  }
-});
-
 const originalLookup = dns.lookup;
 dns.lookup = function(hostname, options, callback) {
   const cb = typeof options === 'function' ? options : callback;
@@ -25,7 +18,7 @@ dns.lookup = function(hostname, options, callback) {
   } catch (_) {}
 
   if (hostname === targetHost) {
-    return cb(null, poolerIp, 4);
+    return cb(null, '52.77.146.31', 4);
   }
   return originalLookup.apply(this, arguments);
 };
