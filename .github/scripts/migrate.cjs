@@ -1,19 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const dns = require('dns');
-const tls = require('tls');
 const { Client } = require('pg');
-
-const originalConnect = tls.connect;
-tls.connect = function(options) {
-  console.log('DEBUG GHA tls.connect options:', {
-    host: options.host,
-    port: options.port,
-    servername: options.servername,
-    rejectUnauthorized: options.rejectUnauthorized
-  });
-  return originalConnect.apply(this, arguments);
-};
 
 const rawDbUrl = process.env.SUPABASE_DB_URL;
 const sqlPath =
@@ -42,15 +30,6 @@ const sql = fs.readFileSync(path.resolve(process.cwd(), sqlPath), 'utf8');
         targetHost = parsedRaw.hostname;
       }
     } catch (_) {}
-
-    try {
-      const addresses = await dns.promises.resolve4('aws-0-ap-southeast-1.pooler.supabase.com');
-      if (addresses && addresses[0]) {
-        poolerIp = addresses[0];
-      }
-    } catch (e) {
-      console.log('Using default pooler IP fallback:', poolerIp);
-    }
 
     let normalisedUrl = rawDbUrl;
     // Delete query params that interfere
