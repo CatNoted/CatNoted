@@ -62,9 +62,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   children,
   activePage = 'root-doc-node',
   onPageSelect,
-  pageTitle,
-  userEmail,
-  onAuthTrigger
+  pageTitle: _pageTitle,
+  userEmail: _userEmail,
+  onAuthTrigger: _onAuthTrigger
 }) => {
   const { blocks, addBlock, updateBlockType } = useDocumentStore();
 
@@ -104,41 +104,48 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     ];
   }, [pageNodes, docTitle]);
 
-  // Persistent sidebar state
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
-    const saved = localStorage.getItem('catnoted:sidebar-collapsed');
-    return saved === 'true';
-  });
+  // Persistent sidebar state - initialized with safe defaults to prevent hydration issues
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
+  const [sidebarWidth, setSidebarWidth] = useState<number>(256);
+  const [isSidebarResizing, setIsSidebarResizing] = useState(false);
+
+  useEffect(() => {
+    const savedCollapsed = localStorage.getItem('catnoted:sidebar-collapsed');
+    if (savedCollapsed !== null) {
+      setIsSidebarCollapsed(savedCollapsed === 'true');
+    }
+    const savedWidth = localStorage.getItem('catnoted:sidebar-width');
+    if (savedWidth !== null) {
+      setSidebarWidth(parseInt(savedWidth, 10));
+    }
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('catnoted:sidebar-collapsed', String(isSidebarCollapsed));
   }, [isSidebarCollapsed]);
-
-  const [sidebarWidth, setSidebarWidth] = useState<number>(() => {
-    const saved = localStorage.getItem('catnoted:sidebar-width');
-    return saved ? parseInt(saved, 10) : 256;
-  });
 
   useEffect(() => {
     localStorage.setItem('catnoted:sidebar-width', String(sidebarWidth));
   }, [sidebarWidth]);
 
   // Sidebar drag resizer handle
-  const isResizingSidebar = useRef(false);
   const handleSidebarResizeStart = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
-    isResizingSidebar.current = true;
+    setIsSidebarResizing(true);
     document.body.style.cursor = 'col-resize';
     document.body.style.userSelect = 'none';
 
+    const startWidth = sidebarWidth;
+    const startX = e.clientX;
+
     const handleMouseMove = (moveEvent: MouseEvent) => {
-      if (!isResizingSidebar.current) return;
-      const newWidth = Math.max(180, Math.min(450, moveEvent.clientX - 64));
+      const deltaX = moveEvent.clientX - startX;
+      const newWidth = Math.max(180, Math.min(450, startWidth + deltaX));
       setSidebarWidth(newWidth);
     };
 
     const handleMouseUp = () => {
-      isResizingSidebar.current = false;
+      setIsSidebarResizing(false);
       document.body.style.cursor = '';
       document.body.style.userSelect = '';
       document.removeEventListener('mousemove', handleMouseMove);
@@ -147,12 +154,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
-  }, []);
+  }, [sidebarWidth]);
 
   // Workspace Switcher states
   const [isWorkspaceDropdownOpen, setIsWorkspaceDropdownOpen] = useState(false);
-  const [activeWorkspace, setActiveWorkspace] = useState('Personal Space 😺');
-  const workspaces = ['Personal Space 😺', 'Work Workspace 💼', 'Creative Sandbox 🎨'];
+  const [activeWorkspace, setActiveWorkspace] = useState('CatNoted Space');
+  const workspaces = ['CatNoted Space', 'Personal Space 😺', 'Work Workspace 💼', 'Creative Sandbox 🎨'];
 
   // Section expand/collapse state
   const [sectionsExpanded, setSectionsExpanded] = useState<Record<string, boolean>>({
@@ -166,59 +173,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       ...prev,
       [section]: !prev[section]
     }));
-  };
-
-  // Sidebar width and collapse states
-  const [sidebarWidth, setSidebarWidth] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('catnoted:sidebar-width');
-      return saved ? parseInt(saved, 10) : 256;
-    }
-    return 256;
-  });
-
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('catnoted:sidebar-collapsed');
-      return saved === 'true';
-    }
-    return false;
-  });
-
-  const [isSidebarResizing, setIsSidebarResizing] = useState(false);
-  const [currentWorkspace, setCurrentWorkspace] = useState('CatNoted Space');
-  const [isWorkspaceDropdownOpen, setIsWorkspaceDropdownOpen] = useState(false);
-
-  const sidebarRef = useRef<HTMLDivElement>(null);
-
-  const startSidebarResize = useCallback((mouseDownEvent: React.MouseEvent) => {
-    mouseDownEvent.preventDefault();
-    setIsSidebarResizing(true);
-
-    const startWidth = sidebarWidth;
-    const startX = mouseDownEvent.clientX;
-
-    const doResize = (mouseMoveEvent: MouseEvent) => {
-      const delta = mouseMoveEvent.clientX - startX;
-      const newWidth = Math.max(160, Math.min(480, startWidth + delta));
-      setSidebarWidth(newWidth);
-      localStorage.setItem('catnoted:sidebar-width', newWidth.toString());
-    };
-
-    const stopResize = () => {
-      setIsSidebarResizing(false);
-      document.removeEventListener('mousemove', doResize);
-      document.removeEventListener('mouseup', stopResize);
-    };
-
-    document.addEventListener('mousemove', doResize);
-    document.addEventListener('mouseup', stopResize);
-  }, [sidebarWidth]);
-
-  const handleToggleSidebar = () => {
-    const nextCollapsed = !isSidebarCollapsed;
-    setIsSidebarCollapsed(nextCollapsed);
-    localStorage.setItem('catnoted:sidebar-collapsed', String(nextCollapsed));
   };
 
   const [chatInput, setChatInput] = useState('');
@@ -526,7 +480,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       {!zenMode && (
         <aside
           style={{ width: isSidebarCollapsed ? 0 : sidebarWidth }}
-          className={`border-r border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 z-10 shrink-0 flex flex-col h-full text-sm transition-[width,opacity] duration-300 ease-in-out overflow-hidden ${
+          className={`border-r border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 z-10 shrink-0 flex flex-col h-full text-sm overflow-hidden ${
+            isSidebarResizing ? '' : 'transition-[width,opacity] duration-300 ease-in-out'
+          } ${
             isSidebarCollapsed ? 'opacity-0 pointer-events-none' : 'opacity-100'
           }`}
         >
@@ -707,9 +663,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                               </button>
                             </li>
                           );
-                        })}
-                      </ul>
-                    )}
+                        })
+                      )}
+                    </ul>
+                  )}
                   </div>
 
                 {/* 3. Widgets Category */}
@@ -756,65 +713,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                   )}
                 </div>
 
-                  {/* 3. Widgets Category */}
-                  <div>
-                    <button
-                      onClick={() => toggleSection('widgets')}
-                      className="w-full flex items-center justify-between px-2 py-1 hover:bg-slate-50 dark:hover:bg-zinc-800/40 rounded-md text-xs font-medium text-slate-500 dark:text-zinc-400"
-                    >
-                      <span className="flex items-center gap-1.5">
-                        {sectionsExpanded.widgets ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
-                        <Cpu className="w-3.5 h-3.5 text-emerald-500" />
-                        <span>Widgets</span>
-                      </span>
-                      <span className="text-[10px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full">{widgetNodes.length}</span>
-                    </button>
-                    {sectionsExpanded.widgets && (
-                      <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-100 dark:border-zinc-800/60 ml-3.5">
-                        {widgetNodes.length === 0 ? (
-                          <span className="block px-2 py-1 text-[11px] text-slate-400 dark:text-zinc-500 italic">No widgets found</span>
-                        ) : (
-                          widgetNodes.map(node => {
-                            const isActive = activePage === node.id;
-                            return (
-                              <li key={node.id}>
-                                <button
-                                  onClick={() => {
-                                    if (onPageSelect) onPageSelect(node.id);
-                                    onModeChange('doc');
-                                  }}
-                                  className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
-                                    isActive
-                                      ? 'bg-indigo-50/80 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-medium'
-                                      : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
-                                  }`}
-                                >
-                                  <Cpu className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 shrink-0" />
-                                  <span className="truncate text-xs">{node.label}</span>
-                                </button>
-                              </li>
-                            );
-                          })
-                        )}
-                      </ul>
-                    )}
-                  </div>
-
-                </div>
               </div>
             </div>
-          </aside>
-
-          {/* Interactive Resize Handle */}
-          <div
-            onMouseDown={startSidebarResize}
-            className={`absolute top-0 right-[-3px] w-[6px] h-full cursor-col-resize z-50 transition-colors ${
-              isSidebarResizing
-                ? 'bg-indigo-500 dark:bg-indigo-400 opacity-100'
-                : 'hover:bg-slate-300 dark:hover:bg-zinc-800 hover:opacity-100 opacity-0'
-            }`}
-          />
-        </div>
+          </div>
+        </aside>
       )}
 
       {/* Resize Handle for Workspace Sidebar */}
