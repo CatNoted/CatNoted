@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { SlashCommandMenu, buildSlashCommands } from './SlashCommandMenu.js';
 
 interface TextBlockProps {
+  onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   id: string;
   content: string;
   onChange: (value: string) => void;
@@ -176,6 +177,8 @@ export const TextBlock: React.FC<TextBlockProps> = ({
   return (
     <div className="relative w-full">
       <textarea
+        aria-label={`Text block`}
+        role="textbox"
         ref={textareaRef}
         value={content}
         onChange={handleChange}

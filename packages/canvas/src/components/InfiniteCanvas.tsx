@@ -13,6 +13,8 @@ import { CanvasProperties } from './CanvasProperties.js';
 export const ycanvas = ydoc.getMap<CanvasElement>('canvas');
 
 export const InfiniteCanvas: React.FC = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
   const { blocks } = useDocumentStore();
   const [elements, setElements] = useState<Record<string, CanvasElement>>({});
 
@@ -47,6 +49,48 @@ export const InfiniteCanvas: React.FC = () => {
     handleWheel,
     transformStyle
   } = useCanvasViewport();
+
+  useEffect(() => {
+    const handleCanvasKeyDown = (e: KeyboardEvent) => {
+      // Don't intercept if inside an input or textarea
+      if ((e.target as HTMLElement).tagName === 'INPUT' || (e.target as HTMLElement).tagName === 'TEXTAREA') return;
+
+      const PAN_AMOUNT = 50;
+      if (e.key === 'ArrowUp') setPan(o => ({ x: o.x, y: o.y + PAN_AMOUNT }));
+      else if (e.key === 'ArrowDown') setPan(o => ({ x: o.x, y: o.y - PAN_AMOUNT }));
+      else if (e.key === 'ArrowLeft') setPan(o => ({ x: o.x + PAN_AMOUNT, y: o.y }));
+      else if (e.key === 'ArrowRight') setPan(o => ({ x: o.x - PAN_AMOUNT, y: o.y }));
+      else if (e.key === '=' || e.key === '+') {
+         setScale(s => Math.min(3, s + 0.1));
+      } else if (e.key === '-') {
+         setScale(s => Math.max(0.1, s - 0.1));
+      }
+    };
+    window.addEventListener('keydown', handleCanvasKeyDown);
+    return () => window.removeEventListener('keydown', handleCanvasKeyDown);
+  }, [setPan, setScale]);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const handleWheelNative = (e: WheelEvent) => {
+      e.preventDefault();
+      // Emulate React Synthetic Event for handleWheel
+      const syntheticEvent = {
+        clientX: e.clientX,
+        clientY: e.clientY,
+        deltaX: e.deltaX,
+        deltaY: e.deltaY,
+        ctrlKey: e.ctrlKey,
+        metaKey: e.metaKey,
+        preventDefault: () => e.preventDefault(),
+        stopPropagation: () => e.stopPropagation(),
+      } as unknown as React.WheelEvent<HTMLDivElement>;
+      handleWheel(syntheticEvent);
+    };
+    el.addEventListener('wheel', handleWheelNative, { passive: false });
+    return () => el.removeEventListener('wheel', handleWheelNative);
+  }, [handleWheel]);
 
   // Sync elements map from Yjs
   useEffect(() => {
@@ -439,10 +483,13 @@ export const InfiniteCanvas: React.FC = () => {
 
   return (
     <div
+      ref={containerRef}
+      role="application"
+      aria-label="Interactive Canvas"
+      tabIndex={0}
       onMouseDown={handleBackgroundMouseDown}
       onMouseMove={handleGlobalMouseMove}
       onMouseUp={handleGlobalMouseUp}
-      onWheel={handleWheel}
       className="h-[75vh] w-full border border-slate-200 dark:border-zinc-800 rounded-3xl overflow-hidden bg-slate-50 dark:bg-zinc-950 shadow-inner relative cursor-grab active:cursor-grabbing select-none"
     >
       {/* Dynamic Dot Grid Background */}

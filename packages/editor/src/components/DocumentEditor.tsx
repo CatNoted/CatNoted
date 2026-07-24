@@ -43,6 +43,17 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     }
   }, [activePage, blocks]);
 
+
+  const handleKeyDownNav = (e: React.KeyboardEvent, index: number) => {
+    if (e.key === 'ArrowUp' && index > 0) {
+      e.preventDefault();
+      setFocusBlockId(blocks[index - 1].id);
+    } else if (e.key === 'ArrowDown' && index < blocks.length - 1) {
+      e.preventDefault();
+      setFocusBlockId(blocks[index + 1].id);
+    }
+  };
+
   const handleCreateBlock = (afterId: string) => {
     const newId = addBlock(afterId, 'text', '');
     setFocusBlockId(newId);
@@ -167,7 +178,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             <div className="flex-1 min-w-0 pr-4">
               {block.type === 'heading' && (
                 <HeadingBlock
-                  id={block.id}
+                  id={block.id} onKeyDown={(e) => handleKeyDownNav(e as React.KeyboardEvent, index)}
                   content={block.content}
                   level={block.properties?.level || 2}
                   onChange={(val) => updateBlockContent(block.id, val)}
@@ -195,7 +206,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
               {block.type === 'text' && (
                 <TextBlock
-                  id={block.id}
+                  id={block.id} onKeyDown={(e) => handleKeyDownNav(e as React.KeyboardEvent, index)}
                   content={block.content}
                   onChange={(val) => updateBlockContent(block.id, val)}
                   onEnter={() => handleCreateBlock(block.id)}
@@ -218,7 +229,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     ))}
                   </div>
                   <TextBlock
-                    id={block.id}
+                    id={block.id} onKeyDown={(e) => handleKeyDownNav(e as React.KeyboardEvent, index)}
                     content={block.content}
                     onChange={(val) => updateBlockContent(block.id, val)}
                     onEnter={() => handleCreateBlock(block.id)}
@@ -238,7 +249,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     {index + 1}.
                   </span>
                   <TextBlock
-                    id={block.id}
+                    id={block.id} onKeyDown={(e) => handleKeyDownNav(e as React.KeyboardEvent, index)}
                     content={block.content}
                     onChange={(val) => updateBlockContent(block.id, val)}
                     onEnter={() => handleCreateBlock(block.id)}
@@ -266,7 +277,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     className="mt-1 w-3.5 h-3.5 rounded border-slate-300 dark:border-zinc-600 accent-indigo-500 flex-shrink-0 cursor-pointer"
                   />
                   <TextBlock
-                    id={block.id}
+                    id={block.id} onKeyDown={(e) => handleKeyDownNav(e as React.KeyboardEvent, index)}
                     content={block.content}
                     onChange={(val) => updateBlockContent(block.id, val)}
                     onEnter={() => handleCreateBlock(block.id)}
@@ -284,7 +295,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 <div className="flex gap-3">
                   <div className="w-0.5 bg-indigo-400 dark:bg-indigo-500 rounded-full flex-shrink-0 self-stretch" />
                   <TextBlock
-                    id={block.id}
+                    id={block.id} onKeyDown={(e) => handleKeyDownNav(e as React.KeyboardEvent, index)}
                     content={block.content}
                     onChange={(val) => updateBlockContent(block.id, val)}
                     onEnter={() => handleCreateBlock(block.id)}

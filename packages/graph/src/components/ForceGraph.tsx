@@ -30,6 +30,25 @@ export const ForceGraph: React.FC<ForceGraphProps> = ({
   const [scale, setScale] = useState(1);
   const [hoverNode, setHoverNode] = useState<PhysNode | null>(null);
 
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const PAN_AMT = 30;
+      if (e.key === 'ArrowUp') setPan(p => ({ ...p, y: p.y + PAN_AMT }));
+      else if (e.key === 'ArrowDown') setPan(p => ({ ...p, y: p.y - PAN_AMT }));
+      else if (e.key === 'ArrowLeft') setPan(p => ({ ...p, x: p.x + PAN_AMT }));
+      else if (e.key === 'ArrowRight') setPan(p => ({ ...p, x: p.x - PAN_AMT }));
+      else if (e.key === '+' || e.key === '=') setScale(s => Math.min(3, s + 0.1));
+      else if (e.key === '-') setScale(s => Math.max(0.1, s - 0.1));
+    };
+
+    canvas.addEventListener('keydown', handleKeyDown);
+    return () => canvas.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   // Sync input nodes to physics simulation references
   useEffect(() => {
     const existing = new Map(nodesRef.current.map(n => [n.id, n]));
@@ -278,7 +297,10 @@ export const ForceGraph: React.FC<ForceGraphProps> = ({
 
   return (
     <canvas
-      ref={canvasRef}
+        ref={canvasRef}
+        role="application"
+        aria-label="Force-directed graph of notes"
+        tabIndex={0}
       width={700}
       height={480}
       onMouseDown={handleMouseDown}

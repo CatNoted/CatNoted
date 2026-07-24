@@ -14,6 +14,7 @@ interface HeadingBlockProps {
   focusOnMount?: boolean;
   onFocus?: () => void;
   onBlur?: () => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
 }
 
 export const HeadingBlock: React.FC<HeadingBlockProps> = ({
@@ -146,6 +147,8 @@ export const HeadingBlock: React.FC<HeadingBlockProps> = ({
   return (
     <div className="relative w-full">
       <textarea
+        aria-label={`Heading level ${level}`}
+        role="textbox"
         ref={textareaRef}
         value={content}
         onChange={handleChange}

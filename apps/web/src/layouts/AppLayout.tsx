@@ -399,17 +399,22 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   };
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-zinc-100">
+    <div className="flex flex-col sm:flex-row h-screen w-screen overflow-hidden bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-zinc-100">
+      {/* Skip to main content link for keyboard accessibility */}
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-indigo-600 focus:text-white focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-400">
+        Skip to main content
+      </a>
+
       
       {/* Pane 1: Left Sidebar (Navigation) - Hidden in Zen Mode */}
       {!zenMode && (
-        <aside className="w-16 flex flex-col items-center justify-between py-4 border-r border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 z-10 shrink-0">
-          <div className="flex flex-col items-center gap-6 w-full">
-            <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold shadow-md shadow-indigo-200 dark:shadow-none">
+        <aside className="w-full h-16 sm:w-16 sm:h-auto flex flex-row sm:flex-col items-center justify-between px-4 sm:px-0 py-0 sm:py-4 border-t sm:border-t-0 border-r-0 sm:border-r border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 z-[60] sm:z-10 shrink-0 order-last sm:order-first">
+          <div className="flex flex-row sm:flex-col items-center gap-2 sm:gap-6 w-full sm:w-full justify-between sm:justify-start flex-1 sm:flex-none">
+            <div className="hidden sm:flex w-10 h-10 rounded-xl bg-indigo-600 items-center justify-center text-white font-bold shadow-md shadow-indigo-200 dark:shadow-none">
               CN
             </div>
 
-            <nav className="flex flex-col gap-3 w-full px-2" aria-label="Sidebar Navigation">
+            <nav className="flex flex-row sm:flex-col gap-1 sm:gap-3 w-full px-2 justify-center" aria-label="Sidebar Navigation">
               {[
                 { id: 'doc', icon: FileText, label: 'Doc Mode' },
                 { id: 'canvas', icon: Layout, label: 'Canvas' },
