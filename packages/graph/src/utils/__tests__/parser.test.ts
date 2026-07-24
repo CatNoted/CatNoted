@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseDocumentGraph } from '../parser';
+import { parseDocumentGraph } from '../parser.js';
 import { BlockNode } from '@catnoted/shared';
 
 describe('Whitebox Test: parseDocumentGraph (Graph Parsing Logic)', () => {

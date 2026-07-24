@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { BrowserVFS } from '../vfs';
+import { BrowserVFS } from '../vfs.js';
 
 describe('Whitebox Test: BrowserVFS (Virtual File System)', () => {
   beforeEach(() => {

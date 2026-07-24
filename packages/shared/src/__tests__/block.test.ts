@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { BlockNode, BlockType, CanvasElement, GraphNode, GraphEdge, WidgetSpec, AgentMessage } from '../index';
+import { BlockNode, BlockType, CanvasElement, GraphNode, GraphEdge, WidgetSpec, AgentMessage } from '../index.js';
 
 describe('Whitebox Test: @catnoted/shared Data Structures & Schemas', () => {
   it('should instantiate a valid BlockNode object with all property fields', () => {

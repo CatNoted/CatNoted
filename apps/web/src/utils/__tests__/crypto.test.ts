@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { encryptPayload, decryptPayload } from '../crypto';
+import { encryptPayload, decryptPayload } from '../crypto.js';
 
 describe('Whitebox Test: Web Crypto Payload Encryption & Decryption', () => {
   const passphrase = 'SuperSecretMasterKey123!';

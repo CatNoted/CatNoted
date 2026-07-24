@@ -2,9 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const { Client } = require('pg');
 
-// Suppress TLS warning for Supabase self-signed intermediaries
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-
 const rawDbUrl = process.env.SUPABASE_DB_URL;
 const sqlPath =
   process.env.MIGRATION_SQL_PATH ||

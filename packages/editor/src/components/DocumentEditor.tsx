@@ -147,6 +147,8 @@ export const DocumentEditor: React.FC = () => {
                   onChange={(val) => updateBlockContent(block.id, val)}
                   onEnter={() => handleCreateBlock(block.id)}
                   onBackspace={() => handleBackspaceBlock(block.id, index)}
+                  onSetType={(type, props) => updateBlockType(block.id, type as any, props)}
+                  onAddWidget={() => handleAddWidget(block.id)}
                   focusOnMount={isFocused}
                 />
               )}
