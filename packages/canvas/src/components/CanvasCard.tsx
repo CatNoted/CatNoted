@@ -95,20 +95,24 @@ export const CanvasCard: React.FC<CanvasCardProps> = ({
           e.stopPropagation();
           onStartConnector(e, block.id);
         }}
-        className="absolute right-[-8px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-amber-500 bg-zinc-950 hover:bg-amber-500 hover:scale-125 transition-all cursor-crosshair z-20 flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+        className={`absolute right-[-8px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-indigo-500 bg-white dark:bg-zinc-950 hover:bg-indigo-500 hover:scale-125 transition-all cursor-crosshair z-20 flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
+          isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+        }`}
         title="Drag to connect"
         aria-label={`Drag connector from ${block.content || 'this card'}`}
         type="button"
       >
-        <div className="w-1.5 h-1.5 rounded-full bg-amber-500 hover:bg-zinc-950" />
+        <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 hover:bg-white dark:hover:bg-zinc-950" />
       </button>
 
       {/* Connector Handle Port - Left Side (Target node port / helpful visual aid) */}
       <div
-        className="absolute left-[-8px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border border-zinc-700 bg-zinc-900 z-20 flex items-center justify-center pointer-events-none"
+        className={`absolute left-[-8px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-indigo-200 dark:border-indigo-900 bg-white dark:bg-zinc-900 z-20 flex items-center justify-center pointer-events-none transition-opacity ${
+          isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+        }`}
         aria-hidden="true"
       >
-        <div className="w-1 h-1 rounded-full bg-zinc-500" />
+        <div className="w-1.5 h-1.5 rounded-full bg-indigo-200 dark:bg-indigo-900" />
       </div>
     </div>
   );

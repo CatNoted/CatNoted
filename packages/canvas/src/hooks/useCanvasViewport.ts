@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 
-export function useCanvasViewport() {
+export function useCanvasViewport(containerRef?: React.RefObject<HTMLElement | null>) {
   const [pan, setPan] = useState({ x: 100, y: 100 });
   const [scale, setScale] = useState(1);
   const isDragging = useRef(false);
@@ -26,6 +26,14 @@ export function useCanvasViewport() {
       window.removeEventListener('keyup', handleKeyUp);
     };
   }, []);
+
+  const scaleRef = useRef(scale);
+  const panRef = useRef(pan);
+
+  useEffect(() => {
+    scaleRef.current = scale;
+    panRef.current = pan;
+  }, [scale, pan]);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     // Prevent dragging from card clicks unless space panning

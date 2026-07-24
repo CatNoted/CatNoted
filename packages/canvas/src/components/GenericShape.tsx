@@ -8,6 +8,7 @@ interface GenericShapeProps {
   onSelectToggle: (e: React.MouseEvent, id: string) => void;
   onDragStart: (e: React.MouseEvent, id: string) => void;
   onResizeStart: (e: React.MouseEvent, handle: string, id: string) => void;
+  onStartConnector?: (e: React.MouseEvent, fromId: string) => void;
   onTextChange: (id: string, text: string) => void;
 }
 
@@ -17,6 +18,7 @@ export const GenericShape: React.FC<GenericShapeProps> = ({
   onSelectToggle,
   onDragStart,
   onResizeStart,
+  onStartConnector,
   onTextChange
 }) => {
   const width = element.width || 200;
@@ -66,23 +68,23 @@ export const GenericShape: React.FC<GenericShapeProps> = ({
         transform: `rotate(${element.rotation || 0}deg)`,
         opacity: element.opacity ?? 1,
       }}
-      className={`absolute ${isSelected ? 'ring-2 ring-amber-500 ring-offset-1 ring-offset-transparent' : ''}`}
+      className={`absolute group ${isSelected ? 'ring-2 ring-indigo-500 ring-offset-1 ring-offset-transparent' : ''}`}
       onMouseDown={(e) => {
         if ((e.target as HTMLElement).tagName === 'TEXTAREA') return;
         onSelectToggle(e, element.id);
         onDragStart(e, element.id);
       }}
     >
-      <div className={`${shapeClass} w-full h-full relative overflow-hidden group justify-center`}>
+      <div className={`${shapeClass} w-full h-full relative overflow-hidden group justify-center transition-shadow ${isSelected ? 'shadow-md shadow-indigo-500/10' : ''}`}>
         {element.type === 'frame' ? (
-           <span className="absolute top-2 left-2 text-[10px] font-mono text-slate-400 bg-white/80 dark:bg-zinc-900/80 px-1 rounded z-10">Frame</span>
+           <span className="absolute top-2 left-3 text-[10px] font-mono font-medium text-slate-400 bg-white/80 dark:bg-zinc-900/80 px-1.5 py-0.5 rounded shadow-sm z-10">Frame</span>
         ) : null}
 
         {element.type !== 'frame' && (
           <textarea
             value={element.text || ''}
             onChange={(e) => onTextChange(element.id, e.target.value)}
-            className={`w-full h-full bg-transparent resize-none ${alignClass} outline-none focus:ring-0 p-1 placeholder-slate-400/50 flex flex-col justify-center`}
+            className={`w-full h-full bg-transparent resize-none ${alignClass} outline-none focus:ring-0 p-2 placeholder-slate-400/50 flex flex-col justify-center text-sm`}
             placeholder="Type..."
             style={{
               pointerEvents: isSelected ? 'auto' : 'none',
@@ -90,6 +92,23 @@ export const GenericShape: React.FC<GenericShapeProps> = ({
           />
         )}
       </div>
+
+      {onStartConnector && element.type !== 'frame' && (
+        <button
+          onMouseDown={(e) => {
+            e.stopPropagation();
+            onStartConnector(e, element.id);
+          }}
+          className={`absolute right-[-8px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-indigo-500 bg-white dark:bg-zinc-950 hover:bg-indigo-500 hover:scale-125 transition-all cursor-crosshair z-20 flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
+            isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+          }`}
+          title="Drag to connect"
+          aria-label={`Drag connector from this shape`}
+          type="button"
+        >
+          <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 hover:bg-white dark:hover:bg-zinc-950" />
+        </button>
+      )}
 
       {isSelected && (
         <ResizeHandles
