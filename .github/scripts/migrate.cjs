@@ -1,7 +1,19 @@
 const fs = require('fs');
 const path = require('path');
 const dns = require('dns');
+const tls = require('tls');
 const { Client } = require('pg');
+
+const originalConnect = tls.connect;
+tls.connect = function(options) {
+  console.log('DEBUG GHA tls.connect options:', {
+    host: options.host,
+    port: options.port,
+    servername: options.servername,
+    rejectUnauthorized: options.rejectUnauthorized
+  });
+  return originalConnect.apply(this, arguments);
+};
 
 const rawDbUrl = process.env.SUPABASE_DB_URL;
 const sqlPath =
