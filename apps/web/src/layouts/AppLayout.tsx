@@ -15,7 +15,14 @@ import {
   X,
   MessageSquare,
   GripVertical,
-  Minus
+  Minus,
+  ChevronDown,
+  ChevronRight,
+  Folder,
+  FolderOpen,
+  Clock,
+  Tag,
+  Cpu
 } from 'lucide-react';
 
 export type ActiveMode = 'doc' | 'canvas' | 'graph' | 'settings';
@@ -27,10 +34,13 @@ interface AppLayoutProps {
   onToggleTheme: () => void;
   zenMode?: boolean;
   children: React.ReactNode;
+  activePage?: string;
+  onPageSelect?: (pageId: string) => void;
 }
 
 import { requestLlmWidget } from '@catnoted/agent-runtime';
 import { useDocumentStore } from '@catnoted/editor';
+import { parseDocumentGraph } from '@catnoted/graph';
 
 // ── Floating panel position & size constants ────────────────────────────
 const PANEL_DEFAULT_WIDTH = 380;
@@ -44,9 +54,62 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   isDarkMode,
   onToggleTheme,
   zenMode = false,
-  children
+  children,
+  activePage = 'root-doc-node',
+  onPageSelect
 }) => {
   const { blocks, addBlock, updateBlockType } = useDocumentStore();
+
+  // Parse document graph nodes
+  const graphData = React.useMemo(() => {
+    return parseDocumentGraph(blocks);
+  }, [blocks]);
+
+  const mainHeading = blocks.find(b => b.type === 'heading' && b.properties?.level === 1);
+  const docTitle = mainHeading?.content || 'Untitled Document';
+
+  const pageNodes = graphData.nodes.filter(n => n.type === 'page');
+  const tagNodes = graphData.nodes.filter(n => n.type === 'tag');
+  const widgetNodes = React.useMemo(() => {
+    return blocks
+      .filter(b => b.type === 'widget')
+      .map(b => ({
+        id: b.id,
+        label: b.properties?.widgetId || 'AI Widget',
+        type: 'widget' as const
+      }));
+  }, [blocks]);
+
+  const recentDocs = React.useMemo(() => {
+    const otherPages = pageNodes
+      .filter(n => n.id !== 'root-doc-node')
+      .map(n => {
+        const title = n.label.startsWith('📁 ') || n.label.startsWith('📄 ')
+          ? n.label.slice(2)
+          : n.label;
+        return { id: n.id, title };
+      });
+
+    return [
+      { id: 'root-doc-node', title: docTitle },
+      ...otherPages
+    ];
+  }, [pageNodes, docTitle]);
+
+  // Section expand/collapse state
+  const [sectionsExpanded, setSectionsExpanded] = useState<Record<string, boolean>>({
+    pages: true,
+    tags: true,
+    widgets: false
+  });
+
+  const toggleSection = (section: string) => {
+    setSectionsExpanded(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
+
   const [chatInput, setChatInput] = useState('');
   const [messages, setMessages] = useState<Array<{ sender: 'user' | 'agent'; text: string }>>([
     { sender: 'agent', text: "Hello! I am your Space Agent. What would you like to build or note down today?" }
@@ -245,6 +308,193 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
             <div className="w-8 h-8 rounded-full bg-slate-300 dark:bg-zinc-700 flex items-center justify-center text-slate-600 dark:text-zinc-300 text-xs font-semibold">
               US
+            </div>
+          </div>
+        </aside>
+      )}
+
+      {/* Pane 1.5: Workspace Sidebar (Recent & Collapsible Page Tree) - Hidden in Zen Mode */}
+      {!zenMode && (
+        <aside className="w-64 border-r border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 z-10 shrink-0 flex flex-col h-full text-sm">
+          {/* Sidebar Header */}
+          <div className="h-14 px-4 border-b border-slate-200 dark:border-zinc-800 flex items-center gap-2">
+            <span className="font-semibold text-xs uppercase tracking-wider text-slate-500 dark:text-zinc-400">Workspace Library</span>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-3 space-y-6">
+            {/* Recent Documents Section */}
+            <div>
+              <div className="flex items-center gap-1.5 px-2 mb-2 text-xs font-semibold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
+                <Clock className="w-3.5 h-3.5" />
+                <span>Recent Documents</span>
+              </div>
+              <ul className="space-y-1">
+                {recentDocs.map(doc => {
+                  const isActive = activePage === doc.id;
+                  return (
+                    <li key={doc.id}>
+                      <button
+                        onClick={() => {
+                          if (onPageSelect) onPageSelect(doc.id);
+                          onModeChange('doc');
+                        }}
+                        className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between transition-colors ${
+                          isActive
+                            ? 'bg-indigo-50 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 font-medium'
+                            : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/50 hover:text-slate-900 dark:hover:text-zinc-200'
+                        }`}
+                      >
+                        <span className="truncate flex items-center gap-2">
+                          <FileText className="w-4 h-4 text-slate-400 dark:text-zinc-500 shrink-0" />
+                          <span className="truncate">{doc.title}</span>
+                        </span>
+                        <span className="text-[10px] text-slate-400 dark:text-zinc-500 opacity-60">Recent</span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+
+            {/* Collapsible Page Tree Section */}
+            <div>
+              <div className="px-2 mb-2 text-xs font-semibold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
+                <span>Page Tree</span>
+              </div>
+
+              <div className="space-y-2">
+                {/* 1. Pages Category */}
+                <div>
+                  <button
+                    onClick={() => toggleSection('pages')}
+                    className="w-full flex items-center justify-between px-2 py-1 hover:bg-slate-50 dark:hover:bg-zinc-800/40 rounded-md text-xs font-medium text-slate-500 dark:text-zinc-400"
+                  >
+                    <span className="flex items-center gap-1.5">
+                      {sectionsExpanded.pages ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+                      {sectionsExpanded.pages ? <FolderOpen className="w-3.5 h-3.5 text-indigo-500" /> : <Folder className="w-3.5 h-3.5 text-indigo-500" />}
+                      <span>Pages</span>
+                    </span>
+                    <span className="text-[10px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full">{pageNodes.length}</span>
+                  </button>
+                  {sectionsExpanded.pages && (
+                    <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-100 dark:border-zinc-800/60 ml-3.5">
+                      {pageNodes.map(node => {
+                        const isActive = activePage === node.id;
+                        const displayLabel = node.label.startsWith('📁 ') || node.label.startsWith('📄 ')
+                          ? node.label.slice(2)
+                          : node.label;
+                        return (
+                          <li key={node.id}>
+                            <button
+                              onClick={() => {
+                                if (onPageSelect) onPageSelect(node.id);
+                                onModeChange('doc');
+                              }}
+                              className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
+                                isActive
+                                  ? 'bg-indigo-50/80 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-medium'
+                                  : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
+                              }`}
+                            >
+                              <FileText className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 shrink-0" />
+                              <span className="truncate text-xs">{displayLabel}</span>
+                            </button>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </div>
+
+                {/* 2. Tags Category */}
+                <div>
+                  <button
+                    onClick={() => toggleSection('tags')}
+                    className="w-full flex items-center justify-between px-2 py-1 hover:bg-slate-50 dark:hover:bg-zinc-800/40 rounded-md text-xs font-medium text-slate-500 dark:text-zinc-400"
+                  >
+                    <span className="flex items-center gap-1.5">
+                      {sectionsExpanded.tags ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+                      <Tag className="w-3.5 h-3.5 text-amber-500" />
+                      <span>Tags</span>
+                    </span>
+                    <span className="text-[10px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full">{tagNodes.length}</span>
+                  </button>
+                  {sectionsExpanded.tags && (
+                    <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-100 dark:border-zinc-800/60 ml-3.5">
+                      {tagNodes.length === 0 ? (
+                        <span className="block px-2 py-1 text-[11px] text-slate-400 dark:text-zinc-500 italic">No tags found</span>
+                      ) : (
+                        tagNodes.map(node => {
+                          const isActive = activePage === node.id;
+                          return (
+                            <li key={node.id}>
+                              <button
+                                onClick={() => {
+                                  if (onPageSelect) onPageSelect(node.id);
+                                  onModeChange('doc');
+                                }}
+                                className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
+                                  isActive
+                                    ? 'bg-indigo-50/80 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-medium'
+                                    : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
+                                }`}
+                              >
+                                <Tag className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 shrink-0" />
+                                <span className="truncate text-xs">{node.label}</span>
+                              </button>
+                            </li>
+                          );
+                        })
+                      )}
+                    </ul>
+                  )}
+                </div>
+
+                {/* 3. Widgets Category */}
+                <div>
+                  <button
+                    onClick={() => toggleSection('widgets')}
+                    className="w-full flex items-center justify-between px-2 py-1 hover:bg-slate-50 dark:hover:bg-zinc-800/40 rounded-md text-xs font-medium text-slate-500 dark:text-zinc-400"
+                  >
+                    <span className="flex items-center gap-1.5">
+                      {sectionsExpanded.widgets ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+                      <Cpu className="w-3.5 h-3.5 text-emerald-500" />
+                      <span>Widgets</span>
+                    </span>
+                    <span className="text-[10px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full">{widgetNodes.length}</span>
+                  </button>
+                  {sectionsExpanded.widgets && (
+                    <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-100 dark:border-zinc-800/60 ml-3.5">
+                      {widgetNodes.length === 0 ? (
+                        <span className="block px-2 py-1 text-[11px] text-slate-400 dark:text-zinc-500 italic">No widgets found</span>
+                      ) : (
+                        widgetNodes.map(node => {
+                          const isActive = activePage === node.id;
+                          return (
+                            <li key={node.id}>
+                              <button
+                                onClick={() => {
+                                  if (onPageSelect) onPageSelect(node.id);
+                                  onModeChange('doc');
+                                }}
+                                className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
+                                  isActive
+                                    ? 'bg-indigo-50/80 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-medium'
+                                    : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
+                                }`}
+                              >
+                                <Cpu className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 shrink-0" />
+                                <span className="truncate text-xs">{node.label}</span>
+                              </button>
+                            </li>
+                          );
+                        })
+                      )}
+                    </ul>
+                  )}
+                </div>
+
+              </div>
             </div>
           </div>
         </aside>
