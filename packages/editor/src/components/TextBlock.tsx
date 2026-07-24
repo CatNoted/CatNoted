@@ -137,7 +137,7 @@ export const TextBlock: React.FC<TextBlockProps> = ({
         onKeyDown={handleKeyDown}
         placeholder="Type '/' for commands..."
         rows={1}
-        className="w-full bg-transparent resize-none text-slate-800 dark:text-zinc-200 border-none outline-none focus:ring-0 p-0 text-sm leading-relaxed placeholder-slate-300 dark:placeholder-zinc-700"
+        className="w-full bg-transparent resize-none text-slate-800 dark:text-zinc-200 border-none outline-none focus:ring-0 p-0 text-[15px] leading-7 placeholder-slate-300 dark:placeholder-zinc-600"
       />
 
       {slashActive &&

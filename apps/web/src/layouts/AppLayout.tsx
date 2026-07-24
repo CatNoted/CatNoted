@@ -179,7 +179,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           </div>
         </header>
 
-        <div className="flex-1 overflow-auto p-6">
+        <div className="flex-1 overflow-hidden">
           {children}
         </div>
       </main>

@@ -107,46 +107,61 @@ const App: React.FC = () => {
     switch (activeMode) {
       case 'doc':
         return (
-          <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl p-6 shadow-sm max-w-3xl mx-auto mt-4">
-            <div className="border-b border-slate-100 dark:border-zinc-800 pb-4 mb-6 flex items-center justify-between">
+          <div className="flex flex-col h-full">
+            {/* Document Topbar */}
+            <div className="flex items-center justify-between px-10 py-4 border-b border-slate-100 dark:border-zinc-800/60">
               <div>
-                <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-zinc-50">Untitled Document</h1>
-                <p className="text-xs text-slate-400 dark:text-zinc-500 mt-1">
-                  Linear Editor Mode. E2EE Sync: <span className="text-indigo-500 font-mono">AES-GCM-256</span>.
+                <h1 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-zinc-50">Untitled Document</h1>
+                <p className="text-[11px] text-slate-400 dark:text-zinc-500 mt-0.5 flex items-center gap-1.5">
+                  Linear Editor &middot; E2EE Sync:
+                  <span className="text-indigo-500 font-mono font-semibold">AES-GCM-256</span>
                 </p>
               </div>
               <button
                 onClick={() => setIsAuthOpen(true)}
-                className="px-3.5 py-1.5 border border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-850 rounded-xl text-xs font-semibold"
+                className="flex items-center gap-2 px-3 py-1.5 border border-slate-200 dark:border-zinc-700 hover:bg-slate-50 dark:hover:bg-zinc-800 rounded-lg text-xs font-medium text-slate-600 dark:text-zinc-300 transition-colors"
               >
-                Account: {userEmail}
+                <span className="w-5 h-5 rounded-full bg-indigo-500 text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0">
+                  {userEmail.charAt(0).toUpperCase()}
+                </span>
+                {userEmail}
               </button>
             </div>
-            
-            <DocumentEditor />
+
+            {/* Document Body */}
+            <div className="flex-1 overflow-auto">
+              <DocumentEditor />
+            </div>
           </div>
         );
       case 'canvas':
         return (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between px-2">
-              <div>
-                <h1 className="text-lg font-bold tracking-tight text-slate-900 dark:text-zinc-50">Edgeless Canvas</h1>
-                <p className="text-xs text-slate-400 dark:text-zinc-500">Spatial whiteboard view synced automatically with document nodes.</p>
+          <div className="h-full overflow-auto p-6">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between px-2">
+                <div>
+                  <h1 className="text-lg font-bold tracking-tight text-slate-900 dark:text-zinc-50">Edgeless Canvas</h1>
+                  <p className="text-xs text-slate-400 dark:text-zinc-500">Spatial whiteboard view synced automatically with document nodes.</p>
+                </div>
+                <button
+                  onClick={() => setIsAuthOpen(true)}
+                  className="flex items-center gap-2 px-3 py-1.5 border border-slate-200 dark:border-zinc-700 hover:bg-slate-50 dark:hover:bg-zinc-800 rounded-lg text-xs font-medium text-slate-600 dark:text-zinc-300 transition-colors"
+                >
+                  <span className="w-5 h-5 rounded-full bg-indigo-500 text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0">
+                    {userEmail.charAt(0).toUpperCase()}
+                  </span>
+                  {userEmail}
+                </button>
               </div>
-              <button
-                onClick={() => setIsAuthOpen(true)}
-                className="px-3.5 py-1.5 border border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-850 rounded-xl text-xs font-semibold bg-white dark:bg-zinc-900"
-              >
-                Account: {userEmail}
-              </button>
+              <InfiniteCanvas />
             </div>
-            <InfiniteCanvas />
           </div>
         );
       case 'graph':
         return (
-          <GraphView onNavigateToNode={(nodeLabel) => alert(`Navigating to reference node: "${nodeLabel}"`)} />
+          <div className="h-full overflow-hidden">
+            <GraphView onNavigateToNode={(nodeLabel) => alert(`Navigating to reference node: "${nodeLabel}"`)} />
+          </div>
         );
       default:
         return null;

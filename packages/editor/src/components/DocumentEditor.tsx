@@ -50,14 +50,14 @@ export const DocumentEditor: React.FC = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8 space-y-3">
+    <div className="max-w-3xl mx-auto px-8 py-10 space-y-1">
       {blocks.map((block, index) => {
         const isFocused = focusBlockId === block.id;
 
         return (
           <div 
             key={block.id} 
-            className="group relative flex items-start gap-2 -ml-8 px-8 py-1 rounded-lg transition-colors hover:bg-slate-100/50 dark:hover:bg-zinc-900/30"
+            className="group relative flex items-start gap-2 -ml-10 px-10 py-1 rounded-lg transition-colors hover:bg-slate-50 dark:hover:bg-zinc-900/40"
           >
             {/* Left Block Control Action Button */}
             <div className="absolute left-2 top-1.5 opacity-0 group-hover:opacity-100 flex items-center gap-1 transition-opacity">
