@@ -176,6 +176,9 @@ const App: React.FC = () => {
         isDarkMode={isDarkMode}
         onToggleTheme={() => setIsDarkMode(!isDarkMode)}
         zenMode={isZenMode}
+        userEmail={userEmail}
+        onOpenAuth={() => setIsAuthOpen(true)}
+        onOpenSettings={() => setIsSettingsOpen(true)}
       >
         {renderContent()}
       </AppLayout>

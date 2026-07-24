@@ -27,6 +27,9 @@ interface AppLayoutProps {
   onToggleTheme: () => void;
   zenMode?: boolean;
   children: React.ReactNode;
+  userEmail?: string;
+  onOpenAuth?: () => void;
+  onOpenSettings?: () => void;
 }
 
 import { requestLlmWidget } from '@catnoted/agent-runtime';
@@ -44,13 +47,52 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   isDarkMode,
   onToggleTheme,
   zenMode = false,
-  children
+  children,
+  userEmail = 'guest@catnoted.com',
+  onOpenAuth,
+  onOpenSettings,
 }) => {
   const { blocks, addBlock, updateBlockType } = useDocumentStore();
   const [chatInput, setChatInput] = useState('');
   const [messages, setMessages] = useState<Array<{ sender: 'user' | 'agent'; text: string }>>([
     { sender: 'agent', text: "Hello! I am your Space Agent. What would you like to build or note down today?" }
   ]);
+
+  // ── Bottom Profile Dropdown state ───────────────────────────────────
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDropdownOpen]);
+
+  // Escape key to close dropdown
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsDropdownOpen(false);
+      }
+    };
+    if (isDropdownOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isDropdownOpen]);
+
+  const userInitials = userEmail ? userEmail.substring(0, 2).toUpperCase() : 'US';
 
   // ── Floating panel state ────────────────────────────────────────────
   const [isAgentOpen, setIsAgentOpen] = useState(false);
@@ -239,12 +281,92 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               onClick={onToggleTheme}
               className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 dark:text-zinc-500 hover:text-amber-500 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all duration-200"
               title={isDarkMode ? 'Light Mode' : 'Dark Mode'}
+              type="button"
             >
               {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
 
-            <div className="w-8 h-8 rounded-full bg-slate-300 dark:bg-zinc-700 flex items-center justify-center text-slate-600 dark:text-zinc-300 text-xs font-semibold">
-              US
+            <div className="relative w-full flex justify-center" ref={dropdownRef}>
+              <button
+                onClick={() => setIsDropdownOpen(prev => !prev)}
+                type="button"
+                className="w-8 h-8 rounded-full bg-slate-300 dark:bg-zinc-700 flex items-center justify-center text-slate-600 dark:text-zinc-300 text-xs font-semibold hover:ring-2 hover:ring-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all cursor-pointer"
+                title="User Profile Menu"
+                aria-haspopup="true"
+                aria-expanded={isDropdownOpen}
+              >
+                {userInitials}
+              </button>
+
+              {isDropdownOpen && (
+                <div
+                  className="absolute bottom-0 left-14 w-56 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-xl z-50 p-1.5 flex flex-col gap-0.5"
+                  style={{
+                    animation: 'slideInPanel 0.15s cubic-bezier(0.16, 1, 0.3, 1)',
+                  }}
+                  role="menu"
+                >
+                  {/* Status */}
+                  <div className="px-3 py-2 border-b border-slate-100 dark:border-zinc-800/60 flex flex-col gap-1 select-none">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500">VFS Status</span>
+                    <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      Local VFS Connected
+                    </div>
+                  </div>
+
+                  {/* Auth shortcut */}
+                  <button
+                    onClick={() => {
+                      onOpenAuth?.();
+                      setIsDropdownOpen(false);
+                    }}
+                    type="button"
+                    className="w-full px-3 py-2 text-left text-xs hover:bg-slate-50 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-zinc-100 flex items-center gap-2 rounded-xl transition-all duration-150 cursor-pointer"
+                    role="menuitem"
+                  >
+                    <User className="w-4 h-4 text-slate-400 dark:text-zinc-500" />
+                    <span className="truncate">Auth: {userEmail}</span>
+                  </button>
+
+                  {/* Settings shortcut */}
+                  <button
+                    onClick={() => {
+                      onOpenSettings?.();
+                      setIsDropdownOpen(false);
+                    }}
+                    type="button"
+                    className="w-full px-3 py-2 text-left text-xs hover:bg-slate-50 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-zinc-100 flex items-center gap-2 rounded-xl transition-all duration-150 cursor-pointer"
+                    role="menuitem"
+                  >
+                    <Settings className="w-4 h-4 text-slate-400 dark:text-zinc-500" />
+                    <span>Settings & Keys</span>
+                  </button>
+
+                  {/* Theme toggle shortcut */}
+                  <button
+                    onClick={() => {
+                      onToggleTheme();
+                      setIsDropdownOpen(false);
+                    }}
+                    type="button"
+                    className="w-full px-3 py-2 text-left text-xs hover:bg-slate-50 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-zinc-100 flex items-center gap-2 rounded-xl transition-all duration-150 cursor-pointer"
+                    role="menuitem"
+                  >
+                    {isDarkMode ? (
+                      <>
+                        <Sun className="w-4 h-4 text-amber-500" />
+                        <span>Light Mode</span>
+                      </>
+                    ) : (
+                      <>
+                        <Moon className="w-4 h-4 text-slate-400 dark:text-zinc-550" />
+                        <span>Dark Mode</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </aside>
