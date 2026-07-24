@@ -19,13 +19,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Route Supabase Direct Host to Pooler IPv4 with Port Redirect
+      - name: Configure Supabase DB URL for GHA Pooler Routing
         run: |
-          POOLER_IP=$(dig +short aws-0-ap-southeast-1.pooler.supabase.com | grep -E '^[0-9.]+$' | head -n 1)
-          if [ -z "$POOLER_IP" ]; then POOLER_IP="52.77.146.31"; fi
-          echo "Routing db.vhuchnycqhprthmdsont.supabase.co to IPv4 Pooler: $POOLER_IP"
-          echo "$POOLER_IP db.vhuchnycqhprthmdsont.supabase.co" | sudo tee -a /etc/hosts
-          # Redirect local outgoing TCP traffic on port 5432 to port 6543
-          sudo iptables -t nat -A OUTPUT -p tcp -d "$POOLER_IP" --dport 5432 -j DNAT --to-destination :6543
+          POOLED_URL=$(echo "${{ secrets.SUPABASE_DB_URL }}" | sed -e 's/db.vhuchnycqhprthmdsont.supabase.co:5432/aws-0-ap-southeast-1.pooler.supabase.com:6543/')
+          echo "SUPABASE_DB_URL=$POOLED_URL" >> $GITHUB_ENV
       - run: npm install pg@8.11.3 --no-audit --no-fund --silent
       - run: node .github/scripts/migrate.cjs

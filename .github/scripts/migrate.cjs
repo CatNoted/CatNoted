@@ -47,11 +47,21 @@ function normaliseUrl(raw) {
   const poolerMatch = hostname.match(/\.pooler\.supabase\.com$/i);
   if (poolerMatch) {
     const userParts = parsed.username.split('.');
-    const projectRef = userParts.length >= 2 ? userParts[1] : userParts[0];
-    if (projectRef) {
-      parsed.username = 'postgres.' + projectRef;
-      console.log('Detected pooler host. Username corrected to: postgres.' + projectRef);
+    let projectRef = userParts.length >= 2 ? userParts[1] : '';
+    if (!projectRef || projectRef === 'postgres') {
+      try {
+        const envContent = fs.readFileSync(path.resolve(process.cwd(), '.env'), 'utf8');
+        const match = envContent.match(/VITE_SUPABASE_URL=https:\/\/([^.]+)\.supabase\.co/);
+        if (match) {
+          projectRef = match[1];
+        }
+      } catch (_) {}
     }
+    if (!projectRef) {
+      projectRef = 'vhuchnycqhprthmdsont';
+    }
+    parsed.username = 'postgres.' + projectRef;
+    console.log('Detected pooler host. Username corrected to: postgres.' + projectRef);
     return parsed.toString();
   }
 
@@ -62,15 +72,23 @@ function normaliseUrl(raw) {
 const connectionString = normaliseUrl(rawDbUrl);
 
 let hostname = '';
+let servername = '';
 try {
-  hostname = new URL(connectionString).hostname;
+  const parsedUrl = new URL(connectionString);
+  hostname = parsedUrl.hostname;
+  if (hostname.includes('pooler.supabase.com')) {
+    const ref = parsedUrl.username.split('.')[1] || 'vhuchnycqhprthmdsont';
+    servername = `db.${ref}.supabase.co`;
+  } else {
+    servername = hostname;
+  }
 } catch (_) {}
 
 const client = new Client({
   connectionString,
   ssl: {
     rejectUnauthorized: false,
-    ...(hostname ? { servername: hostname } : {}),
+    ...(servername ? { servername } : {}),
   },
 });
 
