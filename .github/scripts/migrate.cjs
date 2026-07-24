@@ -43,25 +43,11 @@ function normaliseUrl(raw) {
     return parsed.toString();
   }
 
-  // Pooler host: *.pooler.supabase.com -- username must be "postgres.<ref>"
+  // Pooler host: *.pooler.supabase.com -- keep username as "postgres" when using SNI
   const poolerMatch = hostname.match(/\.pooler\.supabase\.com$/i);
   if (poolerMatch) {
-    const userParts = parsed.username.split('.');
-    let projectRef = userParts.length >= 2 ? userParts[1] : '';
-    if (!projectRef || projectRef === 'postgres') {
-      try {
-        const envContent = fs.readFileSync(path.resolve(process.cwd(), '.env'), 'utf8');
-        const match = envContent.match(/VITE_SUPABASE_URL=https:\/\/([^.]+)\.supabase\.co/);
-        if (match) {
-          projectRef = match[1];
-        }
-      } catch (_) {}
-    }
-    if (!projectRef) {
-      projectRef = 'vhuchnycqhprthmdsont';
-    }
-    parsed.username = 'postgres.' + projectRef;
-    console.log('Detected pooler host. Username corrected to: postgres.' + projectRef);
+    parsed.username = 'postgres';
+    console.log('Detected pooler host. Username kept as: postgres');
     return parsed.toString();
   }
 
