@@ -34,7 +34,7 @@ export const ForceGraph: React.FC<ForceGraphProps> = ({
   useEffect(() => {
     const existing = new Map(nodesRef.current.map(n => [n.id, n]));
     
-    nodesRef.current = inputNodes.map((n, i) => {
+    nodesRef.current = inputNodes.map((n) => {
       const prev = existing.get(n.id);
       if (prev) return { ...prev, label: n.label, type: n.type };
       // Otherwise assign random coordinates near center
@@ -60,6 +60,9 @@ export const ForceGraph: React.FC<ForceGraphProps> = ({
       if (!ctx) return;
 
       const pNodes = nodesRef.current;
+
+      // O(N) precomputation of node map for O(1) edge lookups later
+      const nodeMap = new Map(pNodes.map(n => [n.id, n]));
 
       // 1. Physics: Repulsion (anti-collision)
       for (let i = 0; i < pNodes.length; i++) {
@@ -87,8 +90,8 @@ export const ForceGraph: React.FC<ForceGraphProps> = ({
         const sourceId = typeof edge.source === 'object' ? (edge.source as any).id : edge.source;
         const targetId = typeof edge.target === 'object' ? (edge.target as any).id : edge.target;
 
-        const startNode = pNodes.find(n => n.id === sourceId);
-        const endNode = pNodes.find(n => n.id === targetId);
+        const startNode = nodeMap.get(sourceId);
+        const endNode = nodeMap.get(targetId);
 
         if (startNode && endNode) {
           const dx = endNode.x - startNode.x;
@@ -137,8 +140,8 @@ export const ForceGraph: React.FC<ForceGraphProps> = ({
         const sourceId = typeof edge.source === 'object' ? (edge.source as any).id : edge.source;
         const targetId = typeof edge.target === 'object' ? (edge.target as any).id : edge.target;
 
-        const start = pNodes.find(n => n.id === sourceId);
-        const end = pNodes.find(n => n.id === targetId);
+        const start = nodeMap.get(sourceId);
+        const end = nodeMap.get(targetId);
 
         if (start && end) {
           ctx.beginPath();
@@ -259,7 +262,7 @@ export const ForceGraph: React.FC<ForceGraphProps> = ({
     setHoverNode(hit);
   };
 
-  const handleMouseUp = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const handleMouseUp = (_e: React.MouseEvent<HTMLCanvasElement>) => {
     if (dragNodeRef.current) {
       // If drag threshold was low, trigger click
       onNodeClick(dragNodeRef.current);
