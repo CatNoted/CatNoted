@@ -62,6 +62,7 @@ export const DocumentEditor: React.FC = () => {
             {/* Left Block Controls - fixed width gutter, never overlaps content */}
             <div className="w-10 flex-shrink-0 flex items-start justify-end gap-0.5 pt-[4px] opacity-0 group-hover:opacity-100 transition-opacity">
               <button
+                type="button"
                 onClick={() => handleCreateBlock(block.id)}
                 title="Add block below"
                 className="p-0.5 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
@@ -71,6 +72,7 @@ export const DocumentEditor: React.FC = () => {
               
               <div className="relative">
                 <button
+                  type="button"
                   onClick={() => setActiveMenuId(activeMenuId === block.id ? null : block.id)}
                   title="Block settings"
                   className="p-0.5 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
