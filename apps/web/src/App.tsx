@@ -351,7 +351,7 @@ const App: React.FC = () => {
       case 'graph':
         return (
           <div className="h-full overflow-hidden">
-            <GraphView onNavigateToNode={(nodeLabel) => alert(`Navigating to reference node: "${nodeLabel}"`)} />
+            <GraphView onNavigateToNode={(nodeId) => { setActivePage(nodeId); setActiveMode("doc"); }} />
           </div>
         );
       default:

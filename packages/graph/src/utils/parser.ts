@@ -5,6 +5,8 @@ export function parseDocumentGraph(blocks: BlockNode[]): { nodes: GraphNode[]; e
   const edges: GraphEdge[] = [];
 
   const rootId = 'root-doc-node';
+
+  // Make sure we have a node for the root note
   nodesMap.set(rootId, {
     id: rootId,
     label: '📁 Untitled Note',
@@ -15,13 +17,29 @@ export function parseDocumentGraph(blocks: BlockNode[]): { nodes: GraphNode[]; e
   const linkRegex = /\[\[(.*?)\]\]/g;
   const tagRegex = /#([a-zA-Z0-9_\-]+)/g;
 
+  // First pass: register all pages that have blocks
   blocks.forEach(block => {
+    const sourceId = block.parentId || rootId;
+    if (!nodesMap.has(sourceId)) {
+      const pageName = sourceId.replace(/^page-/, '').split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+      nodesMap.set(sourceId, {
+        id: sourceId,
+        label: `📄 ${pageName}`,
+        type: 'page',
+        val: 15
+      });
+    }
+  });
+
+  // Second pass: extract links and tags
+  blocks.forEach(block => {
+    const sourceId = block.parentId || rootId;
+
     let linkMatch;
     // Reset index to avoid sticky states on global regex
     linkRegex.lastIndex = 0;
     while ((linkMatch = linkRegex.exec(block.content)) !== null) {
       // Remove any internal brackets which shouldn't be part of page name
-      // e.g. for [[[ ]]] linkMatch[1] will be '[ ' which shouldn't be a valid page name
       const pageName = linkMatch[1].replace(/[\[\]]/g, '').trim();
       if (!pageName) continue;
       const nodeId = `page-${pageName.toLowerCase().replace(/\s+/g, '-')}`;
@@ -35,11 +53,11 @@ export function parseDocumentGraph(blocks: BlockNode[]): { nodes: GraphNode[]; e
         });
       }
 
-      const edgeId = `edge-${rootId}-${nodeId}`;
+      const edgeId = `edge-${sourceId}-${nodeId}`;
       if (!edges.some(e => e.id === edgeId)) {
         edges.push({
           id: edgeId,
-          source: rootId,
+          source: sourceId,
           target: nodeId,
           type: 'link'
         });
@@ -62,11 +80,11 @@ export function parseDocumentGraph(blocks: BlockNode[]): { nodes: GraphNode[]; e
         });
       }
 
-      const edgeId = `edge-${rootId}-${nodeId}`;
+      const edgeId = `edge-${sourceId}-${nodeId}`;
       if (!edges.some(e => e.id === edgeId)) {
         edges.push({
           id: edgeId,
-          source: rootId,
+          source: sourceId,
           target: nodeId,
           type: 'tag'
         });

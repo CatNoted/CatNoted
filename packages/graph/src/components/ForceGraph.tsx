@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { GraphNode, GraphEdge } from '@catnoted/shared';
+import { Ghost } from 'lucide-react';
 
 interface ForceGraphProps {
   nodes: GraphNode[];
@@ -25,10 +26,22 @@ export const ForceGraph: React.FC<ForceGraphProps> = ({
   const dragNodeRef = useRef<PhysNode | null>(null);
   const isPanning = useRef(false);
   const panStart = useRef({ x: 0, y: 0 });
+  const dragStartCoords = useRef({ x: 0, y: 0 });
+  const hasDraggedRef = useRef(false);
 
   const [pan, setPan] = useState({ x: 300, y: 250 });
   const [scale, setScale] = useState(1);
   const [hoverNode, setHoverNode] = useState<PhysNode | null>(null);
+
+  // Auto-center view on first load if we have nodes
+  useEffect(() => {
+    if (inputNodes.length > 0 && canvasRef.current) {
+      setPan({
+        x: canvasRef.current.width / 2,
+        y: canvasRef.current.height / 2
+      });
+    }
+  }, [inputNodes.length]);
 
   // Sync input nodes to physics simulation references
   useEffect(() => {
@@ -40,8 +53,8 @@ export const ForceGraph: React.FC<ForceGraphProps> = ({
       // Otherwise assign random coordinates near center
       return {
         ...n,
-        x: 300 + (Math.random() - 0.5) * 150,
-        y: 250 + (Math.random() - 0.5) * 150,
+        x: (Math.random() - 0.5) * 150,
+        y: (Math.random() - 0.5) * 150,
         vx: 0,
         vy: 0,
         radius: n.type === 'page' ? 8 : 6
@@ -60,8 +73,6 @@ export const ForceGraph: React.FC<ForceGraphProps> = ({
       if (!ctx) return;
 
       const pNodes = nodesRef.current;
-
-      // O(N) precomputation of node map for O(1) edge lookups later
       const nodeMap = new Map(pNodes.map(n => [n.id, n]));
 
       // 1. Physics: Repulsion (anti-collision)
@@ -71,10 +82,12 @@ export const ForceGraph: React.FC<ForceGraphProps> = ({
           const nB = pNodes[j];
           const dx = nB.x - nA.x;
           const dy = nB.y - nA.y;
-          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-          const minDist = 100;
-          if (dist < minDist) {
-            const force = (minDist - dist) * 0.08;
+          const distSq = dx * dx + dy * dy;
+          // Obsidian-like stronger, longer repulsion
+          const minDist = 180;
+          if (distSq < minDist * minDist && distSq > 0) {
+            const dist = Math.sqrt(distSq);
+            const force = (minDist - dist) * 0.05;
             const fx = (dx / dist) * force;
             const fy = (dy / dist) * force;
             nB.vx += fx;
@@ -97,8 +110,9 @@ export const ForceGraph: React.FC<ForceGraphProps> = ({
           const dx = endNode.x - startNode.x;
           const dy = endNode.y - startNode.y;
           const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-          const restLength = 110;
-          const force = (dist - restLength) * 0.02;
+          // Longer rest length for clearer graph
+          const restLength = 150;
+          const force = (dist - restLength) * 0.015;
           const fx = (dx / dist) * force;
           const fy = (dy / dist) * force;
           endNode.vx -= fx;
@@ -109,19 +123,16 @@ export const ForceGraph: React.FC<ForceGraphProps> = ({
       });
 
       // 3. Physics: Center pulling gravity and updating positions
-      const centerX = canvas.width / (2 * scale) - pan.x / scale;
-      const centerY = canvas.height / (2 * scale) - pan.y / scale;
-
       pNodes.forEach(node => {
         if (node === dragNodeRef.current) return;
 
-        // Weak gravity to center
-        node.vx += (centerX - node.x) * 0.005;
-        node.vy += (centerY - node.y) * 0.005;
+        // Gravity to origin (0,0) which is visual center via pan
+        node.vx -= node.x * 0.003;
+        node.vy -= node.y * 0.003;
 
         // Friction / damping
-        node.vx *= 0.82;
-        node.vy *= 0.82;
+        node.vx *= 0.85;
+        node.vy *= 0.85;
 
         node.x += node.vx;
         node.y += node.vy;
@@ -149,51 +160,73 @@ export const ForceGraph: React.FC<ForceGraphProps> = ({
           ctx.lineTo(end.x, end.y);
           
           const isRelatedToHover = hoverNode && (start.id === hoverNode.id || end.id === hoverNode.id);
-          ctx.strokeStyle = isRelatedToHover 
-            ? 'rgba(99, 102, 241, 0.8)' 
-            : 'rgba(203, 213, 225, 0.4)';
-          ctx.lineWidth = isRelatedToHover ? 1.5 : 1;
+          // Dark mode checks dynamically per frame
+          const isDark = document.documentElement.classList.contains('dark');
+
+          // Style backlinks/edges
+          if (isRelatedToHover) {
+             ctx.strokeStyle = isDark ? 'rgba(129, 140, 248, 0.8)' : 'rgba(99, 102, 241, 0.8)';
+             ctx.lineWidth = 2;
+          } else {
+             ctx.strokeStyle = isDark ? 'rgba(82, 82, 91, 0.5)' : 'rgba(203, 213, 225, 0.6)';
+             ctx.lineWidth = 1;
+          }
           ctx.stroke();
         }
       });
+
+      const isDark = document.documentElement.classList.contains('dark');
 
       // Draw Nodes
       pNodes.forEach(node => {
         const isHovered = hoverNode && hoverNode.id === node.id;
         const isRoot = node.id === 'root-doc-node';
+        const isConnectedToHover = hoverNode && edges.some(e => {
+            const sid = typeof e.source === 'object' ? (e.source as any).id : e.source;
+            const tid = typeof e.target === 'object' ? (e.target as any).id : e.target;
+            return (sid === hoverNode.id && tid === node.id) || (tid === hoverNode.id && sid === node.id);
+        });
+
+        const active = isHovered || isConnectedToHover;
 
         ctx.beginPath();
-        ctx.arc(node.x, node.y, node.radius + (isHovered ? 2 : 0), 0, 2 * Math.PI);
+        // Dynamic radius
+        const r = node.radius + (isHovered ? 3 : (isConnectedToHover ? 1 : 0));
+        ctx.arc(node.x, node.y, r, 0, 2 * Math.PI);
         
-        // Node styling colors
+        // Node styling colors based on Obsidian style theme
         if (isRoot) {
-          ctx.fillStyle = '#4f46e5'; // Indigo
+          ctx.fillStyle = isDark ? '#a78bfa' : '#7c3aed'; // Violet
         } else if (node.type === 'tag') {
-          ctx.fillStyle = '#10b981'; // Emerald
+          ctx.fillStyle = isDark ? '#34d399' : '#10b981'; // Emerald
         } else {
-          ctx.fillStyle = '#6366f1'; // Indigo light
+          ctx.fillStyle = isDark ? '#94a3b8' : '#64748b'; // Slate
+        }
+
+        if (active) {
+          ctx.fillStyle = isDark ? '#818cf8' : '#4f46e5'; // Indigo active
         }
 
         ctx.fill();
 
-        // Node outline/glow
-        if (isHovered) {
-          ctx.strokeStyle = 'rgba(99, 102, 241, 0.5)';
-          ctx.lineWidth = 4;
+        // Node outline/glow for active
+        if (active) {
+          ctx.strokeStyle = isDark ? 'rgba(129, 140, 248, 0.4)' : 'rgba(99, 102, 241, 0.4)';
+          ctx.lineWidth = 6;
           ctx.stroke();
         }
 
         // Draw Labels
-        ctx.fillStyle = isHovered ? '#4f46e5' : '#475569';
-        // Check dark mode
-        const isDark = document.documentElement.classList.contains('dark');
-        if (isDark) {
-          ctx.fillStyle = isHovered ? '#818cf8' : '#cbd5e1';
-        }
+        // Only show labels for hovered, connected, or large nodes, or root
+        if (active || isRoot || scale > 1.2) {
+          ctx.fillStyle = active
+            ? (isDark ? '#e0e7ff' : '#312e81')
+            : (isDark ? '#94a3b8' : '#475569');
 
-        ctx.font = `${isHovered ? 'bold' : 'normal'} 10px sans-serif`;
-        ctx.textAlign = 'center';
-        ctx.fillText(node.label, node.x, node.y - node.radius - 6);
+          ctx.font = `${active ? 'bold' : 'normal'} ${10 / Math.max(0.5, scale)}px sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.fillText(node.label, node.x, node.y - r - (6 / scale));
+        }
       });
 
       ctx.restore();
@@ -222,13 +255,16 @@ export const ForceGraph: React.FC<ForceGraphProps> = ({
     return nodesRef.current.find(node => {
       const dx = node.x - coords.x;
       const dy = node.y - coords.y;
-      return Math.sqrt(dx * dx + dy * dy) < node.radius + 12;
+      return Math.sqrt(dx * dx + dy * dy) < node.radius + 15 / scale;
     }) || null;
   };
 
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const coords = getCanvasCoords(e);
     const hit = detectNode(coords);
+
+    hasDraggedRef.current = false;
+    dragStartCoords.current = { x: e.clientX, y: e.clientY };
 
     if (hit) {
       dragNodeRef.current = hit;
@@ -240,6 +276,15 @@ export const ForceGraph: React.FC<ForceGraphProps> = ({
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const coords = getCanvasCoords(e);
+
+    // Check drag threshold
+    if (!hasDraggedRef.current) {
+        const dx = e.clientX - dragStartCoords.current.x;
+        const dy = e.clientY - dragStartCoords.current.y;
+        if (Math.sqrt(dx * dx + dy * dy) > 3) {
+            hasDraggedRef.current = true;
+        }
+    }
 
     // Drag node logic
     if (dragNodeRef.current) {
@@ -263,7 +308,7 @@ export const ForceGraph: React.FC<ForceGraphProps> = ({
   };
 
   const handleMouseUp = (_e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (dragNodeRef.current) {
+    if (dragNodeRef.current && !hasDraggedRef.current) {
       // If drag threshold was low, trigger click
       onNodeClick(dragNodeRef.current);
     }
@@ -272,20 +317,47 @@ export const ForceGraph: React.FC<ForceGraphProps> = ({
   };
 
   const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
+    // Prevent default scroll behavior on wheel for zooming if possible
+    // Note: React synthetic onWheel doesn't support e.preventDefault() well,
+    // but we handle scale changes
     const direction = e.deltaY < 0 ? 1 : -1;
-    setScale(prev => Math.max(0.4, Math.min(2.5, prev + direction * 0.05)));
+    setScale(prev => Math.max(0.2, Math.min(4, prev + direction * 0.1)));
   };
+
+  // Passive event listener for wheel to prevent scroll
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const onWheelRaw = (e: WheelEvent) => {
+        e.preventDefault();
+    };
+    canvas.addEventListener('wheel', onWheelRaw, { passive: false });
+    return () => canvas.removeEventListener('wheel', onWheelRaw);
+  }, []);
+
+  if (inputNodes.length === 0) {
+    return (
+      <div className="w-full h-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl flex flex-col items-center justify-center text-slate-400 dark:text-zinc-500">
+        <Ghost className="w-12 h-12 mb-4 text-slate-300 dark:text-zinc-600" />
+        <p className="text-sm">Graph is empty.</p>
+        <p className="text-xs mt-2 opacity-75">Add wiki-links [[like this]] to your documents to see connections.</p>
+      </div>
+    );
+  }
 
   return (
     <canvas
       ref={canvasRef}
-      width={700}
-      height={480}
+      width={800}
+      height={600}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
       onWheel={handleWheel}
       className="w-full h-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-inner cursor-grab active:cursor-grabbing"
+      style={{ width: '100%', height: '100%' }}
     />
   );
 };

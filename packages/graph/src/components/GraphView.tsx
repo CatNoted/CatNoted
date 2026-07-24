@@ -6,7 +6,7 @@ import { GraphNode } from '@catnoted/shared';
 import { Network, Info } from 'lucide-react';
 
 interface GraphViewProps {
-  onNavigateToNode: (nodeLabel: string) => void;
+  onNavigateToNode: (nodeId: string) => void;
 }
 
 export const GraphView: React.FC<GraphViewProps> = ({ onNavigateToNode }) => {
@@ -17,14 +17,11 @@ export const GraphView: React.FC<GraphViewProps> = ({ onNavigateToNode }) => {
   }, [blocks]);
 
   const handleNodeClick = (node: GraphNode) => {
-    if (node.id === 'root-doc-node') return;
-    // Extract label title (removing emoji)
-    const cleanLabel = node.label.replace(/^[📄#]\s*/, '');
-    onNavigateToNode(cleanLabel);
+    onNavigateToNode(node.id);
   };
 
   return (
-    <div className="flex flex-col gap-4 h-full">
+    <div className="flex flex-col gap-4 h-full p-4">
       {/* Header bar and stats */}
       <div className="flex items-center justify-between px-2">
         <div>
@@ -50,7 +47,7 @@ export const GraphView: React.FC<GraphViewProps> = ({ onNavigateToNode }) => {
       </div>
 
       {/* Main Canvas Force Graph */}
-      <div className="h-[60vh] relative min-h-[400px]">
+      <div className="flex-1 relative min-h-[400px]">
         <ForceGraph 
           nodes={nodes} 
           edges={edges} 
