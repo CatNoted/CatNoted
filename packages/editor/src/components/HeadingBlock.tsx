@@ -85,7 +85,7 @@ export const HeadingBlock: React.FC<HeadingBlockProps> = ({
   /** When user picks a command, strip the "/" + query from content */
   const handleSetType = useCallback(
     (type: string, properties?: Record<string, unknown>) => {
-      const cleaned = content.replace(/(^|\s)\/\S*$/, (match, prefix) => prefix);
+      const cleaned = content.replace(/(^|\s)\/\S*$/, (_match, prefix) => prefix);
       onChange(cleaned);
       if (onSetType) onSetType(type, properties);
       closeMenu();
@@ -94,7 +94,7 @@ export const HeadingBlock: React.FC<HeadingBlockProps> = ({
   );
 
   const handleAddWidget = useCallback(() => {
-    const cleaned = content.replace(/(^|\s)\/\S*$/, (match, prefix) => prefix);
+    const cleaned = content.replace(/(^|\s)\/\S*$/, (_match, prefix) => prefix);
     onChange(cleaned);
     if (onAddWidget) onAddWidget();
     closeMenu();

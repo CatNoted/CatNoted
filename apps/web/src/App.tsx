@@ -21,7 +21,7 @@ const App: React.FC = () => {
   const [isZenMode, setIsZenMode] = useState<boolean>(false);
   
   // E2EE Sync credentials
-  const [passphrase, setPassphrase] = useState('super-secret-default-passphrase');
+  const [passphrase, setPassphrase] = useState('');
   const [userEmail, setUserEmail] = useState('guest@catnoted.com');
 
   // Modals state
@@ -54,6 +54,7 @@ const App: React.FC = () => {
   // 1. Local E2EE Sync Loop: Listen to local Yjs changes, encrypt them, and broadcast
   useEffect(() => {
     const handleUpdate = async (update: Uint8Array, origin: any) => {
+      if (!passphrase) return;
       if (origin === 'remote-sync') return; // Ignore updates received from other devices to prevent loops
       
       try {
@@ -77,6 +78,7 @@ const App: React.FC = () => {
   // 2. Incoming Sync Loop: Listen to incoming messages, decrypt, and merge
   useEffect(() => {
     const unsubscribe = mockSyncChannel.subscribe(async (msg) => {
+      if (!passphrase) return;
       if (msg.sender === 'local-tab') return; // Ignore own changes
 
       try {
@@ -114,7 +116,11 @@ const App: React.FC = () => {
                 <h1 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-zinc-50">Untitled Document</h1>
                 <p className="text-[11px] text-slate-400 dark:text-zinc-500 mt-0.5 flex items-center gap-1.5">
                   Linear Editor &middot; E2EE Sync:
-                  <span className="text-indigo-500 font-mono font-semibold">AES-GCM-256</span>
+                  {passphrase ? (
+                    <span className="text-indigo-500 font-mono font-semibold">AES-GCM-256</span>
+                  ) : (
+                    <button onClick={() => setIsSettingsOpen(true)} className="text-amber-500 font-semibold hover:underline">Setup Required</button>
+                  )}
                 </p>
               </div>
               <button

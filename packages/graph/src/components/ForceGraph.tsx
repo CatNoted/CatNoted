@@ -34,7 +34,7 @@ export const ForceGraph: React.FC<ForceGraphProps> = ({
   useEffect(() => {
     const existing = new Map(nodesRef.current.map(n => [n.id, n]));
     
-    nodesRef.current = inputNodes.map((n, i) => {
+    nodesRef.current = inputNodes.map((n, _i) => {
       const prev = existing.get(n.id);
       if (prev) return { ...prev, label: n.label, type: n.type };
       // Otherwise assign random coordinates near center
@@ -259,7 +259,7 @@ export const ForceGraph: React.FC<ForceGraphProps> = ({
     setHoverNode(hit);
   };
 
-  const handleMouseUp = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const handleMouseUp = (_e: React.MouseEvent<HTMLCanvasElement>) => {
     if (dragNodeRef.current) {
       // If drag threshold was low, trigger click
       onNodeClick(dragNodeRef.current);

@@ -84,7 +84,7 @@ export const TextBlock: React.FC<TextBlockProps> = ({
   const handleSetType = useCallback(
     (type: string, properties?: Record<string, unknown>) => {
       // Remove the slash trigger text from content
-      const cleaned = content.replace(/(^|\s)\/\S*$/, (match, prefix) => prefix);
+      const cleaned = content.replace(/(^|\s)\/\S*$/, (_match, prefix) => prefix);
       onChange(cleaned);
       onSetType(type, properties);
       closeMenu();
@@ -93,7 +93,7 @@ export const TextBlock: React.FC<TextBlockProps> = ({
   );
 
   const handleAddWidget = useCallback(() => {
-    const cleaned = content.replace(/(^|\s)\/\S*$/, (match, prefix) => prefix);
+    const cleaned = content.replace(/(^|\s)\/\S*$/, (_match, prefix) => prefix);
     onChange(cleaned);
     onAddWidget();
     closeMenu();
