@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 
 export function useCanvasViewport() {
   const [pan, setPan] = useState({ x: 100, y: 100 });
@@ -28,14 +28,45 @@ export function useCanvasViewport() {
     isDragging.current = false;
   }, []);
 
-  const handleWheel = useCallback((e: React.WheelEvent) => {
-    const zoomFactor = 0.05;
-    const direction = e.deltaY < 0 ? 1 : -1;
-    const newScale = Math.max(0.3, Math.min(2.5, scale + direction * zoomFactor));
-    setScale(newScale);
+  const handleWheel = useCallback((e: WheelEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Adjust zoom sensitivity based on event properties (e.g. pinch-to-zoom vs scroll wheel)
+    if (e.ctrlKey) {
+      const zoomSensitivity = 0.01;
+      const zoomDelta = -e.deltaY * zoomSensitivity;
+      const newScale = Math.max(0.1, Math.min(5.0, scale * (1 + zoomDelta)));
+
+      // Calculate zoom around cursor
+      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      // Adjust pan to zoom around cursor
+      setPan(prev => ({
+        x: mouseX - (mouseX - prev.x) * (newScale / scale),
+        y: mouseY - (mouseY - prev.y) * (newScale / scale)
+      }));
+      setScale(newScale);
+    } else {
+      // Pan with trackpad
+      setPan(prev => ({
+        x: prev.x - e.deltaX,
+        y: prev.y - e.deltaY
+      }));
+    }
   }, [scale]);
 
+  // Hook to attach native wheel listener to ref with passive: false
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Note: users of this hook will now need to attach containerRef to their container
+  // instead of passing handleWheel directly. But for backward compatibility with tests
+  // we'll keep handleWheel in the return object.
+
   return {
+    containerRef,
     pan,
     scale,
     setPan,

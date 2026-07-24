@@ -22,7 +22,10 @@ import {
   FolderOpen,
   Clock,
   Tag,
-  Cpu
+  Cpu,
+  PanelLeftClose,
+  PanelLeftOpen,
+  ChevronsUpDown
 } from 'lucide-react';
 
 export type ActiveMode = 'doc' | 'canvas' | 'graph' | 'settings';
@@ -95,6 +98,47 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       ...otherPages
     ];
   }, [pageNodes, docTitle]);
+
+
+  const [sidebarWidth, setSidebarWidth] = useState(() => {
+    const saved = localStorage.getItem('catnoted:sidebar-width');
+    return saved ? parseInt(saved, 10) : 256;
+  });
+
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    const saved = localStorage.getItem('catnoted:sidebar-collapsed');
+    return saved === 'true';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('catnoted:sidebar-width', sidebarWidth.toString());
+  }, [sidebarWidth]);
+
+  useEffect(() => {
+    localStorage.setItem('catnoted:sidebar-collapsed', sidebarCollapsed.toString());
+  }, [sidebarCollapsed]);
+
+  const isResizingSidebar = useRef(false);
+
+  const handleSidebarResizeStart = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    isResizingSidebar.current = true;
+
+    const handleMove = (ev: MouseEvent) => {
+      if (!isResizingSidebar.current) return;
+      const newWidth = Math.max(160, Math.min(480, ev.clientX - 64));
+      setSidebarWidth(newWidth);
+    };
+
+    const handleUp = () => {
+      isResizingSidebar.current = false;
+      document.removeEventListener('mousemove', handleMove);
+      document.removeEventListener('mouseup', handleUp);
+    };
+
+    document.addEventListener('mousemove', handleMove);
+    document.addEventListener('mouseup', handleUp);
+  }, []);
 
   // Section expand/collapse state
   const [sectionsExpanded, setSectionsExpanded] = useState<Record<string, boolean>>({
@@ -413,13 +457,40 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
       {/* Pane 1.5: Workspace Sidebar (Recent & Collapsible Page Tree) - Hidden in Zen Mode */}
       {!zenMode && (
-        <aside className="w-64 border-r border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 z-10 shrink-0 flex flex-col h-full text-sm">
-          {/* Sidebar Header */}
-          <div className="h-14 px-4 border-b border-slate-200 dark:border-zinc-800 flex items-center gap-2">
-            <span className="font-semibold text-xs uppercase tracking-wider text-slate-500 dark:text-zinc-400">Workspace Library</span>
+        <aside
+          className="relative border-r border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 z-10 shrink-0 flex flex-col h-full text-sm transition-[width] duration-200 ease-in-out"
+          style={{ width: sidebarCollapsed ? 0 : sidebarWidth, overflow: 'hidden' }}
+        >
+          {/* Resize Handle */}
+          {!sidebarCollapsed && (
+            <div
+              className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-indigo-500/50 z-20 transition-colors"
+              onMouseDown={handleSidebarResizeStart}
+            />
+          )}
+
+          {/* Sidebar Header / Workspace Switcher */}
+          <div className="h-14 px-3 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between shrink-0">
+            <button className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-800/50 transition-colors w-full justify-between group">
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 rounded bg-indigo-600 flex items-center justify-center text-white text-[10px] font-bold">
+                  W
+                </div>
+                <span className="font-semibold text-sm text-slate-700 dark:text-zinc-200 truncate">My Workspace</span>
+              </div>
+              <ChevronsUpDown className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+            </button>
+            <button
+              onClick={() => setSidebarCollapsed(true)}
+              className="ml-1 p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-400 dark:text-zinc-500 transition-colors"
+              title="Collapse Sidebar"
+            >
+              <PanelLeftClose className="w-4 h-4" />
+            </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-3 space-y-6">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden min-w-[160px]">
+            <div className="p-3 space-y-6">
             {/* Recent Documents Section */}
             <div>
               <div className="flex items-center gap-1.5 px-2 mb-2 text-xs font-semibold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
@@ -520,7 +591,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                   {sectionsExpanded.tags && (
                     <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-100 dark:border-zinc-800/60 ml-3.5">
                       {tagNodes.length === 0 ? (
-                        <span className="block px-2 py-1 text-[11px] text-slate-400 dark:text-zinc-500 italic">No tags found</span>
+                        <div className="px-2 py-3 flex flex-col items-center justify-center text-center gap-1.5 opacity-60">
+                          <Tag className="w-4 h-4 text-slate-400 dark:text-zinc-500" />
+                          <span className="text-[10px] text-slate-500 dark:text-zinc-400">Type #tag in editor</span>
+                        </div>
                       ) : (
                         tagNodes.map(node => {
                           const isActive = activePage === node.id;
@@ -564,7 +638,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                   {sectionsExpanded.widgets && (
                     <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-100 dark:border-zinc-800/60 ml-3.5">
                       {widgetNodes.length === 0 ? (
-                        <span className="block px-2 py-1 text-[11px] text-slate-400 dark:text-zinc-500 italic">No widgets found</span>
+                        <div className="px-2 py-3 flex flex-col items-center justify-center text-center gap-1.5 opacity-60">
+                          <Cpu className="w-4 h-4 text-slate-400 dark:text-zinc-500" />
+                          <span className="text-[10px] text-slate-500 dark:text-zinc-400">Add AI widget</span>
+                        </div>
                       ) : (
                         widgetNodes.map(node => {
                           const isActive = activePage === node.id;
@@ -594,27 +671,75 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
               </div>
             </div>
+            </div>
           </div>
         </aside>
       )}
 
+      {/* Uncollapse button when collapsed */}
+          {sidebarCollapsed && !zenMode && (
+            <button
+              onClick={() => setSidebarCollapsed(false)}
+              className="absolute left-16 top-4 z-20 p-1.5 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-md shadow-sm hover:bg-slate-50 dark:hover:bg-zinc-800 text-slate-400 dark:text-zinc-500 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+              title="Expand Sidebar"
+            >
+              <PanelLeftOpen className="w-4 h-4" />
+            </button>
+          )}
+
       {/* Pane 2: Middle Panel (Main Workspace) — now takes full remaining width */}
       <main className="flex-1 flex flex-col h-full overflow-hidden bg-slate-50 dark:bg-zinc-950">
-        <header className="h-14 px-6 border-b border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-xs uppercase tracking-widest text-slate-400 dark:text-zinc-500 font-bold">Workspace</span>
-            <span className="text-slate-300 dark:text-zinc-700">/</span>
-            <span className="text-sm font-semibold capitalize">{activeMode} View</span>
+        <header className="h-14 px-4 sm:px-6 border-b border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-3">
+            {/* Breadcrumb */}
+            <div className="flex items-center gap-1.5 text-sm">
+              <span className="text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200 cursor-pointer transition-colors">Workspace</span>
+              <span className="text-slate-300 dark:text-zinc-700">/</span>
+              <div className="flex items-center gap-1.5 text-slate-800 dark:text-zinc-200 font-medium">
+                <FileText className="w-4 h-4 text-indigo-500" />
+                <span className="truncate max-w-[120px] sm:max-w-[200px]">{docTitle}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            {/* Mode Toggle (AFFiNE style) */}
+            <div className="flex items-center bg-slate-100 dark:bg-zinc-800/80 p-0.5 rounded-lg border border-slate-200/50 dark:border-zinc-700/50">
+              {[
+                { id: 'doc', icon: FileText, label: 'Doc' },
+                { id: 'canvas', icon: Layout, label: 'Canvas' },
+                { id: 'graph', icon: Network, label: 'Graph' }
+              ].map((item) => {
+                const Icon = item.icon;
+                const isActive = activeMode === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => onModeChange(item.id as ActiveMode)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                      isActive
+                        ? 'bg-white dark:bg-zinc-700 text-slate-800 dark:text-zinc-100 shadow-sm ring-1 ring-slate-200 dark:ring-zinc-600'
+                        : 'text-slate-500 dark:text-zinc-400 hover:text-slate-700 dark:hover:text-zinc-200 hover:bg-slate-200/50 dark:hover:bg-zinc-700/50'
+                    }`}
+                    title={item.label}
+                  >
+                    <Icon className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">{item.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="w-px h-5 bg-slate-200 dark:bg-zinc-800 mx-1"></div>
+
             {zenMode && (
-              <span className="text-[10px] bg-indigo-100 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 px-2 py-0.5 rounded ml-2 font-mono font-semibold">
-                Zen Active (Press Cmd+K to toggle sidebars)
+              <span className="hidden sm:inline-block text-[10px] bg-indigo-100 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 px-2 py-1 rounded-md font-mono font-semibold uppercase tracking-wider">
+                Zen Mode (Cmd+K)
               </span>
             )}
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-              Local VFS Connected
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/50">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.5)]"></span>
+              <span className="hidden sm:inline">Local VFS</span>
             </span>
           </div>
         </header>

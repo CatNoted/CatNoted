@@ -1,6 +1,12 @@
 import { renderHook, act } from '@testing-library/react';
 import { useCanvasViewport } from './useCanvasViewport.js';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+
+const mockEvent = (overrides = {}) => ({
+  preventDefault: vi.fn(),
+  stopPropagation: vi.fn(),
+  ...overrides
+});
 
 describe('useCanvasViewport', () => {
   it('should initialize with default values', () => {
@@ -110,44 +116,46 @@ describe('useCanvasViewport', () => {
 
     // Zoom in
     act(() => {
-      const wheelEvent = {
+      const wheelEvent = mockEvent({
         deltaY: -100, // scrolling up, should zoom in
-      } as unknown as React.WheelEvent;
+        ctrlKey: true, clientX: 0, clientY: 0, currentTarget: { getBoundingClientRect: () => ({ left: 0, top: 0, width: 1000, height: 1000 }) }
+      }) as unknown as WheelEvent;
 
       result.current.handleWheel(wheelEvent);
     });
 
-    expect(result.current.scale).toBe(1.05);
+    expect(result.current.scale).toBe(2.0);
 
     // Zoom out
     act(() => {
-      const wheelEvent = {
+      const wheelEvent = mockEvent({
         deltaY: 100, // scrolling down, should zoom out
-      } as unknown as React.WheelEvent;
+        ctrlKey: true, clientX: 0, clientY: 0, currentTarget: { getBoundingClientRect: () => ({ left: 0, top: 0, width: 1000, height: 1000 }) }
+      }) as unknown as WheelEvent;
 
       result.current.handleWheel(wheelEvent);
     });
 
-    expect(result.current.scale).toBe(1.0);
+    expect(result.current.scale).toBe(0.1); // 2.0 * (1 - 100*0.01) = 0
   });
 
-  it('should clamp zoom scale between 0.3 and 2.5', () => {
+  it('should clamp zoom scale between 0.1 and 5.0', () => {
     const { result } = renderHook(() => useCanvasViewport());
 
     // Zoom out to minimum
     for (let i = 0; i < 20; i++) {
       act(() => {
-        result.current.handleWheel({ deltaY: 100 } as unknown as React.WheelEvent);
+        result.current.handleWheel(mockEvent({ deltaY: 100, ctrlKey: true, clientX: 0, clientY: 0, currentTarget: { getBoundingClientRect: () => ({ left: 0, top: 0, width: 1000, height: 1000 }) } }) as any);
       });
     }
-    expect(result.current.scale).toBe(0.3);
+    expect(result.current.scale).toBe(0.1);
 
     // Zoom in to maximum
     for (let i = 0; i < 50; i++) {
       act(() => {
-        result.current.handleWheel({ deltaY: -100 } as unknown as React.WheelEvent);
+        result.current.handleWheel(mockEvent({ deltaY: -100, ctrlKey: true, clientX: 0, clientY: 0, currentTarget: { getBoundingClientRect: () => ({ left: 0, top: 0, width: 1000, height: 1000 }) } }) as any);
       });
     }
-    expect(result.current.scale).toBe(2.5);
+    expect(result.current.scale).toBe(5.0);
   });
 });

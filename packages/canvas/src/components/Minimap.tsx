@@ -1,4 +1,5 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { CanvasElement } from '@catnoted/shared';
 
 interface MinimapProps {
@@ -19,6 +20,7 @@ export const Minimap: React.FC<MinimapProps> = ({
   viewportHeight = 500
 }) => {
   const minimapRef = useRef<HTMLDivElement>(null);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const isDraggingRef = useRef(false);
 
   // Constants for minimap container dimensions
@@ -94,46 +96,61 @@ export const Minimap: React.FC<MinimapProps> = ({
   }, [pan, scale, boundsMinX, boundsWidth, boundsMinY, boundsHeight, viewportWidth, viewportHeight]);
 
   return (
-    <div className="flex flex-col gap-1.5 items-end">
-      <span className="text-[9px] font-mono font-semibold text-slate-400 dark:text-zinc-500 uppercase tracking-widest">Minimap navigation</span>
-      <div
-        ref={minimapRef}
-        onMouseDown={handleMouseDown}
-        style={{ width: minimapWidth, height: minimapHeight }}
-        className="bg-white/85 dark:bg-zinc-950/85 border border-slate-200 dark:border-zinc-800 rounded-xl relative overflow-hidden shadow-md cursor-crosshair select-none backdrop-blur-sm"
-      >
-        {/* Dynamic mini representations of cards */}
-        {elementList.map(el => {
-          const mx = scaleX(el.x);
-          const my = scaleY(el.y);
-          const mw = ((el.width || 260) / boundsWidth) * minimapWidth;
-          const mh = ((el.height || 120) / boundsHeight) * minimapHeight;
-
-          return (
-            <div
-              key={`mini-${el.id}`}
-              style={{
-                left: mx,
-                top: my,
-                width: Math.max(4, mw),
-                height: Math.max(3, mh),
-              }}
-              className="absolute bg-slate-300 dark:bg-zinc-800 border border-slate-400/20 dark:border-zinc-700/50 rounded-sm"
-            />
-          );
-        })}
-
-        {/* Viewport Overlay Box */}
-        <div
-          style={{
-            left: viewX,
-            top: viewY,
-            width: viewWidth,
-            height: viewHeight,
-          }}
-          className="absolute border-2 border-amber-500 bg-amber-500/10 rounded-lg pointer-events-none transition-[left,top,width,height] duration-75"
-        />
+    <div className="flex flex-col gap-2 items-end">
+      <div className="flex items-center gap-2 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-sm px-3 py-1.5 rounded-full border border-slate-200 dark:border-zinc-800 shadow-sm">
+        <span className="text-[10px] font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-widest">
+          {Math.round(scale * 100)}%
+        </span>
+        <div className="w-px h-3 bg-slate-200 dark:bg-zinc-700" />
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="text-slate-400 dark:text-zinc-500 hover:text-slate-700 dark:hover:text-zinc-300 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-sm"
+          title={isCollapsed ? "Expand Minimap" : "Collapse Minimap"}
+        >
+          {isCollapsed ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+        </button>
       </div>
+
+      {!isCollapsed && (
+        <div
+          ref={minimapRef}
+          onMouseDown={handleMouseDown}
+          style={{ width: minimapWidth, height: minimapHeight }}
+          className="bg-white/85 dark:bg-zinc-900/85 border border-slate-200 dark:border-zinc-800 rounded-xl relative overflow-hidden shadow-lg cursor-crosshair select-none backdrop-blur-md transition-all"
+        >
+          {/* Dynamic mini representations of cards */}
+          {elementList.map(el => {
+            const mx = scaleX(el.x);
+            const my = scaleY(el.y);
+            const mw = ((el.width || 260) / boundsWidth) * minimapWidth;
+            const mh = ((el.height || 120) / boundsHeight) * minimapHeight;
+
+            return (
+              <div
+                key={`mini-${el.id}`}
+                style={{
+                  left: mx,
+                  top: my,
+                  width: Math.max(4, mw),
+                  height: Math.max(3, mh),
+                }}
+                className="absolute bg-slate-300 dark:bg-zinc-700 border border-slate-400/20 dark:border-zinc-600/50 rounded-sm"
+              />
+            );
+          })}
+
+          {/* Viewport Overlay Box */}
+          <div
+            style={{
+              left: viewX,
+              top: viewY,
+              width: viewWidth,
+              height: viewHeight,
+            }}
+            className="absolute border-2 border-indigo-500/80 bg-indigo-500/10 rounded-md pointer-events-none transition-[left,top,width,height] duration-75 shadow-[0_0_0_9999px_rgba(0,0,0,0.1)] dark:shadow-[0_0_0_9999px_rgba(0,0,0,0.3)]"
+          />
+        </div>
+      )}
     </div>
   );
 };
