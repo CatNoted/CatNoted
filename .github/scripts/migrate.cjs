@@ -1,6 +1,11 @@
 const fs = require('fs');
 const path = require('path');
+const dns = require('dns');
 const { Client } = require('pg');
+
+if (typeof dns.setDefaultResultOrder === 'function') {
+  dns.setDefaultResultOrder('ipv4first');
+}
 
 const rawDbUrl = process.env.SUPABASE_DB_URL;
 const sqlPath =
