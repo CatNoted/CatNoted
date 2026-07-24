@@ -324,8 +324,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             });
           }
         });
+        alert('Widgets catalog successfully imported to document!');
       } catch (err) {
-        // Silently handle invalid JSON files
+        alert('Failed to parse widget catalog JSON file.');
       }
     };
     fileReader.readAsText(files[0]);

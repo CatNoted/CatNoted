@@ -136,4 +136,63 @@ describe('AppLayout Sidebar Integration Tests', () => {
     // Clean up
     document.body.removeChild(container);
   });
+
+  it('should alert on invalid JSON during widget import', async () => {
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+
+    const alertMock = vi.spyOn(window, 'alert').mockImplementation(() => {});
+
+    await act(async () => {
+      const root = createRoot(container);
+      root.render(
+        <AppLayout
+          activeMode="doc"
+          onModeChange={vi.fn()}
+          isDarkMode={true}
+          onToggleTheme={vi.fn()}
+          activePage="root-doc-node"
+          onPageSelect={vi.fn()}
+        >
+          <div>Workspace Content</div>
+        </AppLayout>
+      );
+    });
+
+    // Wait for AppLayout to render
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    // The Space Agent panel is initially closed. We need to open it.
+    const buttons = Array.from(container.querySelectorAll('button'));
+
+
+    // There is a floating button for the space agent
+    const floatBtn = buttons.find(btn => btn.className.includes('fixed bottom-6 right-6'));
+    if (floatBtn) {
+        await act(async () => {
+          floatBtn.click();
+        });
+        await new Promise(resolve => setTimeout(resolve, 50));
+    }
+
+
+    // Find the file input
+    const fileInput = container.querySelector('input[type="file"]');
+    expect(fileInput).toBeTruthy();
+
+    // Create an invalid JSON file
+    const file = new File(['invalid json data'], 'widgets.json', { type: 'application/json' });
+
+    await act(async () => {
+      Object.defineProperty(fileInput!, 'files', { value: [file] });
+      fileInput!.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    expect(alertMock).toHaveBeenCalledWith('Failed to parse widget catalog JSON file.');
+
+    alertMock.mockRestore();
+    document.body.removeChild(container);
+  });
 });
