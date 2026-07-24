@@ -3,6 +3,10 @@ const path = require('path');
 const dns = require('dns');
 const { Client } = require('pg');
 
+// Intercept DNS lookups inside the Node.js process to bypass GHA IPv6 unreachability issues.
+// Since GHA runners lack IPv6 support, we force resolution of the direct Supabase host
+// to the persistent IPv4 address of the Singapore pooler.
+// We also support options.all array-return format expected by Node's net.connect.
 const originalLookup = dns.lookup;
 dns.lookup = function(hostname, options, callback) {
   const cb = typeof options === 'function' ? options : callback;
