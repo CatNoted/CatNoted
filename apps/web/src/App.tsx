@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AppLayout, ActiveMode } from './layouts/AppLayout.js';
+import { AppLayout, ActiveMode, Workspace } from './layouts/AppLayout.js';
 import { DocumentEditor } from '@catnoted/editor';
 import { InfiniteCanvas } from '@catnoted/canvas';
 import { GraphView } from '@catnoted/graph';
@@ -15,7 +15,14 @@ import { AuthModal } from './components/auth/AuthModal.js';
 import { SettingsModal } from './components/settings/SettingsModal.js';
 import { CommandPalette } from './components/CommandPalette.js';
 
+const defaultWorkspaces: Workspace[] = [
+  { id: 'personal', name: 'Personal Space', description: 'Your private notes and thoughts', emoji: '🏠' },
+  { id: 'research', name: 'Research Lab', description: 'Academic papers & deep dives', emoji: '📚' },
+  { id: 'agent-vfs', name: 'Agent Sandbox', description: 'AI Agent code, tools & widgets', emoji: '🤖' }
+];
+
 const App: React.FC = () => {
+  const [activeWorkspace, setActiveWorkspace] = useState<Workspace>(defaultWorkspaces[0]);
   const [activeMode, setActiveMode] = useState<ActiveMode>('doc');
   const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
   const [isZenMode, setIsZenMode] = useState<boolean>(false);
@@ -111,7 +118,10 @@ const App: React.FC = () => {
             {/* Document Topbar */}
             <div className="flex items-center justify-between px-10 py-4 border-b border-slate-100 dark:border-zinc-800/60">
               <div>
-                <h1 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-zinc-50">Untitled Document</h1>
+                <h1 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-zinc-50 flex items-center gap-2">
+                  <span className="text-lg">{activeWorkspace.emoji}</span>
+                  <span>{activeWorkspace.name} &mdash; Untitled Document</span>
+                </h1>
                 <p className="text-[11px] text-slate-400 dark:text-zinc-500 mt-0.5 flex items-center gap-1.5">
                   Linear Editor &middot; E2EE Sync:
                   <span className="text-indigo-500 font-mono font-semibold">AES-GCM-256</span>
@@ -140,7 +150,10 @@ const App: React.FC = () => {
             <div className="space-y-4">
               <div className="flex items-center justify-between px-2">
                 <div>
-                  <h1 className="text-lg font-bold tracking-tight text-slate-900 dark:text-zinc-50">Edgeless Canvas</h1>
+                  <h1 className="text-lg font-bold tracking-tight text-slate-900 dark:text-zinc-50 flex items-center gap-2">
+                    <span className="text-base">{activeWorkspace.emoji}</span>
+                    <span>{activeWorkspace.name} &mdash; Edgeless Canvas</span>
+                  </h1>
                   <p className="text-xs text-slate-400 dark:text-zinc-500">Spatial whiteboard view synced automatically with document nodes.</p>
                 </div>
                 <button
@@ -176,6 +189,9 @@ const App: React.FC = () => {
         isDarkMode={isDarkMode}
         onToggleTheme={() => setIsDarkMode(!isDarkMode)}
         zenMode={isZenMode}
+        activeWorkspace={activeWorkspace}
+        workspaces={defaultWorkspaces}
+        onWorkspaceChange={setActiveWorkspace}
       >
         {renderContent()}
       </AppLayout>

@@ -15,10 +15,20 @@ import {
   X,
   MessageSquare,
   GripVertical,
-  Minus
+  Minus,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 
 export type ActiveMode = 'doc' | 'canvas' | 'graph' | 'settings';
+
+export interface Workspace {
+  id: string;
+  name: string;
+  description: string;
+  emoji?: string;
+}
 
 interface AppLayoutProps {
   activeMode: ActiveMode;
@@ -27,6 +37,9 @@ interface AppLayoutProps {
   onToggleTheme: () => void;
   zenMode?: boolean;
   children: React.ReactNode;
+  activeWorkspace: Workspace;
+  workspaces: Workspace[];
+  onWorkspaceChange: (workspace: Workspace) => void;
 }
 
 import { requestLlmWidget } from '@catnoted/agent-runtime';
@@ -44,13 +57,21 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   isDarkMode,
   onToggleTheme,
   zenMode = false,
-  children
+  children,
+  activeWorkspace,
+  workspaces,
+  onWorkspaceChange
 }) => {
   const { blocks, addBlock, updateBlockType } = useDocumentStore();
   const [chatInput, setChatInput] = useState('');
   const [messages, setMessages] = useState<Array<{ sender: 'user' | 'agent'; text: string }>>([
     { sender: 'agent', text: "Hello! I am your Space Agent. What would you like to build or note down today?" }
   ]);
+
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
+  const [isViewsOpen, setIsViewsOpen] = useState(true);
+  const [isSystemOpen, setIsSystemOpen] = useState(true);
+  const [isWorkspaceDropdownOpen, setIsWorkspaceDropdownOpen] = useState(false);
 
   // ── Floating panel state ────────────────────────────────────────────
   const [isAgentOpen, setIsAgentOpen] = useState(false);
@@ -201,52 +222,299 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       
       {/* Pane 1: Left Sidebar (Navigation) - Hidden in Zen Mode */}
       {!zenMode && (
-        <aside className="w-16 flex flex-col items-center justify-between py-4 border-r border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 z-10 shrink-0">
-          <div className="flex flex-col items-center gap-6 w-full">
-            <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold shadow-md shadow-indigo-200 dark:shadow-none">
-              CN
-            </div>
+        <aside
+          className={`${
+            isSidebarExpanded ? 'w-64' : 'w-16'
+          } flex flex-col justify-between py-4 border-r border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 z-10 shrink-0 transition-all duration-350 ease-in-out`}
+        >
+          {/* Top Section */}
+          <div className="flex flex-col items-center w-full gap-4">
 
-            <nav className="flex flex-col gap-3 w-full px-2">
-              {[
-                { id: 'doc', icon: FileText, label: 'Doc Mode' },
-                { id: 'canvas', icon: Layout, label: 'Canvas' },
-                { id: 'graph', icon: Network, label: 'Graph' },
-                { id: 'settings', icon: Settings, label: 'Settings' }
-              ].map(item => {
-                const Icon = item.icon;
-                const isActive = activeMode === item.id;
-                return (
+            {/* Logo Area */}
+            {isSidebarExpanded ? (
+              <div className="flex items-center justify-between w-full px-4 mb-2">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold shadow-md shadow-indigo-200 dark:shadow-none">
+                    CN
+                  </div>
+                  <span className="font-extrabold text-sm tracking-tight bg-gradient-to-r from-indigo-600 to-indigo-400 bg-clip-text text-transparent">
+                    CatNoted
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsSidebarExpanded(false)}
+                  title="Collapse Sidebar"
+                  className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-400 hover:text-slate-650 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center gap-3 w-full mb-2">
+                <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold shadow-md shadow-indigo-200 dark:shadow-none">
+                  CN
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsSidebarExpanded(true)}
+                  title="Expand Sidebar"
+                  className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-400 hover:text-slate-650 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+
+            {/* Workspace Switcher Control */}
+            {isSidebarExpanded ? (
+              <div className="relative w-full px-3 mb-2">
+                <button
+                  type="button"
+                  onClick={() => setIsWorkspaceDropdownOpen(!isWorkspaceDropdownOpen)}
+                  aria-haspopup="listbox"
+                  aria-expanded={isWorkspaceDropdownOpen}
+                  className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl border border-slate-100 dark:border-zinc-800/80 hover:bg-slate-50 dark:hover:bg-zinc-850 transition-colors focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
+                >
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="text-base shrink-0">{activeWorkspace.emoji}</span>
+                    <span className="font-semibold text-xs text-slate-800 dark:text-zinc-200 truncate">
+                      {activeWorkspace.name}
+                    </span>
+                  </div>
+                  <ChevronDown className={`w-3.5 h-3.5 text-slate-400 shrink-0 transition-transform duration-250 ${isWorkspaceDropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
+
+                {/* Dropdown Menu */}
+                {isWorkspaceDropdownOpen && (
+                  <div className="absolute left-3 right-3 top-full mt-1.5 z-20 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl shadow-xl p-1 animate-in fade-in slide-in-from-top-1 duration-150">
+                    <div className="text-[9px] font-bold text-slate-400 dark:text-zinc-500 px-3 py-1.5 uppercase tracking-wider">
+                      Select Workspace
+                    </div>
+                    <div role="listbox" className="space-y-0.5 max-h-[180px] overflow-y-auto">
+                      {workspaces.map((ws) => (
+                        <button
+                          key={ws.id}
+                          type="button"
+                          role="option"
+                          aria-selected={ws.id === activeWorkspace.id}
+                          onClick={() => {
+                            onWorkspaceChange(ws);
+                            setIsWorkspaceDropdownOpen(false);
+                          }}
+                          className={`w-full text-left px-3 py-2 rounded-lg flex flex-col gap-0.5 transition-colors focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none ${
+                            ws.id === activeWorkspace.id
+                              ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
+                              : 'hover:bg-slate-50 dark:hover:bg-zinc-850 text-slate-700 dark:text-zinc-300'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2 font-medium text-xs">
+                            <span>{ws.emoji}</span>
+                            <span>{ws.name}</span>
+                          </div>
+                          <span className="text-[10px] text-slate-400 dark:text-zinc-500 pl-6 line-clamp-1">
+                            {ws.description}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="relative mb-2">
+                <button
+                  type="button"
+                  onClick={() => setIsWorkspaceDropdownOpen(!isWorkspaceDropdownOpen)}
+                  title={activeWorkspace.name}
+                  aria-haspopup="listbox"
+                  aria-expanded={isWorkspaceDropdownOpen}
+                  className="w-10 h-10 rounded-xl flex items-center justify-center border border-slate-100 dark:border-zinc-850 hover:bg-slate-50 dark:hover:bg-zinc-850 transition-colors focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
+                >
+                  <span className="text-lg">{activeWorkspace.emoji}</span>
+                </button>
+
+                {/* Mini Dropdown Menu */}
+                {isWorkspaceDropdownOpen && (
+                  <div className="absolute left-12 top-0 w-52 z-20 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl shadow-xl p-1 animate-in fade-in slide-in-from-left-1 duration-150">
+                    <div className="text-[9px] font-bold text-slate-400 dark:text-zinc-500 px-3 py-1.5 uppercase tracking-wider">
+                      Workspaces
+                    </div>
+                    <div role="listbox" className="space-y-0.5">
+                      {workspaces.map((ws) => (
+                        <button
+                          key={ws.id}
+                          type="button"
+                          role="option"
+                          aria-selected={ws.id === activeWorkspace.id}
+                          onClick={() => {
+                            onWorkspaceChange(ws);
+                            setIsWorkspaceDropdownOpen(false);
+                          }}
+                          className={`w-full text-left px-3 py-1.5 rounded-lg flex items-center gap-2 transition-colors focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none ${
+                            ws.id === activeWorkspace.id
+                              ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
+                              : 'hover:bg-slate-50 dark:hover:bg-zinc-850 text-slate-700 dark:text-zinc-300'
+                          }`}
+                        >
+                          <span className="text-xs">{ws.emoji}</span>
+                          <span className="text-xs font-semibold">{ws.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Navigation Body */}
+            {isSidebarExpanded ? (
+              <div className="flex flex-col gap-4 w-full">
+                {/* Collapsible Section: Views */}
+                <div className="w-full px-3">
                   <button
-                    key={item.id}
-                    onClick={() => onModeChange(item.id as ActiveMode)}
-                    title={item.label}
-                    className={`w-full py-3 rounded-xl flex items-center justify-center transition-all duration-200 ${
-                      isActive 
-                        ? 'bg-indigo-50 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 font-semibold shadow-sm shadow-indigo-500/10 dark:shadow-indigo-500/5' 
-                        : 'text-slate-400 dark:text-zinc-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10'
-                    }`}
+                    type="button"
+                    onClick={() => setIsViewsOpen(!isViewsOpen)}
+                    aria-expanded={isViewsOpen}
+                    className="w-full flex items-center justify-between px-2 py-1 rounded-lg text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors focus-visible:ring-1 focus-visible:ring-indigo-500 focus-visible:outline-none"
                   >
-                    <Icon className="w-5 h-5" />
+                    <span className="text-[9px] font-bold uppercase tracking-wider">Views</span>
+                    {isViewsOpen ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
                   </button>
-                );
-              })}
-            </nav>
+
+                  {isViewsOpen && (
+                    <div className="mt-1 space-y-0.5">
+                      {[
+                        { id: 'doc', icon: FileText, label: 'Doc Mode' },
+                        { id: 'canvas', icon: Layout, label: 'Canvas' },
+                        { id: 'graph', icon: Network, label: 'Graph' }
+                      ].map(item => {
+                        const Icon = item.icon;
+                        const isActive = activeMode === item.id;
+                        return (
+                          <button
+                            key={item.id}
+                            type="button"
+                            onClick={() => onModeChange(item.id as ActiveMode)}
+                            className={`w-full px-3 py-1.5 rounded-xl flex items-center gap-2.5 transition-all duration-200 text-xs font-semibold focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none ${
+                              isActive
+                                ? 'bg-indigo-50 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-400'
+                                : 'text-slate-500 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50/50 dark:hover:bg-indigo-500/5'
+                            }`}
+                          >
+                            <Icon className="w-3.5 h-3.5 shrink-0" />
+                            <span className="truncate">{item.label}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                {/* Collapsible Section: System */}
+                <div className="w-full px-3">
+                  <button
+                    type="button"
+                    onClick={() => setIsSystemOpen(!isSystemOpen)}
+                    aria-expanded={isSystemOpen}
+                    className="w-full flex items-center justify-between px-2 py-1 rounded-lg text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors focus-visible:ring-1 focus-visible:ring-indigo-500 focus-visible:outline-none"
+                  >
+                    <span className="text-[9px] font-bold uppercase tracking-wider">System</span>
+                    {isSystemOpen ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+                  </button>
+
+                  {isSystemOpen && (
+                    <div className="mt-1 space-y-0.5">
+                      {[
+                        { id: 'settings', icon: Settings, label: 'Settings' }
+                      ].map(item => {
+                        const Icon = item.icon;
+                        const isActive = activeMode === item.id;
+                        return (
+                          <button
+                            key={item.id}
+                            type="button"
+                            onClick={() => onModeChange(item.id as ActiveMode)}
+                            className={`w-full px-3 py-1.5 rounded-xl flex items-center gap-2.5 transition-all duration-200 text-xs font-semibold focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none ${
+                              isActive
+                                ? 'bg-indigo-50 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-400'
+                                : 'text-slate-500 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50/50 dark:hover:bg-indigo-500/5'
+                            }`}
+                          >
+                            <Icon className="w-3.5 h-3.5 shrink-0" />
+                            <span className="truncate">{item.label}</span>
+                          </button>
+                        );
+                      })}
+
+                      {/* Theme Toggle within system section */}
+                      <button
+                        type="button"
+                        onClick={onToggleTheme}
+                        className="w-full px-3 py-1.5 rounded-xl flex items-center gap-2.5 transition-all duration-200 text-xs font-semibold text-slate-500 dark:text-zinc-400 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50/50 dark:hover:bg-amber-500/5 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
+                      >
+                        {isDarkMode ? <Sun className="w-3.5 h-3.5 shrink-0 text-amber-500" /> : <Moon className="w-3.5 h-3.5 shrink-0" />}
+                        <span>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <nav className="flex flex-col items-center gap-3 w-full px-2">
+                {[
+                  { id: 'doc', icon: FileText, label: 'Doc Mode' },
+                  { id: 'canvas', icon: Layout, label: 'Canvas' },
+                  { id: 'graph', icon: Network, label: 'Graph' },
+                  { id: 'settings', icon: Settings, label: 'Settings' }
+                ].map(item => {
+                  const Icon = item.icon;
+                  const isActive = activeMode === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => onModeChange(item.id as ActiveMode)}
+                      title={item.label}
+                      className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none ${
+                        isActive
+                          ? 'bg-indigo-50 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 font-semibold shadow-sm'
+                          : 'text-slate-400 dark:text-zinc-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10'
+                      }`}
+                    >
+                      <Icon className="w-5 h-5" />
+                    </button>
+                  );
+                })}
+
+                <button
+                  type="button"
+                  onClick={onToggleTheme}
+                  className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 dark:text-zinc-500 hover:text-amber-500 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
+                  title={isDarkMode ? 'Light Mode' : 'Dark Mode'}
+                >
+                  {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                </button>
+              </nav>
+            )}
           </div>
 
-          <div className="flex flex-col items-center gap-4 w-full">
-            <button
-              onClick={onToggleTheme}
-              className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 dark:text-zinc-500 hover:text-amber-500 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all duration-200"
-              title={isDarkMode ? 'Light Mode' : 'Dark Mode'}
-            >
-              {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
-
-            <div className="w-8 h-8 rounded-full bg-slate-300 dark:bg-zinc-700 flex items-center justify-center text-slate-600 dark:text-zinc-300 text-xs font-semibold">
+          {/* User Profile Footer */}
+          {isSidebarExpanded ? (
+            <div className="flex items-center gap-3 px-4 py-2.5 border-t border-slate-100 dark:border-zinc-800/80 w-full mt-auto">
+              <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xs font-semibold">
+                US
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-bold text-slate-800 dark:text-zinc-200 truncate">Space User</p>
+                <p className="text-[10px] text-slate-400 dark:text-zinc-500 truncate">Guest Workspace</p>
+              </div>
+            </div>
+          ) : (
+            <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xs font-semibold mt-auto mb-1" title="Space User (Guest Workspace)">
               US
             </div>
-          </div>
+          )}
         </aside>
       )}
 
@@ -254,7 +522,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       <main className="flex-1 flex flex-col h-full overflow-hidden bg-slate-50 dark:bg-zinc-950">
         <header className="h-14 px-6 border-b border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-xs uppercase tracking-widest text-slate-400 dark:text-zinc-500 font-bold">Workspace</span>
+            <span className="text-xs uppercase tracking-widest text-slate-400 dark:text-zinc-500 font-bold">{activeWorkspace.name}</span>
             <span className="text-slate-300 dark:text-zinc-700">/</span>
             <span className="text-sm font-semibold capitalize">{activeMode} View</span>
             {zenMode && (
