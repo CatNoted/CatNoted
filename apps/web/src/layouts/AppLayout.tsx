@@ -1,11 +1,11 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { 
-  FileText, 
-  Layout, 
-  Network, 
-  Settings, 
-  Moon, 
-  Sun, 
+import React, { useState, useRef, useCallback, useEffect } from "react";
+import {
+  FileText,
+  Layout,
+  Network,
+  Settings,
+  Moon,
+  Sun,
   Send,
   Bot,
   Sparkles,
@@ -15,10 +15,14 @@ import {
   X,
   MessageSquare,
   GripVertical,
-  Minus
-} from 'lucide-react';
+  ChevronDown,
+  ChevronRight,
+  FolderDot,
+  Check,
+  Minus,
+} from "lucide-react";
 
-export type ActiveMode = 'doc' | 'canvas' | 'graph' | 'settings';
+export type ActiveMode = "doc" | "canvas" | "graph" | "settings";
 
 interface AppLayoutProps {
   activeMode: ActiveMode;
@@ -26,11 +30,13 @@ interface AppLayoutProps {
   isDarkMode: boolean;
   onToggleTheme: () => void;
   zenMode?: boolean;
+  currentWorkspace?: string;
+  onWorkspaceChange?: (workspace: string) => void;
   children: React.ReactNode;
 }
 
-import { requestLlmWidget } from '@catnoted/agent-runtime';
-import { useDocumentStore } from '@catnoted/editor';
+import { requestLlmWidget } from "@catnoted/agent-runtime";
+import { useDocumentStore } from "@catnoted/editor";
 
 // ── Floating panel position & size constants ────────────────────────────
 const PANEL_DEFAULT_WIDTH = 380;
@@ -44,19 +50,34 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   isDarkMode,
   onToggleTheme,
   zenMode = false,
-  children
+  currentWorkspace = "Personal Space",
+  onWorkspaceChange,
+  children,
 }) => {
   const { blocks, addBlock, updateBlockType } = useDocumentStore();
-  const [chatInput, setChatInput] = useState('');
-  const [messages, setMessages] = useState<Array<{ sender: 'user' | 'agent'; text: string }>>([
-    { sender: 'agent', text: "Hello! I am your Space Agent. What would you like to build or note down today?" }
+
+  // ── Sidebar state ────────────────────────────────────────────────
+  const [isViewsCollapsed, setIsViewsCollapsed] = useState(false);
+  const [isSwitcherOpen, setIsSwitcherOpen] = useState(false);
+  const workspaces = ["Personal Space", "Team Workspace", "Project X"];
+  const [chatInput, setChatInput] = useState("");
+  const [messages, setMessages] = useState<
+    Array<{ sender: "user" | "agent"; text: string }>
+  >([
+    {
+      sender: "agent",
+      text: "Hello! I am your Space Agent. What would you like to build or note down today?",
+    },
   ]);
 
   // ── Floating panel state ────────────────────────────────────────────
   const [isAgentOpen, setIsAgentOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [panelPos, setPanelPos] = useState({ x: -1, y: -1 }); // -1 = not yet initialized
-  const [panelSize, setPanelSize] = useState({ w: PANEL_DEFAULT_WIDTH, h: PANEL_DEFAULT_HEIGHT });
+  const [panelSize, setPanelSize] = useState({
+    w: PANEL_DEFAULT_WIDTH,
+    h: PANEL_DEFAULT_HEIGHT,
+  });
 
   // Drag state refs (avoid re-renders during drag)
   const isDragging = useRef(false);
@@ -79,89 +100,123 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   }, [isAgentOpen, panelPos.x]);
 
   // ── Drag handlers ──────────────────────────────────────────────────
-  const handleDragStart = useCallback((e: React.MouseEvent) => {
-    // Only drag from the header grip area
-    if ((e.target as HTMLElement).closest('button')) return;
-    e.preventDefault();
-    isDragging.current = true;
-    dragOffset.current = {
-      x: e.clientX - panelPos.x,
-      y: e.clientY - panelPos.y,
-    };
+  const handleDragStart = useCallback(
+    (e: React.MouseEvent) => {
+      // Only drag from the header grip area
+      if ((e.target as HTMLElement).closest("button")) return;
+      e.preventDefault();
+      isDragging.current = true;
+      dragOffset.current = {
+        x: e.clientX - panelPos.x,
+        y: e.clientY - panelPos.y,
+      };
 
-    const handleMove = (ev: MouseEvent) => {
-      if (!isDragging.current) return;
-      const newX = Math.max(0, Math.min(window.innerWidth - panelSize.w, ev.clientX - dragOffset.current.x));
-      const newY = Math.max(0, Math.min(window.innerHeight - 48, ev.clientY - dragOffset.current.y));
-      setPanelPos({ x: newX, y: newY });
-    };
+      const handleMove = (ev: MouseEvent) => {
+        if (!isDragging.current) return;
+        const newX = Math.max(
+          0,
+          Math.min(
+            window.innerWidth - panelSize.w,
+            ev.clientX - dragOffset.current.x,
+          ),
+        );
+        const newY = Math.max(
+          0,
+          Math.min(window.innerHeight - 48, ev.clientY - dragOffset.current.y),
+        );
+        setPanelPos({ x: newX, y: newY });
+      };
 
-    const handleUp = () => {
-      isDragging.current = false;
-      document.removeEventListener('mousemove', handleMove);
-      document.removeEventListener('mouseup', handleUp);
-    };
+      const handleUp = () => {
+        isDragging.current = false;
+        document.removeEventListener("mousemove", handleMove);
+        document.removeEventListener("mouseup", handleUp);
+      };
 
-    document.addEventListener('mousemove', handleMove);
-    document.addEventListener('mouseup', handleUp);
-  }, [panelPos, panelSize.w]);
+      document.addEventListener("mousemove", handleMove);
+      document.addEventListener("mouseup", handleUp);
+    },
+    [panelPos, panelSize.w],
+  );
 
   // ── Resize handlers (bottom-left corner) ───────────────────────────
-  const handleResizeStart = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    isResizing.current = true;
-    resizeStart.current = { x: e.clientX, y: e.clientY, w: panelSize.w, h: panelSize.h };
+  const handleResizeStart = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      isResizing.current = true;
+      resizeStart.current = {
+        x: e.clientX,
+        y: e.clientY,
+        w: panelSize.w,
+        h: panelSize.h,
+      };
 
-    const handleMove = (ev: MouseEvent) => {
-      if (!isResizing.current) return;
-      const dw = resizeStart.current.x - ev.clientX; // left edge moves left = larger
-      const dh = ev.clientY - resizeStart.current.y;
-      const newW = Math.max(PANEL_MIN_WIDTH, resizeStart.current.w + dw);
-      const newH = Math.max(PANEL_MIN_HEIGHT, resizeStart.current.h + dh);
+      const handleMove = (ev: MouseEvent) => {
+        if (!isResizing.current) return;
+        const dw = resizeStart.current.x - ev.clientX; // left edge moves left = larger
+        const dh = ev.clientY - resizeStart.current.y;
+        const newW = Math.max(PANEL_MIN_WIDTH, resizeStart.current.w + dw);
+        const newH = Math.max(PANEL_MIN_HEIGHT, resizeStart.current.h + dh);
 
-      // Adjust position to keep right edge anchored
-      setPanelSize({ w: newW, h: newH });
-      setPanelPos(prev => ({ x: Math.max(0, prev.x - (newW - panelSize.w)), y: prev.y }));
-    };
+        // Adjust position to keep right edge anchored
+        setPanelSize({ w: newW, h: newH });
+        setPanelPos((prev) => ({
+          x: Math.max(0, prev.x - (newW - panelSize.w)),
+          y: prev.y,
+        }));
+      };
 
-    const handleUp = () => {
-      isResizing.current = false;
-      document.removeEventListener('mousemove', handleMove);
-      document.removeEventListener('mouseup', handleUp);
-    };
+      const handleUp = () => {
+        isResizing.current = false;
+        document.removeEventListener("mousemove", handleMove);
+        document.removeEventListener("mouseup", handleUp);
+      };
 
-    document.addEventListener('mousemove', handleMove);
-    document.addEventListener('mouseup', handleUp);
-  }, [panelSize, panelPos]);
+      document.addEventListener("mousemove", handleMove);
+      document.addEventListener("mouseup", handleUp);
+    },
+    [panelSize, panelPos],
+  );
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!chatInput.trim()) return;
 
     const userMsg = chatInput;
-    setMessages(prev => [...prev, { sender: 'user', text: userMsg }]);
-    setChatInput('');
+    setMessages((prev) => [...prev, { sender: "user", text: userMsg }]);
+    setChatInput("");
 
     try {
       const response = await requestLlmWidget(userMsg);
-      setMessages(prev => [...prev, { sender: 'agent', text: response.text }]);
+      setMessages((prev) => [
+        ...prev,
+        { sender: "agent", text: response.text },
+      ]);
 
-      const newBlockId = addBlock(null, 'widget', '');
-      updateBlockType(newBlockId, 'widget', {
+      const newBlockId = addBlock(null, "widget", "");
+      updateBlockType(newBlockId, "widget", {
         widgetId: `ai-widget-${Math.random().toString(36).substring(2, 6)}`,
-        srcDoc: response.code
+        srcDoc: response.code,
       });
     } catch (error) {
-      setMessages(prev => [...prev, { sender: 'agent', text: 'Failed to request LLM widget sandbox compiles.' }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          sender: "agent",
+          text: "Failed to request LLM widget sandbox compiles.",
+        },
+      ]);
     }
   };
 
   // Export all widgets from the document store as JSON catalog
   const handleExportWidgets = () => {
-    const widgets = blocks.filter(b => b.type === 'widget');
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(widgets, null, 2));
-    const downloadAnchor = document.createElement('a');
+    const widgets = blocks.filter((b) => b.type === "widget");
+    const dataStr =
+      "data:text/json;charset=utf-8," +
+      encodeURIComponent(JSON.stringify(widgets, null, 2));
+    const downloadAnchor = document.createElement("a");
     downloadAnchor.setAttribute("href", dataStr);
     downloadAnchor.setAttribute("download", "catnoted-widgets.json");
     document.body.appendChild(downloadAnchor);
@@ -174,18 +229,18 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     const fileReader = new FileReader();
     const files = e.target.files;
     if (!files || files.length === 0) return;
-    
-    fileReader.onload = event => {
+
+    fileReader.onload = (event) => {
       try {
         const parsed = JSON.parse(event.target?.result as string);
         const widgetList = Array.isArray(parsed) ? parsed : [parsed];
-        
-        widgetList.forEach(widget => {
-          if (widget.type === 'widget' && widget.properties?.srcDoc) {
-            const newId = addBlock(null, 'widget', '');
-            updateBlockType(newId, 'widget', {
-              widgetId: widget.properties.widgetId || 'imported-widget',
-              srcDoc: widget.properties.srcDoc
+
+        widgetList.forEach((widget) => {
+          if (widget.type === "widget" && widget.properties?.srcDoc) {
+            const newId = addBlock(null, "widget", "");
+            updateBlockType(newId, "widget", {
+              widgetId: widget.properties.widgetId || "imported-widget",
+              srcDoc: widget.properties.srcDoc,
             });
           }
         });
@@ -198,54 +253,146 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-zinc-100">
-      
       {/* Pane 1: Left Sidebar (Navigation) - Hidden in Zen Mode */}
       {!zenMode && (
-        <aside className="w-16 flex flex-col items-center justify-between py-4 border-r border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 z-10 shrink-0">
-          <div className="flex flex-col items-center gap-6 w-full">
-            <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold shadow-md shadow-indigo-200 dark:shadow-none">
-              CN
+        <aside className="w-64 flex flex-col justify-between py-4 border-r border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950 z-10 shrink-0 h-full">
+          <div className="flex flex-col gap-4 w-full px-3">
+            {/* Workspace Switcher */}
+            <div className="relative w-full">
+              <button
+                onClick={() => setIsSwitcherOpen(!isSwitcherOpen)}
+                className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-slate-200/50 dark:hover:bg-zinc-800/50 transition-colors group"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold shadow-md shadow-indigo-200 dark:shadow-none shrink-0">
+                    CN
+                  </div>
+                  <div className="flex flex-col items-start overflow-hidden">
+                    <span className="text-sm font-semibold text-slate-700 dark:text-zinc-200 truncate w-36 text-left">
+                      {currentWorkspace}
+                    </span>
+                    <span className="text-[10px] text-slate-400 dark:text-zinc-500 font-medium">
+                      Free Plan
+                    </span>
+                  </div>
+                </div>
+                <ChevronDown className="w-4 h-4 text-slate-400 dark:text-zinc-500 group-hover:text-slate-600 dark:group-hover:text-zinc-300 transition-colors" />
+              </button>
+
+              {isSwitcherOpen && (
+                <>
+                  <div
+                    className="fixed inset-0 z-40"
+                    onClick={() => setIsSwitcherOpen(false)}
+                  ></div>
+                  <div className="absolute top-14 left-0 w-[240px] bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl shadow-xl shadow-slate-200/50 dark:shadow-black/40 p-2 z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider px-2 py-1.5 mb-1">
+                      Workspaces
+                    </div>
+                    {workspaces.map((ws) => (
+                      <button
+                        key={ws}
+                        onClick={() => {
+                          onWorkspaceChange?.(ws);
+                          setIsSwitcherOpen(false);
+                        }}
+                        className={`w-full flex items-center justify-between px-2 py-2 rounded-lg text-sm transition-colors ${
+                          currentWorkspace === ws
+                            ? "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-medium"
+                            : "text-slate-600 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800"
+                        }`}
+                      >
+                        <span className="flex items-center gap-2">
+                          <FolderDot
+                            className={`w-4 h-4 ${currentWorkspace === ws ? "text-indigo-500" : "text-slate-400 dark:text-zinc-500"}`}
+                          />
+                          {ws}
+                        </span>
+                        {currentWorkspace === ws && (
+                          <Check className="w-3.5 h-3.5" />
+                        )}
+                      </button>
+                    ))}
+                    <div className="h-px bg-slate-100 dark:bg-zinc-800 my-1"></div>
+                    <button className="w-full flex items-center gap-2 px-2 py-2 rounded-lg text-sm text-slate-500 dark:text-zinc-400 hover:text-slate-700 dark:hover:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors">
+                      <Layout className="w-4 h-4" /> Create new workspace
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
 
-            <nav className="flex flex-col gap-3 w-full px-2">
-              {[
-                { id: 'doc', icon: FileText, label: 'Doc Mode' },
-                { id: 'canvas', icon: Layout, label: 'Canvas' },
-                { id: 'graph', icon: Network, label: 'Graph' },
-                { id: 'settings', icon: Settings, label: 'Settings' }
-              ].map(item => {
-                const Icon = item.icon;
-                const isActive = activeMode === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => onModeChange(item.id as ActiveMode)}
-                    title={item.label}
-                    className={`w-full py-3 rounded-xl flex items-center justify-center transition-all duration-200 ${
-                      isActive 
-                        ? 'bg-indigo-50 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 font-semibold shadow-sm shadow-indigo-500/10 dark:shadow-indigo-500/5' 
-                        : 'text-slate-400 dark:text-zinc-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10'
-                    }`}
-                  >
-                    <Icon className="w-5 h-5" />
-                  </button>
-                );
-              })}
-            </nav>
+            {/* Collapsible Views Section */}
+            <div className="w-full">
+              <button
+                onClick={() => setIsViewsCollapsed(!isViewsCollapsed)}
+                className="w-full flex items-center gap-1 px-2 py-1.5 group"
+              >
+                {isViewsCollapsed ? (
+                  <ChevronRight className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 group-hover:text-slate-600 dark:group-hover:text-zinc-300 transition-colors" />
+                ) : (
+                  <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 group-hover:text-slate-600 dark:group-hover:text-zinc-300 transition-colors" />
+                )}
+                <span className="text-[11px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider group-hover:text-slate-600 dark:group-hover:text-zinc-300 transition-colors">
+                  VIEWS
+                </span>
+              </button>
+
+              <div
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${isViewsCollapsed ? "max-h-0 opacity-0" : "max-h-64 opacity-100 mt-1"}`}
+              >
+                <nav className="flex flex-col gap-1 w-full">
+                  {[
+                    { id: "doc", icon: FileText, label: "Doc Mode" },
+                    { id: "canvas", icon: Layout, label: "Canvas" },
+                    { id: "graph", icon: Network, label: "Graph" },
+                    { id: "settings", icon: Settings, label: "Settings" },
+                  ].map((item) => {
+                    const Icon = item.icon;
+                    const isActive = activeMode === item.id;
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => onModeChange(item.id as ActiveMode)}
+                        title={item.label}
+                        className={`w-full px-3 py-2 rounded-lg flex items-center gap-3 transition-all duration-200 ${
+                          isActive
+                            ? "bg-indigo-100/50 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 font-medium shadow-sm shadow-indigo-500/5 dark:shadow-indigo-500/5"
+                            : "text-slate-500 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-200/50 dark:hover:bg-indigo-500/10"
+                        }`}
+                      >
+                        <Icon className="w-4 h-4 shrink-0" />
+                        <span className="text-sm">{item.label}</span>
+                      </button>
+                    );
+                  })}
+                </nav>
+              </div>
+            </div>
           </div>
 
-          <div className="flex flex-col items-center gap-4 w-full">
+          <div className="flex flex-col gap-2 w-full px-3">
             <button
               onClick={onToggleTheme}
-              className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 dark:text-zinc-500 hover:text-amber-500 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all duration-200"
-              title={isDarkMode ? 'Light Mode' : 'Dark Mode'}
+              className="w-full px-3 py-2 rounded-lg flex items-center gap-3 text-slate-500 dark:text-zinc-400 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-slate-200/50 dark:hover:bg-amber-500/10 transition-all duration-200"
+              title={isDarkMode ? "Light Mode" : "Dark Mode"}
             >
-              {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              {isDarkMode ? (
+                <Sun className="w-4 h-4 shrink-0" />
+              ) : (
+                <Moon className="w-4 h-4 shrink-0" />
+              )}
+              <span className="text-sm">
+                {isDarkMode ? "Light Mode" : "Dark Mode"}
+              </span>
             </button>
 
-            <div className="w-8 h-8 rounded-full bg-slate-300 dark:bg-zinc-700 flex items-center justify-center text-slate-600 dark:text-zinc-300 text-xs font-semibold">
-              US
-            </div>
+            <button className="w-full px-3 py-2 rounded-lg flex items-center gap-3 text-slate-500 dark:text-zinc-400 hover:text-slate-700 dark:hover:text-zinc-200 hover:bg-slate-200/50 dark:hover:bg-zinc-800 transition-all duration-200">
+              <div className="w-5 h-5 rounded-full bg-slate-300 dark:bg-zinc-700 flex items-center justify-center text-slate-600 dark:text-zinc-300 text-[9px] font-bold shrink-0">
+                US
+              </div>
+              <span className="text-sm font-medium">User Account</span>
+            </button>
           </div>
         </aside>
       )}
@@ -254,9 +401,13 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       <main className="flex-1 flex flex-col h-full overflow-hidden bg-slate-50 dark:bg-zinc-950">
         <header className="h-14 px-6 border-b border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-xs uppercase tracking-widest text-slate-400 dark:text-zinc-500 font-bold">Workspace</span>
+            <span className="text-xs uppercase tracking-widest text-slate-400 dark:text-zinc-500 font-bold">
+              Workspace
+            </span>
             <span className="text-slate-300 dark:text-zinc-700">/</span>
-            <span className="text-sm font-semibold capitalize">{activeMode} View</span>
+            <span className="text-sm font-semibold capitalize">
+              {activeMode} View
+            </span>
             {zenMode && (
               <span className="text-[10px] bg-indigo-100 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 px-2 py-0.5 rounded ml-2 font-mono font-semibold">
                 Zen Active (Press Cmd+K to toggle sidebars)
@@ -271,9 +422,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           </div>
         </header>
 
-        <div className="flex-1 overflow-hidden">
-          {children}
-        </div>
+        <div className="flex-1 overflow-hidden">{children}</div>
       </main>
 
       {/* ── Floating Agent Toggle FAB ─────────────────────────────────── */}
@@ -283,7 +432,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-2xl bg-indigo-600 hover:bg-indigo-500 dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/25 dark:shadow-indigo-500/30 hover:shadow-xl hover:shadow-indigo-500/40 dark:hover:shadow-indigo-400/35 flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 group"
           title="Open Space Agent"
           style={{
-            animation: 'floatFab 3s ease-in-out infinite',
+            animation: "floatFab 3s ease-in-out infinite",
           }}
         >
           <Bot className="w-6 h-6 transition-all duration-300 group-hover:opacity-0 group-hover:scale-75 absolute" />
@@ -299,36 +448,42 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       {isAgentOpen && (
         <div
           ref={panelRef}
-          className={`fixed z-50 flex flex-col transition-shadow duration-300 ${isMinimized ? '' : ''}`}
+          className={`fixed z-50 flex flex-col transition-shadow duration-300 ${isMinimized ? "" : ""}`}
           style={{
             left: panelPos.x,
             top: panelPos.y,
             width: isMinimized ? PANEL_DEFAULT_WIDTH : panelSize.w,
             height: isMinimized ? 52 : panelSize.h,
             borderRadius: 20,
-            overflow: 'hidden',
+            overflow: "hidden",
             // Glassmorphism backdrop
             background: isDarkMode
-              ? 'linear-gradient(180deg, rgba(15, 23, 42, 0.92) 0%, rgba(9, 14, 28, 0.96) 100%)'
-              : 'linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(248, 250, 252, 0.96) 100%)',
-            backdropFilter: 'blur(24px) saturate(1.6)',
-            WebkitBackdropFilter: 'blur(24px) saturate(1.6)',
-            border: isDarkMode ? '1px solid rgba(99, 102, 241, 0.18)' : '1px solid rgba(99, 102, 241, 0.15)',
+              ? "linear-gradient(180deg, rgba(15, 23, 42, 0.92) 0%, rgba(9, 14, 28, 0.96) 100%)"
+              : "linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(248, 250, 252, 0.96) 100%)",
+            backdropFilter: "blur(24px) saturate(1.6)",
+            WebkitBackdropFilter: "blur(24px) saturate(1.6)",
+            border: isDarkMode
+              ? "1px solid rgba(99, 102, 241, 0.18)"
+              : "1px solid rgba(99, 102, 241, 0.15)",
             boxShadow: isDarkMode
-              ? '0 8px 40px -8px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(99, 102, 241, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.04)'
-              : '0 8px 40px -8px rgba(99, 102, 241, 0.2), 0 0 0 1px rgba(99, 102, 241, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
-            animation: 'slideInPanel 0.35s cubic-bezier(0.16, 1, 0.3, 1)',
+              ? "0 8px 40px -8px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(99, 102, 241, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.04)"
+              : "0 8px 40px -8px rgba(99, 102, 241, 0.2), 0 0 0 1px rgba(99, 102, 241, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6)",
+            animation: "slideInPanel 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
           }}
         >
           {/* ── Panel Header (Draggable) ──────────────────────────────── */}
           <div
             className="flex items-center justify-between px-4 h-[52px] shrink-0 select-none"
             style={{
-              cursor: 'grab',
-              borderBottom: isMinimized ? 'none' : (isDarkMode ? '1px solid rgba(99, 102, 241, 0.12)' : '1px solid rgba(99, 102, 241, 0.1)'),
+              cursor: "grab",
+              borderBottom: isMinimized
+                ? "none"
+                : isDarkMode
+                  ? "1px solid rgba(99, 102, 241, 0.12)"
+                  : "1px solid rgba(99, 102, 241, 0.1)",
               background: isDarkMode
-                ? 'linear-gradient(90deg, rgba(99, 102, 241, 0.06) 0%, transparent 100%)'
-                : 'linear-gradient(90deg, rgba(99, 102, 241, 0.04) 0%, transparent 100%)',
+                ? "linear-gradient(90deg, rgba(99, 102, 241, 0.06) 0%, transparent 100%)"
+                : "linear-gradient(90deg, rgba(99, 102, 241, 0.04) 0%, transparent 100%)",
             }}
             onMouseDown={handleDragStart}
           >
@@ -337,19 +492,24 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               <div className="w-7 h-7 rounded-lg bg-indigo-600/10 dark:bg-indigo-500/10 flex items-center justify-center">
                 <Bot className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
               </div>
-              <span className="font-semibold text-sm text-slate-800 dark:text-zinc-100 tracking-tight">Space Agent</span>
+              <span className="font-semibold text-sm text-slate-800 dark:text-zinc-100 tracking-tight">
+                Space Agent
+              </span>
               <Sparkles className="w-3.5 h-3.5 text-indigo-500 animate-pulse" />
             </div>
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setIsMinimized(!isMinimized)}
                 className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 dark:text-zinc-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/15 transition-all duration-200 hover:scale-110"
-                title={isMinimized ? 'Expand' : 'Minimize'}
+                title={isMinimized ? "Expand" : "Minimize"}
               >
                 <Minus className="w-4 h-4" />
               </button>
               <button
-                onClick={() => { setIsAgentOpen(false); setIsMinimized(false); }}
+                onClick={() => {
+                  setIsAgentOpen(false);
+                  setIsMinimized(false);
+                }}
                 className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 dark:text-zinc-500 hover:text-rose-500 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/15 transition-all duration-200 hover:scale-110"
                 title="Close"
               >
@@ -365,7 +525,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               <div
                 className="px-3 py-2 flex gap-2 justify-between shrink-0"
                 style={{
-                  borderBottom: isDarkMode ? '1px solid rgba(99, 102, 241, 0.08)' : '1px solid rgba(99, 102, 241, 0.06)',
+                  borderBottom: isDarkMode
+                    ? "1px solid rgba(99, 102, 241, 0.08)"
+                    : "1px solid rgba(99, 102, 241, 0.06)",
                 }}
               >
                 <button
@@ -389,22 +551,30 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               {/* Messages list */}
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {messages.map((msg, index) => (
-                  <div 
-                    key={index} 
-                    className={`flex gap-2 max-w-[85%] ${msg.sender === 'user' ? 'ml-auto flex-row-reverse' : ''}`}
+                  <div
+                    key={index}
+                    className={`flex gap-2 max-w-[85%] ${msg.sender === "user" ? "ml-auto flex-row-reverse" : ""}`}
                   >
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0 ${
-                      msg.sender === 'user' 
-                        ? 'bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300' 
-                        : 'bg-indigo-100 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400'
-                    }`}>
-                      {msg.sender === 'user' ? <User className="w-3.5 h-3.5" /> : <Bot className="w-3.5 h-3.5" />}
+                    <div
+                      className={`w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0 ${
+                        msg.sender === "user"
+                          ? "bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300"
+                          : "bg-indigo-100 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400"
+                      }`}
+                    >
+                      {msg.sender === "user" ? (
+                        <User className="w-3.5 h-3.5" />
+                      ) : (
+                        <Bot className="w-3.5 h-3.5" />
+                      )}
                     </div>
-                    <div className={`p-3 rounded-2xl text-xs leading-relaxed ${
-                      msg.sender === 'user'
-                        ? 'bg-indigo-600 text-white rounded-tr-none shadow-sm shadow-indigo-600/20'
-                        : 'bg-slate-100 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-200 rounded-tl-none border border-transparent dark:border-zinc-700/40'
-                    }`}>
+                    <div
+                      className={`p-3 rounded-2xl text-xs leading-relaxed ${
+                        msg.sender === "user"
+                          ? "bg-indigo-600 text-white rounded-tr-none shadow-sm shadow-indigo-600/20"
+                          : "bg-slate-100 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-200 rounded-tl-none border border-transparent dark:border-zinc-700/40"
+                      }`}
+                    >
                       {msg.text}
                     </div>
                   </div>
@@ -416,7 +586,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 onSubmit={handleSendMessage}
                 className="p-3 shrink-0"
                 style={{
-                  borderTop: isDarkMode ? '1px solid rgba(99, 102, 241, 0.08)' : '1px solid rgba(99, 102, 241, 0.06)',
+                  borderTop: isDarkMode
+                    ? "1px solid rgba(99, 102, 241, 0.08)"
+                    : "1px solid rgba(99, 102, 241, 0.06)",
                 }}
               >
                 <div className="relative flex items-center">
@@ -427,7 +599,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     placeholder="Ask agent to generate a widget..."
                     className="w-full pl-3 pr-10 py-2.5 rounded-xl border border-slate-200 dark:border-zinc-700/60 bg-white/80 dark:bg-zinc-900/60 text-xs text-slate-800 dark:text-zinc-200 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 dark:focus:ring-indigo-400/30 focus:border-indigo-400 dark:focus:border-indigo-500/50 hover:border-slate-300 dark:hover:border-zinc-600 transition-all duration-200"
                   />
-                  <button 
+                  <button
                     type="submit"
                     className="absolute right-1.5 p-1.5 bg-indigo-600 hover:bg-indigo-500 dark:hover:bg-indigo-500 text-white rounded-lg transition-all duration-200 hover:scale-110 hover:shadow-md hover:shadow-indigo-500/30 active:scale-95"
                   >
@@ -441,8 +613,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 className="absolute bottom-0 left-0 w-5 h-5 cursor-nesw-resize opacity-0 hover:opacity-100 transition-opacity"
                 onMouseDown={handleResizeStart}
                 style={{
-                  background: 'linear-gradient(135deg, transparent 50%, rgba(99, 102, 241, 0.3) 50%)',
-                  borderRadius: '0 0 0 18px',
+                  background:
+                    "linear-gradient(135deg, transparent 50%, rgba(99, 102, 241, 0.3) 50%)",
+                  borderRadius: "0 0 0 18px",
                 }}
               />
             </>
