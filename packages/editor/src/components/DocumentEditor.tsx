@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useDocumentStore } from '../store.js';
+import { BlockType } from '@catnoted/shared';
 import { TextBlock } from './TextBlock.js';
 import { HeadingBlock } from './HeadingBlock.js';
 import { WidgetBlockPlaceholder } from './WidgetBlockPlaceholder.js';
@@ -147,7 +148,7 @@ export const DocumentEditor: React.FC = () => {
                   onChange={(val) => updateBlockContent(block.id, val)}
                   onEnter={() => handleCreateBlock(block.id)}
                   onBackspace={() => handleBackspaceBlock(block.id, index)}
-                  onSetType={(type, props) => updateBlockType(block.id, type as any, props)}
+                  onSetType={(type, props) => updateBlockType(block.id, type as BlockType, props)}
                   onAddWidget={() => handleAddWidget(block.id)}
                   focusOnMount={isFocused}
                 />
@@ -160,7 +161,7 @@ export const DocumentEditor: React.FC = () => {
                   onChange={(val) => updateBlockContent(block.id, val)}
                   onEnter={() => handleCreateBlock(block.id)}
                   onBackspace={() => handleBackspaceBlock(block.id, index)}
-                  onSetType={(type, props) => updateBlockType(block.id, type as any, props)}
+                  onSetType={(type, props) => updateBlockType(block.id, type as BlockType, props)}
                   onAddWidget={() => handleAddWidget(block.id)}
                   focusOnMount={isFocused}
                 />
@@ -176,7 +177,7 @@ export const DocumentEditor: React.FC = () => {
                     onChange={(val) => updateBlockContent(block.id, val)}
                     onEnter={() => handleCreateBlock(block.id)}
                     onBackspace={() => handleBackspaceBlock(block.id, index)}
-                    onSetType={(type, props) => updateBlockType(block.id, type as any, props)}
+                    onSetType={(type, props) => updateBlockType(block.id, type as BlockType, props)}
                     onAddWidget={() => handleAddWidget(block.id)}
                     focusOnMount={isFocused}
                   />
@@ -195,7 +196,7 @@ export const DocumentEditor: React.FC = () => {
                     onChange={(val) => updateBlockContent(block.id, val)}
                     onEnter={() => handleCreateBlock(block.id)}
                     onBackspace={() => handleBackspaceBlock(block.id, index)}
-                    onSetType={(type, props) => updateBlockType(block.id, type as any, props)}
+                    onSetType={(type, props) => updateBlockType(block.id, type as BlockType, props)}
                     onAddWidget={() => handleAddWidget(block.id)}
                     focusOnMount={isFocused}
                   />
@@ -209,7 +210,7 @@ export const DocumentEditor: React.FC = () => {
                     type="checkbox"
                     checked={!!block.properties?.checked}
                     onChange={(e) =>
-                      updateBlockType(block.id, 'todo' as any, {
+                      updateBlockType(block.id, 'todo', {
                         ...block.properties,
                         checked: e.target.checked,
                       })
@@ -222,7 +223,7 @@ export const DocumentEditor: React.FC = () => {
                     onChange={(val) => updateBlockContent(block.id, val)}
                     onEnter={() => handleCreateBlock(block.id)}
                     onBackspace={() => handleBackspaceBlock(block.id, index)}
-                    onSetType={(type, props) => updateBlockType(block.id, type as any, props)}
+                    onSetType={(type, props) => updateBlockType(block.id, type as BlockType, props)}
                     onAddWidget={() => handleAddWidget(block.id)}
                     focusOnMount={isFocused}
                   />
@@ -239,7 +240,7 @@ export const DocumentEditor: React.FC = () => {
                     onChange={(val) => updateBlockContent(block.id, val)}
                     onEnter={() => handleCreateBlock(block.id)}
                     onBackspace={() => handleBackspaceBlock(block.id, index)}
-                    onSetType={(type, props) => updateBlockType(block.id, type as any, props)}
+                    onSetType={(type, props) => updateBlockType(block.id, type as BlockType, props)}
                     onAddWidget={() => handleAddWidget(block.id)}
                     focusOnMount={isFocused}
                   />
