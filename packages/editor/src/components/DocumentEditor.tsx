@@ -60,7 +60,15 @@ export const DocumentEditor: React.FC = () => {
             className="group flex items-start gap-0 px-4 py-0.5 rounded-lg transition-all hover:bg-slate-50/80 dark:hover:bg-zinc-900/30 hover:shadow-sm hover:ring-1 hover:ring-slate-100 dark:hover:ring-zinc-800/60"
           >
             {/* Left Block Controls - fixed width gutter, never overlaps content */}
-            <div className="w-10 flex-shrink-0 flex items-start justify-end gap-0.5 pt-[4px] opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className={`w-10 flex-shrink-0 flex items-start justify-end gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity ${
+              block.type === 'heading'
+                ? block.properties?.level === 1
+                  ? 'pt-[10px]'
+                  : block.properties?.level === 2
+                  ? 'pt-[8px]'
+                  : 'pt-[6px]'
+                : 'pt-[6px]'
+            }`}>
               <button
                 type="button"
                 onClick={() => handleCreateBlock(block.id)}
@@ -165,13 +173,20 @@ export const DocumentEditor: React.FC = () => {
                   onSetType={(type, props) => updateBlockType(block.id, type as any, props)}
                   onAddWidget={() => handleAddWidget(block.id)}
                   focusOnMount={isFocused}
+                  blockType={block.type}
                 />
               )}
 
               {/* --- Bullet list --- */}
               {block.type === 'bullet' && (
                 <div className="flex items-start gap-2">
-                  <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-zinc-500 flex-shrink-0" />
+                  <div className="flex flex-col flex-shrink-0">
+                    {block.content.split('\n').map((_, i) => (
+                      <div key={i} className="h-7 w-1.5 flex items-center justify-center">
+                        <span className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-zinc-500" />
+                      </div>
+                    ))}
+                  </div>
                   <TextBlock
                     id={block.id}
                     content={block.content}
@@ -181,6 +196,7 @@ export const DocumentEditor: React.FC = () => {
                     onSetType={(type, props) => updateBlockType(block.id, type as any, props)}
                     onAddWidget={() => handleAddWidget(block.id)}
                     focusOnMount={isFocused}
+                    blockType={block.type}
                   />
                 </div>
               )}
@@ -200,6 +216,7 @@ export const DocumentEditor: React.FC = () => {
                     onSetType={(type, props) => updateBlockType(block.id, type as any, props)}
                     onAddWidget={() => handleAddWidget(block.id)}
                     focusOnMount={isFocused}
+                    blockType={block.type}
                   />
                 </div>
               )}
@@ -227,6 +244,7 @@ export const DocumentEditor: React.FC = () => {
                     onSetType={(type, props) => updateBlockType(block.id, type as any, props)}
                     onAddWidget={() => handleAddWidget(block.id)}
                     focusOnMount={isFocused}
+                    blockType={block.type}
                   />
                 </div>
               )}
@@ -244,6 +262,7 @@ export const DocumentEditor: React.FC = () => {
                     onSetType={(type, props) => updateBlockType(block.id, type as any, props)}
                     onAddWidget={() => handleAddWidget(block.id)}
                     focusOnMount={isFocused}
+                    blockType={block.type}
                   />
                 </div>
               )}
