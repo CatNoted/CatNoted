@@ -1,121 +1,65 @@
-import React, { useState, useEffect } from 'react';
-import { useDocumentStore } from '../store.js';
-import { BlockRow } from './BlockRow.js';
-
-import { 
-  Plus, 
-  Trash2, 
-  Heading1, 
-  Heading2, 
-  Heading3, 
-  AlignLeft, 
-  Cpu, 
-  MoreVertical 
+import React, { useRef } from 'react';
+import {
+  Plus,
+  Trash2,
+  Heading1,
+  Heading2,
+  Heading3,
+  AlignLeft,
+  Cpu,
+  MoreVertical
 } from 'lucide-react';
+import { TextBlock } from './TextBlock.js';
+import { HeadingBlock } from './HeadingBlock.js';
+import { WidgetBlockPlaceholder } from './WidgetBlockPlaceholder.js';
+import { SandboxFrame } from '@catnoted/agent-runtime';
 
-interface DocumentEditorProps {
-  activePage?: string;
+interface BlockRowProps {
+  block: any;
+  index: number;
+  isFocused: boolean;
+  activeMenuId: string | null;
+  activePage: string;
   onRenamePage?: (oldTitle: string, newTitle: string) => void;
+  handleCreateBlock: (id: string) => void;
+  handleBackspaceBlock: (id: string, index: number) => void;
+  handleAddWidget: (id: string) => void;
+  updateBlockContent: (id: string, val: string) => void;
+  updateBlockType: (id: string, type: any, props?: any) => void;
+  deleteBlock: (id: string) => void;
+  setActiveMenuId: (id: string | null) => void;
 }
 
-export const DocumentEditor: React.FC<DocumentEditorProps> = ({
-  activePage = 'root-doc-node',
-  onRenamePage
+const BlockRowBase: React.FC<BlockRowProps> = ({
+  block,
+  index,
+  isFocused,
+  activeMenuId,
+  activePage,
+  onRenamePage,
+  handleCreateBlock,
+  handleBackspaceBlock,
+  handleAddWidget,
+  updateBlockContent,
+  updateBlockType,
+  deleteBlock,
+  setActiveMenuId,
 }) => {
-  const { 
-    blocks, 
-    addBlock, 
-    updateBlockContent, 
-    updateBlockType, 
-    deleteBlock 
-  } = useDocumentStore(activePage);
+  const titleOnFocusRef = useRef<string>('');
 
-  const [focusBlockId, setFocusBlockId] = useState<string | null>(null);
-  const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
-
-  useEffect(() => {
-    // If the page has exactly 1 block and it's a level-1 heading, auto-focus it
-    if (blocks.length === 1 && blocks[0].type === 'heading' && blocks[0].properties?.level === 1) {
-      setFocusBlockId(blocks[0].id);
-    }
-  }, [activePage, blocks]);
-
-  const handleCreateBlock = (afterId: string) => {
-    const newId = addBlock(afterId, 'text', '');
-    setFocusBlockId(newId);
-  };
-
-  const handleEnterBlock = (id: string, index: number) => {
-    const block = blocks[index];
-    if (block && ['bullet', 'ordered', 'todo'].includes(block.type)) {
-      if (block.content.trim() === '') {
-        // Empty list item: escape to text block
-        updateBlockType(id, 'text');
-        return;
-      }
-      // Non-empty list item: continue list
-      const newId = addBlock(id, block.type, '');
-      if (block.type === 'todo') {
-        updateBlockType(newId, 'todo', { checked: false });
-      } else {
-        updateBlockType(newId, block.type);
-      }
-      setFocusBlockId(newId);
-      return;
-    }
-
-    // Default enter behavior
-    const newId = addBlock(id, 'text', '');
-    setFocusBlockId(newId);
-  };
-
-  const handleBackspaceBlock = (id: string, index: number) => {
-    if (blocks.length > 1) {
-      deleteBlock(id);
-      // Focus on the previous block, or next block if it was the first
-      const focusBlock = index > 0 ? blocks[index - 1] : blocks[1];
-      if (focusBlock) {
-        setFocusBlockId(focusBlock.id);
-      }
-    }
-  };
-
-  const handleAddWidget = (afterId: string) => {
-    const newId = addBlock(afterId, 'widget', '');
-    updateBlockType(newId, 'widget', { widgetId: `widget-${Math.random().toString(36).substring(2, 6)}` });
-    setActiveMenuId(null);
-  };
+  const onEnterBlock = React.useCallback(() => handleCreateBlock(block.id), [handleCreateBlock, block.id]);
+  const onBackspaceBlockInner = React.useCallback(() => handleBackspaceBlock(block.id, index), [handleBackspaceBlock, block.id, index]);
+  const onSetTypeBlock = React.useCallback((type: any, props: any) => updateBlockType(block.id, type, props), [updateBlockType, block.id]);
+  const onAddWidgetBlock = React.useCallback(() => handleAddWidget(block.id), [handleAddWidget, block.id]);
+  const onChangeContent = React.useCallback((val: string) => updateBlockContent(block.id, val), [updateBlockContent, block.id]);
 
   return (
-    <div className="max-w-3xl mx-auto py-10 space-y-0.5 min-h-[50vh]" onClick={(e) => {
-      // If clicking in the empty space below blocks, focus the last block
-      if (e.target === e.currentTarget && blocks.length > 0) {
-        setFocusBlockId(blocks[blocks.length - 1].id);
-      }
-    }}>
-      {blocks.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20 text-slate-400 dark:text-zinc-500 opacity-60">
-          <span className="text-4xl mb-3">📝</span>
-          <p className="text-sm font-medium">This document is empty</p>
-          <p className="text-xs mt-1">Start typing or type '/' for commands</p>
-          <button
-            onClick={() => handleCreateBlock('root')}
-            className="mt-4 px-4 py-1.5 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-md text-xs font-semibold hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition-colors"
-          >
-            Create first block
-          </button>
-        </div>
-      )}
-      {blocks.map((block, index) => {
-        const isFocused = focusBlockId === block.id;
-
-        return (
-          <div 
-            key={block.id} 
+          <div
+            key={block.id}
             className="group flex items-start gap-0 px-4 py-0.5 rounded-lg transition-all hover:bg-slate-50/80 dark:hover:bg-zinc-900/30 hover:shadow-sm hover:ring-1 hover:ring-slate-100 dark:hover:ring-zinc-800/60"
           >
             {/* Left Block Controls - fixed width gutter, never overlaps content */}
-            <div className={`w-10 flex-shrink-0 flex items-start justify-end gap-0.5 ${activeMenuId === block.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} transition-opacity ${
+            <div className={`w-10 flex-shrink-0 flex items-start justify-end gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity ${
               block.type === 'heading'
                 ? block.properties?.level === 1
                   ? 'pt-[10px]'
@@ -132,7 +76,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               >
                 <Plus className="w-3 h-3" />
               </button>
-              
+
               <div className="relative">
                 <button
                   type="button"
@@ -203,19 +147,18 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             </div>
 
             {/* Block Content — always to the right of controls */}
-            <div className="flex-1 min-w-0 w-full pl-0">
+            <div className="flex-1 min-w-0 pr-4">
               {block.type === 'heading' && (
                 <HeadingBlock
                   id={block.id}
                   content={block.content}
                   level={block.properties?.level || 2}
-                  onChange={(val) => updateBlockContent(block.id, val)}
-                  onEnter={() => handleEnterBlock(block.id, index)}
-                  onBackspace={() => handleBackspaceBlock(block.id, index)}
-                  onSetType={(type, props) => updateBlockType(block.id, type as any, props)}
-                  onAddWidget={() => handleAddWidget(block.id)}
+                  onChange={onChangeContent}
+                  onEnter={onEnterBlock}
+                  onBackspace={onBackspaceBlockInner}
+                  onSetType={onSetTypeBlock}
+                  onAddWidget={onAddWidgetBlock}
                   onFocus={() => {
-                    setFocusBlockId(block.id);
                     if (index === 0 && block.properties?.level === 1 && activePage !== 'root-doc-node') {
                       titleOnFocusRef.current = block.content;
                     }
@@ -237,14 +180,13 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 <TextBlock
                   id={block.id}
                   content={block.content}
-                  onChange={(val) => updateBlockContent(block.id, val)}
-                  onEnter={() => handleEnterBlock(block.id, index)}
-                  onBackspace={() => handleBackspaceBlock(block.id, index)}
-                  onSetType={(type, props) => updateBlockType(block.id, type as any, props)}
-                  onAddWidget={() => handleAddWidget(block.id)}
+                  onChange={onChangeContent}
+                  onEnter={onEnterBlock}
+                  onBackspace={onBackspaceBlockInner}
+                  onSetType={onSetTypeBlock}
+                  onAddWidget={onAddWidgetBlock}
                   focusOnMount={isFocused}
                   blockType={block.type}
-                  onFocus={() => setFocusBlockId(block.id)}
                 />
               )}
 
@@ -252,7 +194,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               {block.type === 'bullet' && (
                 <div className="flex items-start gap-2">
                   <div className="flex flex-col flex-shrink-0">
-                    {block.content.split('\n').map((_, i) => (
+                    {block.content.split('\n').map((_: any, i: number) => (
                       <div key={i} className="h-7 w-1.5 flex items-center justify-center">
                         <span className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-zinc-500" />
                       </div>
@@ -261,14 +203,13 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                   <TextBlock
                     id={block.id}
                     content={block.content}
-                    onChange={(val) => updateBlockContent(block.id, val)}
-                    onEnter={() => handleEnterBlock(block.id, index)}
-                    onBackspace={() => handleBackspaceBlock(block.id, index)}
-                    onSetType={(type, props) => updateBlockType(block.id, type as any, props)}
-                    onAddWidget={() => handleAddWidget(block.id)}
+                    onChange={onChangeContent}
+                    onEnter={onEnterBlock}
+                    onBackspace={onBackspaceBlockInner}
+                    onSetType={onSetTypeBlock}
+                    onAddWidget={onAddWidgetBlock}
                     focusOnMount={isFocused}
                     blockType={block.type}
-                    onFocus={() => setFocusBlockId(block.id)}
                   />
                 </div>
               )}
@@ -282,14 +223,13 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                   <TextBlock
                     id={block.id}
                     content={block.content}
-                    onChange={(val) => updateBlockContent(block.id, val)}
-                    onEnter={() => handleEnterBlock(block.id, index)}
-                    onBackspace={() => handleBackspaceBlock(block.id, index)}
-                    onSetType={(type, props) => updateBlockType(block.id, type as any, props)}
-                    onAddWidget={() => handleAddWidget(block.id)}
+                    onChange={onChangeContent}
+                    onEnter={onEnterBlock}
+                    onBackspace={onBackspaceBlockInner}
+                    onSetType={onSetTypeBlock}
+                    onAddWidget={onAddWidgetBlock}
                     focusOnMount={isFocused}
                     blockType={block.type}
-                    onFocus={() => setFocusBlockId(block.id)}
                   />
                 </div>
               )}
@@ -311,14 +251,13 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                   <TextBlock
                     id={block.id}
                     content={block.content}
-                    onChange={(val) => updateBlockContent(block.id, val)}
-                    onEnter={() => handleEnterBlock(block.id, index)}
-                    onBackspace={() => handleBackspaceBlock(block.id, index)}
-                    onSetType={(type, props) => updateBlockType(block.id, type as any, props)}
-                    onAddWidget={() => handleAddWidget(block.id)}
+                    onChange={onChangeContent}
+                    onEnter={onEnterBlock}
+                    onBackspace={onBackspaceBlockInner}
+                    onSetType={onSetTypeBlock}
+                    onAddWidget={onAddWidgetBlock}
                     focusOnMount={isFocused}
                     blockType={block.type}
-                    onFocus={() => setFocusBlockId(block.id)}
                   />
                 </div>
               )}
@@ -330,14 +269,13 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                   <TextBlock
                     id={block.id}
                     content={block.content}
-                    onChange={(val) => updateBlockContent(block.id, val)}
-                    onEnter={() => handleEnterBlock(block.id, index)}
-                    onBackspace={() => handleBackspaceBlock(block.id, index)}
-                    onSetType={(type, props) => updateBlockType(block.id, type as any, props)}
-                    onAddWidget={() => handleAddWidget(block.id)}
+                    onChange={onChangeContent}
+                    onEnter={onEnterBlock}
+                    onBackspace={onBackspaceBlockInner}
+                    onSetType={onSetTypeBlock}
+                    onAddWidget={onAddWidgetBlock}
                     focusOnMount={isFocused}
                     blockType={block.type}
-                    onFocus={() => setFocusBlockId(block.id)}
                   />
                 </div>
               )}
@@ -368,7 +306,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                   <div className="w-full my-4 border border-slate-200 dark:border-zinc-800 rounded-2xl bg-white dark:bg-zinc-900 overflow-hidden shadow-sm">
                     <div className="h-8 border-b border-slate-100 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-900/50 px-3 flex items-center justify-between text-[10px] font-mono text-slate-400">
                       <span>Widget Render Sandbox</span>
-                      <button 
+                      <button
                         onClick={() => deleteBlock(block.id)}
                         className="text-red-400 hover:text-red-500 font-sans"
                       >
@@ -387,8 +325,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               )}
             </div>
           </div>
-        );
-      })}
-    </div>
+
   );
 };
+
+export const BlockRow = React.memo(BlockRowBase);
