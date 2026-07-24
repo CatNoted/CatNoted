@@ -16,10 +16,12 @@ describe('Whitebox Test: Web Crypto Payload Encryption & Decryption', () => {
   });
 
   it('should throw error when payload is too short (<28 bytes)', async () => {
-    const shortPayload = new Uint8Array(20);
-    await expect(decryptPayload(shortPayload, passphrase)).rejects.toThrow(
-      'Invalid encrypted payload'
-    );
+    const payloads = [new Uint8Array(0), new Uint8Array(20), new Uint8Array(27)];
+    for (const payload of payloads) {
+      await expect(decryptPayload(payload, passphrase)).rejects.toThrow(
+        'Invalid encrypted payload'
+      );
+    }
   });
 
   it('should fail decryption when incorrect passphrase is provided', async () => {
