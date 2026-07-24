@@ -575,7 +575,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               <button
                 type="button"
                 onClick={() => setIsWorkspaceDropdownOpen(!isWorkspaceDropdownOpen)}
-                className="font-semibold text-xs uppercase tracking-wider text-slate-500 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-450 flex items-center gap-1.5 py-1 px-2 rounded-lg hover:bg-slate-50 dark:hover:bg-zinc-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                className="font-semibold text-xs text-slate-700 dark:text-zinc-200 hover:text-slate-900 dark:hover:text-white flex items-center gap-1.5 py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500"
               >
                 <span>{activeWorkspace}</span>
                 <ChevronDown className="w-3.5 h-3.5 shrink-0" />
@@ -592,8 +592,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         setActiveWorkspace(ws);
                         setIsWorkspaceDropdownOpen(false);
                       }}
-                      className={`w-full px-3 py-2 text-left hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-300 flex items-center justify-between ${
-                        activeWorkspace === ws ? 'font-semibold text-indigo-600 dark:text-indigo-400' : ''
+                      className={`w-full px-3 py-2 text-left hover:bg-slate-50 dark:hover:bg-zinc-800/50 text-slate-700 dark:text-zinc-300 flex items-center justify-between ${
+                        activeWorkspace === ws ? 'font-semibold text-slate-900 dark:text-white' : ''
                       }`}
                     >
                       <span>{ws}</span>
@@ -611,7 +611,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             <button
               type="button"
               onClick={() => setIsSidebarCollapsed(true)}
-              className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500"
+              className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-500"
               title="Collapse Sidebar"
               aria-label="Collapse Workspace Sidebar"
             >
@@ -639,7 +639,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         }}
                         className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between transition-colors ${
                           isActive
-                            ? 'bg-slate-100 dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 font-medium'
+                            ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
                             : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/40 hover:text-slate-900 dark:hover:text-zinc-200'
                         }`}
                       >
@@ -665,7 +665,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 <button
                   type="button"
                   onClick={onCreatePage}
-                  className="w-full flex items-center justify-center gap-1.5 py-2 px-3 mb-3 bg-indigo-50 dark:bg-indigo-955/40 text-indigo-600 dark:text-indigo-400 font-semibold hover:bg-indigo-100 dark:hover:bg-indigo-950/60 rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                  className="w-full flex items-center justify-center gap-1.5 py-2 px-3 mb-3 bg-slate-50 dark:bg-zinc-800/50 text-slate-600 dark:text-zinc-300 font-medium hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500"
                 >
                   <span>+ New Page</span>
                 </button>
@@ -701,7 +701,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                               }}
                               className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
                                 isActive
-                                  ? 'bg-slate-100 dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 font-medium'
+                                  ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
                                   : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
                               }`}
                             >
@@ -750,7 +750,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                 }}
                                 className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
                                   isActive
-                                    ? 'bg-slate-100 dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 font-medium'
+                                    ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
                                     : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
                                 }`}
                               >
@@ -797,7 +797,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                 }}
                                 className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
                                   isActive
-                                    ? 'bg-slate-100 dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 font-medium'
+                                    ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
                                     : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
                                 }`}
                               >
@@ -823,7 +823,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       {!zenMode && !isSidebarCollapsed && (
         <div
           onMouseDown={handleSidebarResizeStart}
-          className="w-[4px] hover:w-[6px] bg-slate-200/50 dark:bg-zinc-800/50 hover:bg-indigo-400 dark:hover:bg-indigo-500 cursor-col-resize transition-all h-full z-20 shrink-0"
+          className="w-[4px] hover:w-[6px] bg-slate-200/50 dark:bg-zinc-800/50 hover:bg-slate-300 dark:hover:bg-zinc-600 cursor-col-resize transition-all h-full z-20 shrink-0"
         />
       )}
 
@@ -833,7 +833,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           <button
             type="button"
             onClick={() => setIsSidebarCollapsed(false)}
-            className="absolute top-4 left-4 z-30 p-1.5 rounded-lg text-slate-500 hover:text-slate-700 dark:text-zinc-400 dark:hover:text-zinc-200 bg-white/80 dark:bg-zinc-900/80 border border-slate-200/60 dark:border-zinc-800/60 hover:bg-slate-100 dark:hover:bg-zinc-850 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 shadow-sm"
+            className="absolute top-4 left-4 z-30 p-1.5 rounded-lg text-slate-500 hover:text-slate-700 dark:text-zinc-400 dark:hover:text-zinc-200 bg-white/80 dark:bg-zinc-900/80 border border-slate-200/60 dark:border-zinc-800/60 hover:bg-slate-100 dark:hover:bg-zinc-850 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-500 shadow-sm"
             title="Expand Sidebar"
             aria-label="Expand Workspace Sidebar"
           >
