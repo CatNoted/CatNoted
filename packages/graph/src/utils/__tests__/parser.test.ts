@@ -89,17 +89,23 @@ describe('Whitebox Test: parseDocumentGraph (Graph Parsing Logic)', () => {
     expect(result.edges).toHaveLength(2);
   });
 
-  it('should handle empty or whitespace-only wiki-links [[ ]] safely', () => {
+  it('should handle empty or whitespace-only wiki-links safely', () => {
     const blocks: BlockNode[] = [
       {
         id: 'b1',
         type: 'text',
-        content: 'Invalid empty [[  ]] link test.',
+        content: 'Invalid empty [[  ]] link test with completely empty [[]].',
       },
+      {
+        id: 'b2',
+        type: 'text',
+        content: 'Tabs and newlines [[\n\t\r]] and multiple [[ ]] [[   ]] and nested/malformed [[[ ]]] or [[ ] or [[',
+      }
     ];
 
     const result = parseDocumentGraph(blocks);
     expect(result.nodes).toHaveLength(1); // root node only
     expect(result.edges).toHaveLength(0);
   });
+
 });

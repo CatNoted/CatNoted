@@ -20,7 +20,9 @@ export function parseDocumentGraph(blocks: BlockNode[]): { nodes: GraphNode[]; e
     // Reset index to avoid sticky states on global regex
     linkRegex.lastIndex = 0;
     while ((linkMatch = linkRegex.exec(block.content)) !== null) {
-      const pageName = linkMatch[1].trim();
+      // Remove any internal brackets which shouldn't be part of page name
+      // e.g. for [[[ ]]] linkMatch[1] will be '[ ' which shouldn't be a valid page name
+      const pageName = linkMatch[1].replace(/[\[\]]/g, '').trim();
       if (!pageName) continue;
       const nodeId = `page-${pageName.toLowerCase().replace(/\s+/g, '-')}`;
       
