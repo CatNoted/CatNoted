@@ -26,6 +26,7 @@ jobs:
           if [ -z "$POOLER_IP" ]; then POOLER_IP="52.77.146.31"; fi
           echo "Routing db.vhuchnycqhprthmdsont.supabase.co to IPv4 Pooler: $POOLER_IP"
           echo "$POOLER_IP db.vhuchnycqhprthmdsont.supabase.co" | sudo tee -a /etc/hosts
+          echo "::1 db.vhuchnycqhprthmdsont.supabase.co" | sudo tee -a /etc/hosts
       - name: Configure Supabase DB URL for GHA Pooler Routing
         run: |
           # Replace port 5432 with 6543
