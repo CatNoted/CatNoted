@@ -88,8 +88,13 @@ export const SlashCommandMenu: React.FC<SlashCommandMenuProps> = ({
         onClose();
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    const timer = setTimeout(() => {
+      document.addEventListener('mousedown', handleClickOutside);
+    }, 0);
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, [onClose]);
 
   // Auto-scroll selected item into view
@@ -102,7 +107,7 @@ export const SlashCommandMenu: React.FC<SlashCommandMenuProps> = ({
     return (
       <div
         ref={menuRef}
-        style={{ top: position.top, left: position.left }}
+        style={{ top: `${position.top}px`, left: `${position.left}px` }}
         className="fixed z-[9999] w-64 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 rounded-xl shadow-2xl py-2 px-2"
       >
         <p className="text-xs text-slate-400 dark:text-zinc-500 px-2 py-1">
@@ -115,7 +120,7 @@ export const SlashCommandMenu: React.FC<SlashCommandMenuProps> = ({
   return (
     <div
       ref={menuRef}
-      style={{ top: position.top, left: position.left }}
+      style={{ top: `${position.top}px`, left: `${position.left}px` }}
       className="fixed z-[9999] w-64 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 rounded-xl shadow-2xl py-2 overflow-hidden"
     >
       {/* Header */}
@@ -131,6 +136,10 @@ export const SlashCommandMenu: React.FC<SlashCommandMenuProps> = ({
           <button
             key={cmd.id}
             data-index={i}
+            onMouseDown={(e) => {
+              e.preventDefault();
+              cmd.action();
+            }}
             onClick={() => cmd.action()}
             onMouseEnter={() => setSelectedIndex(i)}
             className={`w-full flex items-center gap-3 px-2 py-2 rounded-lg text-left transition-colors group ${
