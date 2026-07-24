@@ -115,6 +115,78 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     { sender: 'agent', text: "Hello! I am your Space Agent. What would you like to build or note down today?" }
   ]);
 
+  // ── Sidebar Keyboard Navigation & Focus Management ──────────────────
+  const navRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const [focusedNavIndex, setFocusedNavIndex] = useState(0);
+
+  useEffect(() => {
+    const activeIndex = ['doc', 'canvas', 'graph', 'settings'].indexOf(activeMode);
+    if (activeIndex !== -1) {
+      setFocusedNavIndex(activeIndex);
+    }
+  }, [activeMode]);
+
+  const handleNavKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
+    let nextIndex = index;
+    const maxIndex = 3; // 4 items (0 to 3)
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        nextIndex = index === maxIndex ? 0 : index + 1;
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        nextIndex = index === 0 ? maxIndex : index - 1;
+        break;
+      case 'Home':
+        e.preventDefault();
+        nextIndex = 0;
+        break;
+      case 'End':
+        e.preventDefault();
+        nextIndex = maxIndex;
+        break;
+      default:
+        return;
+    }
+
+    setFocusedNavIndex(nextIndex);
+    navRefs.current[nextIndex]?.focus();
+  };
+
+  const utilRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const [focusedUtilIndex, setFocusedUtilIndex] = useState(0);
+
+  const handleUtilKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
+    let nextIndex = index;
+    const maxIndex = 1; // 2 items (0 and 1)
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        nextIndex = index === maxIndex ? 0 : index + 1;
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        nextIndex = index === 0 ? maxIndex : index - 1;
+        break;
+      case 'Home':
+        e.preventDefault();
+        nextIndex = 0;
+        break;
+      case 'End':
+        e.preventDefault();
+        nextIndex = maxIndex;
+        break;
+      default:
+        return;
+    }
+
+    setFocusedUtilIndex(nextIndex);
+    utilRefs.current[nextIndex]?.focus();
+  };
+
   // ── Floating panel state ────────────────────────────────────────────
   const [isAgentOpen, setIsAgentOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
@@ -270,21 +342,27 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               CN
             </div>
 
-            <nav className="flex flex-col gap-3 w-full px-2">
+            <nav className="flex flex-col gap-3 w-full px-2" aria-label="Sidebar Navigation">
               {[
                 { id: 'doc', icon: FileText, label: 'Doc Mode' },
                 { id: 'canvas', icon: Layout, label: 'Canvas' },
                 { id: 'graph', icon: Network, label: 'Graph' },
                 { id: 'settings', icon: Settings, label: 'Settings' }
-              ].map(item => {
+              ].map((item, index) => {
                 const Icon = item.icon;
                 const isActive = activeMode === item.id;
                 return (
                   <button
                     key={item.id}
+                    ref={el => { navRefs.current[index] = el; }}
+                    type="button"
                     onClick={() => onModeChange(item.id as ActiveMode)}
+                    onKeyDown={(e) => handleNavKeyDown(e, index)}
+                    onFocus={() => setFocusedNavIndex(index)}
+                    tabIndex={focusedNavIndex === index ? 0 : -1}
                     title={item.label}
-                    className={`w-full py-3 rounded-xl flex items-center justify-center transition-all duration-200 ${
+                    aria-label={item.label}
+                    className={`w-full py-3 rounded-xl flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400 ${
                       isActive 
                         ? 'bg-indigo-50 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 font-semibold shadow-sm shadow-indigo-500/10 dark:shadow-indigo-500/5' 
                         : 'text-slate-400 dark:text-zinc-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10'
@@ -297,18 +375,38 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             </nav>
           </div>
 
-          <div className="flex flex-col items-center gap-4 w-full">
+          <div
+            className="flex flex-col items-center gap-4 w-full"
+            role="toolbar"
+            aria-label="Sidebar Actions"
+          >
             <button
+              ref={el => { utilRefs.current[0] = el; }}
+              type="button"
+              role="switch"
+              aria-checked={isDarkMode}
               onClick={onToggleTheme}
-              className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 dark:text-zinc-500 hover:text-amber-500 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all duration-200"
+              onKeyDown={(e) => handleUtilKeyDown(e, 0)}
+              onFocus={() => setFocusedUtilIndex(0)}
+              tabIndex={focusedUtilIndex === 0 ? 0 : -1}
+              className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 dark:text-zinc-500 hover:text-amber-500 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 dark:focus-visible:ring-amber-400"
               title={isDarkMode ? 'Light Mode' : 'Dark Mode'}
+              aria-label={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             >
               {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
 
-            <div className="w-8 h-8 rounded-full bg-slate-300 dark:bg-zinc-700 flex items-center justify-center text-slate-600 dark:text-zinc-300 text-xs font-semibold">
+            <button
+              ref={el => { utilRefs.current[1] = el; }}
+              type="button"
+              onKeyDown={(e) => handleUtilKeyDown(e, 1)}
+              onFocus={() => setFocusedUtilIndex(1)}
+              tabIndex={focusedUtilIndex === 1 ? 0 : -1}
+              className="w-8 h-8 rounded-full bg-slate-300 dark:bg-zinc-700 flex items-center justify-center text-slate-600 dark:text-zinc-300 text-xs font-semibold hover:bg-slate-400 dark:hover:bg-zinc-600 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400"
+              aria-label="User Profile"
+            >
               US
-            </div>
+            </button>
           </div>
         </aside>
       )}
