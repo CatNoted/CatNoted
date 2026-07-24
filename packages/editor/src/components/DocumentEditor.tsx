@@ -50,21 +50,21 @@ export const DocumentEditor: React.FC = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-8 py-10 space-y-1">
+    <div className="max-w-3xl mx-auto py-10 space-y-0.5">
       {blocks.map((block, index) => {
         const isFocused = focusBlockId === block.id;
 
         return (
           <div 
             key={block.id} 
-            className="group relative flex items-start gap-2 -ml-10 px-10 py-1 rounded-lg transition-colors hover:bg-slate-50 dark:hover:bg-zinc-900/40"
+            className="group flex items-start gap-0 px-4 py-0.5 rounded-lg transition-colors hover:bg-slate-50 dark:hover:bg-zinc-900/40"
           >
-            {/* Left Block Control Action Button */}
-            <div className="absolute left-2 top-1.5 opacity-0 group-hover:opacity-100 flex items-center gap-1 transition-opacity">
+            {/* Left Block Controls - fixed width gutter, never overlaps content */}
+            <div className="w-14 flex-shrink-0 flex items-start justify-end gap-0.5 pt-[3px] opacity-0 group-hover:opacity-100 transition-opacity">
               <button
                 onClick={() => handleCreateBlock(block.id)}
                 title="Add block below"
-                className="p-1 hover:bg-slate-200 dark:hover:bg-zinc-800 rounded text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200"
+                className="p-1 hover:bg-slate-200 dark:hover:bg-zinc-700 rounded text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200"
               >
                 <Plus className="w-3.5 h-3.5" />
               </button>
@@ -73,19 +73,19 @@ export const DocumentEditor: React.FC = () => {
                 <button
                   onClick={() => setActiveMenuId(activeMenuId === block.id ? null : block.id)}
                   title="Block settings"
-                  className="p-1 hover:bg-slate-200 dark:hover:bg-zinc-800 rounded text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200"
+                  className="p-1 hover:bg-slate-200 dark:hover:bg-zinc-700 rounded text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200"
                 >
                   <MoreVertical className="w-3.5 h-3.5" />
                 </button>
 
                 {activeMenuId === block.id && (
-                  <div className="absolute left-0 mt-1 w-36 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl shadow-lg z-50 py-1 text-xs">
+                  <div className="absolute left-0 mt-1 w-40 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl shadow-lg z-50 py-1 text-xs">
                     <button
                       onClick={() => {
                         updateBlockType(block.id, 'text');
                         setActiveMenuId(null);
                       }}
-                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-850"
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-200"
                     >
                       <AlignLeft className="w-3.5 h-3.5" /> Text Paragraph
                     </button>
@@ -94,7 +94,7 @@ export const DocumentEditor: React.FC = () => {
                         updateBlockType(block.id, 'heading', { level: 1 });
                         setActiveMenuId(null);
                       }}
-                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-850"
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-200"
                     >
                       <Heading1 className="w-3.5 h-3.5" /> Heading 1
                     </button>
@@ -103,7 +103,7 @@ export const DocumentEditor: React.FC = () => {
                         updateBlockType(block.id, 'heading', { level: 2 });
                         setActiveMenuId(null);
                       }}
-                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-850"
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-200"
                     >
                       <Heading2 className="w-3.5 h-3.5" /> Heading 2
                     </button>
@@ -112,13 +112,13 @@ export const DocumentEditor: React.FC = () => {
                         updateBlockType(block.id, 'heading', { level: 3 });
                         setActiveMenuId(null);
                       }}
-                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-850"
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-200"
                     >
                       <Heading3 className="w-3.5 h-3.5" /> Heading 3
                     </button>
                     <button
                       onClick={() => handleAddWidget(block.id)}
-                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-850 text-indigo-600 dark:text-indigo-400"
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-indigo-600 dark:text-indigo-400"
                     >
                       <Cpu className="w-3.5 h-3.5" /> Insert AI Widget
                     </button>
@@ -128,7 +128,7 @@ export const DocumentEditor: React.FC = () => {
                         deleteBlock(block.id);
                         setActiveMenuId(null);
                       }}
-                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-850 text-red-500"
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-red-500"
                     >
                       <Trash2 className="w-3.5 h-3.5" /> Delete Block
                     </button>
@@ -137,8 +137,8 @@ export const DocumentEditor: React.FC = () => {
               </div>
             </div>
 
-            {/* Block Content Renderers */}
-            <div className="flex-1 min-w-0">
+            {/* Block Content — always to the right of controls */}
+            <div className="flex-1 min-w-0 pr-4">
               {block.type === 'heading' && (
                 <HeadingBlock
                   id={block.id}
