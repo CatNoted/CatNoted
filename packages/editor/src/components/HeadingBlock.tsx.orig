@@ -2,19 +2,21 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { SlashCommandMenu, buildSlashCommands } from './SlashCommandMenu.js';
 
-interface TextBlockProps {
+interface HeadingBlockProps {
   id: string;
   content: string;
+  level: 1 | 2 | 3 | 4 | 5 | 6;
   onChange: (value: string) => void;
   onEnter: () => void;
   onBackspace: () => void;
-  onSetType: (type: string, properties?: Record<string, unknown>) => void;
-  onAddWidget: () => void;
+  onSetType?: (type: string, properties?: Record<string, unknown>) => void;
+  onAddWidget?: () => void;
   focusOnMount?: boolean;
 }
 
-export const TextBlock: React.FC<TextBlockProps> = ({
+export const HeadingBlock: React.FC<HeadingBlockProps> = ({
   content,
+  level,
   onChange,
   onEnter,
   onBackspace,
@@ -35,7 +37,6 @@ export const TextBlock: React.FC<TextBlockProps> = ({
     }
   }, [focusOnMount]);
 
-  // Handle auto-resize
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
@@ -53,15 +54,21 @@ export const TextBlock: React.FC<TextBlockProps> = ({
     };
   }, []);
 
+  const closeMenu = useCallback(() => {
+    setSlashActive(false);
+    setSlashQuery('');
+  }, []);
+
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const val = e.target.value;
     onChange(val);
+
+    if (!onSetType) return;
 
     // Detect slash at start or after whitespace
     const cursorPos = e.target.selectionStart ?? val.length;
     const textBeforeCursor = val.slice(0, cursorPos);
 
-    // Find the last slash that's either at position 0 or preceded by whitespace
     const slashMatch = textBeforeCursor.match(/(^|\s)\/(\S*)$/);
 
     if (slashMatch) {
@@ -75,27 +82,21 @@ export const TextBlock: React.FC<TextBlockProps> = ({
     }
   };
 
-  const closeMenu = useCallback(() => {
-    setSlashActive(false);
-    setSlashQuery('');
-  }, []);
-
   /** When user picks a command, strip the "/" + query from content */
   const handleSetType = useCallback(
     (type: string, properties?: Record<string, unknown>) => {
-      // Remove the slash trigger text from content
-      const cleaned = content.replace(/(^|\s)\/\S*$/, (_, prefix) => prefix);
+      const cleaned = content.replace(/(^|\s)\/\S*$/, (match, prefix) => prefix);
       onChange(cleaned);
-      onSetType(type, properties);
+      if (onSetType) onSetType(type, properties);
       closeMenu();
     },
     [content, onChange, onSetType, closeMenu]
   );
 
   const handleAddWidget = useCallback(() => {
-    const cleaned = content.replace(/(^|\s)\/\S*$/, (_, prefix) => prefix);
+    const cleaned = content.replace(/(^|\s)\/\S*$/, (match, prefix) => prefix);
     onChange(cleaned);
-    onAddWidget();
+    if (onAddWidget) onAddWidget();
     closeMenu();
   }, [content, onChange, onAddWidget, closeMenu]);
 
@@ -106,9 +107,7 @@ export const TextBlock: React.FC<TextBlockProps> = ({
   });
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    // Let the slash menu consume Enter/Arrow keys when open
     if (slashActive && ['Enter', 'ArrowUp', 'ArrowDown', 'Escape'].includes(e.key)) {
-      // The SlashCommandMenu handles these via window keydown (capture phase)
       return;
     }
 
@@ -117,7 +116,6 @@ export const TextBlock: React.FC<TextBlockProps> = ({
       onEnter();
     } else if (e.key === 'Backspace') {
       if (slashActive) {
-        // If query is empty (just typed '/'), close the menu
         if (slashQuery.length === 0) {
           closeMenu();
         }
@@ -128,6 +126,19 @@ export const TextBlock: React.FC<TextBlockProps> = ({
     }
   };
 
+  const getHeadingClassName = () => {
+    switch (level) {
+      case 1:
+        return 'text-2xl font-bold tracking-tight text-slate-900 dark:text-zinc-50';
+      case 2:
+        return 'text-xl font-bold tracking-tight text-slate-800 dark:text-zinc-100';
+      case 3:
+        return 'text-lg font-semibold tracking-tight text-slate-800 dark:text-zinc-200';
+      default:
+        return 'text-base font-semibold tracking-tight text-slate-800 dark:text-zinc-200';
+    }
+  };
+
   return (
     <div className="relative w-full">
       <textarea
@@ -135,9 +146,9 @@ export const TextBlock: React.FC<TextBlockProps> = ({
         value={content}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
-        placeholder="Type '/' for commands..."
+        placeholder={`Heading ${level}`}
         rows={1}
-        className="w-full bg-transparent resize-none text-slate-800 dark:text-zinc-200 border-none outline-none focus:ring-0 p-0 text-[15px] leading-7 placeholder-slate-300 dark:placeholder-zinc-600"
+        className={`w-full bg-transparent resize-none border-none outline-none focus:ring-0 p-0 leading-snug placeholder-slate-300 dark:placeholder-zinc-700 ${getHeadingClassName()}`}
       />
 
       {slashActive &&
