@@ -125,36 +125,19 @@ const App: React.FC = () => {
       case 'doc':
         return (
           <div className="flex flex-col h-full">
-            {/* Document Topbar */}
-            <div className="flex items-center justify-between px-10 py-4 border-b border-slate-100 dark:border-zinc-800/60">
-              <div>
-                <h1 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-zinc-50 flex items-center gap-2">
-                  {activePage !== 'root-doc-node' && (
-                    <button
-                      onClick={() => setActivePage('root-doc-node')}
-                      className="text-xs px-2 py-1 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-500 rounded-md transition-colors mr-1"
-                      title="Back to root note"
-                    >
-                      ← Root
-                    </button>
-                  )}
-                  {pageTitle}
-                </h1>
-                <p className="text-[11px] text-slate-400 dark:text-zinc-500 mt-0.5 flex items-center gap-1.5">
-                  Linear Editor &middot; E2EE Sync:
-                  <span className="text-indigo-500 font-mono font-semibold">AES-GCM-256</span>
-                </p>
+            {/* Quick Navigation helper when inside sub-pages */}
+            {activePage !== 'root-doc-node' && (
+              <div className="px-10 pt-4 flex shrink-0">
+                <button
+                  onClick={() => setActivePage('root-doc-node')}
+                  className="text-xs px-2.5 py-1 bg-slate-100 dark:bg-zinc-850 hover:bg-slate-200 dark:hover:bg-zinc-800 text-slate-500 dark:text-zinc-400 rounded-lg transition-colors flex items-center gap-1"
+                  title="Back to root note"
+                >
+                  <span>← Back to root:</span>
+                  <span className="font-semibold">{docTitle}</span>
+                </button>
               </div>
-              <button
-                onClick={() => setIsAuthOpen(true)}
-                className="flex items-center gap-2 px-3 py-1.5 border border-slate-200 dark:border-zinc-700 hover:bg-slate-50 dark:hover:bg-zinc-800 rounded-lg text-xs font-medium text-slate-600 dark:text-zinc-300 transition-colors"
-              >
-                <span className="w-5 h-5 rounded-full bg-indigo-500 text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0">
-                  {userEmail.charAt(0).toUpperCase()}
-                </span>
-                {userEmail}
-              </button>
-            </div>
+            )}
 
             {/* Document Body */}
             <div className="flex-1 overflow-auto">
@@ -164,23 +147,8 @@ const App: React.FC = () => {
         );
       case 'canvas':
         return (
-          <div className="h-full overflow-auto p-6">
+          <div className="h-full overflow-auto p-4 md:p-6">
             <div className="space-y-4">
-              <div className="flex items-center justify-between px-2">
-                <div>
-                  <h1 className="text-lg font-bold tracking-tight text-slate-900 dark:text-zinc-50">Edgeless Canvas</h1>
-                  <p className="text-xs text-slate-400 dark:text-zinc-500">Spatial whiteboard view synced automatically with document nodes.</p>
-                </div>
-                <button
-                  onClick={() => setIsAuthOpen(true)}
-                  className="flex items-center gap-2 px-3 py-1.5 border border-slate-200 dark:border-zinc-700 hover:bg-slate-50 dark:hover:bg-zinc-800 rounded-lg text-xs font-medium text-slate-600 dark:text-zinc-300 transition-colors"
-                >
-                  <span className="w-5 h-5 rounded-full bg-indigo-500 text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0">
-                    {userEmail.charAt(0).toUpperCase()}
-                  </span>
-                  {userEmail}
-                </button>
-              </div>
               <InfiniteCanvas />
             </div>
           </div>
@@ -206,6 +174,9 @@ const App: React.FC = () => {
         zenMode={isZenMode}
         activePage={activePage}
         onPageSelect={setActivePage}
+        pageTitle={pageTitle}
+        userEmail={userEmail}
+        onAuthTrigger={() => setIsAuthOpen(true)}
       >
         {renderContent()}
       </AppLayout>

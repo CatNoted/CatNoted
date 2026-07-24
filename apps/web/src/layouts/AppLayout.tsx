@@ -22,7 +22,10 @@ import {
   FolderOpen,
   Clock,
   Tag,
-  Cpu
+  Cpu,
+  Menu,
+  Share2,
+  MoreHorizontal
 } from 'lucide-react';
 
 export type ActiveMode = 'doc' | 'canvas' | 'graph' | 'settings';
@@ -36,6 +39,9 @@ interface AppLayoutProps {
   children: React.ReactNode;
   activePage?: string;
   onPageSelect?: (pageId: string) => void;
+  pageTitle?: string;
+  userEmail?: string;
+  onAuthTrigger?: () => void;
 }
 
 import { requestLlmWidget } from '@catnoted/agent-runtime';
@@ -56,7 +62,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   zenMode = false,
   children,
   activePage = 'root-doc-node',
-  onPageSelect
+  onPageSelect,
+  pageTitle,
+  userEmail,
+  onAuthTrigger
 }) => {
   const { blocks, addBlock, updateBlockType } = useDocumentStore();
 
@@ -108,6 +117,59 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       ...prev,
       [section]: !prev[section]
     }));
+  };
+
+  // Sidebar width and collapse states
+  const [sidebarWidth, setSidebarWidth] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('catnoted:sidebar-width');
+      return saved ? parseInt(saved, 10) : 256;
+    }
+    return 256;
+  });
+
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('catnoted:sidebar-collapsed');
+      return saved === 'true';
+    }
+    return false;
+  });
+
+  const [isSidebarResizing, setIsSidebarResizing] = useState(false);
+  const [currentWorkspace, setCurrentWorkspace] = useState('CatNoted Space');
+  const [isWorkspaceDropdownOpen, setIsWorkspaceDropdownOpen] = useState(false);
+
+  const sidebarRef = useRef<HTMLDivElement>(null);
+
+  const startSidebarResize = useCallback((mouseDownEvent: React.MouseEvent) => {
+    mouseDownEvent.preventDefault();
+    setIsSidebarResizing(true);
+
+    const startWidth = sidebarWidth;
+    const startX = mouseDownEvent.clientX;
+
+    const doResize = (mouseMoveEvent: MouseEvent) => {
+      const delta = mouseMoveEvent.clientX - startX;
+      const newWidth = Math.max(160, Math.min(480, startWidth + delta));
+      setSidebarWidth(newWidth);
+      localStorage.setItem('catnoted:sidebar-width', newWidth.toString());
+    };
+
+    const stopResize = () => {
+      setIsSidebarResizing(false);
+      document.removeEventListener('mousemove', doResize);
+      document.removeEventListener('mouseup', stopResize);
+    };
+
+    document.addEventListener('mousemove', doResize);
+    document.addEventListener('mouseup', stopResize);
+  }, [sidebarWidth]);
+
+  const handleToggleSidebar = () => {
+    const nextCollapsed = !isSidebarCollapsed;
+    setIsSidebarCollapsed(nextCollapsed);
+    localStorage.setItem('catnoted:sidebar-collapsed', String(nextCollapsed));
   };
 
   const [chatInput, setChatInput] = useState('');
@@ -413,117 +475,129 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
       {/* Pane 1.5: Workspace Sidebar (Recent & Collapsible Page Tree) - Hidden in Zen Mode */}
       {!zenMode && (
-        <aside className="w-64 border-r border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 z-10 shrink-0 flex flex-col h-full text-sm">
-          {/* Sidebar Header */}
-          <div className="h-14 px-4 border-b border-slate-200 dark:border-zinc-800 flex items-center gap-2">
-            <span className="font-semibold text-xs uppercase tracking-wider text-slate-500 dark:text-zinc-400">Workspace Library</span>
-          </div>
+        <div
+          ref={sidebarRef}
+          style={{ width: isSidebarCollapsed ? 0 : sidebarWidth }}
+          className={`relative h-full shrink-0 flex z-10 select-none group/sidebar border-r border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 ${
+            isSidebarResizing ? '' : 'transition-[width] duration-300 ease-in-out'
+          }`}
+        >
+          <aside className="w-full h-full flex flex-col text-sm overflow-hidden">
+            {/* Sidebar Header with Workspace Switcher */}
+            <div className="h-14 px-4 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between gap-2 shrink-0">
+              <div className="relative flex-1">
+                <button
+                  onClick={() => setIsWorkspaceDropdownOpen(!isWorkspaceDropdownOpen)}
+                  className="w-full text-left px-2 py-1.5 rounded-lg flex items-center justify-between text-slate-700 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-800/60 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500"
+                >
+                  <span className="font-semibold text-xs uppercase tracking-wider text-slate-600 dark:text-zinc-300 truncate flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-indigo-500" />
+                    {currentWorkspace}
+                  </span>
+                  <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                </button>
 
-          <div className="flex-1 overflow-y-auto p-3 space-y-6">
-            {/* Recent Documents Section */}
-            <div>
-              <div className="flex items-center gap-1.5 px-2 mb-2 text-xs font-semibold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
-                <Clock className="w-3.5 h-3.5" />
-                <span>Recent Documents</span>
+                {isWorkspaceDropdownOpen && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-40"
+                      onClick={() => setIsWorkspaceDropdownOpen(false)}
+                    />
+                    <div className="absolute left-0 mt-1 w-full bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl shadow-lg z-50 py-1 text-xs animate-in fade-in slide-in-from-top-1 duration-100">
+                      {['CatNoted Space', 'Personal Drafts', 'Collaborative Lab'].map((ws) => (
+                        <button
+                          key={ws}
+                          onClick={() => {
+                            setCurrentWorkspace(ws);
+                            setIsWorkspaceDropdownOpen(false);
+                          }}
+                          className={`w-full px-3 py-2 text-left flex items-center justify-between hover:bg-slate-50 dark:hover:bg-zinc-800 ${
+                            currentWorkspace === ws
+                              ? 'text-indigo-600 dark:text-indigo-400 font-medium bg-indigo-50/20 dark:bg-indigo-500/5'
+                              : 'text-slate-600 dark:text-zinc-400'
+                          }`}
+                        >
+                          {ws}
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
-              <ul className="space-y-1">
-                {recentDocs.map(doc => {
-                  const isActive = activePage === doc.id;
-                  return (
-                    <li key={doc.id}>
-                      <button
-                        onClick={() => {
-                          if (onPageSelect) onPageSelect(doc.id);
-                          onModeChange('doc');
-                        }}
-                        className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between transition-colors ${
-                          isActive
-                            ? 'bg-indigo-50 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 font-medium'
-                            : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/50 hover:text-slate-900 dark:hover:text-zinc-200'
-                        }`}
-                      >
-                        <span className="truncate flex items-center gap-2">
-                          <FileText className="w-4 h-4 text-slate-400 dark:text-zinc-500 shrink-0" />
-                          <span className="truncate">{doc.title}</span>
-                        </span>
-                        <span className="text-[10px] text-slate-400 dark:text-zinc-500 opacity-60">Recent</span>
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
+
+              {/* Sidebar Collapse Toggle Button inside header */}
+              <button
+                onClick={handleToggleSidebar}
+                className="p-1 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-zinc-300 transition-colors"
+                title="Collapse Sidebar"
+                aria-label="Collapse Sidebar"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
-            {/* Collapsible Page Tree Section */}
-            <div>
-              <div className="px-2 mb-2 text-xs font-semibold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
-                <span>Page Tree</span>
+            <div className="flex-1 overflow-y-auto p-3 space-y-6">
+              {/* Recent Documents Section */}
+              <div>
+                <div className="flex items-center gap-1.5 px-2 mb-2 text-xs font-semibold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
+                  <Clock className="w-3.5 h-3.5" />
+                  <span>Recent Documents</span>
+                </div>
+                <ul className="space-y-1">
+                  {recentDocs.map(doc => {
+                    const isActive = activePage === doc.id;
+                    return (
+                      <li key={doc.id}>
+                        <button
+                          onClick={() => {
+                            if (onPageSelect) onPageSelect(doc.id);
+                            onModeChange('doc');
+                          }}
+                          className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between transition-colors ${
+                            isActive
+                              ? 'bg-indigo-50 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 font-medium'
+                              : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/50 hover:text-slate-900 dark:hover:text-zinc-200'
+                          }`}
+                        >
+                          <span className="truncate flex items-center gap-2">
+                            <FileText className="w-4 h-4 text-slate-400 dark:text-zinc-500 shrink-0" />
+                            <span className="truncate">{doc.title}</span>
+                          </span>
+                          <span className="text-[10px] text-slate-400 dark:text-zinc-500 opacity-60">Recent</span>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
               </div>
 
-              <div className="space-y-2">
-                {/* 1. Pages Category */}
-                <div>
-                  <button
-                    onClick={() => toggleSection('pages')}
-                    className="w-full flex items-center justify-between px-2 py-1 hover:bg-slate-50 dark:hover:bg-zinc-800/40 rounded-md text-xs font-medium text-slate-500 dark:text-zinc-400"
-                  >
-                    <span className="flex items-center gap-1.5">
-                      {sectionsExpanded.pages ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
-                      {sectionsExpanded.pages ? <FolderOpen className="w-3.5 h-3.5 text-indigo-500" /> : <Folder className="w-3.5 h-3.5 text-indigo-500" />}
-                      <span>Pages</span>
-                    </span>
-                    <span className="text-[10px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full">{pageNodes.length}</span>
-                  </button>
-                  {sectionsExpanded.pages && (
-                    <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-100 dark:border-zinc-800/60 ml-3.5">
-                      {pageNodes.map(node => {
-                        const isActive = activePage === node.id;
-                        const displayLabel = node.label.startsWith('📁 ') || node.label.startsWith('📄 ')
-                          ? node.label.slice(2)
-                          : node.label;
-                        return (
-                          <li key={node.id}>
-                            <button
-                              onClick={() => {
-                                if (onPageSelect) onPageSelect(node.id);
-                                onModeChange('doc');
-                              }}
-                              className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
-                                isActive
-                                  ? 'bg-indigo-50/80 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-medium'
-                                  : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
-                              }`}
-                            >
-                              <FileText className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 shrink-0" />
-                              <span className="truncate text-xs">{displayLabel}</span>
-                            </button>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  )}
+              {/* Collapsible Page Tree Section */}
+              <div>
+                <div className="px-2 mb-2 text-xs font-semibold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
+                  <span>Page Tree</span>
                 </div>
 
-                {/* 2. Tags Category */}
-                <div>
-                  <button
-                    onClick={() => toggleSection('tags')}
-                    className="w-full flex items-center justify-between px-2 py-1 hover:bg-slate-50 dark:hover:bg-zinc-800/40 rounded-md text-xs font-medium text-slate-500 dark:text-zinc-400"
-                  >
-                    <span className="flex items-center gap-1.5">
-                      {sectionsExpanded.tags ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
-                      <Tag className="w-3.5 h-3.5 text-amber-500" />
-                      <span>Tags</span>
-                    </span>
-                    <span className="text-[10px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full">{tagNodes.length}</span>
-                  </button>
-                  {sectionsExpanded.tags && (
-                    <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-100 dark:border-zinc-800/60 ml-3.5">
-                      {tagNodes.length === 0 ? (
-                        <span className="block px-2 py-1 text-[11px] text-slate-400 dark:text-zinc-500 italic">No tags found</span>
-                      ) : (
-                        tagNodes.map(node => {
+                <div className="space-y-2">
+                  {/* 1. Pages Category */}
+                  <div>
+                    <button
+                      onClick={() => toggleSection('pages')}
+                      className="w-full flex items-center justify-between px-2 py-1 hover:bg-slate-50 dark:hover:bg-zinc-800/40 rounded-md text-xs font-medium text-slate-500 dark:text-zinc-400"
+                    >
+                      <span className="flex items-center gap-1.5">
+                        {sectionsExpanded.pages ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+                        {sectionsExpanded.pages ? <FolderOpen className="w-3.5 h-3.5 text-indigo-500" /> : <Folder className="w-3.5 h-3.5 text-indigo-500" />}
+                        <span>Pages</span>
+                      </span>
+                      <span className="text-[10px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full">{pageNodes.length}</span>
+                    </button>
+                    {sectionsExpanded.pages && (
+                      <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-100 dark:border-zinc-800/60 ml-3.5">
+                        {pageNodes.map(node => {
                           const isActive = activePage === node.id;
+                          const displayLabel = node.label.startsWith('📁 ') || node.label.startsWith('📄 ')
+                            ? node.label.slice(2)
+                            : node.label;
                           return (
                             <li key={node.id}>
                               <button
@@ -537,84 +611,212 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                     : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
                                 }`}
                               >
-                                <Tag className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 shrink-0" />
-                                <span className="truncate text-xs">{node.label}</span>
+                                <FileText className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 shrink-0" />
+                                <span className="truncate text-xs">{displayLabel}</span>
                               </button>
                             </li>
                           );
-                        })
-                      )}
-                    </ul>
-                  )}
-                </div>
+                        })}
+                      </ul>
+                    )}
+                  </div>
 
-                {/* 3. Widgets Category */}
-                <div>
-                  <button
-                    onClick={() => toggleSection('widgets')}
-                    className="w-full flex items-center justify-between px-2 py-1 hover:bg-slate-50 dark:hover:bg-zinc-800/40 rounded-md text-xs font-medium text-slate-500 dark:text-zinc-400"
-                  >
-                    <span className="flex items-center gap-1.5">
-                      {sectionsExpanded.widgets ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
-                      <Cpu className="w-3.5 h-3.5 text-emerald-500" />
-                      <span>Widgets</span>
-                    </span>
-                    <span className="text-[10px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full">{widgetNodes.length}</span>
-                  </button>
-                  {sectionsExpanded.widgets && (
-                    <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-100 dark:border-zinc-800/60 ml-3.5">
-                      {widgetNodes.length === 0 ? (
-                        <span className="block px-2 py-1 text-[11px] text-slate-400 dark:text-zinc-500 italic">No widgets found</span>
-                      ) : (
-                        widgetNodes.map(node => {
-                          const isActive = activePage === node.id;
-                          return (
-                            <li key={node.id}>
-                              <button
-                                onClick={() => {
-                                  if (onPageSelect) onPageSelect(node.id);
-                                  onModeChange('doc');
-                                }}
-                                className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
-                                  isActive
-                                    ? 'bg-indigo-50/80 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-medium'
-                                    : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
-                                }`}
-                              >
-                                <Cpu className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 shrink-0" />
-                                <span className="truncate text-xs">{node.label}</span>
-                              </button>
-                            </li>
-                          );
-                        })
-                      )}
-                    </ul>
-                  )}
-                </div>
+                  {/* 2. Tags Category */}
+                  <div>
+                    <button
+                      onClick={() => toggleSection('tags')}
+                      className="w-full flex items-center justify-between px-2 py-1 hover:bg-slate-50 dark:hover:bg-zinc-800/40 rounded-md text-xs font-medium text-slate-500 dark:text-zinc-400"
+                    >
+                      <span className="flex items-center gap-1.5">
+                        {sectionsExpanded.tags ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+                        <Tag className="w-3.5 h-3.5 text-amber-500" />
+                        <span>Tags</span>
+                      </span>
+                      <span className="text-[10px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full">{tagNodes.length}</span>
+                    </button>
+                    {sectionsExpanded.tags && (
+                      <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-100 dark:border-zinc-800/60 ml-3.5">
+                        {tagNodes.length === 0 ? (
+                          <span className="block px-2 py-1 text-[11px] text-slate-400 dark:text-zinc-500 italic">No tags found</span>
+                        ) : (
+                          tagNodes.map(node => {
+                            const isActive = activePage === node.id;
+                            return (
+                              <li key={node.id}>
+                                <button
+                                  onClick={() => {
+                                    if (onPageSelect) onPageSelect(node.id);
+                                    onModeChange('doc');
+                                  }}
+                                  className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
+                                    isActive
+                                      ? 'bg-indigo-50/80 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-medium'
+                                      : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
+                                  }`}
+                                >
+                                  <Tag className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 shrink-0" />
+                                  <span className="truncate text-xs">{node.label}</span>
+                                </button>
+                              </li>
+                            );
+                          })
+                        )}
+                      </ul>
+                    )}
+                  </div>
 
+                  {/* 3. Widgets Category */}
+                  <div>
+                    <button
+                      onClick={() => toggleSection('widgets')}
+                      className="w-full flex items-center justify-between px-2 py-1 hover:bg-slate-50 dark:hover:bg-zinc-800/40 rounded-md text-xs font-medium text-slate-500 dark:text-zinc-400"
+                    >
+                      <span className="flex items-center gap-1.5">
+                        {sectionsExpanded.widgets ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+                        <Cpu className="w-3.5 h-3.5 text-emerald-500" />
+                        <span>Widgets</span>
+                      </span>
+                      <span className="text-[10px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full">{widgetNodes.length}</span>
+                    </button>
+                    {sectionsExpanded.widgets && (
+                      <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-100 dark:border-zinc-800/60 ml-3.5">
+                        {widgetNodes.length === 0 ? (
+                          <span className="block px-2 py-1 text-[11px] text-slate-400 dark:text-zinc-500 italic">No widgets found</span>
+                        ) : (
+                          widgetNodes.map(node => {
+                            const isActive = activePage === node.id;
+                            return (
+                              <li key={node.id}>
+                                <button
+                                  onClick={() => {
+                                    if (onPageSelect) onPageSelect(node.id);
+                                    onModeChange('doc');
+                                  }}
+                                  className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
+                                    isActive
+                                      ? 'bg-indigo-50/80 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-medium'
+                                      : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
+                                  }`}
+                                >
+                                  <Cpu className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 shrink-0" />
+                                  <span className="truncate text-xs">{node.label}</span>
+                                </button>
+                              </li>
+                            );
+                          })
+                        )}
+                      </ul>
+                    )}
+                  </div>
+
+                </div>
               </div>
             </div>
-          </div>
-        </aside>
+          </aside>
+
+          {/* Interactive Resize Handle */}
+          <div
+            onMouseDown={startSidebarResize}
+            className={`absolute top-0 right-[-3px] w-[6px] h-full cursor-col-resize z-50 transition-colors ${
+              isSidebarResizing
+                ? 'bg-indigo-500 dark:bg-indigo-400 opacity-100'
+                : 'hover:bg-slate-300 dark:hover:bg-zinc-800 hover:opacity-100 opacity-0'
+            }`}
+          />
+        </div>
       )}
 
       {/* Pane 2: Middle Panel (Main Workspace) — now takes full remaining width */}
       <main className="flex-1 flex flex-col h-full overflow-hidden bg-slate-50 dark:bg-zinc-950">
-        <header className="h-14 px-6 border-b border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-xs uppercase tracking-widest text-slate-400 dark:text-zinc-500 font-bold">Workspace</span>
-            <span className="text-slate-300 dark:text-zinc-700">/</span>
-            <span className="text-sm font-semibold capitalize">{activeMode} View</span>
-            {zenMode && (
-              <span className="text-[10px] bg-indigo-100 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 px-2 py-0.5 rounded ml-2 font-mono font-semibold">
-                Zen Active (Press Cmd+K to toggle sidebars)
-              </span>
+        <header className="h-14 px-4 border-b border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center justify-between shrink-0">
+          {/* Left: Sidebar Toggle and Breadcrumbs */}
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            {!zenMode && isSidebarCollapsed && (
+              <button
+                onClick={handleToggleSidebar}
+                className="p-1.5 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg text-slate-500 dark:text-zinc-400 transition-colors shrink-0"
+                title="Expand Sidebar"
+                aria-label="Expand Sidebar"
+              >
+                <Menu className="w-4 h-4" />
+              </button>
             )}
+
+            <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-zinc-400 truncate">
+              <span className="truncate max-w-[100px] hover:text-slate-800 dark:hover:text-zinc-200 cursor-pointer">Workspace</span>
+              <ChevronRight className="w-3.5 h-3.5 shrink-0 opacity-60" />
+              <span className="capitalize hover:text-slate-800 dark:hover:text-zinc-200 cursor-pointer shrink-0">{activeMode}</span>
+              {pageTitle && (
+                <>
+                  <ChevronRight className="w-3.5 h-3.5 shrink-0 opacity-60" />
+                  <span className="truncate max-w-[150px] font-semibold text-slate-800 dark:text-zinc-100">{pageTitle}</span>
+                </>
+              )}
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400">
+
+          {/* Center: AFFiNE-style Mode Toggle Segments */}
+          <div className="hidden sm:flex items-center bg-slate-100 dark:bg-zinc-950 p-1 rounded-xl border border-slate-200/60 dark:border-zinc-800/80 shrink-0">
+            {[
+              { id: 'doc', label: 'Doc', icon: FileText },
+              { id: 'canvas', label: 'Canvas', icon: Layout },
+              { id: 'graph', label: 'Graph', icon: Network }
+            ].map(segment => {
+              const IconComponent = segment.icon;
+              const isSegmentActive = activeMode === segment.id;
+              return (
+                <button
+                  key={segment.id}
+                  onClick={() => onModeChange(segment.id as ActiveMode)}
+                  className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium transition-all duration-200 ${
+                    isSegmentActive
+                      ? 'bg-white dark:bg-zinc-800 text-slate-900 dark:text-zinc-100 shadow-sm'
+                      : 'text-slate-500 hover:text-slate-900 dark:hover:text-zinc-200'
+                  }`}
+                >
+                  <IconComponent className="w-3.5 h-3.5" />
+                  <span>{segment.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Right: Share, Actions, Auth & Connection Status */}
+          <div className="flex items-center gap-2.5 ml-4 shrink-0">
+            {/* Minimal Share Button */}
+            <button
+              onClick={() => alert('Link copied to clipboard!')}
+              className="p-1.5 border border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800 rounded-lg text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-200 transition-colors"
+              title="Share space"
+            >
+              <Share2 className="w-3.5 h-3.5" />
+            </button>
+
+            {/* Actions Menu */}
+            <button
+              onClick={() => alert('No other space actions configured.')}
+              className="p-1.5 border border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800 rounded-lg text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-200 transition-colors"
+              title="More actions"
+            >
+              <MoreHorizontal className="w-3.5 h-3.5" />
+            </button>
+
+            {/* Auth Indicator Trigger */}
+            {userEmail && (
+              <button
+                onClick={onAuthTrigger}
+                className="flex items-center gap-2 px-2.5 py-1 border border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800 rounded-lg text-xs font-medium text-slate-600 dark:text-zinc-300 transition-colors"
+              >
+                <span className="w-5 h-5 rounded-full bg-indigo-500 text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0">
+                  {userEmail.charAt(0).toUpperCase()}
+                </span>
+                <span className="hidden md:inline truncate max-w-[120px]">{userEmail}</span>
+              </button>
+            )}
+
+            <span className="hidden lg:inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-950/40">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-              Local VFS Connected
+              Connected
             </span>
           </div>
         </header>
