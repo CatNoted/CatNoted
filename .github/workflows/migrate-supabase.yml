@@ -19,14 +19,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Route Supabase Direct Host to Singapore IPv4 Pooler
-        run: |
-          # Resolve pooler domain to IPv4 to find active IP, fallback to 52.77.146.31
-          POOLER_IP=$(dig +short aws-0-ap-southeast-1.pooler.supabase.com | grep -E '^[0-9.]+$' | head -n 1)
-          if [ -z "$POOLER_IP" ]; then POOLER_IP="52.77.146.31"; fi
-          echo "Routing db.vhuchnycqhprthmdsont.supabase.co to IPv4 Pooler: $POOLER_IP"
-          echo "$POOLER_IP db.vhuchnycqhprthmdsont.supabase.co" | sudo tee -a /etc/hosts
-          echo "::1 db.vhuchnycqhprthmdsont.supabase.co" | sudo tee -a /etc/hosts
       - name: Configure Supabase DB URL for GHA Pooler Routing
         run: |
           # Replace port 5432 with 6543
