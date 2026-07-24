@@ -50,4 +50,17 @@ describe('Whitebox Test: BrowserVFS (Virtual File System)', () => {
     expect(paths).toContain('notes/note1.txt');
     expect(paths).toContain('notes/note2.txt');
   });
+
+  it('should ignore invalid JSON in list() gracefully', () => {
+    const vfs = new BrowserVFS();
+    vfs.write('valid/file.txt', 'Valid content');
+
+    localStorage.setItem('catnoted_vfs:invalid/file.txt', '{ invalid json }');
+
+    const list = vfs.list();
+    const paths = list.map((n) => n.path);
+
+    expect(paths).toContain('valid/file.txt');
+    expect(paths).not.toContain('invalid/file.txt');
+  });
 });
