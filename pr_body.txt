@@ -1,0 +1,5 @@
+🎯 **What:** Replaced the insecure `Math.random()` pseudo-random number generator used for ID generation in `packages/editor/src/store.ts` with the standard, cryptographically secure `crypto.randomUUID()`. Minor unused variable warnings identified during typecheck have also been cleaned up.
+
+⚠️ **Risk:** The previous method of generating block IDs (`block-${Math.random().toString(36).substring(2, 11)}`) is not cryptographically secure, which could lead to ID collisions, predictability, or potential spoofing in systems that assume ID uniqueness and unpredictability.
+
+🛡️ **Solution:** Switched the ID generation logic to use the built-in `crypto.randomUUID()`, which conforms to UUID v4 standards, providing true randomness and significantly reducing the risk of collisions. Tested to ensure no regressions in block creation logic or editor rendering.

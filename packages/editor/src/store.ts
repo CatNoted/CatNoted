@@ -40,7 +40,7 @@ export function useDocumentStore() {
 
   const addBlock = (afterId: string | null, type: BlockType = 'text', content: string = '') => {
     const newBlock: BlockNode = {
-      id: `block-${Math.random().toString(36).substring(2, 11)}`,
+      id: `block-${crypto.randomUUID()}`,
       type,
       content,
       properties: type === 'heading' ? { level: 2 } : {}
