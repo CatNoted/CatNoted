@@ -4,6 +4,7 @@ import { SlashCommandMenu, buildSlashCommands } from './SlashCommandMenu.js';
 
 interface HeadingBlockProps {
   id: string;
+  type?: string;
   content: string;
   level: 1 | 2 | 3 | 4 | 5 | 6;
   onChange: (value: string) => void;
@@ -18,6 +19,7 @@ interface HeadingBlockProps {
 
 const HeadingBlockBase: React.FC<HeadingBlockProps> = ({
   content,
+  type,
   level,
   onChange,
   onEnter,

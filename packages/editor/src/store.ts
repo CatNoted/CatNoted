@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import * as Y from 'yjs';
 import { BlockNode, BlockType } from '@catnoted/shared';
+import { IndexeddbPersistence } from 'y-indexeddb';
 
 export const ydoc = new Y.Doc();
-export const yblocks = ydoc.getArray<BlockNode>('blocks');
+export const ypages = ydoc.getMap<any>('pages');
 
 // Prepopulate if empty
 if (yblocks.length === 0) {
@@ -62,9 +63,23 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
       updateBlocks();
     };
 
+    const pagesObserver = () => {
+      setPages(ypages.toJSON());
+    };
+
     yblocks.observe(observer);
+    ypages.observe(pagesObserver);
+
+    const handleSync = () => {
+      setBlocks(yblocks.toArray());
+      setPages(ypages.toJSON());
+    };
+    provider.on('synced', handleSync);
+
     return () => {
       yblocks.unobserve(observer);
+      ypages.unobserve(pagesObserver);
+      provider.off('synced', handleSync);
     };
   }, [pageId]);
 
@@ -130,11 +145,64 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
     });
   };
 
+  const createPage = (title: string = 'Untitled') => {
+    const newPageId = `page-${Math.random().toString(36).substring(2, 11)}`;
+    ydoc.transact(() => {
+      ypages.set(newPageId, {
+        id: newPageId,
+        title,
+        createdAt: Date.now()
+      });
+      // create empty block for new page
+      const newYBlocks = ydoc.getArray<BlockNode>(`blocks_${newPageId}`);
+      newYBlocks.insert(0, [{
+        id: `block-${Math.random().toString(36).substring(2, 11)}`,
+        type: 'text',
+        content: ''
+      }]);
+    });
+    return newPageId;
+  };
+
+  const renamePage = (id: string, title: string) => {
+    const page = ypages.get(id);
+    if (page) {
+      ydoc.transact(() => {
+        ypages.set(id, { ...page, title });
+      });
+    }
+  };
+
+  const moveBlock = (fromIndex: number, toIndex: number) => {
+    ydoc.transact(() => {
+      const currentArray = yblocks.toArray();
+      if (fromIndex >= 0 && fromIndex < currentArray.length && toIndex >= 0 && toIndex < currentArray.length) {
+        const block = yblocks.get(fromIndex);
+        yblocks.delete(fromIndex, 1);
+        // If moving down, the actual insertion index shifts
+        const insertIndex = toIndex > fromIndex ? toIndex : toIndex;
+        yblocks.insert(insertIndex, [block]);
+      }
+    });
+  };
+
+  const deletePage = (id: string) => {
+    if (id === 'root-doc-node') return; // Cannot delete root
+    ydoc.transact(() => {
+      ypages.delete(id);
+    });
+  };
+
   return {
     blocks,
+    pages,
     addBlock,
     updateBlockContent,
     updateBlockType,
-    deleteBlock
+    deleteBlock,
+    createPage,
+    renamePage,
+    deletePage,
+    moveBlock
   };
 }
