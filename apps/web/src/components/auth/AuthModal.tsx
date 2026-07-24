@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { LogIn, UserPlus, KeyRound, Sparkles } from 'lucide-react';
+import { supabase } from '../../utils/supabase.js';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -16,19 +17,36 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setErrorMsg(null);
 
-    // Simulate login success locally
-    setTimeout(() => {
-      setLoading(false);
-      onAuthSuccess(email || 'guest@catnoted.com');
+    try {
+      if (!supabase) {
+        throw new Error('Authentication is currently unavailable.');
+      }
+
+      if (isSignUp) {
+        const { data, error } = await supabase.auth.signUp({ email, password });
+        if (error) throw error;
+        onAuthSuccess(data.user?.email || email);
+      } else {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        onAuthSuccess(data.user?.email || email);
+      }
       onClose();
-    }, 800);
+    } catch (err: any) {
+      // Avoid exposing internal error structures, just use message or default
+      setErrorMsg(err.message || 'Authentication failed');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleGuestMode = () => {
@@ -58,6 +76,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4 mt-6">
+          {errorMsg && (
+            <div className="p-3 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-xs text-center border border-red-100 dark:border-red-900/30">
+              {errorMsg}
+            </div>
+          )}
           <div>
             <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Email Address</label>
             <input
