@@ -110,28 +110,20 @@ describe('useCanvasViewport', () => {
 
     // Zoom in
     act(() => {
-      const wheelEvent = {
-        deltaY: -100, // scrolling up, should zoom in
-      } as unknown as React.WheelEvent;
-
-      result.current.handleWheel(wheelEvent);
+      result.current.handleWheel({ deltaY: -100 } as unknown as React.WheelEvent);
     });
 
-    expect(result.current.scale).toBe(1.05);
+    expect(result.current.scale).toBeCloseTo(2.718281828459045);
 
     // Zoom out
     act(() => {
-      const wheelEvent = {
-        deltaY: 100, // scrolling down, should zoom out
-      } as unknown as React.WheelEvent;
-
-      result.current.handleWheel(wheelEvent);
+      result.current.handleWheel({ deltaY: 200 } as unknown as React.WheelEvent);
     });
 
-    expect(result.current.scale).toBe(1.0);
+    expect(result.current.scale).toBeCloseTo(0.36787944117144233);
   });
 
-  it('should clamp zoom scale between 0.3 and 2.5', () => {
+  it('should clamp zoom scale between 0.1 and 5', () => {
     const { result } = renderHook(() => useCanvasViewport());
 
     // Zoom out to minimum
@@ -140,14 +132,14 @@ describe('useCanvasViewport', () => {
         result.current.handleWheel({ deltaY: 100 } as unknown as React.WheelEvent);
       });
     }
-    expect(result.current.scale).toBe(0.3);
+    expect(result.current.scale).toBe(0.1);
 
     // Zoom in to maximum
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 60; i++) {
       act(() => {
         result.current.handleWheel({ deltaY: -100 } as unknown as React.WheelEvent);
       });
     }
-    expect(result.current.scale).toBe(2.5);
+    expect(result.current.scale).toBe(5);
   });
 });
