@@ -22,11 +22,11 @@ jobs:
           node-version: 24
       - uses: pnpm/action-setup@v4
       - run: pnpm install
-      - uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-version: 'latest'
-          vercel-args: '--prod'
-          working-directory: ./
+      - name: Install latest Vercel CLI
+        run: npm i -g vercel@latest
+      - name: Deploy to production
+        run: |
+          vercel deploy --prod --yes \
+            --token "${{ secrets.VERCEL_TOKEN }}" \
+            --org-id "${{ secrets.VERCEL_ORG_ID }}" \
+            --project-id "${{ secrets.VERCEL_PROJECT_ID }}"
