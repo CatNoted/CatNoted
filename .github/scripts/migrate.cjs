@@ -3,34 +3,6 @@ const path = require('path');
 const dns = require('dns');
 const { Client } = require('pg');
 
-// Intercept DNS lookups inside the Node.js process to bypass GHA IPv6 unreachability issues.
-// Since GHA runners lack IPv6 support, we force resolution of the direct Supabase host
-// to the persistent IPv4 address of the Singapore pooler.
-// We also support options.all array-return format expected by Node's net.connect.
-const originalLookup = dns.lookup;
-dns.lookup = function(hostname, options, callback) {
-  const cb = typeof options === 'function' ? options : callback;
-  const opts = typeof options === 'object' && options !== null ? options : {};
-  let targetHost = 'db.vhuchnycqhprthmdsont.supabase.co';
-  try {
-    const rawUrl = process.env.SUPABASE_DB_URL;
-    if (rawUrl) {
-      const parsed = new URL(rawUrl);
-      if (parsed.hostname.startsWith('db.')) {
-        targetHost = parsed.hostname;
-      }
-    }
-  } catch (_) {}
-
-  if (hostname === targetHost) {
-    if (opts.all) {
-      return cb(null, [{ address: '52.77.146.31', family: 4 }]);
-    }
-    return cb(null, '52.77.146.31', 4);
-  }
-  return originalLookup.apply(this, arguments);
-};
-
 const rawDbUrl = process.env.SUPABASE_DB_URL;
 const sqlPath =
   process.env.MIGRATION_SQL_PATH ||
@@ -43,70 +15,55 @@ if (!rawDbUrl) {
 
 const sql = fs.readFileSync(path.resolve(process.cwd(), sqlPath), 'utf8');
 
-/**
- * Normalise a Supabase connection string so the username matches the host type:
- *   Direct host  (db.<ref>.supabase.co)  --> username = "postgres"
- *   Pooler host  (*.pooler.supabase.com) --> username = "postgres.<ref>"
- * Also strips sslmode/ssl query params that interfere with pg's ssl option.
- */
-function normaliseUrl(raw) {
-  let parsed;
-  try {
-    parsed = new URL(raw);
-  } catch (_) {
-    return raw;
-  }
-
-  parsed.searchParams.delete('sslmode');
-  parsed.searchParams.delete('ssl');
-  parsed.searchParams.delete('pgbouncer');
-  parsed.searchParams.delete('uselibpqcompat');
-
-  const hostname = parsed.hostname;
-
-  // Direct host: db.<ref>.supabase.co -- MUST use username "postgres"
-  const directMatch = hostname.match(/^db\.([^.]+)\.supabase\.co$/i);
-  if (directMatch) {
-    parsed.username = 'postgres';
-    console.log('Detected direct host. Username corrected to: postgres');
-    return parsed.toString();
-  }
-
-  // Pooler host: *.pooler.supabase.com -- username must be "postgres.<ref>"
-  const poolerMatch = hostname.match(/\.pooler\.supabase\.com$/i);
-  if (poolerMatch) {
-    const userParts = parsed.username.split('.');
-    const projectRef = userParts.length >= 2 ? userParts[1] : userParts[0];
-    if (projectRef && projectRef !== 'postgres') {
-      parsed.username = 'postgres.' + projectRef;
-    } else {
-      parsed.username = 'postgres.vhuchnycqhprthmdsont';
-    }
-    console.log('Detected pooler host. Username corrected to: ' + parsed.username);
-    return parsed.toString();
-  }
-
-  console.log('Using connection URL as-is for host: ' + hostname);
-  return parsed.toString();
-}
-
-const connectionString = normaliseUrl(rawDbUrl);
-
-let hostname = '';
-try {
-  hostname = new URL(connectionString).hostname;
-} catch (_) {}
-
-const client = new Client({
-  connectionString,
-  ssl: {
-    rejectUnauthorized: false,
-    ...(hostname ? { servername: hostname } : {}),
-  },
-});
-
+// We bypass the Node.js DNS resolution subsystem by resolving the pooler IPv4
+// address dynamically and passing it directly as the connection options' host,
+// while passing the direct hostname as the TLS servername SNI.
 (async () => {
+  let client;
   try {
+    let targetHost = 'db.vhuchnycqhprthmdsont.supabase.co';
+    let poolerIp = '52.77.146.31';
+    
+    try {
+      const parsedRaw = new URL(rawDbUrl);
+      if (parsedRaw.hostname.startsWith('db.')) {
+        targetHost = parsedRaw.hostname;
+      }
+    } catch (_) {}
+
+    try {
+      const addresses = await dns.promises.resolve4('aws-0-ap-southeast-1.pooler.supabase.com');
+      if (addresses && addresses[0]) {
+        poolerIp = addresses[0];
+      }
+    } catch (e) {
+      console.log('Using default pooler IP fallback:', poolerIp);
+    }
+
+    let normalisedUrl = rawDbUrl;
+    // Delete query params that interfere
+    try {
+      const parsedUrl = new URL(rawDbUrl);
+      parsedUrl.searchParams.delete('sslmode');
+      parsedUrl.searchParams.delete('ssl');
+      parsedUrl.searchParams.delete('pgbouncer');
+      parsedUrl.searchParams.delete('uselibpqcompat');
+      normalisedUrl = parsedUrl.toString();
+    } catch (_) {}
+
+    const parsedUrl = new URL(normalisedUrl);
+    client = new Client({
+      host: poolerIp,
+      port: 6543,
+      user: 'postgres', // direct host username is postgres
+      password: decodeURIComponent(parsedUrl.password),
+      database: parsedUrl.pathname.slice(1) || 'postgres',
+      ssl: {
+        rejectUnauthorized: false,
+        servername: targetHost,
+      },
+    });
+
     await client.connect();
     console.log('Connected to database.');
     await client.query('BEGIN');
@@ -115,10 +72,14 @@ const client = new Client({
     console.log('Migration applied successfully.');
     process.exit(0);
   } catch (err) {
-    await client.query('ROLLBACK').catch(() => {});
+    if (client) {
+      await client.query('ROLLBACK').catch(() => {});
+    }
     console.error('Migration failed:', err.message || err);
     process.exit(1);
   } finally {
-    await client.end().catch(() => {});
+    if (client) {
+      await client.end().catch(() => {});
+    }
   }
 })();
