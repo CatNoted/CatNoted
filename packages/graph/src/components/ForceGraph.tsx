@@ -1,5 +1,10 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
 import { GraphNode, GraphEdge } from '@catnoted/shared';
+
+export interface ForceGraphRef {
+  exportPNG: () => void;
+  exportSVG: () => void;
+}
 
 interface ForceGraphProps {
   nodes: GraphNode[];
@@ -15,20 +20,37 @@ interface PhysNode extends GraphNode {
   radius: number;
 }
 
-export const ForceGraph: React.FC<ForceGraphProps> = ({
+export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
   nodes: inputNodes,
   edges,
   onNodeClick
-}) => {
+}, ref) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const nodesRef = useRef<PhysNode[]>([]);
   const dragNodeRef = useRef<PhysNode | null>(null);
-  const isPanning = useRef(false);
-  const panStart = useRef({ x: 0, y: 0 });
 
-  const [pan, setPan] = useState({ x: 300, y: 250 });
-  const [scale, setScale] = useState(1);
-  const [hoverNode, setHoverNode] = useState<PhysNode | null>(null);
+  // Use refs for rapidly changing values to prevent re-renders and animation loop restarts
+  const isPanningRef = useRef(false);
+  const panStartRef = useRef({ x: 0, y: 0 });
+  const panRef = useRef({ x: 300, y: 250 });
+  const scaleRef = useRef(1);
+  const hoverNodeRef = useRef<PhysNode | null>(null);
+
+  // Keep track of all known positions even if filtered out
+  const knownPositionsRef = useRef<Record<string, {x: number, y: number}>>({});
+
+  // Initialize known positions from localStorage only once
+  useEffect(() => {
+    const persistedStr = localStorage.getItem('catnoted:graph-positions');
+    if (persistedStr) {
+      try {
+        const persisted = JSON.parse(persistedStr);
+        knownPositionsRef.current = { ...persisted, ...knownPositionsRef.current };
+      } catch (e) {
+        // ignore
+      }
+    }
+  }, []);
 
   // Sync input nodes to physics simulation references
   useEffect(() => {
@@ -37,11 +59,15 @@ export const ForceGraph: React.FC<ForceGraphProps> = ({
     nodesRef.current = inputNodes.map((n) => {
       const prev = existing.get(n.id);
       if (prev) return { ...prev, label: n.label, type: n.type };
-      // Otherwise assign random coordinates near center
+
+      const saved = knownPositionsRef.current[n.id];
+      const startX = saved ? saved.x : 300 + (Math.random() - 0.5) * 150;
+      const startY = saved ? saved.y : 250 + (Math.random() - 0.5) * 150;
+
       return {
         ...n,
-        x: 300 + (Math.random() - 0.5) * 150,
-        y: 250 + (Math.random() - 0.5) * 150,
+        x: startX,
+        y: startY,
         vx: 0,
         vy: 0,
         radius: n.type === 'page' ? 8 : 6
@@ -49,17 +75,93 @@ export const ForceGraph: React.FC<ForceGraphProps> = ({
     });
   }, [inputNodes]);
 
+  const savePositions = () => {
+    nodesRef.current.forEach(n => {
+      knownPositionsRef.current[n.id] = { x: n.x, y: n.y };
+    });
+    localStorage.setItem('catnoted:graph-positions', JSON.stringify(knownPositionsRef.current));
+  };
+
+  useImperativeHandle(ref, () => ({
+    exportPNG: () => {
+      if (!canvasRef.current) return;
+      const dataUrl = canvasRef.current.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.download = 'graph.png';
+      link.href = dataUrl;
+      link.click();
+    },
+    exportSVG: () => {
+      if (!canvasRef.current) return;
+      const width = canvasRef.current.width;
+      const height = canvasRef.current.height;
+      const isDark = document.documentElement.classList.contains('dark');
+      const bgColor = isDark ? '#09090b' : '#f8fafc'; // zinc-950 or slate-50
+
+      const nodeMap = new Map(nodesRef.current.map(n => [n.id, n]));
+
+      const svgEdges = edges.map(edge => {
+        const sourceId = typeof edge.source === 'object' ? (edge.source as any).id : edge.source;
+        const targetId = typeof edge.target === 'object' ? (edge.target as any).id : edge.target;
+        const start = nodeMap.get(sourceId);
+        const end = nodeMap.get(targetId);
+        if (!start || !end) return '';
+
+        return `<line x1="${start.x}" y1="${start.y}" x2="${end.x}" y2="${end.y}" stroke="rgba(203, 213, 225, 0.4)" stroke-width="1" />`;
+      }).join('\n');
+
+      const svgNodes = nodesRef.current.map(node => {
+        let fill = '#6366f1';
+        if (node.id === 'root-doc-node') {
+          fill = '#4f46e5';
+        } else if (node.type === 'tag') {
+          fill = '#10b981';
+        }
+
+        const labelFill = isDark ? '#cbd5e1' : '#475569';
+
+        return `
+          <g>
+            <circle cx="${node.x}" cy="${node.y}" r="${node.radius}" fill="${fill}" />
+            <text x="${node.x}" y="${node.y - node.radius - 6}" font-family="sans-serif" font-size="10px" fill="${labelFill}" text-anchor="middle">${node.label.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</text>
+          </g>
+        `;
+      }).join('\n');
+
+      const svgContent = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" style="background-color: ${bgColor};">
+          <g transform="translate(${panRef.current.x}, ${panRef.current.y}) scale(${scaleRef.current})">
+            ${svgEdges}
+            ${svgNodes}
+          </g>
+        </svg>
+      `;
+
+      const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.download = 'graph.svg';
+      link.href = url;
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+  }));
+
   // Main physics & rendering animation loop
   useEffect(() => {
     let animId: number;
+    let lastSaveTime = 0;
 
-    const tick = () => {
+    const tick = (timestamp: number) => {
       const canvas = canvasRef.current;
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
       const pNodes = nodesRef.current;
+      const pan = panRef.current;
+      const scale = scaleRef.current;
+      const hoverNode = hoverNodeRef.current;
 
       // O(N) precomputation of node map for O(1) edge lookups later
       const nodeMap = new Map(pNodes.map(n => [n.id, n]));
@@ -112,6 +214,8 @@ export const ForceGraph: React.FC<ForceGraphProps> = ({
       const centerX = canvas.width / (2 * scale) - pan.x / scale;
       const centerY = canvas.height / (2 * scale) - pan.y / scale;
 
+      let totalMovement = 0;
+
       pNodes.forEach(node => {
         if (node === dragNodeRef.current) return;
 
@@ -125,7 +229,15 @@ export const ForceGraph: React.FC<ForceGraphProps> = ({
 
         node.x += node.vx;
         node.y += node.vy;
+
+        totalMovement += Math.abs(node.vx) + Math.abs(node.vy);
       });
+
+      // Periodically save positions when graph settles
+      if (timestamp - lastSaveTime > 2000 && totalMovement < pNodes.length * 0.1) {
+        savePositions();
+        lastSaveTime = timestamp;
+      }
 
       // 4. DRAWING
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -202,8 +314,11 @@ export const ForceGraph: React.FC<ForceGraphProps> = ({
     };
 
     animId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(animId);
-  }, [edges, pan, scale, hoverNode]);
+    return () => {
+      cancelAnimationFrame(animId);
+      savePositions();
+    };
+  }, [edges]); // Only re-run effect if edges array identity changes (GraphView handles memoization)
 
   // Handle pointer coordinates projection taking pan & scale into account
   const getCanvasCoords = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -213,8 +328,8 @@ export const ForceGraph: React.FC<ForceGraphProps> = ({
     const clientX = e.clientX - rect.left;
     const clientY = e.clientY - rect.top;
     return {
-      x: (clientX - pan.x) / scale,
-      y: (clientY - pan.y) / scale
+      x: (clientX - panRef.current.x) / scaleRef.current,
+      y: (clientY - panRef.current.y) / scaleRef.current
     };
   };
 
@@ -233,8 +348,8 @@ export const ForceGraph: React.FC<ForceGraphProps> = ({
     if (hit) {
       dragNodeRef.current = hit;
     } else {
-      isPanning.current = true;
-      panStart.current = { x: e.clientX - pan.x, y: e.clientY - pan.y };
+      isPanningRef.current = true;
+      panStartRef.current = { x: e.clientX - panRef.current.x, y: e.clientY - panRef.current.y };
     }
   };
 
@@ -249,31 +364,31 @@ export const ForceGraph: React.FC<ForceGraphProps> = ({
     }
 
     // Pan viewport logic
-    if (isPanning.current) {
-      setPan({
-        x: e.clientX - panStart.current.x,
-        y: e.clientY - panStart.current.y
-      });
+    if (isPanningRef.current) {
+      panRef.current = {
+        x: e.clientX - panStartRef.current.x,
+        y: e.clientY - panStartRef.current.y
+      };
       return;
     }
 
     // Hover detection
     const hit = detectNode(coords);
-    setHoverNode(hit);
+    hoverNodeRef.current = hit;
   };
 
   const handleMouseUp = (_e: React.MouseEvent<HTMLCanvasElement>) => {
     if (dragNodeRef.current) {
-      // If drag threshold was low, trigger click
       onNodeClick(dragNodeRef.current);
     }
     dragNodeRef.current = null;
-    isPanning.current = false;
+    isPanningRef.current = false;
+    savePositions();
   };
 
   const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
     const direction = e.deltaY < 0 ? 1 : -1;
-    setScale(prev => Math.max(0.4, Math.min(2.5, prev + direction * 0.05)));
+    scaleRef.current = Math.max(0.4, Math.min(2.5, scaleRef.current + direction * 0.05));
   };
 
   return (
@@ -288,4 +403,4 @@ export const ForceGraph: React.FC<ForceGraphProps> = ({
       className="w-full h-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-inner cursor-grab active:cursor-grabbing"
     />
   );
-};
+});
