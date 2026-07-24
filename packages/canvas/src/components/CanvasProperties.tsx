@@ -1,13 +1,14 @@
 import React from 'react';
 import { CanvasElement } from '@catnoted/shared';
-import { Palette, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Square, CircleDashed, AlignLeft, AlignCenter, AlignRight } from 'lucide-react';
+import { Palette, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Square, CircleDashed, AlignLeft, AlignCenter, AlignRight, Lock, Unlock, ArrowUpToLine, ArrowDownToLine, Layers } from 'lucide-react';
 
 interface CanvasPropertiesProps {
   selectedElements: CanvasElement[];
   onUpdateElement: (id: string, updates: Partial<CanvasElement>) => void;
+  elements: Record<string, CanvasElement>;
 }
 
-export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElements, onUpdateElement }) => {
+export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElements, onUpdateElement, elements }) => {
   if (selectedElements.length === 0) return null;
 
   const element = selectedElements[0];
@@ -15,6 +16,23 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
   const handleUpdate = (updates: Partial<CanvasElement>) => {
     selectedElements.forEach(el => onUpdateElement(el.id, updates));
   };
+
+  const handleBringToFront = () => {
+    const allZ = Object.values(elements).map(el => el.zIndex || 0);
+    const maxZ = allZ.length ? Math.max(...allZ) : 0;
+    handleUpdate({ zIndex: maxZ + 1 });
+  };
+
+  const handleSendToBack = () => {
+    const allZ = Object.values(elements).map(el => el.zIndex || 0);
+    const minZ = allZ.length ? Math.min(...allZ) : 0;
+    handleUpdate({ zIndex: minZ - 1 });
+  };
+
+  const handleToggleLock = () => {
+    selectedElements.forEach(el => onUpdateElement(el.id, { locked: !el.locked }));
+  };
+
 
   const handleNudge = (dx: number, dy: number) => {
     selectedElements.forEach(el => onUpdateElement(el.id, { x: el.x + dx, y: el.y + dy }));
@@ -83,6 +101,38 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
           onChange={(e) => handleUpdate({ opacity: parseFloat(e.target.value) })}
           className="w-full accent-indigo-500"
         />
+      </div>
+
+
+      {/* Arrange & Lock */}
+      <div className="flex flex-col gap-2">
+        <span className="text-xs text-slate-600 dark:text-zinc-400 font-medium flex items-center gap-1"><Layers className="w-3 h-3" /> Arrange & Lock</span>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleBringToFront}
+            className="p-1.5 rounded border bg-white border-slate-200 text-slate-600 hover:bg-slate-50 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-700"
+            title="Bring to Front (])"
+            type="button"
+          >
+            <ArrowUpToLine className="w-4 h-4" />
+          </button>
+          <button
+            onClick={handleSendToBack}
+            className="p-1.5 rounded border bg-white border-slate-200 text-slate-600 hover:bg-slate-50 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-700"
+            title="Send to Back ([)"
+            type="button"
+          >
+            <ArrowDownToLine className="w-4 h-4" />
+          </button>
+          <button
+            onClick={handleToggleLock}
+            className={`p-1.5 rounded border ${element.locked ? 'bg-indigo-50 border-indigo-200 text-indigo-600 dark:bg-indigo-900/30 dark:border-indigo-800 dark:text-indigo-400' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-700'}`}
+            title="Toggle Lock (Ctrl+L)"
+            type="button"
+          >
+            {element.locked ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
+          </button>
+        </div>
       </div>
 
       {/* Alignment */}

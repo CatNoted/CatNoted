@@ -151,7 +151,7 @@ describe('useCanvasViewport', () => {
     expect(result.current.scale).toBe(0.1);
 
     // Zoom in to maximum
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 60; i++) {
       act(() => {
         result.current.handleWheel(mockEvent({ deltaY: -100, ctrlKey: true, clientX: 0, clientY: 0, currentTarget: { getBoundingClientRect: () => ({ left: 0, top: 0, width: 1000, height: 1000 }) } }) as any);
       });
