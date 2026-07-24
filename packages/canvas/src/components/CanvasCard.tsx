@@ -37,10 +37,10 @@ export const CanvasCard: React.FC<CanvasCardProps> = ({
           onSelectToggle(e, block.id);
         }
       }}
-      className={`absolute bg-white dark:bg-zinc-900 border rounded-2xl shadow-sm hover:shadow-md transition-all select-none flex flex-col ${
+      className={`absolute bg-white dark:bg-zinc-900/90 backdrop-blur-sm border rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-none hover:shadow-md transition-all select-none flex flex-col ${
         isSelected
-          ? 'border-amber-500 ring-2 ring-amber-500/30 shadow-amber-500/10'
-          : 'border-slate-200 dark:border-zinc-800'
+          ? 'border-indigo-500/50 ring-2 ring-indigo-500/20 shadow-indigo-500/5'
+          : 'border-slate-200/80 dark:border-zinc-800'
       }`}
     >
       {/* Drag Handle Header */}
@@ -50,14 +50,14 @@ export const CanvasCard: React.FC<CanvasCardProps> = ({
           if (target.closest('button, input, textarea')) return;
           onDragStart(e, block.id);
         }}
-        className="h-8 cursor-grab active:cursor-grabbing border-b border-slate-100 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-900/50 rounded-t-2xl flex items-center px-3 justify-between"
+        className="h-7 cursor-grab active:cursor-grabbing border-b border-slate-100 dark:border-zinc-800/80 bg-slate-50/50 dark:bg-zinc-900/50 rounded-t-xl flex items-center px-3 justify-between"
       >
-        <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">{block.type} card</span>
+        <span className="text-[9px] font-medium text-slate-400 uppercase tracking-widest">{block.type}</span>
         <div className="flex items-center gap-1.5">
           {isSelected && (
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
           )}
-          <div className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-zinc-700" />
+          <div className="w-1.5 h-1.5 rounded-full bg-slate-200 dark:bg-zinc-800" />
         </div>
       </div>
 

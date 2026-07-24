@@ -403,13 +403,13 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       
       {/* Pane 1: Left Sidebar (Navigation) - Hidden in Zen Mode */}
       {!zenMode && (
-        <aside className="w-16 flex flex-col items-center justify-between py-4 border-r border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 z-10 shrink-0">
-          <div className="flex flex-col items-center gap-6 w-full">
-            <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold shadow-md shadow-indigo-200 dark:shadow-none">
+        <aside className="w-14 flex flex-col items-center justify-between py-3 border-r border-slate-200 dark:border-zinc-800 bg-[#fbfbfb] dark:bg-zinc-950 z-10 shrink-0">
+          <div className="flex flex-col items-center gap-4 w-full">
+            <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-xs shadow-sm shadow-indigo-200 dark:shadow-none">
               CN
             </div>
 
-            <nav className="flex flex-col gap-3 w-full px-2" aria-label="Sidebar Navigation">
+            <nav className="flex flex-col gap-2 w-full px-1.5" aria-label="Sidebar Navigation">
               {[
                 { id: 'doc', icon: FileText, label: 'Doc Mode' },
                 { id: 'canvas', icon: Layout, label: 'Canvas' },
@@ -429,13 +429,13 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     tabIndex={focusedNavIndex === index ? 0 : -1}
                     title={item.label}
                     aria-label={item.label}
-                    className={`w-full py-3 rounded-xl flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400 ${
+                    className={`w-full py-2.5 rounded-lg flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400 ${
                       isActive 
-                        ? 'bg-indigo-50 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 font-semibold shadow-sm shadow-indigo-500/10 dark:shadow-indigo-500/5' 
-                        : 'text-slate-400 dark:text-zinc-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10'
+                        ? 'bg-white dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 shadow-[0_1px_3px_rgba(0,0,0,0.05)] dark:shadow-none font-semibold'
+                        : 'text-slate-400 dark:text-zinc-500 hover:text-slate-900 dark:hover:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5'
                     }`}
                   >
-                    <Icon className="w-5 h-5" />
+                    <Icon className="w-4 h-4" />
                   </button>
                 );
               })}
@@ -443,7 +443,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           </div>
 
           <div
-            className="flex flex-col items-center gap-4 w-full"
+            className="flex flex-col items-center gap-3 w-full px-1.5"
             role="toolbar"
             aria-label="Sidebar Actions"
           >
@@ -456,11 +456,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               onKeyDown={(e) => handleUtilKeyDown(e, 0)}
               onFocus={() => setFocusedUtilIndex(0)}
               tabIndex={focusedUtilIndex === 0 ? 0 : -1}
-              className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 dark:text-zinc-500 hover:text-amber-500 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 dark:focus-visible:ring-amber-400"
+              className="w-full py-2.5 rounded-lg flex items-center justify-center text-slate-400 dark:text-zinc-500 hover:text-amber-500 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 dark:focus-visible:ring-amber-400"
               title={isDarkMode ? 'Light Mode' : 'Dark Mode'}
               aria-label={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             >
-              {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
 
             <button
@@ -469,7 +469,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               onKeyDown={(e) => handleUtilKeyDown(e, 1)}
               onFocus={() => setFocusedUtilIndex(1)}
               tabIndex={focusedUtilIndex === 1 ? 0 : -1}
-              className="w-8 h-8 rounded-full bg-slate-300 dark:bg-zinc-700 flex items-center justify-center text-slate-600 dark:text-zinc-300 text-xs font-semibold hover:bg-slate-400 dark:hover:bg-zinc-600 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400"
+              className="w-7 h-7 rounded-full bg-slate-200 dark:bg-zinc-700 flex items-center justify-center text-slate-600 dark:text-zinc-300 text-[10px] font-semibold hover:bg-slate-300 dark:hover:bg-zinc-600 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400"
               aria-label="User Profile"
             >
               US
