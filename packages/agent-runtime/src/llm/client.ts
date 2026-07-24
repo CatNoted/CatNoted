@@ -112,7 +112,11 @@ const WIDGET_TEMPLATES: Record<string, string> = {
         li.style.alignItems = 'center';
         li.style.borderBottom = '1px solid var(--border)';
         li.style.padding = '2px 0';
-        li.innerHTML = '<span>' + input.value + '</span><button onclick="this.parentNode.remove()" style="background: none; border: none; color: red; font-size: 9px; cursor: pointer;">✕</button>';
+        // 🛡️ Sentinel: Prevent XSS by escaping HTML entities
+        const sanitizedVal = input.value.replace(/[&<>"']/g, function(m) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+        });
+        li.innerHTML = '<span>' + sanitizedVal + '</span><button onclick="this.parentNode.remove()" style="background: none; border: none; color: red; font-size: 9px; cursor: pointer;">✕</button>';
         document.getElementById('todo-list').appendChild(li);
         input.value = '';
       }
