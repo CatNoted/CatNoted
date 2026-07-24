@@ -38,6 +38,8 @@ export function useCanvasViewport() {
   return {
     pan,
     scale,
+    setPan,
+    setScale,
     handleMouseDown,
     handleMouseMove,
     handleMouseUp,
