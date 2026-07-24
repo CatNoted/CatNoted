@@ -12,6 +12,8 @@ interface HeadingBlockProps {
   onSetType?: (type: string, properties?: Record<string, unknown>) => void;
   onAddWidget?: () => void;
   focusOnMount?: boolean;
+  onFocus?: () => void;
+  onBlur?: () => void;
 }
 
 export const HeadingBlock: React.FC<HeadingBlockProps> = ({
@@ -23,6 +25,8 @@ export const HeadingBlock: React.FC<HeadingBlockProps> = ({
   onSetType,
   onAddWidget,
   focusOnMount = false,
+  onFocus,
+  onBlur,
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -146,6 +150,8 @@ export const HeadingBlock: React.FC<HeadingBlockProps> = ({
         value={content}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
+        onFocus={onFocus}
+        onBlur={onBlur}
         placeholder={`Heading ${level}`}
         rows={1}
         className={`w-full bg-transparent resize-none border-none outline-none focus:ring-0 p-0 leading-snug placeholder-slate-300 dark:placeholder-zinc-700 ${getHeadingClassName()}`}

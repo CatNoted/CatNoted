@@ -28,14 +28,15 @@ const App: React.FC = () => {
   const [isZenMode, setIsZenMode] = useState<boolean>(false);
   const [activePage, setActivePage] = useState<string>('root-doc-node');
 
-  const { blocks, updateBlockContent } = useDocumentStore();
+  const { blocks: rootBlocks, addBlock: addRootBlock, updateBlockContent: updateRootBlockContent } = useDocumentStore('root-doc-node');
+  const { blocks: activeBlocks, updateBlockContent: updateActiveBlockContent } = useDocumentStore(activePage);
 
   const graphData = React.useMemo(() => {
-    return parseDocumentGraph(blocks);
-  }, [blocks]);
+    return parseDocumentGraph(rootBlocks);
+  }, [rootBlocks]);
 
-  const mainHeading = blocks.find(b => b.type === 'heading' && b.properties?.level === 1);
-  const docTitle = mainHeading?.content || 'Untitled Document';
+  const activeHeading = activeBlocks.find(b => b.type === 'heading' && b.properties?.level === 1);
+  const docTitle = activeHeading?.content || 'Untitled Document';
 
   const activePageNode = graphData.nodes.find(n => n.id === activePage);
   const pageTitle = activePage === 'root-doc-node'
@@ -54,24 +55,82 @@ const App: React.FC = () => {
     }
   }, [pageTitle, isEditingTitle]);
 
+  const handleRenamePage = (oldTitle: string, newTitle: string) => {
+    if (activePage === 'root-doc-node') return;
+    if (!oldTitle.trim() || !newTitle.trim() || oldTitle === newTitle) return;
+
+    // 1. Rename wiki link in rootBlocks
+    const targetBlock = rootBlocks.find(b => b.content.includes(`[[${oldTitle}]]`));
+    if (targetBlock) {
+      const updatedContent = targetBlock.content.replace(`[[${oldTitle}]]`, `[[${newTitle}]]`);
+      updateRootBlockContent(targetBlock.id, updatedContent);
+    }
+
+    // 2. Migrate blocks in Yjs
+    const oldPageId = activePage;
+    const newPageId = `page-${newTitle.toLowerCase().replace(/\s+/g, '-')}`;
+
+    const oldYarr = ydoc.getArray<any>(`blocks:${oldPageId}`);
+    const newYarr = ydoc.getArray<any>(`blocks:${newPageId}`);
+
+    ydoc.transact(() => {
+      if (newYarr.length === 0 && oldYarr.length > 0) {
+        newYarr.insert(0, oldYarr.toArray());
+        oldYarr.delete(0, oldYarr.length);
+      }
+    });
+
+    setActivePage(newPageId);
+  };
+
   const handleSaveTitle = () => {
     setIsEditingTitle(false);
     if (editTitleValue.trim()) {
       if (activePage === 'root-doc-node') {
-        if (mainHeading) {
-          updateBlockContent(mainHeading.id, editTitleValue);
+        if (activeHeading) {
+          updateActiveBlockContent(activeHeading.id, editTitleValue);
         } else {
-          const firstBlock = blocks[0];
+          const firstBlock = activeBlocks[0];
           if (firstBlock) {
-            updateBlockContent(firstBlock.id, editTitleValue);
+            updateActiveBlockContent(firstBlock.id, editTitleValue);
           }
         }
       } else {
-        if (mainHeading) {
-          updateBlockContent(mainHeading.id, editTitleValue);
+        const oldTitle = pageTitle;
+        const newTitle = editTitleValue.trim();
+        if (oldTitle !== newTitle) {
+          if (activeHeading) {
+            updateActiveBlockContent(activeHeading.id, newTitle);
+          }
+          handleRenamePage(oldTitle, newTitle);
         }
       }
     }
+  };
+
+  const handleCreatePage = () => {
+    const existingTitles = graphData.nodes
+      .filter(n => n.type === 'page')
+      .map(n => {
+        return n.label.startsWith('📁 ') || n.label.startsWith('📄 ')
+          ? n.label.slice(2)
+          : n.label;
+      });
+
+    let index = 1;
+    let newTitle = `Untitled Page ${index}`;
+    while (existingTitles.includes(newTitle)) {
+      index++;
+      newTitle = `Untitled Page ${index}`;
+    }
+
+    // Add wiki link to the root document blocks
+    addRootBlock(null, 'text', `[[${newTitle}]]`);
+
+    // Navigate to the newly created page
+    const pageId = `page-${newTitle.toLowerCase().replace(/\s+/g, '-')}`;
+    setActivePage(pageId);
+    setActiveMode('doc');
   };
   
   // E2EE Sync credentials
@@ -252,7 +311,7 @@ const App: React.FC = () => {
           <button
             type="button"
             onClick={() => alert(`Share Link: catnoted.app/space/default`)}
-            className="p-1.5 border border-slate-200/60 dark:border-zinc-800/60 hover:bg-slate-50 dark:hover:bg-zinc-850 text-slate-500 hover:text-indigo-500 rounded-lg text-xs flex items-center gap-1.5 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 shadow-sm"
+            className="p-1.5 border border-slate-200/60 dark:border-zinc-800/60 hover:bg-slate-50 dark:hover:bg-zinc-850 text-slate-500 hover:text-indigo-550 rounded-lg text-xs flex items-center gap-1.5 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 shadow-sm"
             title="Share document link"
           >
             <Share2 className="w-3.5 h-3.5" />
@@ -280,7 +339,7 @@ const App: React.FC = () => {
       case 'doc':
         return (
           <div className="h-full overflow-auto">
-            <DocumentEditor />
+            <DocumentEditor activePage={activePage} onRenamePage={handleRenamePage} />
           </div>
         );
       case 'canvas':
@@ -324,6 +383,7 @@ const App: React.FC = () => {
         pageTitle={pageTitle}
         userEmail={userEmail}
         onAuthTrigger={() => setIsAuthOpen(true)}
+        onCreatePage={handleCreatePage}
       >
         {renderContent()}
       </AppLayout>

@@ -136,4 +136,45 @@ describe('AppLayout Sidebar Integration Tests', () => {
     // Clean up
     document.body.removeChild(container);
   });
+
+  it('should invoke onCreatePage callback when clicking the "+ New Page" button', async () => {
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+
+    const onCreatePage = vi.fn();
+
+    await act(async () => {
+      const root = createRoot(container);
+      root.render(
+        <AppLayout
+          activeMode="doc"
+          onModeChange={vi.fn()}
+          isDarkMode={true}
+          onToggleTheme={vi.fn()}
+          activePage="root-doc-node"
+          onPageSelect={vi.fn()}
+          onCreatePage={onCreatePage}
+        >
+          <div>Workspace Content</div>
+        </AppLayout>
+      );
+    });
+
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    const buttons = Array.from(container.querySelectorAll('button'));
+    const newPageButton = buttons.find(btn => btn.textContent?.includes('+ New Page'));
+
+    expect(newPageButton).toBeDefined();
+
+    await act(async () => {
+      newPageButton?.click();
+    });
+
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    expect(onCreatePage).toHaveBeenCalled();
+
+    document.body.removeChild(container);
+  });
 });
