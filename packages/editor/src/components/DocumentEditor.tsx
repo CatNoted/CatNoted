@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDocumentStore } from '../store.js';
 import { TextBlock } from './TextBlock.js';
 import { HeadingBlock } from './HeadingBlock.js';
@@ -15,17 +15,33 @@ import {
   MoreVertical 
 } from 'lucide-react';
 
-export const DocumentEditor: React.FC = () => {
+interface DocumentEditorProps {
+  activePage?: string;
+  onRenamePage?: (oldTitle: string, newTitle: string) => void;
+}
+
+export const DocumentEditor: React.FC<DocumentEditorProps> = ({
+  activePage = 'root-doc-node',
+  onRenamePage
+}) => {
   const { 
     blocks, 
     addBlock, 
     updateBlockContent, 
     updateBlockType, 
     deleteBlock 
-  } = useDocumentStore();
+  } = useDocumentStore(activePage);
 
   const [focusBlockId, setFocusBlockId] = useState<string | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+  const titleOnFocusRef = useRef<string>('');
+
+  useEffect(() => {
+    // If the page has exactly 1 block and it's a level-1 heading, auto-focus it
+    if (blocks.length === 1 && blocks[0].type === 'heading' && blocks[0].properties?.level === 1) {
+      setFocusBlockId(blocks[0].id);
+    }
+  }, [activePage, blocks]);
 
   const handleCreateBlock = (afterId: string) => {
     const newId = addBlock(afterId, 'text', '');
@@ -159,6 +175,20 @@ export const DocumentEditor: React.FC = () => {
                   onBackspace={() => handleBackspaceBlock(block.id, index)}
                   onSetType={(type, props) => updateBlockType(block.id, type as any, props)}
                   onAddWidget={() => handleAddWidget(block.id)}
+                  onFocus={() => {
+                    if (index === 0 && block.properties?.level === 1 && activePage !== 'root-doc-node') {
+                      titleOnFocusRef.current = block.content;
+                    }
+                  }}
+                  onBlur={() => {
+                    if (index === 0 && block.properties?.level === 1 && activePage !== 'root-doc-node' && onRenamePage) {
+                      const oldTitle = titleOnFocusRef.current.trim();
+                      const newTitle = block.content.trim();
+                      if (oldTitle && newTitle && oldTitle !== newTitle) {
+                        onRenamePage(oldTitle, newTitle);
+                      }
+                    }
+                  }}
                   focusOnMount={isFocused}
                 />
               )}

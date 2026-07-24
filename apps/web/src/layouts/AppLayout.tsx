@@ -41,6 +41,7 @@ interface AppLayoutProps {
   pageTitle?: string;
   userEmail?: string;
   onAuthTrigger?: () => void;
+  onCreatePage?: () => void;
 }
 
 import { requestLlmWidget } from '@catnoted/agent-runtime';
@@ -64,7 +65,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   onPageSelect,
   pageTitle: _pageTitle,
   userEmail: _userEmail,
-  onAuthTrigger: _onAuthTrigger
+  onAuthTrigger: _onAuthTrigger,
+  onCreatePage
 }) => {
   const { blocks, addBlock, updateBlockType } = useDocumentStore();
 
@@ -577,6 +579,16 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               <div className="px-2 mb-2 text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
                 <span>Page Tree</span>
               </div>
+
+              {onCreatePage && (
+                <button
+                  type="button"
+                  onClick={onCreatePage}
+                  className="w-full flex items-center justify-center gap-1.5 py-2 px-3 mb-3 bg-indigo-50 dark:bg-indigo-955/40 text-indigo-600 dark:text-indigo-400 font-semibold hover:bg-indigo-100 dark:hover:bg-indigo-950/60 rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                >
+                  <span>+ New Page</span>
+                </button>
+              )}
 
               <div className="space-y-1.5">
                 {/* 1. Pages Category */}
