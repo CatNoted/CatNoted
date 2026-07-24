@@ -1,0 +1,12 @@
+🎯 **What:**
+Added missing unit test coverage for `requestLlmWidget` located in `packages/agent-runtime/src/llm/client.ts`. The missing test caused a testing gap around the widget generator which integrates with various templates and custom configurations.
+
+📊 **Coverage:**
+The new test suite `packages/agent-runtime/src/llm/client.test.ts` now covers:
+*   Happy path LLM generation when provided with a valid API key and endpoint.
+*   Graceful fallback to mock templates (Time, Calculator, Todo) when LLM fetch fails.
+*   Default endpoints fallbacks.
+*   Validates regex template matching functionality without requiring an API Key.
+
+✨ **Result:**
+The test suite is fully verified and executes correctly, improving test coverage for widget requests and safeguarding future updates to the mock template strings or `LLMConfig`.
