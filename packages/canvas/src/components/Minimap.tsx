@@ -1,4 +1,5 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { CanvasElement } from '@catnoted/shared';
 
 interface MinimapProps {
@@ -19,6 +20,7 @@ export const Minimap: React.FC<MinimapProps> = ({
   viewportHeight = 500
 }) => {
   const minimapRef = useRef<HTMLDivElement>(null);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const isDraggingRef = useRef(false);
 
   // Constants for minimap container dimensions
@@ -134,6 +136,47 @@ export const Minimap: React.FC<MinimapProps> = ({
           className="absolute border border-indigo-500 bg-indigo-500/10 rounded-md pointer-events-none transition-[left,top,width,height] duration-75 shadow-[0_0_8px_rgba(99,102,241,0.15)]"
         />
       </div>
+
+      {!isCollapsed && (
+        <div
+          ref={minimapRef}
+          onMouseDown={handleMouseDown}
+          style={{ width: minimapWidth, height: minimapHeight }}
+          className="bg-white/85 dark:bg-zinc-900/85 border border-slate-200 dark:border-zinc-800 rounded-xl relative overflow-hidden shadow-lg cursor-crosshair select-none backdrop-blur-md transition-all"
+        >
+          {/* Dynamic mini representations of cards */}
+          {elementList.map(el => {
+            const mx = scaleX(el.x);
+            const my = scaleY(el.y);
+            const mw = ((el.width || 260) / boundsWidth) * minimapWidth;
+            const mh = ((el.height || 120) / boundsHeight) * minimapHeight;
+
+            return (
+              <div
+                key={`mini-${el.id}`}
+                style={{
+                  left: mx,
+                  top: my,
+                  width: Math.max(4, mw),
+                  height: Math.max(3, mh),
+                }}
+                className="absolute bg-slate-300 dark:bg-zinc-700 border border-slate-400/20 dark:border-zinc-600/50 rounded-sm"
+              />
+            );
+          })}
+
+          {/* Viewport Overlay Box */}
+          <div
+            style={{
+              left: viewX,
+              top: viewY,
+              width: viewWidth,
+              height: viewHeight,
+            }}
+            className="absolute border-2 border-indigo-500/80 bg-indigo-500/10 rounded-md pointer-events-none transition-[left,top,width,height] duration-75 shadow-[0_0_0_9999px_rgba(0,0,0,0.1)] dark:shadow-[0_0_0_9999px_rgba(0,0,0,0.3)]"
+          />
+        </div>
+      )}
     </div>
   );
 };

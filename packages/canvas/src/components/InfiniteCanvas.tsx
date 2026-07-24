@@ -45,8 +45,20 @@ export const InfiniteCanvas: React.FC = () => {
     handleMouseMove,
     handleMouseUp,
     handleWheel,
-    transformStyle
+    transformStyle,
+    containerRef
   } = useCanvasViewport();
+
+  // Attach native wheel event for zooming/panning
+  useEffect(() => {
+    const el = containerRef.current;
+    if (el) {
+      el.addEventListener('wheel', handleWheel, { passive: false });
+      return () => {
+        el.removeEventListener('wheel', handleWheel);
+      };
+    }
+  }, [handleWheel]);
 
   // Sync elements map from Yjs
   useEffect(() => {
@@ -442,7 +454,7 @@ export const InfiniteCanvas: React.FC = () => {
       onMouseDown={handleBackgroundMouseDown}
       onMouseMove={handleGlobalMouseMove}
       onMouseUp={handleGlobalMouseUp}
-      onWheel={handleWheel}
+      ref={containerRef}
       className="h-[75vh] w-full border border-slate-200 dark:border-zinc-800 rounded-3xl overflow-hidden bg-slate-50 dark:bg-zinc-950 shadow-inner relative cursor-grab active:cursor-grabbing select-none"
     >
       {/* Dynamic Dot Grid Background */}

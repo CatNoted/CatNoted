@@ -66,7 +66,25 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   };
 
   return (
-    <div className="max-w-3xl mx-auto py-10 space-y-0.5">
+    <div className="max-w-3xl mx-auto py-10 space-y-0.5 min-h-[50vh]" onClick={(e) => {
+      // If clicking in the empty space below blocks, focus the last block
+      if (e.target === e.currentTarget && blocks.length > 0) {
+        setFocusBlockId(blocks[blocks.length - 1].id);
+      }
+    }}>
+      {blocks.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-20 text-slate-400 dark:text-zinc-500 opacity-60">
+          <span className="text-4xl mb-3">📝</span>
+          <p className="text-sm font-medium">This document is empty</p>
+          <p className="text-xs mt-1">Start typing or type '/' for commands</p>
+          <button
+            onClick={() => handleCreateBlock('root')}
+            className="mt-4 px-4 py-1.5 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-md text-xs font-semibold hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition-colors"
+          >
+            Create first block
+          </button>
+        </div>
+      )}
       {blocks.map((block, index) => {
         const isFocused = focusBlockId === block.id;
 
@@ -164,7 +182,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             </div>
 
             {/* Block Content — always to the right of controls */}
-            <div className="flex-1 min-w-0 pr-4">
+            <div className="flex-1 min-w-0 w-full pl-0">
               {block.type === 'heading' && (
                 <HeadingBlock
                   id={block.id}

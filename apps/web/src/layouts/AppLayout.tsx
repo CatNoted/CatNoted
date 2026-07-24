@@ -539,7 +539,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-3 space-y-6">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden min-w-[160px]">
+            <div className="p-3 space-y-6">
             {/* Recent Documents Section */}
             <div>
               <div className="flex items-center gap-1.5 px-2 mb-2 text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
@@ -650,7 +651,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                   {sectionsExpanded.tags && (
                     <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-150 dark:border-zinc-800 ml-3.5">
                       {tagNodes.length === 0 ? (
-                        <span className="block px-2 py-1 text-[11px] text-slate-400 dark:text-zinc-500 italic">No tags found</span>
+                        <div className="px-2 py-3 flex flex-col items-center justify-center text-center gap-1.5 opacity-60">
+                          <Tag className="w-4 h-4 text-slate-400 dark:text-zinc-500" />
+                          <span className="text-[10px] text-slate-500 dark:text-zinc-400">Type #tag in editor</span>
+                        </div>
                       ) : (
                         tagNodes.map(node => {
                           const isActive = activePage === node.id;
@@ -697,7 +701,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                   {sectionsExpanded.widgets && (
                     <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-150 dark:border-zinc-800 ml-3.5">
                       {widgetNodes.length === 0 ? (
-                        <span className="block px-2 py-1 text-[11px] text-slate-400 dark:text-zinc-500 italic">No widgets found</span>
+                        <div className="px-2 py-3 flex flex-col items-center justify-center text-center gap-1.5 opacity-60">
+                          <Cpu className="w-4 h-4 text-slate-400 dark:text-zinc-500" />
+                          <span className="text-[10px] text-slate-500 dark:text-zinc-400">Add AI widget</span>
+                        </div>
                       ) : (
                         widgetNodes.map(node => {
                           const isActive = activePage === node.id;
@@ -726,6 +733,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 </div>
 
               </div>
+            </div>
             </div>
           </div>
         </aside>
