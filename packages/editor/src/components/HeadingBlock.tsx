@@ -111,8 +111,13 @@ export const HeadingBlock: React.FC<HeadingBlockProps> = ({
   });
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (slashActive && ['Enter', 'ArrowUp', 'ArrowDown', 'Escape'].includes(e.key)) {
-      return;
+    if (slashActive) {
+      if (['Enter', 'ArrowUp', 'ArrowDown', 'Escape'].includes(e.key)) {
+        return;
+      }
+      if (['ArrowLeft', 'ArrowRight'].includes(e.key)) {
+        closeMenu();
+      }
     }
 
     if (e.key === 'Enter' && !e.shiftKey) {
