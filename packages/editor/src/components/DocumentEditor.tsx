@@ -57,7 +57,7 @@ export const DocumentEditor: React.FC = () => {
         return (
           <div 
             key={block.id} 
-            className="group flex items-start gap-0 px-4 py-0.5 rounded-lg transition-colors hover:bg-black/5 dark:hover:bg-zinc-800 hover:shadow-sm"
+            className="group flex items-start gap-0 px-4 py-0.5 rounded-lg transition-all hover:bg-black/5 dark:hover:bg-zinc-800 hover:shadow-sm hover:ring-1 hover:ring-slate-200/60 dark:hover:ring-zinc-700/60"
           >
             {/* Left Block Controls - fixed width gutter, never overlaps content */}
             <div className="w-14 flex-shrink-0 flex items-start justify-end gap-0.5 pt-[3px] opacity-0 group-hover:opacity-100 transition-opacity">
