@@ -6,6 +6,9 @@ import { CanvasCard } from './CanvasCard.js';
 import { ConnectorLine } from './ConnectorLine.js';
 import { Minimap } from './Minimap.js';
 import { Trash2 } from 'lucide-react';
+import { GenericShape } from './GenericShape.js';
+import { CanvasToolbar } from './CanvasToolbar.js';
+import { CanvasProperties } from './CanvasProperties.js';
 
 export const ycanvas = ydoc.getMap<CanvasElement>('canvas');
 
@@ -28,6 +31,10 @@ export const InfiniteCanvas: React.FC = () => {
   const activeDragId = useRef<string | null>(null);
   const dragStartCoords = useRef<Record<string, { x: number; y: number }>>({});
   const dragStartMouse = useRef({ x: 0, y: 0 });
+
+  // Resize states
+  const activeResizeHandle = useRef<{ handle: string, id: string } | null>(null);
+  const resizeStartRect = useRef<{ x: number, y: number, w: number, h: number } | null>(null);
 
   const {
     pan,
@@ -168,12 +175,62 @@ export const InfiniteCanvas: React.FC = () => {
     dragStartCoords.current = coords;
   };
 
+  const handleResizeStart = (e: React.MouseEvent, handle: string, id: string) => {
+    e.stopPropagation();
+    const elem = elements[id];
+    if (elem) {
+      activeResizeHandle.current = { handle, id };
+      resizeStartRect.current = { x: elem.x, y: elem.y, w: elem.width || 200, h: elem.height || 100 };
+      dragStartMouse.current = { x: e.clientX, y: e.clientY };
+    }
+  };
+
   const handleGlobalMouseMove = (e: React.MouseEvent) => {
     // If drawing custom connector
     if (activeConnectorStart) {
       const canvasX = (e.clientX - pan.x) / scale;
       const canvasY = (e.clientY - pan.y) / scale;
       setConnectorMousePos({ x: canvasX, y: canvasY });
+      return;
+    }
+
+    // Resize element
+    if (activeResizeHandle.current && resizeStartRect.current) {
+      const { handle, id } = activeResizeHandle.current;
+      const start = resizeStartRect.current;
+      const deltaX = (e.clientX - dragStartMouse.current.x) / scale;
+      const deltaY = (e.clientY - dragStartMouse.current.y) / scale;
+
+      let newX = start.x;
+      let newY = start.y;
+      let newW = start.w;
+      let newH = start.h;
+
+      if (handle.includes('e')) newW = Math.max(20, start.w + deltaX);
+      if (handle.includes('s')) newH = Math.max(20, start.h + deltaY);
+      if (handle.includes('w')) {
+        const mw = Math.max(20, start.w - deltaX);
+        newX = start.x + (start.w - mw);
+        newW = mw;
+      }
+      if (handle.includes('n')) {
+        const mh = Math.max(20, start.h - deltaY);
+        newY = start.y + (start.h - mh);
+        newH = mh;
+      }
+
+      ydoc.transact(() => {
+        const current = ycanvas.get(id);
+        if (current) {
+          ycanvas.set(id, {
+            ...current,
+            x: Math.round(newX),
+            y: Math.round(newY),
+            width: Math.round(newW),
+            height: Math.round(newH)
+          });
+        }
+      });
       return;
     }
 
@@ -211,6 +268,9 @@ export const InfiniteCanvas: React.FC = () => {
   };
 
   const handleGlobalMouseUp = (e: React.MouseEvent) => {
+    activeResizeHandle.current = null;
+    resizeStartRect.current = null;
+
     // 1. If drawing custom connector
     if (activeConnectorStart) {
       const canvasX = (e.clientX - pan.x) / scale;
@@ -333,9 +393,49 @@ export const InfiniteCanvas: React.FC = () => {
     });
   };
 
+  const handleAddElement = (type: CanvasElement['type']) => {
+    ydoc.transact(() => {
+      const id = `el-${Date.now()}`;
+      const cx = (-pan.x + window.innerWidth / 2) / scale;
+      const cy = (-pan.y + window.innerHeight / 2) / scale;
+
+      const el: CanvasElement = {
+        id,
+        type,
+        x: cx,
+        y: cy,
+        width: type === 'frame' ? 400 : 200,
+        height: type === 'frame' ? 300 : 100,
+        zIndex: 20,
+        rotation: 0
+      };
+
+      if (type === 'shape') {
+        el.shapeType = 'rectangle';
+        el.color = 'bg-white';
+      }
+
+      ycanvas.set(id, el);
+      setSelectedIds([id]);
+    });
+  };
+
+  const handleUpdateElement = (id: string, updates: Partial<CanvasElement>) => {
+    ydoc.transact(() => {
+      const current = ycanvas.get(id);
+      if (current) {
+        ycanvas.set(id, { ...current, ...updates });
+      }
+    });
+  };
+
   const customConnectors = Object.values(elements).filter(
     el => el.type === 'connector' && el.connector
   );
+
+  const selectedElements = selectedIds.map(id => elements[id]).filter(Boolean);
+
+  const nonBlockElements = Object.values(elements).filter(el => el.type !== 'card' && el.type !== 'connector');
 
   return (
     <div
@@ -366,27 +466,6 @@ export const InfiniteCanvas: React.FC = () => {
       {/* Infinite Canvas Content Viewport */}
       <div style={transformStyle} className="absolute inset-0 pointer-events-none">
         
-        {/* Draw SVG Connectors between sequential cards (Default Mindmap skeleton) */}
-        {blocks.map((block, index) => {
-          if (index === 0) return null;
-          const prevBlock = blocks[index - 1];
-          const startElem = elements[prevBlock.id];
-          const endElem = elements[block.id];
-
-          if (!startElem || !endElem) return null;
-
-          return (
-            <ConnectorLine
-              key={`conn-${prevBlock.id}-${block.id}`}
-              startX={startElem.x + (startElem.width || 240)}
-              startY={startElem.y + (startElem.height || 120) / 2}
-              endX={endElem.x}
-              endY={endElem.y + (endElem.height || 120) / 2}
-              label={`Next Block`}
-            />
-          );
-        })}
-
         {/* Draw Custom User-dragged Connectors */}
         {customConnectors.map(elem => {
           const conn = elem.connector;
@@ -467,6 +546,20 @@ export const InfiniteCanvas: React.FC = () => {
           />
         )}
 
+        {/* Draw Non-Block Elements (Notes, Shapes, Frames) */}
+        {nonBlockElements.map(elem => (
+          <div key={elem.id} className="pointer-events-auto">
+            <GenericShape
+              element={elem}
+              isSelected={selectedIds.includes(elem.id)}
+              onSelectToggle={handleSelectToggle}
+              onDragStart={handleCardDragStart}
+              onResizeStart={handleResizeStart}
+              onTextChange={(id, text) => handleUpdateElement(id, { text })}
+            />
+          </div>
+        ))}
+
         {/* Draw Draggable Cards */}
         {blocks.map(block => {
           const elem = elements[block.id];
@@ -486,6 +579,13 @@ export const InfiniteCanvas: React.FC = () => {
           );
         })}
       </div>
+
+      <CanvasToolbar onAddElement={handleAddElement} />
+
+      <CanvasProperties
+        selectedElements={selectedElements}
+        onUpdateElement={handleUpdateElement}
+      />
 
       {/* Minimap Navigation Widget */}
       <div className="absolute bottom-6 right-6 z-40">

@@ -1,4 +1,4 @@
-export type CanvasElementType = 'card' | 'shape' | 'connector';
+export type CanvasElementType = 'card' | 'shape' | 'connector' | 'note' | 'frame';
 
 export interface ConnectorInfo {
   id: string;
@@ -19,6 +19,9 @@ export interface CanvasElement {
   zIndex: number;
   rotation: number;
   color?: string;
+  borderStyle?: 'solid' | 'dashed' | 'none';
+  opacity?: number;
+  textAlign?: 'left' | 'center' | 'right';
   blockId?: string;
   shapeType?: 'rectangle' | 'circle' | 'triangle' | 'star';
   text?: string;
