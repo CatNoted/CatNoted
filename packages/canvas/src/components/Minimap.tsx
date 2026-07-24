@@ -94,13 +94,13 @@ export const Minimap: React.FC<MinimapProps> = ({
   }, [pan, scale, boundsMinX, boundsWidth, boundsMinY, boundsHeight, viewportWidth, viewportHeight]);
 
   return (
-    <div className="flex flex-col gap-1.5 items-end">
-      <span className="text-[9px] font-mono font-semibold text-slate-400 dark:text-zinc-500 uppercase tracking-widest">Minimap navigation</span>
+    <div className="flex flex-col gap-1 items-end">
+      <span className="text-[8px] font-mono font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-widest">Navigation Minimap</span>
       <div
         ref={minimapRef}
         onMouseDown={handleMouseDown}
         style={{ width: minimapWidth, height: minimapHeight }}
-        className="bg-white/85 dark:bg-zinc-950/85 border border-slate-200 dark:border-zinc-800 rounded-xl relative overflow-hidden shadow-md cursor-crosshair select-none backdrop-blur-sm"
+        className="bg-white/60 dark:bg-zinc-950/60 border border-slate-200/40 dark:border-zinc-800/60 rounded-2xl relative overflow-hidden shadow-sm cursor-crosshair select-none backdrop-blur-md transition-shadow hover:shadow-md"
       >
         {/* Dynamic mini representations of cards */}
         {elementList.map(el => {
@@ -118,12 +118,12 @@ export const Minimap: React.FC<MinimapProps> = ({
                 width: Math.max(4, mw),
                 height: Math.max(3, mh),
               }}
-              className="absolute bg-slate-300 dark:bg-zinc-800 border border-slate-400/20 dark:border-zinc-700/50 rounded-sm"
+              className="absolute bg-slate-200 dark:bg-zinc-800/50 border border-slate-300/20 dark:border-zinc-700/30 rounded-md"
             />
           );
         })}
 
-        {/* Viewport Overlay Box */}
+        {/* Viewport Overlay Box (Premium Indigo styling) */}
         <div
           style={{
             left: viewX,
@@ -131,7 +131,7 @@ export const Minimap: React.FC<MinimapProps> = ({
             width: viewWidth,
             height: viewHeight,
           }}
-          className="absolute border-2 border-amber-500 bg-amber-500/10 rounded-lg pointer-events-none transition-[left,top,width,height] duration-75"
+          className="absolute border border-indigo-500 bg-indigo-500/10 rounded-lg pointer-events-none transition-[left,top,width,height] duration-75"
         />
       </div>
     </div>
