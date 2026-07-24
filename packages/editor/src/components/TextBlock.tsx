@@ -14,7 +14,7 @@ interface TextBlockProps {
   blockType?: string;
 }
 
-export const TextBlock: React.FC<TextBlockProps> = ({
+const TextBlockBase: React.FC<TextBlockProps> = ({
   content,
   onChange,
   onEnter,
@@ -198,3 +198,5 @@ export const TextBlock: React.FC<TextBlockProps> = ({
     </div>
   );
 };
+
+export const TextBlock = React.memo(TextBlockBase);

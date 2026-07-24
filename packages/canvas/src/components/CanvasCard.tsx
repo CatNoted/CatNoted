@@ -11,7 +11,7 @@ interface CanvasCardProps {
   onSelectToggle?: (e: React.MouseEvent, id: string) => void;
 }
 
-export const CanvasCard: React.FC<CanvasCardProps> = ({
+const CanvasCardBase: React.FC<CanvasCardProps> = ({
   block,
   canvasElem,
   onDragStart,
@@ -113,3 +113,5 @@ export const CanvasCard: React.FC<CanvasCardProps> = ({
     </div>
   );
 };
+
+export const CanvasCard = React.memo(CanvasCardBase);

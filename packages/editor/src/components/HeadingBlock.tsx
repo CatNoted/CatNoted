@@ -16,7 +16,7 @@ interface HeadingBlockProps {
   onBlur?: () => void;
 }
 
-export const HeadingBlock: React.FC<HeadingBlockProps> = ({
+const HeadingBlockBase: React.FC<HeadingBlockProps> = ({
   content,
   level,
   onChange,
@@ -170,3 +170,5 @@ export const HeadingBlock: React.FC<HeadingBlockProps> = ({
     </div>
   );
 };
+
+export const HeadingBlock = React.memo(HeadingBlockBase);
