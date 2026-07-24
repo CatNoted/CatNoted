@@ -131,11 +131,11 @@ export const HeadingBlock: React.FC<HeadingBlockProps> = ({
       case 1:
         return 'text-2xl font-bold tracking-tight text-slate-900 dark:text-zinc-50';
       case 2:
-        return 'text-xl font-bold tracking-tight text-slate-800 dark:text-zinc-100';
+        return 'text-xl font-bold tracking-tight text-slate-900 dark:text-zinc-100';
       case 3:
-        return 'text-lg font-semibold tracking-tight text-slate-800 dark:text-zinc-200';
+        return 'text-lg font-semibold tracking-tight text-slate-900 dark:text-zinc-100';
       default:
-        return 'text-base font-semibold tracking-tight text-slate-800 dark:text-zinc-200';
+        return 'text-base font-semibold tracking-tight text-slate-900 dark:text-zinc-100';
     }
   };
 
