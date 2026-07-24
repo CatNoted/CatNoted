@@ -1,5 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Settings, ShieldAlert, KeyRound, Cloud, X } from 'lucide-react';
+import { encryptPayload, decryptPayload } from '../../utils/crypto.js';
+
+// Base64 helpers
+function encodeBase64(bytes: Uint8Array): string {
+  const binString = Array.from(bytes, (byte) => String.fromCharCode(byte)).join('');
+  return btoa(binString);
+}
+
+function decodeBase64(base64: string): Uint8Array {
+  const binString = atob(base64);
+  return Uint8Array.from(binString, (m) => m.codePointAt(0)!);
+}
+
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -17,22 +30,63 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const [activeTab, setActiveTab] = useState<'byok' | 'sync'>('byok');
   
   // API Keys state
-  const [openaiKey, setOpenaiKey] = useState(() => localStorage.getItem('byok_openai_key') || '');
-  const [geminiKey, setGeminiKey] = useState(() => localStorage.getItem('byok_gemini_key') || '');
-  const [anthropicKey, setAnthropicKey] = useState(() => localStorage.getItem('byok_anthropic_key') || '');
+  const [openaiKey, setOpenaiKey] = useState('');
+  const [geminiKey, setGeminiKey] = useState('');
+  const [anthropicKey, setAnthropicKey] = useState('');
   const [ollamaUrl, setOllamaUrl] = useState(() => localStorage.getItem('byok_ollama_url') || 'http://localhost:11434');
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const loadKey = async (keyName: string, setter: (val: string) => void) => {
+      const encryptedBase64 = localStorage.getItem(keyName);
+      if (encryptedBase64) {
+        try {
+          const encryptedBytes = decodeBase64(encryptedBase64);
+          const decryptedBytes = await decryptPayload(encryptedBytes, passphrase);
+          const decryptedString = new TextDecoder().decode(decryptedBytes);
+          setter(decryptedString);
+        } catch (e) {
+          console.error(`Failed to decrypt ${keyName}`, e);
+          setter(''); // Clear or handle error
+        }
+      } else {
+        setter('');
+      }
+    };
+
+    loadKey('byok_openai_key', setOpenaiKey);
+    loadKey('byok_gemini_key', setGeminiKey);
+    loadKey('byok_anthropic_key', setAnthropicKey);
+  }, [isOpen, passphrase]);
 
   if (!isOpen) return null;
 
-  const handleSaveKeys = (e: React.FormEvent) => {
+  const handleSaveKeys = async (e: React.FormEvent) => {
     e.preventDefault();
-    localStorage.setItem('byok_openai_key', openaiKey);
-    localStorage.setItem('byok_gemini_key', geminiKey);
-    localStorage.setItem('byok_anthropic_key', anthropicKey);
+
+    const saveKey = async (keyName: string, value: string) => {
+      if (value) {
+        try {
+          const valueBytes = new TextEncoder().encode(value);
+          const encryptedBytes = await encryptPayload(valueBytes, passphrase);
+          const encryptedBase64 = encodeBase64(encryptedBytes);
+          localStorage.setItem(keyName, encryptedBase64);
+        } catch (e) {
+          console.error(`Failed to encrypt ${keyName}`, e);
+        }
+      } else {
+        localStorage.removeItem(keyName);
+      }
+    };
+
+    await saveKey('byok_openai_key', openaiKey);
+    await saveKey('byok_gemini_key', geminiKey);
+    await saveKey('byok_anthropic_key', anthropicKey);
     localStorage.setItem('byok_ollama_url', ollamaUrl);
+
     alert('BYOK API Keys successfully saved in local secure storage!');
   };
-
   return (
     <div className="fixed inset-0 bg-slate-900/50 dark:bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-3xl w-full max-w-lg p-6 shadow-2xl relative flex flex-col h-[520px]">
