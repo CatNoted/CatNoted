@@ -11,6 +11,7 @@ describe('Whitebox Test: parseDocumentGraph (Graph Parsing Logic)', () => {
     expect(result.nodes[0]).toEqual({
       id: 'root-doc-node',
       label: '📁 Untitled Note',
+      rawName: 'Untitled Note',
       type: 'page',
       val: 20,
     });
@@ -30,7 +31,7 @@ describe('Whitebox Test: parseDocumentGraph (Graph Parsing Logic)', () => {
     expect(result.nodes).toHaveLength(2); // root + page-system-design
     const pageNode = result.nodes.find((n) => n.id === 'page-system-design');
     expect(pageNode).toBeDefined();
-    expect(pageNode?.label).toBe('📄 System Design');
+    expect(pageNode?.label).toBe('📄 System Design (1)');
 
     expect(result.edges).toHaveLength(1);
     expect(result.edges[0]).toEqual({
@@ -67,7 +68,7 @@ describe('Whitebox Test: parseDocumentGraph (Graph Parsing Logic)', () => {
     expect(result.edges.length).toBe(4);
   });
 
-  it('should deduplicate repeated links and tags across blocks', () => {
+  it('should deduplicate repeated links and tags across blocks but accumulate count', () => {
     const blocks: BlockNode[] = [
       {
         id: 'b1',
@@ -87,6 +88,12 @@ describe('Whitebox Test: parseDocumentGraph (Graph Parsing Logic)', () => {
     expect(result.nodes).toHaveLength(3);
     // 1 link edge + 1 tag edge = 2 total edges
     expect(result.edges).toHaveLength(2);
+
+    const archNode = result.nodes.find(n => n.id === 'page-architecture');
+    expect(archNode?.label).toBe('📄 Architecture (2)');
+
+    const impNode = result.nodes.find(n => n.id === 'tag-important');
+    expect(impNode?.label).toBe('# important (2)');
   });
 
   it('should handle empty or whitespace-only wiki-links safely', () => {

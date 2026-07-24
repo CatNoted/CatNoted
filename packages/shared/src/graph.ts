@@ -4,6 +4,7 @@ export interface GraphNode {
   type: 'page' | 'tag' | 'widget';
   val?: number;
   color?: string;
+  rawName?: string;
   [key: string]: any;
 }
 
