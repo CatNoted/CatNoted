@@ -410,6 +410,48 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     downloadAnchor.remove();
   };
 
+  // Cache parsed graph nodes based on block updates, not search query
+  const parsedGraphNodes = React.useMemo(() => {
+    return parseDocumentGraph(blocks).nodes;
+  }, [blocks]);
+
+  // Search filtering logic
+  const searchResults = React.useMemo(() => {
+    if (!searchQuery.trim()) return [];
+
+    const query = searchQuery.toLowerCase();
+    const results: Array<{ id: string; type: string; content: string; icon: React.ElementType }> = [];
+
+    // Search in headings / text
+    blocks.forEach(block => {
+      if ((block.type === 'heading' || block.type === 'text') && block.content.toLowerCase().includes(query)) {
+        results.push({
+          id: block.id,
+          type: block.type,
+          content: block.content,
+          icon: block.type === 'heading' ? FileText : FileText
+        });
+      }
+    });
+
+    // Search in graph nodes (pages/tags)
+    parsedGraphNodes.forEach(node => {
+      if (node.label.toLowerCase().includes(query) && node.id !== 'root-doc-node') {
+        // Prevent exact duplicates if we already found the block
+        if (!results.some(r => r.content.includes(node.label.replace(/[📄#]/g, '').trim()))) {
+          results.push({
+            id: node.id,
+            type: node.type,
+            content: node.label,
+            icon: node.type === 'page' ? FileText : Network
+          });
+        }
+      }
+    });
+
+    return results;
+  }, [blocks, parsedGraphNodes, searchQuery]);
+
   // Import widgets catalog and insert them into Yjs store
   const handleImportWidgets = (e: React.ChangeEvent<HTMLInputElement>) => {
     const fileReader = new FileReader();
@@ -455,7 +497,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 { id: 'settings', icon: Settings, label: 'Settings' }
               ].map((item, index) => {
                 const Icon = item.icon;
-                const isActive = activeMode === item.id;
+                const isActive = activeMode === item.id && !isSearchOpen;
                 return (
                   <button
                     key={item.id}
