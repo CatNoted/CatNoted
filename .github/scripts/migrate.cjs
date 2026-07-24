@@ -6,6 +6,7 @@ const { Client } = require('pg');
 const originalLookup = dns.lookup;
 dns.lookup = function(hostname, options, callback) {
   const cb = typeof options === 'function' ? options : callback;
+  const opts = typeof options === 'object' && options !== null ? options : {};
   let targetHost = 'db.vhuchnycqhprthmdsont.supabase.co';
   try {
     const rawUrl = process.env.SUPABASE_DB_URL;
@@ -18,6 +19,9 @@ dns.lookup = function(hostname, options, callback) {
   } catch (_) {}
 
   if (hostname === targetHost) {
+    if (opts.all) {
+      return cb(null, [{ address: '52.77.146.31', family: 4 }]);
+    }
     return cb(null, '52.77.146.31', 4);
   }
   return originalLookup.apply(this, arguments);
