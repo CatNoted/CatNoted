@@ -15,7 +15,7 @@ import {
 
 // E2EE sync utilities
 import { encryptPayload, decryptPayload } from './utils/crypto.js';
-import { mockSyncChannel } from './utils/supabase.js';
+import { mockSyncChannel, supabase } from './utils/supabase.js';
 
 // Modals & Panels
 import { AuthModal } from './components/auth/AuthModal.js';
@@ -135,7 +135,32 @@ const App: React.FC = () => {
   
   // E2EE Sync credentials
   const [passphrase, setPassphrase] = useState('super-secret-default-passphrase');
-  const [userEmail, setUserEmail] = useState('guest@catnoted.com');
+  const [userEmail, setUserEmail] = useState('Guest User');
+  const [session, setSession] = useState<any>(null);
+
+  useEffect(() => {
+    if (!supabase) return;
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (session?.user?.email) {
+        setUserEmail(session.user.email);
+      }
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      if (session?.user?.email) {
+        setUserEmail(session.user.email);
+      } else {
+        setUserEmail('Guest User');
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   // Modals state
   const [isAuthOpen, setIsAuthOpen] = useState(false);
@@ -310,7 +335,10 @@ const App: React.FC = () => {
 
           <button
             type="button"
-            onClick={() => alert(`Share Link: catnoted.app/space/default`)}
+            onClick={() => {
+              const link = `${window.location.origin}/space/${session?.user?.id || 'guest'}`;
+              alert(`Share Link generated:\n${link}\n\n(Anyone with this link and the workspace passphrase can access the E2EE sync room)`);
+            }}
             className="p-1.5 border border-slate-200/60 dark:border-zinc-800/60 hover:bg-slate-50 dark:hover:bg-zinc-850 text-slate-500 hover:text-indigo-550 rounded-lg text-xs flex items-center gap-1.5 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 shadow-sm"
             title="Share document link"
           >
@@ -393,6 +421,7 @@ const App: React.FC = () => {
         isOpen={isAuthOpen}
         onClose={() => setIsAuthOpen(false)}
         onAuthSuccess={setUserEmail}
+        userEmail={userEmail}
       />
       <SettingsModal
         isOpen={isSettingsOpen}
