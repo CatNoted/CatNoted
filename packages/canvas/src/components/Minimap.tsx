@@ -118,7 +118,7 @@ export const Minimap: React.FC<MinimapProps> = ({
                 width: Math.max(4, mw),
                 height: Math.max(3, mh),
               }}
-              className="absolute bg-slate-300 dark:bg-zinc-800 border border-slate-400/20 dark:border-zinc-700/50 rounded-sm"
+              className="absolute bg-indigo-100/60 dark:bg-indigo-950/40 border border-indigo-200/30 dark:border-indigo-900/40 rounded-sm"
             />
           );
         })}
@@ -131,7 +131,7 @@ export const Minimap: React.FC<MinimapProps> = ({
             width: viewWidth,
             height: viewHeight,
           }}
-          className="absolute border-2 border-amber-500 bg-amber-500/10 rounded-lg pointer-events-none transition-[left,top,width,height] duration-75"
+          className="absolute border border-indigo-500 bg-indigo-500/10 rounded-md pointer-events-none transition-[left,top,width,height] duration-75 shadow-[0_0_8px_rgba(99,102,241,0.15)]"
         />
       </div>
     </div>
