@@ -1,22 +1,51 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 
-export function useCanvasViewport() {
+export function useCanvasViewport(containerRef?: React.RefObject<HTMLElement | null>) {
   const [pan, setPan] = useState({ x: 100, y: 100 });
   const [scale, setScale] = useState(1);
   const isDragging = useRef(false);
   const startDrag = useRef({ x: 0, y: 0 });
+  const [isSpacePan, setIsSpacePan] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Space' && !e.repeat && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        setIsSpacePan(true);
+      }
+    };
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.code === 'Space') {
+        setIsSpacePan(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, []);
+
+  const scaleRef = useRef(scale);
+  const panRef = useRef(pan);
+
+  useEffect(() => {
+    scaleRef.current = scale;
+    panRef.current = pan;
+  }, [scale, pan]);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    // Prevent dragging from card clicks (we only want workspace background drag)
-    if (e.target !== e.currentTarget) return;
+    // Prevent dragging from card clicks unless space panning
+    if (!isSpacePan && e.target !== e.currentTarget) return;
 
-    if (e.button === 0 || e.button === 1) {
+    if (e.button === 0 || e.button === 1 || isSpacePan) {
       isDragging.current = true;
       startDrag.current = { x: e.clientX - pan.x, y: e.clientY - pan.y };
     }
-  }, [pan]);
+  }, [pan, isSpacePan]);
 
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+  const handleMouseMove = useCallback((e: React.MouseEvent | MouseEvent) => {
     if (!isDragging.current) return;
     setPan({
       x: e.clientX - startDrag.current.x,
@@ -75,6 +104,8 @@ export function useCanvasViewport() {
     handleMouseMove,
     handleMouseUp,
     handleWheel,
+    containerRef,
+    isSpacePan,
     transformStyle: {
       transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale})`,
       transformOrigin: '0 0'

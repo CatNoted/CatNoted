@@ -26,6 +26,7 @@ export const InfiniteCanvas: React.FC = () => {
   // Marquee selection states
   const [marqueeStart, setMarqueeStart] = useState<{ x: number; y: number } | null>(null);
   const [marqueeEnd, setMarqueeEnd] = useState<{ x: number; y: number } | null>(null);
+  const [snapToGrid, setSnapToGrid] = useState(false);
 
   // Drag states
   const activeDragId = useRef<string | null>(null);
@@ -35,6 +36,8 @@ export const InfiniteCanvas: React.FC = () => {
   // Resize states
   const activeResizeHandle = useRef<{ handle: string, id: string } | null>(null);
   const resizeStartRect = useRef<{ x: number, y: number, w: number, h: number } | null>(null);
+
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const {
     pan,
@@ -102,17 +105,19 @@ export const InfiniteCanvas: React.FC = () => {
   // Handle keyboard Delete / Backspace to remove selected elements or custom connectors
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      const activeElement = document.activeElement;
+      if (activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA' || activeElement.getAttribute('contenteditable') === 'true')) {
+        return;
+      }
+
       if (e.key === 'Delete' || e.key === 'Backspace') {
-        const activeElement = document.activeElement;
-        if (activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA' || activeElement.getAttribute('contenteditable') === 'true')) {
-          return;
-        }
         if (selectedIds.length > 0) {
           ydoc.transact(() => {
             selectedIds.forEach(id => {
               if (ycanvas.has(id)) {
                 const elem = ycanvas.get(id);
-                if (elem && elem.type === 'connector') {
+                // Allow deleting non-card elements (shapes, notes, frames, connectors)
+                if (elem && elem.type !== 'card') {
                   ycanvas.delete(id);
                 }
               }
@@ -126,11 +131,59 @@ export const InfiniteCanvas: React.FC = () => {
         setConnectorMousePos(null);
         setMarqueeStart(null);
         setMarqueeEnd(null);
+      } else if (e.shiftKey && e.key.toLowerCase() === 'g') {
+        setSnapToGrid(prev => !prev);
+      } else if (e.ctrlKey && e.key.toLowerCase() === 'l') {
+        e.preventDefault();
+        if (selectedIds.length > 0) {
+          ydoc.transact(() => {
+            selectedIds.forEach(id => {
+              const elem = ycanvas.get(id);
+              if (elem) {
+                ycanvas.set(id, { ...elem, locked: !elem.locked });
+              }
+            });
+          });
+        }
+      } else if (e.key === '[' || e.key === ']') {
+        if (selectedIds.length > 0) {
+          ydoc.transact(() => {
+            const allZ = Array.from(ycanvas.values()).map(el => el.zIndex || 0);
+            const minZ = allZ.length ? Math.min(...allZ) : 0;
+            const maxZ = allZ.length ? Math.max(...allZ) : 0;
+
+            selectedIds.forEach(id => {
+              const elem = ycanvas.get(id);
+              if (elem) {
+                ycanvas.set(id, { ...elem, zIndex: e.key === '[' ? minZ - 1 : maxZ + 1 });
+              }
+            });
+          });
+        }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedIds]);
+
+  const bringToFront = (ids: string[]) => {
+    ydoc.transact(() => {
+      let maxZ = 10;
+      Array.from(ycanvas.values()).forEach(el => {
+        if (el.zIndex && el.zIndex > maxZ) {
+          maxZ = el.zIndex;
+        }
+      });
+
+      const nextZ = maxZ + 1;
+      ids.forEach(id => {
+        const current = ycanvas.get(id);
+        if (current) {
+          ycanvas.set(id, { ...current, zIndex: nextZ });
+        }
+      });
+    });
+  };
 
   // Handle starting a connection drag
   const handleStartConnector = (e: React.MouseEvent, fromId: string) => {
@@ -151,12 +204,16 @@ export const InfiniteCanvas: React.FC = () => {
         if (prev.includes(id)) {
           return prev.filter(item => item !== id);
         } else {
+          bringToFront([...prev, id]);
           return [...prev, id];
         }
       });
     } else {
       if (!selectedIds.includes(id)) {
+        bringToFront([id]);
         setSelectedIds([id]);
+      } else {
+        bringToFront(selectedIds);
       }
     }
   };
@@ -176,6 +233,8 @@ export const InfiniteCanvas: React.FC = () => {
       }
     }
 
+    bringToFront(targetDragIds);
+
     dragStartMouse.current = { x: e.clientX, y: e.clientY };
     const coords: Record<string, { x: number; y: number }> = {};
     targetDragIds.forEach(dragId => {
@@ -194,6 +253,10 @@ export const InfiniteCanvas: React.FC = () => {
       activeResizeHandle.current = { handle, id };
       resizeStartRect.current = { x: elem.x, y: elem.y, w: elem.width || 200, h: elem.height || 100 };
       dragStartMouse.current = { x: e.clientX, y: e.clientY };
+      if (!selectedIds.includes(id)) {
+        setSelectedIds([id]);
+        bringToFront([id]);
+      }
     }
   };
 
@@ -263,11 +326,17 @@ export const InfiniteCanvas: React.FC = () => {
         Object.keys(dragStartCoords.current).forEach(id => {
           const start = dragStartCoords.current[id];
           const current = ycanvas.get(id);
-          if (current && start) {
+          if (current && start && !current.locked) {
+            let targetX = start.x + deltaX;
+            let targetY = start.y + deltaY;
+            if (snapToGrid) {
+              targetX = Math.round(targetX / 24) * 24;
+              targetY = Math.round(targetY / 24) * 24;
+            }
             ycanvas.set(id, {
               ...current,
-              x: Math.round(start.x + deltaX),
-              y: Math.round(start.y + deltaY)
+              x: Math.round(targetX),
+              y: Math.round(targetY)
             });
           }
         });
@@ -289,7 +358,9 @@ export const InfiniteCanvas: React.FC = () => {
       const canvasY = (e.clientY - pan.y) / scale;
 
       // Find if we dropped onto any other card
-      let targetCardId: string | null = null;
+      let targetId: string | null = null;
+
+      // Check block cards first
       blocks.forEach(block => {
         const elem = elements[block.id];
         if (elem && block.id !== activeConnectorStart) {
@@ -301,13 +372,31 @@ export const InfiniteCanvas: React.FC = () => {
             canvasY >= elem.y &&
             canvasY <= elem.y + h
           ) {
-            targetCardId = block.id;
+            targetId = block.id;
           }
         }
       });
 
-      if (targetCardId) {
-        const connId = `connector-${activeConnectorStart}-${targetCardId}`;
+      // Check other shapes if not found
+      if (!targetId) {
+        Object.values(elements).forEach(elem => {
+          if (elem && elem.id !== activeConnectorStart && elem.type !== 'connector' && elem.type !== 'frame') {
+            const w = elem.width || 200;
+            const h = elem.height || 100;
+            if (
+              canvasX >= elem.x &&
+              canvasX <= elem.x + w &&
+              canvasY >= elem.y &&
+              canvasY <= elem.y + h
+            ) {
+              targetId = elem.id;
+            }
+          }
+        });
+      }
+
+      if (targetId) {
+        const connId = `connector-${activeConnectorStart}-${targetId}`;
         ydoc.transact(() => {
           ycanvas.set(connId, {
             id: connId,
@@ -321,7 +410,7 @@ export const InfiniteCanvas: React.FC = () => {
             connector: {
               id: connId,
               from: activeConnectorStart,
-              to: targetCardId as string,
+              to: targetId as string,
               type: 'bezier'
             }
           });
@@ -341,6 +430,8 @@ export const InfiniteCanvas: React.FC = () => {
       const bottom = Math.max(marqueeStart.y, marqueeEnd.y);
 
       const newlySelected: string[] = [];
+
+      // Check blocks
       blocks.forEach(block => {
         const elem = elements[block.id];
         if (elem) {
@@ -361,6 +452,27 @@ export const InfiniteCanvas: React.FC = () => {
           if (isIntersecting) {
             newlySelected.push(block.id);
           }
+        }
+      });
+
+      // Check non-blocks
+      nonBlockElements.forEach(elem => {
+        const w = elem.width || 200;
+        const h = elem.height || 100;
+        const cardLeft = elem.x;
+        const cardRight = elem.x + w;
+        const cardTop = elem.y;
+        const cardBottom = elem.y + h;
+
+        const isIntersecting = !(
+          cardLeft > right ||
+          cardRight < left ||
+          cardTop > bottom ||
+          cardBottom < top
+        );
+
+        if (isIntersecting) {
+          newlySelected.push(elem.id);
         }
       });
 
@@ -429,6 +541,7 @@ export const InfiniteCanvas: React.FC = () => {
 
       ycanvas.set(id, el);
       setSelectedIds([id]);
+      bringToFront([id]);
     });
   };
 
@@ -449,8 +562,11 @@ export const InfiniteCanvas: React.FC = () => {
 
   const nonBlockElements = Object.values(elements).filter(el => el.type !== 'card' && el.type !== 'connector');
 
+  const hasContent = blocks.length > 0 || nonBlockElements.length > 0 || customConnectors.length > 0;
+
   return (
     <div
+      ref={containerRef}
       onMouseDown={handleBackgroundMouseDown}
       onMouseMove={handleGlobalMouseMove}
       onMouseUp={handleGlobalMouseUp}
@@ -475,6 +591,17 @@ export const InfiniteCanvas: React.FC = () => {
         className="absolute inset-0 hidden dark:block pointer-events-none opacity-50 bg-repeat"
       />
 
+      {!hasContent && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="flex flex-col items-center gap-4 text-slate-400 dark:text-zinc-600 opacity-60">
+             <div className="w-16 h-16 rounded-2xl border-2 border-dashed border-slate-300 dark:border-zinc-700 flex items-center justify-center">
+               <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+             </div>
+             <p className="text-sm font-medium tracking-wide">Canvas is empty</p>
+          </div>
+        </div>
+      )}
+
       {/* Infinite Canvas Content Viewport */}
       <div style={transformStyle} className="absolute inset-0 pointer-events-none">
         
@@ -487,9 +614,9 @@ export const InfiniteCanvas: React.FC = () => {
 
           if (!sourceElem || !targetElem) return null;
 
-          const startX = sourceElem.x + (sourceElem.width || 260);
+          const startX = sourceElem.x + (sourceElem.width || 260) / 2;
           const startY = sourceElem.y + (sourceElem.height || 120) / 2;
-          const endX = targetElem.x;
+          const endX = targetElem.x + (targetElem.width || 260) / 2;
           const endY = targetElem.y + (targetElem.height || 120) / 2;
 
           const midX = (startX + endX) / 2;
@@ -531,7 +658,7 @@ export const InfiniteCanvas: React.FC = () => {
         {activeConnectorStart && connectorMousePos && (() => {
           const sourceElem = elements[activeConnectorStart];
           if (!sourceElem) return null;
-          const startX = sourceElem.x + (sourceElem.width || 260);
+          const startX = sourceElem.x + (sourceElem.width || 260) / 2;
           const startY = sourceElem.y + (sourceElem.height || 120) / 2;
 
           return (
@@ -554,19 +681,20 @@ export const InfiniteCanvas: React.FC = () => {
               width: Math.abs(marqueeEnd.x - marqueeStart.x),
               height: Math.abs(marqueeEnd.y - marqueeStart.y),
             }}
-            className="absolute border-2 border-dashed border-amber-500 bg-amber-500/10 rounded-sm pointer-events-none z-50"
+            className="absolute border border-indigo-500 bg-indigo-500/10 rounded-sm pointer-events-none z-50"
           />
         )}
 
         {/* Draw Non-Block Elements (Notes, Shapes, Frames) */}
         {nonBlockElements.map(elem => (
-          <div key={elem.id} className="pointer-events-auto">
+          <div key={elem.id} className={isSpacePan ? "pointer-events-none" : "pointer-events-auto"}>
             <GenericShape
               element={elem}
               isSelected={selectedIds.includes(elem.id)}
               onSelectToggle={handleSelectToggle}
               onDragStart={handleCardDragStart}
               onResizeStart={handleResizeStart}
+              onStartConnector={handleStartConnector}
               onTextChange={(id, text) => handleUpdateElement(id, { text })}
             />
           </div>
@@ -578,7 +706,7 @@ export const InfiniteCanvas: React.FC = () => {
           if (!elem) return null;
 
           return (
-            <div key={block.id} className="pointer-events-auto">
+            <div key={block.id} className={isSpacePan ? "pointer-events-none" : "pointer-events-auto"}>
               <CanvasCard
                 block={block}
                 canvasElem={elem}
@@ -597,6 +725,7 @@ export const InfiniteCanvas: React.FC = () => {
       <CanvasProperties
         selectedElements={selectedElements}
         onUpdateElement={handleUpdateElement}
+        elements={elements}
       />
 
       {/* Minimap Navigation Widget */}
@@ -611,6 +740,16 @@ export const InfiniteCanvas: React.FC = () => {
 
       {/* Floating Zoom Controls */}
       <div className="absolute bottom-6 left-6 z-40 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border border-slate-200/50 dark:border-zinc-800/60 rounded-2xl px-3 py-2 flex items-center gap-2 shadow-lg shadow-black/5">
+        <button
+          onClick={() => setSnapToGrid(prev => !prev)}
+          className={`px-2 py-0.5 rounded-lg transition-colors text-[10px] font-mono font-semibold ${snapToGrid ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300' : 'text-slate-400 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-zinc-800 dark:hover:text-indigo-400'}`}
+          title="Toggle Grid Snap (Shift+G)"
+          aria-label="Toggle Grid Snap"
+          type="button"
+        >
+          Grid Snap
+        </button>
+        <div className="w-[1px] h-4 bg-slate-200/80 dark:bg-zinc-800/80 mx-1" />
         <button
           onClick={() => setScale((s: number) => Math.max(0.3, s - 0.1))}
           className="p-1 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 transition-colors"

@@ -10,7 +10,7 @@ interface WidgetBlockPlaceholderProps {
   onDelete: () => void;
 }
 
-export const WidgetBlockPlaceholder: React.FC<WidgetBlockPlaceholderProps> = ({
+const WidgetBlockPlaceholderBase: React.FC<WidgetBlockPlaceholderProps> = ({
   properties,
   onDelete
 }) => {
@@ -49,3 +49,5 @@ export const WidgetBlockPlaceholder: React.FC<WidgetBlockPlaceholderProps> = ({
     </div>
   );
 };
+
+export const WidgetBlockPlaceholder = React.memo(WidgetBlockPlaceholderBase);

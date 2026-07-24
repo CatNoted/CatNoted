@@ -8,7 +8,6 @@ import * as Y from 'yjs';
 import {
   Share2,
   Edit2,
-  ChevronRight,
   BookOpen,
   LayoutGrid
 } from 'lucide-react';
@@ -168,6 +167,8 @@ const App: React.FC = () => {
     return () => window.removeEventListener("keydown", handleGlobalKeyDown);
   }, []);
 
+  const { status, conflictMsg, dismissConflict, persistUpdate } = usePersistence();
+
   // 1. Local E2EE Sync Loop: Listen to local Yjs changes, encrypt them, and broadcast
   useEffect(() => {
     const handleUpdate = async (update: Uint8Array, origin: any) => {
@@ -175,11 +176,13 @@ const App: React.FC = () => {
 
       try {
         const encrypted = await encryptPayload(update, passphrase);
+        const payloadArray = Array.from(encrypted);
         mockSyncChannel.broadcast({
           id: Math.random().toString(36).substring(2),
           sender: "local-tab",
           payload: Array.from(encrypted), // Convert Uint8Array to plain array for JSON transit
         });
+        persistUpdate(payloadArray);
       } catch (e) {
         console.error("Encryption failed during local Yjs update:", e);
       }
@@ -189,7 +192,7 @@ const App: React.FC = () => {
     return () => {
       ydoc.off("update", handleUpdate);
     };
-  }, [passphrase]);
+  }, [passphrase, persistUpdate]);
 
   // 2. Incoming Sync Loop: Listen to incoming messages, decrypt, and merge
   useEffect(() => {
@@ -228,20 +231,20 @@ const App: React.FC = () => {
       <header className="h-14 px-6 border-b border-slate-200/50 dark:border-zinc-800/50 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md flex items-center justify-between z-20 shrink-0 w-full select-none">
         {/* Left: Breadcrumbs + Inline Editable Title */}
         <div className="flex items-center gap-2 max-w-[40%]">
-          <span className="text-xs text-slate-400 dark:text-zinc-500 hover:text-slate-600 dark:hover:text-zinc-300 transition-colors">Workspace</span>
-          <ChevronRight className="w-3.5 h-3.5 text-slate-300 dark:text-zinc-700 shrink-0" />
+          <span className="text-sm font-medium text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200 transition-colors cursor-pointer">Workspace</span>
+          <span className="text-slate-300 dark:text-zinc-600 font-light select-none">/</span>
 
           {activePage !== 'root-doc-node' && (
             <>
               <button
                 type="button"
                 onClick={() => setActivePage('root-doc-node')}
-                className="text-xs text-slate-400 dark:text-zinc-500 hover:text-indigo-550 transition-colors shrink-0 font-medium"
+                className="text-sm font-medium text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200 transition-colors shrink-0"
                 title="Back to root note"
               >
                 Root
               </button>
-              <ChevronRight className="w-3.5 h-3.5 text-slate-300 dark:text-zinc-700 shrink-0" />
+              <span className="text-slate-300 dark:text-zinc-600 font-light select-none">/</span>
             </>
           )}
 
@@ -310,14 +313,43 @@ const App: React.FC = () => {
 
         {/* Right: Actions, Sync Indicator, User profile */}
         <div className="flex items-center gap-3">
-          <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            Connected
-          </span>
+          {status === 'saving' && (
+            <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+              Saving...
+            </span>
+          )}
+          {status === 'saved' && (
+            <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              Saved
+            </span>
+          )}
+          {status === 'offline' && (
+            <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-slate-500/10 text-slate-600 dark:text-slate-400 border border-slate-500/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
+              Offline
+            </span>
+          )}
+          {status === 'conflict' && (
+            <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-bounce" />
+              Conflict
+            </span>
+          )}
+          {status === 'error' && (
+            <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+              Error
+            </span>
+          )}
 
           <button
             type="button"
-            onClick={() => alert(`Share Link: catnoted.app/space/default`)}
+            onClick={() => {
+              const link = `${window.location.origin}/space/${session?.user?.id || 'guest'}`;
+              alert(`Share Link generated:\n${link}\n\n(Anyone with this link and the workspace passphrase can access the E2EE sync room)`);
+            }}
             className="p-1.5 border border-slate-200/60 dark:border-zinc-800/60 hover:bg-slate-50 dark:hover:bg-zinc-850 text-slate-500 hover:text-indigo-550 rounded-lg text-xs flex items-center gap-1.5 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 shadow-sm"
             title="Share document link"
           >
@@ -395,11 +427,31 @@ const App: React.FC = () => {
         {renderContent()}
       </AppLayout>
 
+      {/* Conflict Warning UI */}
+      {status === 'conflict' && conflictMsg && (
+        <div className="fixed bottom-4 right-4 max-w-sm w-full bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 shadow-lg rounded-2xl p-4 z-50 flex items-start gap-3 backdrop-blur-sm animate-in slide-in-from-bottom-5">
+          <div className="w-8 h-8 rounded-full bg-rose-100 dark:bg-rose-900/50 flex items-center justify-center shrink-0">
+            <span className="text-rose-600 dark:text-rose-400 font-bold">!</span>
+          </div>
+          <div className="flex-1">
+            <h4 className="text-sm font-semibold text-rose-800 dark:text-rose-300">Sync Conflict</h4>
+            <p className="text-xs text-rose-600/80 dark:text-rose-400/80 mt-1">{conflictMsg}</p>
+          </div>
+          <button
+            onClick={dismissConflict}
+            className="p-1 text-rose-500 hover:text-rose-700 hover:bg-rose-100 dark:hover:bg-rose-900/50 rounded transition-colors"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
       {/* Modals Container */}
       <AuthModal
         isOpen={isAuthOpen}
         onClose={() => setIsAuthOpen(false)}
         onAuthSuccess={setUserEmail}
+        userEmail={userEmail}
       />
       <SettingsModal
         isOpen={isSettingsOpen}

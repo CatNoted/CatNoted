@@ -46,7 +46,7 @@ interface AppLayoutProps {
   onCreatePage?: () => void;
 }
 
-import { requestLlmWidget } from '@catnoted/agent-runtime';
+import { requestLlmWidget, SandboxFrame } from '@catnoted/agent-runtime';
 import { useDocumentStore } from '@catnoted/editor';
 import { parseDocumentGraph } from '@catnoted/graph';
 
@@ -180,7 +180,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   };
 
   const [chatInput, setChatInput] = useState('');
-  const [messages, setMessages] = useState<Array<{ sender: 'user' | 'agent'; text: string }>>([
+  const [messages, setMessages] = useState<Array<{ sender: 'user' | 'agent'; text: string; code?: string; editProposal?: string }>>([
     { sender: 'agent', text: "Hello! I am your Space Agent. What would you like to build or note down today?" }
   ]);
 
@@ -365,7 +365,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     [panelSize, panelPos],
   );
 
-  const handleSendMessage = async (e: React.FormEvent) => {
+    const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!chatInput.trim()) return;
 
@@ -575,7 +575,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               <button
                 type="button"
                 onClick={() => setIsWorkspaceDropdownOpen(!isWorkspaceDropdownOpen)}
-                className="font-semibold text-xs uppercase tracking-wider text-slate-500 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-450 flex items-center gap-1.5 py-1 px-2 rounded-lg hover:bg-slate-50 dark:hover:bg-zinc-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                className="font-semibold text-xs text-slate-700 dark:text-zinc-200 hover:text-slate-900 dark:hover:text-white flex items-center gap-1.5 py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500"
               >
                 <span>{activeWorkspace}</span>
                 <ChevronDown className="w-3.5 h-3.5 shrink-0" />
@@ -592,8 +592,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         setActiveWorkspace(ws);
                         setIsWorkspaceDropdownOpen(false);
                       }}
-                      className={`w-full px-3 py-2 text-left hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-300 flex items-center justify-between ${
-                        activeWorkspace === ws ? 'font-semibold text-indigo-600 dark:text-indigo-400' : ''
+                      className={`w-full px-3 py-2 text-left hover:bg-slate-50 dark:hover:bg-zinc-800/50 text-slate-700 dark:text-zinc-300 flex items-center justify-between ${
+                        activeWorkspace === ws ? 'font-semibold text-slate-900 dark:text-white' : ''
                       }`}
                     >
                       <span>{ws}</span>
@@ -611,7 +611,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             <button
               type="button"
               onClick={() => setIsSidebarCollapsed(true)}
-              className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500"
+              className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-500"
               title="Collapse Sidebar"
               aria-label="Collapse Workspace Sidebar"
             >
@@ -639,7 +639,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         }}
                         className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between transition-colors ${
                           isActive
-                            ? 'bg-slate-100 dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 font-medium'
+                            ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
                             : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/40 hover:text-slate-900 dark:hover:text-zinc-200'
                         }`}
                       >
@@ -665,7 +665,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 <button
                   type="button"
                   onClick={onCreatePage}
-                  className="w-full flex items-center justify-center gap-1.5 py-2 px-3 mb-3 bg-indigo-50 dark:bg-indigo-955/40 text-indigo-600 dark:text-indigo-400 font-semibold hover:bg-indigo-100 dark:hover:bg-indigo-950/60 rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                  className="w-full flex items-center justify-center gap-1.5 py-2 px-3 mb-3 bg-slate-50 dark:bg-zinc-800/50 text-slate-600 dark:text-zinc-300 font-medium hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500"
                 >
                   <span>+ New Page</span>
                 </button>
@@ -701,7 +701,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                               }}
                               className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
                                 isActive
-                                  ? 'bg-slate-100 dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 font-medium'
+                                  ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
                                   : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
                               }`}
                             >
@@ -750,7 +750,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                 }}
                                 className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
                                   isActive
-                                    ? 'bg-slate-100 dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 font-medium'
+                                    ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
                                     : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
                                 }`}
                               >
@@ -797,7 +797,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                 }}
                                 className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
                                   isActive
-                                    ? 'bg-slate-100 dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 font-medium'
+                                    ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
                                     : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
                                 }`}
                               >
@@ -823,7 +823,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       {!zenMode && !isSidebarCollapsed && (
         <div
           onMouseDown={handleSidebarResizeStart}
-          className="w-[4px] hover:w-[6px] bg-slate-200/50 dark:bg-zinc-800/50 hover:bg-indigo-400 dark:hover:bg-indigo-500 cursor-col-resize transition-all h-full z-20 shrink-0"
+          className="w-[4px] hover:w-[6px] bg-slate-200/50 dark:bg-zinc-800/50 hover:bg-slate-300 dark:hover:bg-zinc-600 cursor-col-resize transition-all h-full z-20 shrink-0"
         />
       )}
 
@@ -833,7 +833,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           <button
             type="button"
             onClick={() => setIsSidebarCollapsed(false)}
-            className="absolute top-4 left-4 z-30 p-1.5 rounded-lg text-slate-500 hover:text-slate-700 dark:text-zinc-400 dark:hover:text-zinc-200 bg-white/80 dark:bg-zinc-900/80 border border-slate-200/60 dark:border-zinc-800/60 hover:bg-slate-100 dark:hover:bg-zinc-850 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 shadow-sm"
+            className="absolute top-4 left-4 z-30 p-1.5 rounded-lg text-slate-500 hover:text-slate-700 dark:text-zinc-400 dark:hover:text-zinc-200 bg-white/80 dark:bg-zinc-900/80 border border-slate-200/60 dark:border-zinc-800/60 hover:bg-slate-100 dark:hover:bg-zinc-850 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-500 shadow-sm"
             title="Expand Sidebar"
             aria-label="Expand Workspace Sidebar"
           >
@@ -998,6 +998,45 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     >
                       {msg.text}
                     </div>
+                    {msg.code && (
+                      <div className="w-full mt-1 border border-indigo-200 dark:border-indigo-500/30 rounded-xl overflow-hidden shadow-sm bg-white dark:bg-zinc-900">
+                        <div className="h-[150px] w-full">
+                          <SandboxFrame srcDoc={msg.code} theme={isDarkMode ? 'dark' : 'light'} height="150px" />
+                        </div>
+                        <div className="p-2 border-t border-indigo-100 dark:border-indigo-500/20 bg-slate-50 dark:bg-zinc-800/50 flex justify-end">
+                          <button
+                            onClick={() => {
+                              const newBlockId = addBlock(null, 'widget', '');
+                              updateBlockType(newBlockId, 'widget', {
+                                widgetId: `ai-widget-${Math.random().toString(36).substring(2, 6)}`,
+                                srcDoc: msg.code!
+                              });
+                            }}
+                            className="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-md text-[10px] font-semibold transition-colors"
+                          >
+                            Insert Widget
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                    {msg.editProposal && (
+                      <div className="w-full mt-1 border border-emerald-200 dark:border-emerald-500/30 rounded-xl overflow-hidden shadow-sm bg-emerald-50/50 dark:bg-emerald-900/10">
+                        <div className="p-3 text-xs text-slate-700 dark:text-zinc-300 whitespace-pre-wrap font-mono">
+                          {msg.editProposal}
+                        </div>
+                        <div className="p-2 border-t border-emerald-100 dark:border-emerald-500/20 flex justify-end">
+                          <button
+                            onClick={() => {
+                              // Just append the proposed edit as a text block
+                              addBlock(null, 'text', msg.editProposal!);
+                            }}
+                            className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-md text-[10px] font-semibold transition-colors"
+                          >
+                            Append to Document
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

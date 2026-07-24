@@ -49,7 +49,7 @@ describe('useCanvasViewport', () => {
       } as unknown as React.MouseEvent;
       // Mock same target to bypass target check
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore - circumventing strict readonly for test mock
+      // @ts-ignore
       mouseDownEvent.currentTarget = mouseDownEvent.target;
 
       result.current.handleMouseDown(mouseDownEvent);
@@ -84,7 +84,7 @@ describe('useCanvasViewport', () => {
     expect(result.current.pan).toEqual({ x: 150, y: 200 });
   });
 
-  it('should ignore dragging if event target is not currentTarget', () => {
+  it('should handle panning via wheel when ctrl/meta is not pressed', () => {
     const { result } = renderHook(() => useCanvasViewport());
 
     act(() => {
@@ -151,7 +151,7 @@ describe('useCanvasViewport', () => {
     expect(result.current.scale).toBe(0.1);
 
     // Zoom in to maximum
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 60; i++) {
       act(() => {
         result.current.handleWheel(mockEvent({ deltaY: -100, ctrlKey: true, clientX: 0, clientY: 0, currentTarget: { getBoundingClientRect: () => ({ left: 0, top: 0, width: 1000, height: 1000 }) } }) as any);
       });
