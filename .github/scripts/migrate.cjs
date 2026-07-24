@@ -43,11 +43,17 @@ function normaliseUrl(raw) {
     return parsed.toString();
   }
 
-  // Pooler host: *.pooler.supabase.com -- keep username as "postgres" when using SNI
+  // Pooler host: *.pooler.supabase.com -- username must be "postgres.<ref>"
   const poolerMatch = hostname.match(/\.pooler\.supabase\.com$/i);
   if (poolerMatch) {
-    parsed.username = 'postgres';
-    console.log('Detected pooler host. Username kept as: postgres');
+    const userParts = parsed.username.split('.');
+    const projectRef = userParts.length >= 2 ? userParts[1] : userParts[0];
+    if (projectRef && projectRef !== 'postgres') {
+      parsed.username = 'postgres.' + projectRef;
+    } else {
+      parsed.username = 'postgres.vhuchnycqhprthmdsont';
+    }
+    console.log('Detected pooler host. Username corrected to: ' + parsed.username);
     return parsed.toString();
   }
 
@@ -58,23 +64,15 @@ function normaliseUrl(raw) {
 const connectionString = normaliseUrl(rawDbUrl);
 
 let hostname = '';
-let servername = '';
 try {
-  const parsedUrl = new URL(connectionString);
-  hostname = parsedUrl.hostname;
-  if (hostname.includes('pooler.supabase.com')) {
-    const ref = parsedUrl.username.split('.')[1] || 'vhuchnycqhprthmdsont';
-    servername = `db.${ref}.supabase.co`;
-  } else {
-    servername = hostname;
-  }
+  hostname = new URL(connectionString).hostname;
 } catch (_) {}
 
 const client = new Client({
   connectionString,
   ssl: {
     rejectUnauthorized: false,
-    ...(servername ? { servername } : {}),
+    ...(hostname ? { servername: hostname } : {}),
   },
 });
 
