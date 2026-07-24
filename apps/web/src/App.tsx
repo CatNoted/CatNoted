@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { AppLayout, ActiveMode } from './layouts/AppLayout.js';
 import { DocumentEditor, useDocumentStore } from '@catnoted/editor';
 import { InfiniteCanvas } from '@catnoted/canvas';
-import { GraphView, parseDocumentGraph } from '@catnoted/graph';
+import { GraphView } from '@catnoted/graph';
 import { ydoc } from '@catnoted/editor';
 import * as Y from 'yjs';
 import {

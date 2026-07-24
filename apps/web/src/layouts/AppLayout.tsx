@@ -70,7 +70,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   onAuthTrigger: _onAuthTrigger,
   onCreatePage
 }) => {
-  const { blocks, addBlock, updateBlockType } = useDocumentStore();
+  const { blocks, addBlock, updateBlockType, pages, createPage, deletePage, renamePage } = useDocumentStore(activePage);
+  console.log(pages);
 
   // Parse document graph nodes
   const graphData = React.useMemo(() => {
@@ -657,8 +658,17 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
             {/* Collapsible Page Tree Section */}
             <div>
-              <div className="px-2 mb-2 text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
-                <span>Page Tree</span>
+              <div className="px-2 mb-2 flex items-center justify-between">
+                <div className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
+                  <span>Page Tree</span>
+                </div>
+                <button onClick={() => {
+                    const title = prompt('Enter page title', 'Untitled');
+                    if (title && createPage) {
+                        const newId = createPage(title);
+                        if (onPageSelect) onPageSelect(newId);
+                    }
+                }} className="text-xs text-indigo-500 hover:text-indigo-600 font-semibold cursor-pointer px-1">+ Add</button>
               </div>
 
               {onCreatePage && (
@@ -683,15 +693,13 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                       {sectionsExpanded.pages ? <FolderOpen className="w-3.5 h-3.5 text-indigo-500" /> : <Folder className="w-3.5 h-3.5 text-indigo-500" />}
                       <span>Pages</span>
                     </span>
-                    <span className="text-[9px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full">{pageNodes.length}</span>
+                    <span className="text-[9px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full">{Object.keys(pages || {}).length}</span>
                   </button>
                   {sectionsExpanded.pages && (
                     <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-150 dark:border-zinc-800 ml-3.5">
-                      {pageNodes.map(node => {
+                      {Object.values(pages || {}).map((node: any) => {
                         const isActive = activePage === node.id;
-                        const displayLabel = node.label.startsWith('📁 ') || node.label.startsWith('📄 ')
-                          ? node.label.slice(2)
-                          : node.label;
+                        const displayLabel = node.title || 'Untitled';
                         return (
                           <li key={node.id}>
                             <button
