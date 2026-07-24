@@ -5,6 +5,13 @@ import { InfiniteCanvas } from '@catnoted/canvas';
 import { GraphView, parseDocumentGraph } from '@catnoted/graph';
 import { ydoc } from '@catnoted/editor';
 import * as Y from 'yjs';
+import {
+  Share2,
+  Edit2,
+  ChevronRight,
+  BookOpen,
+  LayoutGrid
+} from 'lucide-react';
 
 // E2EE sync utilities
 import { encryptPayload, decryptPayload } from './utils/crypto.js';
@@ -21,7 +28,7 @@ const App: React.FC = () => {
   const [isZenMode, setIsZenMode] = useState<boolean>(false);
   const [activePage, setActivePage] = useState<string>('root-doc-node');
 
-  const { blocks } = useDocumentStore();
+  const { blocks, updateBlockContent } = useDocumentStore();
 
   const graphData = React.useMemo(() => {
     return parseDocumentGraph(blocks);
@@ -36,6 +43,36 @@ const App: React.FC = () => {
     : (activePageNode
         ? (activePageNode.label.startsWith('📁 ') || activePageNode.label.startsWith('📄 ') ? activePageNode.label.slice(2) : activePageNode.label)
         : activePage);
+
+  // Title inline editing state
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [editTitleValue, setEditTitleValue] = useState('');
+
+  useEffect(() => {
+    if (!isEditingTitle) {
+      setEditTitleValue(pageTitle);
+    }
+  }, [pageTitle, isEditingTitle]);
+
+  const handleSaveTitle = () => {
+    setIsEditingTitle(false);
+    if (editTitleValue.trim()) {
+      if (activePage === 'root-doc-node') {
+        if (mainHeading) {
+          updateBlockContent(mainHeading.id, editTitleValue);
+        } else {
+          const firstBlock = blocks[0];
+          if (firstBlock) {
+            updateBlockContent(firstBlock.id, editTitleValue);
+          }
+        }
+      } else {
+        if (mainHeading) {
+          updateBlockContent(mainHeading.id, editTitleValue);
+        }
+      }
+    }
+  };
   
   // E2EE Sync credentials
   const [passphrase, setPassphrase] = useState('super-secret-default-passphrase');
@@ -120,69 +157,136 @@ const App: React.FC = () => {
     setActiveMode(mode);
   };
 
-  const renderContent = () => {
+  const renderHeader = () => {
+    return (
+      <header className="h-14 px-6 border-b border-slate-200/50 dark:border-zinc-800/50 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md flex items-center justify-between z-20 shrink-0 w-full select-none">
+        {/* Left: Breadcrumbs + Inline Editable Title */}
+        <div className="flex items-center gap-2 max-w-[40%]">
+          <span className="text-xs text-slate-400 dark:text-zinc-500 hover:text-slate-600 dark:hover:text-zinc-300 transition-colors">Workspace</span>
+          <ChevronRight className="w-3.5 h-3.5 text-slate-300 dark:text-zinc-700 shrink-0" />
+
+          {activePage !== 'root-doc-node' && (
+            <>
+              <button
+                type="button"
+                onClick={() => setActivePage('root-doc-node')}
+                className="text-xs text-slate-400 dark:text-zinc-500 hover:text-indigo-550 transition-colors shrink-0 font-medium"
+                title="Back to root note"
+              >
+                Root
+              </button>
+              <ChevronRight className="w-3.5 h-3.5 text-slate-300 dark:text-zinc-700 shrink-0" />
+            </>
+          )}
+
+          {isEditingTitle ? (
+            <input
+              type="text"
+              value={editTitleValue}
+              onChange={(e) => setEditTitleValue(e.target.value)}
+              onBlur={handleSaveTitle}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleSaveTitle();
+                if (e.key === 'Escape') {
+                  setEditTitleValue(pageTitle);
+                  setIsEditingTitle(false);
+                }
+              }}
+              className="px-2 py-0.5 border border-indigo-400 dark:border-indigo-500 rounded bg-slate-50 dark:bg-zinc-850 text-xs font-semibold text-slate-800 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-indigo-500 w-36 sm:w-48"
+              autoFocus
+            />
+          ) : (
+            <div className="flex items-center gap-1.5 group/title truncate">
+              <span
+                onDoubleClick={() => setIsEditingTitle(true)}
+                className="text-xs font-semibold text-slate-800 dark:text-zinc-200 truncate cursor-pointer hover:bg-slate-50 dark:hover:bg-zinc-800/60 px-1.5 py-0.5 rounded transition-colors"
+                title="Double click to edit title"
+              >
+                {pageTitle}
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsEditingTitle(true)}
+                className="opacity-0 group-hover/title:opacity-100 p-0.5 rounded text-slate-400 hover:text-indigo-500 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-all shrink-0"
+                title="Edit page title"
+              >
+                <Edit2 className="w-3 h-3" />
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Center: Mode Switcher Toggle (Doc / Canvas) */}
+        <div className="flex items-center bg-slate-100/80 dark:bg-zinc-800 p-0.5 rounded-xl border border-slate-200/30 dark:border-zinc-800/25">
+          {[
+            { id: 'doc', label: 'Doc', icon: BookOpen },
+            { id: 'canvas', label: 'Canvas', icon: LayoutGrid }
+          ].map((modeItem) => {
+            const IconComponent = modeItem.icon;
+            const isSelected = activeMode === modeItem.id;
+            return (
+              <button
+                key={modeItem.id}
+                type="button"
+                onClick={() => handleModeChange(modeItem.id as ActiveMode)}
+                className={`px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all duration-200 ${
+                  isSelected
+                    ? 'bg-white dark:bg-zinc-900 text-indigo-600 dark:text-indigo-400 shadow-sm shadow-indigo-500/5 font-semibold'
+                    : 'text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200'
+                }`}
+              >
+                <IconComponent className="w-3.5 h-3.5" />
+                <span>{modeItem.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Right: Actions, Sync Indicator, User profile */}
+        <div className="flex items-center gap-3">
+          <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            Connected
+          </span>
+
+          <button
+            type="button"
+            onClick={() => alert(`Share Link: catnoted.app/space/default`)}
+            className="p-1.5 border border-slate-200/60 dark:border-zinc-800/60 hover:bg-slate-50 dark:hover:bg-zinc-850 text-slate-500 hover:text-indigo-500 rounded-lg text-xs flex items-center gap-1.5 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 shadow-sm"
+            title="Share document link"
+          >
+            <Share2 className="w-3.5 h-3.5" />
+            <span className="text-[10px] font-semibold hidden md:inline">Share</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setIsAuthOpen(true)}
+            className="flex items-center gap-2 px-2.5 py-1 hover:bg-slate-50 dark:hover:bg-zinc-850 rounded-lg text-xs font-medium text-slate-600 dark:text-zinc-300 transition-colors border border-transparent hover:border-slate-200/60 dark:hover:border-zinc-800/60"
+            title="Auth Settings"
+          >
+            <span className="w-5 h-5 rounded-full bg-indigo-500 text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0 shadow-sm">
+              {userEmail.charAt(0).toUpperCase()}
+            </span>
+            <span className="max-w-[100px] truncate text-[10px] font-semibold hidden sm:inline">{userEmail}</span>
+          </button>
+        </div>
+      </header>
+    );
+  };
+
+  const renderActiveView = () => {
     switch (activeMode) {
       case 'doc':
         return (
-          <div className="flex flex-col h-full">
-            {/* Document Topbar */}
-            <div className="flex items-center justify-between px-10 py-4 border-b border-slate-100 dark:border-zinc-800/60">
-              <div>
-                <h1 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-zinc-50 flex items-center gap-2">
-                  {activePage !== 'root-doc-node' && (
-                    <button
-                      onClick={() => setActivePage('root-doc-node')}
-                      className="text-xs px-2 py-1 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-500 rounded-md transition-colors mr-1"
-                      title="Back to root note"
-                    >
-                      ← Root
-                    </button>
-                  )}
-                  {pageTitle}
-                </h1>
-                <p className="text-[11px] text-slate-400 dark:text-zinc-500 mt-0.5 flex items-center gap-1.5">
-                  Linear Editor &middot; E2EE Sync:
-                  <span className="text-indigo-500 font-mono font-semibold">AES-GCM-256</span>
-                </p>
-              </div>
-              <button
-                onClick={() => setIsAuthOpen(true)}
-                className="flex items-center gap-2 px-3 py-1.5 border border-slate-200 dark:border-zinc-700 hover:bg-slate-50 dark:hover:bg-zinc-800 rounded-lg text-xs font-medium text-slate-600 dark:text-zinc-300 transition-colors"
-              >
-                <span className="w-5 h-5 rounded-full bg-indigo-500 text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0">
-                  {userEmail.charAt(0).toUpperCase()}
-                </span>
-                {userEmail}
-              </button>
-            </div>
-
-            {/* Document Body */}
-            <div className="flex-1 overflow-auto">
-              <DocumentEditor />
-            </div>
+          <div className="h-full overflow-auto">
+            <DocumentEditor />
           </div>
         );
       case 'canvas':
         return (
           <div className="h-full overflow-auto p-6">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between px-2">
-                <div>
-                  <h1 className="text-lg font-bold tracking-tight text-slate-900 dark:text-zinc-50">Edgeless Canvas</h1>
-                  <p className="text-xs text-slate-400 dark:text-zinc-500">Spatial whiteboard view synced automatically with document nodes.</p>
-                </div>
-                <button
-                  onClick={() => setIsAuthOpen(true)}
-                  className="flex items-center gap-2 px-3 py-1.5 border border-slate-200 dark:border-zinc-700 hover:bg-slate-50 dark:hover:bg-zinc-800 rounded-lg text-xs font-medium text-slate-600 dark:text-zinc-300 transition-colors"
-                >
-                  <span className="w-5 h-5 rounded-full bg-indigo-500 text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0">
-                    {userEmail.charAt(0).toUpperCase()}
-                  </span>
-                  {userEmail}
-                </button>
-              </div>
-              <InfiniteCanvas />
-            </div>
+            <InfiniteCanvas />
           </div>
         );
       case 'graph':
@@ -194,6 +298,17 @@ const App: React.FC = () => {
       default:
         return null;
     }
+  };
+
+  const renderContent = () => {
+    return (
+      <div className="flex flex-col h-full w-full overflow-hidden">
+        {renderHeader()}
+        <div className="flex-1 overflow-hidden h-full w-full">
+          {renderActiveView()}
+        </div>
+      </div>
+    );
   };
 
   return (
