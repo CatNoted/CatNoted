@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import { 
   FileText, 
   Layout, 
@@ -15,7 +15,17 @@ import {
   X,
   MessageSquare,
   GripVertical,
-  Minus
+  Minus,
+  Search,
+  Hash,
+  ChevronRight,
+  CornerDownRight,
+  FileCode,
+  Quote,
+  Heading2,
+  CheckSquare,
+  List,
+  Cpu
 } from 'lucide-react';
 
 export type ActiveMode = 'doc' | 'canvas' | 'graph' | 'settings';
@@ -31,6 +41,7 @@ interface AppLayoutProps {
 
 import { requestLlmWidget } from '@catnoted/agent-runtime';
 import { useDocumentStore } from '@catnoted/editor';
+import { parseDocumentGraph } from '@catnoted/graph';
 
 // ── Floating panel position & size constants ────────────────────────────
 const PANEL_DEFAULT_WIDTH = 380;
@@ -51,6 +62,108 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   const [messages, setMessages] = useState<Array<{ sender: 'user' | 'agent'; text: string }>>([
     { sender: 'agent', text: "Hello! I am your Space Agent. What would you like to build or note down today?" }
   ]);
+
+  // ── Sidebar search & discovery state ──────────────────────────────
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(searchQuery);
+    }, 150);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Parse knowledge graph nodes from document blocks
+  const { nodes } = useMemo(() => {
+    return parseDocumentGraph(blocks);
+  }, [blocks]);
+
+  // Compute search results using a single-pass loop for performance
+  const { matchedPages, matchedBlocks } = useMemo(() => {
+    const queryLower = debouncedQuery.toLowerCase().trim();
+    const pages: Array<{ id: string; label: string; type: 'page' | 'tag' }> = [];
+    const blockResults: Array<{ id: string; type: string; content: string }> = [];
+
+    if (queryLower) {
+      // Single-pass search over nodes
+      for (const node of nodes) {
+        if (node.label.toLowerCase().includes(queryLower)) {
+          pages.push({
+            id: node.id,
+            label: node.label,
+            type: node.type as 'page' | 'tag'
+          });
+        }
+      }
+
+      // Single-pass search over blocks
+      for (const block of blocks) {
+        if (block.content && block.content.toLowerCase().includes(queryLower)) {
+          blockResults.push({
+            id: block.id,
+            type: block.type,
+            content: block.content
+          });
+        }
+      }
+    } else {
+      // Default state: list all pages/tags for easy discovery
+      for (const node of nodes) {
+        pages.push({
+          id: node.id,
+          label: node.label,
+          type: node.type as 'page' | 'tag'
+        });
+      }
+    }
+
+    return { matchedPages: pages, matchedBlocks: blockResults };
+  }, [debouncedQuery, nodes, blocks]);
+
+  const handleSelectBlock = (blockId: string) => {
+    onModeChange('doc');
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('focus-block', { detail: { blockId } }));
+    }, 50);
+  };
+
+  const handleSelectPage = (pageName: string, nodeId: string) => {
+    if (nodeId === 'root-doc-node') {
+      onModeChange('doc');
+    } else {
+      onModeChange('graph');
+      setTimeout(() => {
+        alert(`Navigating to reference node: "${pageName}"`);
+      }, 50);
+    }
+  };
+
+  const getBlockIcon = (type: string) => {
+    switch (type) {
+      case 'heading':
+        return <Heading2 className="w-3.5 h-3.5 text-indigo-500" />;
+      case 'quote':
+        return <Quote className="w-3.5 h-3.5 text-amber-500" />;
+      case 'code':
+        return <FileCode className="w-3.5 h-3.5 text-emerald-500" />;
+      case 'todo':
+        return <CheckSquare className="w-3.5 h-3.5 text-sky-500" />;
+      case 'bullet':
+      case 'ordered':
+        return <List className="w-3.5 h-3.5 text-purple-500" />;
+      case 'widget':
+        return <Cpu className="w-3.5 h-3.5 text-rose-500" />;
+      default:
+        return <FileText className="w-3.5 h-3.5 text-slate-400" />;
+    }
+  };
+
+  const renderBlockContent = (content: string) => {
+    const newlineIdx = content.indexOf('\n');
+    const firstLine = newlineIdx === -1 ? content : content.substring(0, newlineIdx);
+    return firstLine.length > 50 ? `${firstLine.substring(0, 47)}...` : firstLine;
+  };
 
   // ── Floating panel state ────────────────────────────────────────────
   const [isAgentOpen, setIsAgentOpen] = useState(false);
@@ -199,55 +312,172 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-zinc-100">
       
-      {/* Pane 1: Left Sidebar (Navigation) - Hidden in Zen Mode */}
+      {/* Pane 1: Left Sidebar (Navigation & Discovery) - Hidden in Zen Mode */}
       {!zenMode && (
-        <aside className="w-16 flex flex-col items-center justify-between py-4 border-r border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 z-10 shrink-0">
-          <div className="flex flex-col items-center gap-6 w-full">
-            <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold shadow-md shadow-indigo-200 dark:shadow-none">
-              CN
+        <div className="flex h-full shrink-0 z-10">
+          {/* Sub-pane 1a: Narrow Navigation Icon strip */}
+          <aside className="w-16 flex flex-col items-center justify-between py-4 border-r border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 h-full shrink-0">
+            <div className="flex flex-col items-center gap-6 w-full">
+              <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold shadow-md shadow-indigo-200 dark:shadow-none">
+                CN
+              </div>
+
+              <nav className="flex flex-col gap-3 w-full px-2">
+                {[
+                  { id: 'doc', icon: FileText, label: 'Doc Mode' },
+                  { id: 'canvas', icon: Layout, label: 'Canvas' },
+                  { id: 'graph', icon: Network, label: 'Graph' },
+                  { id: 'settings', icon: Settings, label: 'Settings' }
+                ].map(item => {
+                  const Icon = item.icon;
+                  const isActive = activeMode === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => onModeChange(item.id as ActiveMode)}
+                      title={item.label}
+                      className={`w-full py-3 rounded-xl flex items-center justify-center transition-all duration-200 ${
+                        isActive
+                          ? 'bg-indigo-50 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 font-semibold shadow-sm shadow-indigo-500/10 dark:shadow-indigo-500/5'
+                          : 'text-slate-400 dark:text-zinc-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10'
+                      }`}
+                    >
+                      <Icon className="w-5 h-5" />
+                    </button>
+                  );
+                })}
+              </nav>
             </div>
 
-            <nav className="flex flex-col gap-3 w-full px-2">
-              {[
-                { id: 'doc', icon: FileText, label: 'Doc Mode' },
-                { id: 'canvas', icon: Layout, label: 'Canvas' },
-                { id: 'graph', icon: Network, label: 'Graph' },
-                { id: 'settings', icon: Settings, label: 'Settings' }
-              ].map(item => {
-                const Icon = item.icon;
-                const isActive = activeMode === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => onModeChange(item.id as ActiveMode)}
-                    title={item.label}
-                    className={`w-full py-3 rounded-xl flex items-center justify-center transition-all duration-200 ${
-                      isActive 
-                        ? 'bg-indigo-50 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 font-semibold shadow-sm shadow-indigo-500/10 dark:shadow-indigo-500/5' 
-                        : 'text-slate-400 dark:text-zinc-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10'
-                    }`}
-                  >
-                    <Icon className="w-5 h-5" />
-                  </button>
-                );
-              })}
-            </nav>
-          </div>
+            <div className="flex flex-col items-center gap-4 w-full">
+              <button
+                onClick={onToggleTheme}
+                className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 dark:text-zinc-500 hover:text-amber-500 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all duration-200"
+                title={isDarkMode ? 'Light Mode' : 'Dark Mode'}
+              >
+                {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              </button>
 
-          <div className="flex flex-col items-center gap-4 w-full">
-            <button
-              onClick={onToggleTheme}
-              className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 dark:text-zinc-500 hover:text-amber-500 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all duration-200"
-              title={isDarkMode ? 'Light Mode' : 'Dark Mode'}
+              <div className="w-8 h-8 rounded-full bg-slate-300 dark:bg-zinc-700 flex items-center justify-center text-slate-600 dark:text-zinc-300 text-xs font-semibold">
+                US
+              </div>
+            </div>
+          </aside>
+
+          {/* Sub-pane 1b: Search & Discovery Panel */}
+          <aside className="w-64 flex flex-col h-full border-r border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shrink-0 select-none overflow-hidden py-4 px-4">
+            <div className="flex items-center gap-2 px-1 mb-3">
+              <Search className="w-4 h-4 text-indigo-500" />
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-450 dark:text-zinc-400">Discovery</span>
+            </div>
+
+            <div className="relative mb-4 flex items-center">
+              <Search className="absolute left-3 w-3.5 h-3.5 text-slate-400" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search pages & blocks..."
+                role="combobox"
+                aria-expanded={matchedPages.length > 0 || matchedBlocks.length > 0}
+                aria-controls="sidebar-search-results"
+                aria-label="Search documents and blocks"
+                className="w-full pl-9 pr-8 py-2 bg-slate-100 dark:bg-zinc-800/80 border border-slate-200 dark:border-zinc-800 rounded-xl text-xs text-slate-800 dark:text-zinc-250 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2.5 p-1 text-slate-400 hover:text-slate-600 dark:hover:text-zinc-300"
+                  title="Clear search"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              )}
+            </div>
+
+            <div
+              id="sidebar-search-results"
+              role="listbox"
+              aria-label="Search results"
+              className="flex-1 overflow-y-auto space-y-4 pr-1"
             >
-              {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
+              {/* Pages Section */}
+              {matchedPages.length > 0 && (
+                <div className="space-y-1">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500 px-1">Pages</p>
+                  {matchedPages.map((page) => (
+                    <button
+                      key={page.id}
+                      role="option"
+                      aria-selected="false"
+                      onClick={() => handleSelectPage(page.label.replace(/^[📄📁#]\s*/, ''), page.id)}
+                      className="w-full text-left px-2.5 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-800/60 text-slate-700 dark:text-zinc-300 transition-colors flex items-center justify-between group animate-fadeIn"
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        {page.type === 'tag' ? (
+                          <Hash className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                        ) : (
+                          <FileText className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+                        )}
+                        <span className="text-xs truncate">{page.label}</span>
+                      </div>
+                      <ChevronRight className="w-3 h-3 text-slate-400 opacity-0 group-hover:opacity-100 transition-all shrink-0" />
+                    </button>
+                  ))}
+                </div>
+              )}
 
-            <div className="w-8 h-8 rounded-full bg-slate-300 dark:bg-zinc-700 flex items-center justify-center text-slate-600 dark:text-zinc-300 text-xs font-semibold">
-              US
+              {/* Blocks Section */}
+              {matchedBlocks.length > 0 && (
+                <div className="space-y-1">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500 px-1">Blocks</p>
+                  {matchedBlocks.map((block) => (
+                    <button
+                      key={block.id}
+                      role="option"
+                      aria-selected="false"
+                      onClick={() => handleSelectBlock(block.id)}
+                      className="w-full text-left px-2.5 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-800/60 text-slate-700 dark:text-zinc-300 transition-colors flex items-start gap-2 group animate-fadeIn"
+                    >
+                      <div className="mt-0.5 shrink-0">
+                        {getBlockIcon(block.type)}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs leading-normal text-slate-600 dark:text-zinc-300 break-all">
+                          {renderBlockContent(block.content)}
+                        </p>
+                        <span className="text-[9px] text-slate-400 dark:text-zinc-500 font-mono capitalize block mt-0.5">
+                          In {block.type}
+                        </span>
+                      </div>
+                      <CornerDownRight className="w-3 h-3 text-slate-400 opacity-0 group-hover:opacity-100 transition-all shrink-0 self-center" />
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Empty State */}
+              {debouncedQuery && matchedPages.length === 0 && matchedBlocks.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+                  <Search className="w-8 h-8 text-slate-300 dark:text-zinc-700 mb-2 animate-pulse" />
+                  <p className="text-xs font-semibold text-slate-600 dark:text-zinc-300">No results found</p>
+                  <p className="text-[10px] text-slate-400 dark:text-zinc-500 mt-1">
+                    No pages or blocks match "{debouncedQuery}".
+                  </p>
+                </div>
+              )}
+
+              {/* Helpful Hint */}
+              {searchQuery === '' && (
+                <div className="px-3 py-2 bg-slate-50 dark:bg-zinc-800/40 rounded-xl border border-slate-100 dark:border-zinc-800/60">
+                  <p className="text-[10px] text-slate-400 dark:text-zinc-500 leading-normal">
+                    💡 Type above to search blocks & pages instantly.
+                  </p>
+                </div>
+              )}
             </div>
-          </div>
-        </aside>
+          </aside>
+        </div>
       )}
 
       {/* Pane 2: Middle Panel (Main Workspace) — now takes full remaining width */}

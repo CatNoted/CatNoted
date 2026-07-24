@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDocumentStore } from '../store.js';
 import { TextBlock } from './TextBlock.js';
 import { HeadingBlock } from './HeadingBlock.js';
@@ -26,6 +26,29 @@ export const DocumentEditor: React.FC = () => {
 
   const [focusBlockId, setFocusBlockId] = useState<string | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handleFocusBlock = (e: Event) => {
+      const customEvent = e as CustomEvent<{ blockId: string }>;
+      const blockId = customEvent.detail?.blockId;
+      if (blockId) {
+        setFocusBlockId(blockId);
+        setTimeout(() => {
+          const el = document.getElementById(blockId);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // Highlight effect
+            el.classList.add('ring-2', 'ring-indigo-500/50');
+            setTimeout(() => {
+              el.classList.remove('ring-2', 'ring-indigo-500/50');
+            }, 1500);
+          }
+        }, 100);
+      }
+    };
+    window.addEventListener('focus-block', handleFocusBlock);
+    return () => window.removeEventListener('focus-block', handleFocusBlock);
+  }, []);
 
   const handleCreateBlock = (afterId: string) => {
     const newId = addBlock(afterId, 'text', '');
@@ -57,6 +80,7 @@ export const DocumentEditor: React.FC = () => {
         return (
           <div 
             key={block.id} 
+            id={block.id}
             className="group flex items-start gap-0 px-4 py-0.5 rounded-lg transition-all hover:bg-black/5 dark:hover:bg-zinc-800 hover:shadow-sm hover:ring-1 hover:ring-slate-200/60 dark:hover:ring-zinc-700/60"
           >
             {/* Left Block Controls - fixed width gutter, never overlaps content */}
