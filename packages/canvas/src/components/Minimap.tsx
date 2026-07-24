@@ -25,13 +25,13 @@ export const Minimap: React.FC<MinimapProps> = ({
   const minimapWidth = 160;
   const minimapHeight = 100;
 
-  // 1. Calculate boundaries of all elements on the canvas
-  const elementList = Object.values(elements).filter(el => el.type === 'card');
+  // 1. Calculate boundaries of all elements on the canvas (including cards, shapes, notes, frames)
+  const elementList = Object.values(elements).filter(el => el.type !== 'connector');
 
   const boundsMinX = Math.min(-200, ...elementList.map(el => el.x)) - 200;
-  const boundsMaxX = Math.max(1200, ...elementList.map(el => el.x + (el.width || 260))) + 200;
+  const boundsMaxX = Math.max(1200, ...elementList.map(el => el.x + (el.width || (el.type === 'card' ? 260 : el.type === 'note' ? 180 : el.type === 'frame' ? 400 : 140)))) + 200;
   const boundsMinY = Math.min(-200, ...elementList.map(el => el.y)) - 200;
-  const boundsMaxY = Math.max(800, ...elementList.map(el => el.y + (el.height || 120))) + 200;
+  const boundsMaxY = Math.max(800, ...elementList.map(el => el.y + (el.height || (el.type === 'card' ? 120 : el.type === 'note' ? 180 : el.type === 'frame' ? 300 : 140)))) + 200;
 
   const boundsWidth = boundsMaxX - boundsMinX;
   const boundsHeight = boundsMaxY - boundsMinY;
@@ -102,12 +102,35 @@ export const Minimap: React.FC<MinimapProps> = ({
         style={{ width: minimapWidth, height: minimapHeight }}
         className="bg-white/85 dark:bg-zinc-950/85 border border-slate-200 dark:border-zinc-800 rounded-xl relative overflow-hidden shadow-md cursor-crosshair select-none backdrop-blur-sm"
       >
-        {/* Dynamic mini representations of cards */}
+        {/* Dynamic mini representations of cards/shapes/notes/frames */}
         {elementList.map(el => {
+          const defaultW = el.type === 'card' ? 260 : el.type === 'note' ? 180 : el.type === 'frame' ? 400 : 140;
+          const defaultH = el.type === 'card' ? 120 : el.type === 'note' ? 180 : el.type === 'frame' ? 300 : 140;
           const mx = scaleX(el.x);
           const my = scaleY(el.y);
-          const mw = ((el.width || 260) / boundsWidth) * minimapWidth;
-          const mh = ((el.height || 120) / boundsHeight) * minimapHeight;
+          const mw = ((el.width || defaultW) / boundsWidth) * minimapWidth;
+          const mh = ((el.height || defaultH) / boundsHeight) * minimapHeight;
+
+          // Compute aesthetic fill colors representing shape styles on the minimap
+          let bgClass = 'bg-indigo-100/60 dark:bg-indigo-950/40 border border-indigo-200/30';
+          let borderClass = 'rounded-sm';
+
+          if (el.type === 'note') {
+            bgClass = 'bg-amber-100/60 dark:bg-amber-950/40 border border-amber-200/30';
+            borderClass = 'rounded-md';
+          } else if (el.type === 'frame') {
+            bgClass = 'bg-slate-100/20 dark:bg-zinc-900/10 border border-slate-300/30';
+            borderClass = 'rounded-lg border-dashed';
+          } else if (el.type === 'shape') {
+            bgClass = 'bg-purple-100/60 dark:bg-purple-950/40 border border-purple-200/30';
+            if (el.shapeType === 'circle') {
+              borderClass = 'rounded-full';
+            } else {
+              borderClass = 'rounded-md';
+            }
+          }
+
+          const inlineStyles = el.color ? { backgroundColor: el.color + '40' } : {};
 
           return (
             <div
@@ -117,8 +140,9 @@ export const Minimap: React.FC<MinimapProps> = ({
                 top: my,
                 width: Math.max(4, mw),
                 height: Math.max(3, mh),
+                ...inlineStyles
               }}
-              className="absolute bg-indigo-100/60 dark:bg-indigo-950/40 border border-indigo-200/30 dark:border-indigo-900/40 rounded-sm"
+              className={`absolute ${bgClass} ${borderClass}`}
             />
           );
         })}
