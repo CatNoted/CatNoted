@@ -82,6 +82,17 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     }
   }, [activePage, blocks]);
 
+
+  const handleKeyDownNav = (e: React.KeyboardEvent, index: number) => {
+    if (e.key === 'ArrowUp' && index > 0) {
+      e.preventDefault();
+      setFocusBlockId(blocks[index - 1].id);
+    } else if (e.key === 'ArrowDown' && index < blocks.length - 1) {
+      e.preventDefault();
+      setFocusBlockId(blocks[index + 1].id);
+    }
+  };
+
   const handleCreateBlock = (afterId: string) => {
     const block = blocks.find(b => b.id === afterId);
     if (block && (block.type === 'bullet' || block.type === 'ordered' || block.type === 'todo')) {

@@ -67,6 +67,25 @@ export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
     }
   }, [inputNodes.length]);
 
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const PAN_AMT = 30;
+      if (e.key === 'ArrowUp') setPan(p => ({ ...p, y: p.y + PAN_AMT }));
+      else if (e.key === 'ArrowDown') setPan(p => ({ ...p, y: p.y - PAN_AMT }));
+      else if (e.key === 'ArrowLeft') setPan(p => ({ ...p, x: p.x + PAN_AMT }));
+      else if (e.key === 'ArrowRight') setPan(p => ({ ...p, x: p.x - PAN_AMT }));
+      else if (e.key === '+' || e.key === '=') setScale(s => Math.min(3, s + 0.1));
+      else if (e.key === '-') setScale(s => Math.max(0.1, s - 0.1));
+    };
+
+    canvas.addEventListener('keydown', handleKeyDown);
+    return () => canvas.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   // Sync input nodes to physics simulation references
   useEffect(() => {
     const existing = new Map(nodesRef.current.map(n => [n.id, n]));
