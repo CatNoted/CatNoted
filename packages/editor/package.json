@@ -19,10 +19,13 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@catnoted/shared": "workspace:*",
     "@catnoted/agent-runtime": "workspace:*",
-    "yjs": "^13.6.14",
-    "lucide-react": "^0.378.0"
+    "@catnoted/shared": "workspace:*",
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
+    "lucide-react": "^0.378.0",
+    "yjs": "^13.6.14"
   },
   "peerDependencies": {
     "react": "^18.3.1",

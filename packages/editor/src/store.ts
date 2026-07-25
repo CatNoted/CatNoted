@@ -99,11 +99,26 @@ export function useDocumentStore() {
     });
   };
 
+  const moveBlock = (fromId: string, toId: string) => {
+    ydoc.transact(() => {
+      const arr = yblocks.toArray();
+      const fromIndex = arr.findIndex(b => b.id === fromId);
+      const toIndex = arr.findIndex(b => b.id === toId);
+
+      if (fromIndex !== -1 && toIndex !== -1 && fromIndex !== toIndex) {
+        const item = yblocks.get(fromIndex);
+        yblocks.delete(fromIndex, 1);
+        yblocks.insert(toIndex, [item]);
+      }
+    });
+  };
+
   return {
     blocks,
     addBlock,
     updateBlockContent,
     updateBlockType,
-    deleteBlock
+    deleteBlock,
+    moveBlock
   };
 }

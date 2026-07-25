@@ -1,5 +1,21 @@
 import React, { useState } from 'react';
 import { useDocumentStore } from '../store.js';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy
+} from '@dnd-kit/sortable';
+import { SortableBlock } from './SortableBlock.js';
 import { TextBlock } from './TextBlock.js';
 import { HeadingBlock } from './HeadingBlock.js';
 import { WidgetBlockPlaceholder } from './WidgetBlockPlaceholder.js';
@@ -12,7 +28,8 @@ import {
   Heading3, 
   AlignLeft, 
   Cpu, 
-  MoreVertical 
+  MoreVertical,
+  GripVertical
 } from 'lucide-react';
 
 export const DocumentEditor: React.FC = () => {
@@ -21,7 +38,8 @@ export const DocumentEditor: React.FC = () => {
     addBlock, 
     updateBlockContent, 
     updateBlockType, 
-    deleteBlock 
+    deleteBlock,
+    moveBlock
   } = useDocumentStore();
 
   const [focusBlockId, setFocusBlockId] = useState<string | null>(null);
@@ -49,27 +67,61 @@ export const DocumentEditor: React.FC = () => {
     setActiveMenuId(null);
   };
 
-  return (
-    <div className="max-w-3xl mx-auto py-10 space-y-0.5">
-      {blocks.map((block, index) => {
-        const isFocused = focusBlockId === block.id;
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
-        return (
-          <div 
-            key={block.id} 
-            className="group flex items-start gap-0 px-4 py-0.5 rounded-lg transition-all hover:bg-slate-50/80 dark:hover:bg-zinc-900/30 hover:shadow-sm hover:ring-1 hover:ring-slate-100 dark:hover:ring-zinc-800/60"
-          >
-            {/* Left Block Controls - fixed width gutter, never overlaps content */}
-            <div className={`w-10 flex-shrink-0 flex items-start justify-end gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity ${
-              block.type === 'heading'
-                ? block.properties?.level === 1
-                  ? 'pt-[10px]'
-                  : block.properties?.level === 2
-                  ? 'pt-[8px]'
-                  : 'pt-[6px]'
-                : 'pt-[6px]'
-            }`}>
-              <button
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      moveBlock(active.id as string, over.id as string);
+    }
+  };
+
+  return (
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="max-w-3xl mx-auto py-10 space-y-0.5">
+        <SortableContext
+          items={blocks.map(b => b.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          {blocks.map((block, index) => {
+            const isFocused = focusBlockId === block.id;
+
+            return (
+              <SortableBlock key={block.id} id={block.id}>
+                {(dragHandleProps: any) => (
+                  <div className="group flex items-start gap-0 px-4 py-0.5 rounded-lg transition-all hover:bg-slate-50/80 dark:hover:bg-zinc-900/30 hover:shadow-sm hover:ring-1 hover:ring-slate-100 dark:hover:ring-zinc-800/60">
+                    {/* Left Block Controls - fixed width gutter, never overlaps content */}
+                    <div className={`w-14 flex-shrink-0 flex items-start justify-end gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity ${
+                      block.type === 'heading'
+                        ? block.properties?.level === 1
+                          ? 'pt-[10px]'
+                          : block.properties?.level === 2
+                          ? 'pt-[8px]'
+                          : 'pt-[6px]'
+                        : 'pt-[6px]'
+                    }`}>
+                      <button
+                        type="button"
+                        {...dragHandleProps}
+                        title="Drag to reorder"
+                        className="p-0.5 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors cursor-grab active:cursor-grabbing"
+                      >
+                        <GripVertical className="w-3.5 h-3.5" />
+                      </button>
+                      <button
                 type="button"
                 onClick={() => handleCreateBlock(block.id)}
                 title="Add block below"
@@ -312,8 +364,12 @@ export const DocumentEditor: React.FC = () => {
               )}
             </div>
           </div>
-        );
-      })}
-    </div>
+                )}
+              </SortableBlock>
+            );
+          })}
+        </SortableContext>
+      </div>
+    </DndContext>
   );
 };

@@ -28,7 +28,7 @@ const App: React.FC = () => {
   const [isZenMode, setIsZenMode] = useState<boolean>(false);
   const [activePage, setActivePage] = useState<string>('root-doc-node');
 
-  const { blocks, updateBlockContent } = useDocumentStore();
+  const { blocks, updateBlockContent, addBlock } = useDocumentStore();
 
   const graphData = React.useMemo(() => {
     return parseDocumentGraph(blocks);
@@ -53,6 +53,55 @@ const App: React.FC = () => {
       setEditTitleValue(pageTitle);
     }
   }, [pageTitle, isEditingTitle]);
+
+
+  const handlePageCreate = () => {
+    const newPageName = prompt('Enter new page name:', 'New Page');
+    if (newPageName && newPageName.trim()) {
+      addBlock(null, 'text', `[[${newPageName.trim()}]]`);
+    }
+  };
+
+  const handlePageRename = (pageId: string, newName: string) => {
+    const pageNode = graphData.nodes.find(n => n.id === pageId);
+    if (!pageNode) return;
+
+    const oldName = pageNode.label.startsWith('📄 ') || pageNode.label.startsWith('📁 ')
+      ? pageNode.label.slice(2)
+      : pageNode.label;
+
+    if (oldName === newName) return;
+
+    blocks.forEach(block => {
+      if (block.content.includes(`[[${oldName}]]`)) {
+        updateBlockContent(block.id, block.content.replaceAll(`[[${oldName}]]`, `[[${newName}]]`));
+      }
+    });
+
+    if (activePage === pageId) {
+      const newId = `page-${newName.toLowerCase().replace(new RegExp('\\s+', 'g'), '-')}`;
+      setActivePage(newId);
+    }
+  };
+
+  const handlePageDelete = (pageId: string) => {
+    const pageNode = graphData.nodes.find(n => n.id === pageId);
+    if (!pageNode) return;
+
+    const oldName = pageNode.label.startsWith('📄 ') || pageNode.label.startsWith('📁 ')
+      ? pageNode.label.slice(2)
+      : pageNode.label;
+
+    blocks.forEach(block => {
+      if (block.content.includes(`[[${oldName}]]`)) {
+        updateBlockContent(block.id, block.content.replaceAll(`[[${oldName}]]`, oldName));
+      }
+    });
+
+    if (activePage === pageId) {
+      setActivePage('root-doc-node');
+    }
+  };
 
   const handleSaveTitle = () => {
     setIsEditingTitle(false);
@@ -321,9 +370,9 @@ const App: React.FC = () => {
         zenMode={isZenMode}
         activePage={activePage}
         onPageSelect={setActivePage}
-        pageTitle={pageTitle}
-        userEmail={userEmail}
-        onAuthTrigger={() => setIsAuthOpen(true)}
+        onPageCreate={handlePageCreate}
+        onPageRename={handlePageRename}
+        onPageDelete={handlePageDelete}
       >
         {renderContent()}
       </AppLayout>
