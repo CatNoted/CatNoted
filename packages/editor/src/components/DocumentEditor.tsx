@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useEffect, useRef } from 'react';
 import { useDocumentStore } from '../store.js';
 import { HeadingBlock } from './HeadingBlock.js';

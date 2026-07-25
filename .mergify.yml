@@ -1,6 +1,7 @@
-merge_queue:
-  max_parallel_checks: 20
-  skip_intermediate_results: false
+queue_rules:
+  - name: default
+    conditions:
+      - "#approved-reviews-by>=1"
 
 pull_request_rules:
   - name: automatic merge when CI passes and approved
@@ -11,21 +12,5 @@ pull_request_rules:
       - -conflict
       - base=main
     actions:
-      merge:
-        method: merge
-        strict: smart
-        commit_message: title+body
-        delete_branch_on_merge: true
-      rebase:
-        auto: true
-
-  - name: queue mergeable PRs
-    conditions:
-      - -conflict
-      - "#check-failure=0"
-      - "#check-success-or-neutral>=1"
-      - base=main
-    actions:
       queue:
         name: default
-        method: merge
