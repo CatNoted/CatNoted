@@ -6,7 +6,9 @@ export interface ConnectorInfo {
   to: string;
   label?: string;
   color?: string;
-  type?: 'straight' | 'bezier' | 'orthogonal';
+  type?: 'straight' | 'bezier' | 'stepped' | 'orthogonal';
+  arrowStart?: boolean;
+  arrowEnd?: boolean;
 }
 
 export interface CanvasElement {

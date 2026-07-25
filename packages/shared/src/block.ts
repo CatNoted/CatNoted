@@ -14,9 +14,12 @@ export type BlockType =
   | 'callout'
   | 'math'
   | 'table'
-  | 'bookmark';
+  | 'bookmark'
+  | 'embed';
 
 export interface BlockProperties {
+  // Embed properties
+  refPageId?: string;
   // Heading properties
   level?: 1 | 2 | 3 | 4 | 5 | 6;
   
