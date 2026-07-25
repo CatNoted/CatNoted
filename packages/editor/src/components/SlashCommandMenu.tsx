@@ -17,6 +17,7 @@ import {
   Table as TableIcon,
   Bookmark,
   Image as ImageIcon,
+  Link2,
 } from 'lucide-react';
 
 export interface SlashCommand {
@@ -305,6 +306,14 @@ export function buildSlashCommands(opts: {
       icon: <Bookmark className="w-4 h-4" />,
       keywords: ['bookmark', 'link', 'url', 'web', 'card'],
       action: exec(() => onSetType('bookmark')),
+    },
+    {
+      id: 'embed',
+      label: 'Embed Page',
+      description: 'Render inline content from another page',
+      icon: <Link2 className="w-4 h-4" />,
+      keywords: ['embed', 'synced', 'reference', 'page', 'block', 'page-ref'],
+      action: exec(() => onSetType('embed')),
     },
     {
       id: 'image',

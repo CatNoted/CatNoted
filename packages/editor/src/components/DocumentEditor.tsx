@@ -13,6 +13,7 @@ import { WidgetBlockPlaceholder } from './WidgetBlockPlaceholder.js';
 import { PageHeader } from './PageHeader.js';
 import { FloatingBubbleMenu } from './FloatingBubbleMenu.js';
 import { SandboxFrame } from '@catnoted/agent-runtime';
+import { EmbedBlock } from './EmbedBlock.js';
 
 import { 
   Plus, 
@@ -27,7 +28,8 @@ import {
   ChevronRight,
   Code,
   Sigma,
-  Table as TableIcon
+  Table as TableIcon,
+  Link2
 } from 'lucide-react';
 
 interface DocumentEditorProps {
@@ -323,6 +325,15 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     </button>
                     <button
                       onClick={() => {
+                        updateBlockType(block.id, 'embed');
+                        setActiveMenuId(null);
+                      }}
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-200"
+                    >
+                      <Link2 className="w-3.5 h-3.5 text-indigo-500" /> Embed Page
+                    </button>
+                    <button
+                      onClick={() => {
                         duplicateBlock(block.id);
                         setActiveMenuId(null);
                       }}
@@ -437,6 +448,17 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                   content={block.content}
                   language={block.properties?.language || 'javascript'}
                   onChange={(val) => updateBlockContent(block.id, val)}
+                  onUpdateProps={(props) => updateBlockProperties(block.id, props)}
+                  onDelete={() => deleteBlock(block.id)}
+                />
+              )}
+
+              {/* --- Embed page reference block --- */}
+              {block.type === 'embed' && (
+                <EmbedBlock
+                  id={block.id}
+                  refPageId={block.properties?.refPageId}
+                  activePage={activePage}
                   onUpdateProps={(props) => updateBlockProperties(block.id, props)}
                   onDelete={() => deleteBlock(block.id)}
                 />
