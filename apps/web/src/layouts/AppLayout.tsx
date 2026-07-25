@@ -48,7 +48,7 @@ interface AppLayoutProps {
 }
 
 import { requestLlmWidget, SandboxFrame } from '@catnoted/agent-runtime';
-import { useDocumentStore } from '@catnoted/editor';
+import { useDocumentStore, renderPageIcon } from '@catnoted/editor';
 import { parseDocumentGraph } from '@catnoted/graph';
 
 // ── Floating panel position & size constants ────────────────────────────
@@ -84,8 +84,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
   // Parse document graph nodes
   const graphData = React.useMemo(() => {
-    return parseDocumentGraph(blocks);
-  }, [blocks]);
+    return parseDocumentGraph(blocks, pages);
+  }, [blocks, pages]);
 
   const mainHeading = blocks.find(b => b.type === 'heading' && b.properties?.level === 1);
   const docTitle = mainHeading?.content || 'Untitled Document';
@@ -106,17 +106,16 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     const otherPages = pageNodes
       .filter(n => n.id !== 'root-doc-node')
       .map(n => {
-        const title = n.label.startsWith('📁 ') || n.label.startsWith('📄 ')
-          ? n.label.slice(2)
-          : n.label;
-        return { id: n.id, title };
+        return { id: n.id, title: n.rawName || n.label, icon: n.icon };
       });
 
+    const rootPageMeta = pages?.find(p => p.id === 'root-doc-node');
+
     return [
-      { id: 'root-doc-node', title: docTitle },
+      { id: 'root-doc-node', title: docTitle, icon: rootPageMeta?.icon || '📁' },
       ...otherPages
     ];
-  }, [pageNodes, docTitle]);
+  }, [pageNodes, docTitle, pages]);
 
   // Persistent sidebar state - initialized with safe defaults to prevent hydration issues
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
@@ -662,7 +661,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         }`}
                       >
                         <span className="truncate flex items-center gap-2">
-                          <FileText className="w-4 h-4 text-slate-400 dark:text-zinc-500 shrink-0" />
+                          {renderPageIcon(doc.icon, "w-4 h-4 text-slate-400 dark:text-zinc-500 shrink-0 flex items-center justify-center")}
                           <span className="truncate">{doc.title}</span>
                         </span>
                         <span className="text-[10px] text-slate-400 dark:text-zinc-500 opacity-60">Recent</span>
@@ -732,7 +731,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                     : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
                                 }`}
                               >
-                                <span className="text-xs shrink-0">{node.icon || '📄'}</span>
+                                {renderPageIcon(node.icon, "w-3.5 h-3.5 shrink-0 flex items-center justify-center")}
                                 <span className="truncate text-xs">{displayLabel}</span>
                               </button>
                             </li>
@@ -776,7 +775,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                     : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
                                 }`}
                               >
-                                <span className="text-xs shrink-0">{node.icon || '📄'}</span>
+                                {renderPageIcon(node.icon, "w-3.5 h-3.5 shrink-0 flex items-center justify-center")}
                                 <span className="truncate text-xs">{displayLabel}</span>
                               </button>
                               {node.id !== 'root-doc-node' && (

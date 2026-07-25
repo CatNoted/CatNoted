@@ -8,7 +8,7 @@ export { MathBlock } from './components/MathBlock.js';
 export { TableBlock } from './components/TableBlock.js';
 export { BookmarkBlock } from './components/BookmarkBlock.js';
 export { ImageBlock } from './components/ImageBlock.js';
-export { PageHeader } from './components/PageHeader.js';
+export { PageHeader, renderPageIcon } from './components/PageHeader.js';
 export { FloatingBubbleMenu } from './components/FloatingBubbleMenu.js';
 export { WidgetBlockPlaceholder } from './components/WidgetBlockPlaceholder.js';
 export { SlashCommandMenu, buildSlashCommands } from './components/SlashCommandMenu.js';

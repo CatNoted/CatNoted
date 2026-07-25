@@ -1,6 +1,33 @@
-import { BlockNode, GraphNode, GraphEdge } from '@catnoted/shared';
+import { BlockNode, GraphNode, GraphEdge, PageMeta } from '@catnoted/shared';
 
-export function parseDocumentGraph(blocks: BlockNode[]): { nodes: GraphNode[]; edges: GraphEdge[] } {
+const lucideToEmoji: Record<string, string> = {
+  Sparkles: '✨',
+  Heart: '❤️',
+  Star: '⭐',
+  Settings: '⚙️',
+  FileText: '📄',
+  Trash2: '🗑️',
+  RefreshCw: '🔄',
+  Image: '🖼️',
+  Smile: '😊',
+  Plus: '➕',
+  Search: '🔍',
+  Info: 'ℹ️',
+  Download: '📥',
+  Filter: '🔍',
+  Check: '✔️',
+};
+
+function getDisplayIcon(iconStr: string | undefined): string {
+  if (!iconStr) return '📄';
+  if (iconStr.startsWith('lucide:')) {
+    const name = iconStr.slice(7);
+    return lucideToEmoji[name] || '✨';
+  }
+  return iconStr;
+}
+
+export function parseDocumentGraph(blocks: BlockNode[], pages?: PageMeta[]): { nodes: GraphNode[]; edges: GraphEdge[] } {
   const nodesMap = new Map<string, Omit<GraphNode, 'label'> & { _rawName: string; count: number }>();
   const edges: GraphEdge[] = [];
 
@@ -103,23 +130,31 @@ export function parseDocumentGraph(blocks: BlockNode[]): { nodes: GraphNode[]; e
 
   const finalNodes: GraphNode[] = Array.from(nodesMap.values()).map(n => {
     if (n.id === rootId) {
+      const rootPage = pages?.find(p => p.id === rootId);
+      const rootIcon = getDisplayIcon(rootPage?.icon || '📁');
       return {
         id: n.id,
-        label: `📁 ${n._rawName}`,
+        label: `${rootIcon} ${n._rawName}`,
         type: n.type,
         val: n.val,
-        rawName: n._rawName
+        rawName: n._rawName,
+        icon: rootPage?.icon || '📁'
       };
     }
-    const prefix = n.type === 'page' ? '📄 ' : '# ';
+    const pageMeta = pages?.find(p => p.id === n.id);
+    const rawTitle = pageMeta?.title || n._rawName;
+    const pageIcon = pageMeta?.icon || '📄';
+    const displayIcon = getDisplayIcon(pageIcon);
+    const prefix = n.type === 'page' ? `${displayIcon} ` : '# ';
     // Backlink count included in label
-    const label = `${prefix}${n._rawName} (${n.count})`;
+    const label = `${prefix}${rawTitle} (${n.count})`;
     return {
       id: n.id,
       label,
       type: n.type,
       val: n.val,
-      rawName: n._rawName
+      rawName: rawTitle,
+      icon: pageIcon
     };
   });
 
