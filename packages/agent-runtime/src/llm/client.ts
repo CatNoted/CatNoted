@@ -70,7 +70,7 @@ const WIDGET_TEMPLATES: Record<string, string> = {
           display.value = '0';
         } else if (val === '=') {
           try {
-            if (/^[0-9+\-*/. ]+$/.test(display.value)) {
+            if (/^[0-9+*/. -]+$/.test(display.value)) {
               display.value = new Function('return (' + display.value + ')')() || '0';
             } else {
               display.value = 'Error';
