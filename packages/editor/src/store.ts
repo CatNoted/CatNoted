@@ -39,8 +39,16 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
       const allBlocks = yblocks.toArray();
       const pageBlocks = allBlocks.filter(b => (b.parentId || 'root-doc-node') === pageId);
 
+      // Deduplicate blocks by id to avoid duplicate rendering from Yjs observer noise
+      const seen = new Set<string>();
+      const deduped = pageBlocks.filter(b => {
+        if (seen.has(b.id)) return false;
+        seen.add(b.id);
+        return true;
+      });
+
       // Prepopulate sub-page if empty (inside transact, observer will re-fire)
-      if (pageId !== 'root-doc-node' && pageBlocks.length === 0) {
+      if (pageId !== 'root-doc-node' && deduped.length === 0) {
         const rawName = pageId.startsWith('page-') ? pageId.slice(5) : pageId;
         const pageName = rawName
           .split('-')
@@ -62,7 +70,7 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
         return;
       }
 
-      setBlocks(pageBlocks);
+      setBlocks(deduped);
     };
 
     const updatePageMetadata = () => {
