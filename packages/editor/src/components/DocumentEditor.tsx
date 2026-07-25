@@ -2,7 +2,16 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useDocumentStore } from '../store.js';
 import { HeadingBlock } from './HeadingBlock.js';
 import { TextBlock } from './TextBlock.js';
+import { CalloutBlock } from './CalloutBlock.js';
+import { ToggleBlock } from './ToggleBlock.js';
+import { CodeBlock } from './CodeBlock.js';
+import { MathBlock } from './MathBlock.js';
+import { TableBlock } from './TableBlock.js';
+import { BookmarkBlock } from './BookmarkBlock.js';
+import { ImageBlock } from './ImageBlock.js';
 import { WidgetBlockPlaceholder } from './WidgetBlockPlaceholder.js';
+import { PageHeader } from './PageHeader.js';
+import { FloatingBubbleMenu } from './FloatingBubbleMenu.js';
 import { SandboxFrame } from '@catnoted/agent-runtime';
 
 import { 
@@ -13,7 +22,15 @@ import {
   Heading3, 
   AlignLeft, 
   Cpu, 
-  GripVertical
+  GripVertical,
+  Copy,
+  Lightbulb,
+  ChevronRight,
+  Code,
+  Sigma,
+  Table as TableIcon,
+  Bookmark,
+  Image as ImageIcon
 } from 'lucide-react';
 
 interface DocumentEditorProps {
@@ -27,11 +44,15 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 }) => {
   const { 
     blocks, 
+    pageMeta,
     addBlock, 
     updateBlockContent, 
     updateBlockType, 
+    updateBlockProperties,
+    duplicateBlock,
     deleteBlock,
-    moveBlock
+    moveBlock,
+    updatePageMeta
   } = useDocumentStore(activePage);
 
   const [focusBlockId, setFocusBlockId] = useState<string | null>(null);
@@ -40,11 +61,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const [dragOverBlockId, setDragOverBlockId] = useState<string | null>(null);
   const titleOnFocusRef = useRef('');
 
-
   const handleDragStart = (e: React.DragEvent, id: string) => {
     setDraggedBlockId(id);
     e.dataTransfer.effectAllowed = 'move';
-    // Transparent image to hide default drag ghost
     const img = new Image();
     img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
     e.dataTransfer.setDragImage(img, 0, 0);
@@ -62,7 +81,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     e.preventDefault();
     setDragOverBlockId(null);
     if (draggedBlockId && draggedBlockId !== id) {
-      // Reorder blocks by moving draggedBlockId before/after id
       const fromIndex = blocks.findIndex(b => b.id === draggedBlockId);
       const toIndex = blocks.findIndex(b => b.id === id);
 
@@ -75,7 +93,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   };
 
   useEffect(() => {
-    // If the page has exactly 1 block and it's a level-1 heading, auto-focus it
     if (blocks.length === 1 && blocks[0].type === 'heading' && blocks[0].properties?.level === 1) {
       setFocusBlockId(blocks[0].id);
     }
@@ -85,11 +102,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     const block = blocks.find(b => b.id === afterId);
     if (block && (block.type === 'bullet' || block.type === 'ordered' || block.type === 'todo')) {
       if (block.content.trim() === '') {
-        // Convert to text block if empty
         updateBlockType(block.id, 'text', {});
         return;
       } else {
-        // Create another list block of the same type
         const newId = addBlock(afterId, block.type as any, '');
         setFocusBlockId(newId);
         return;
@@ -103,11 +118,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     const block = blocks[index];
     if (block && ['bullet', 'ordered', 'todo'].includes(block.type)) {
       if (block.content.trim() === '') {
-        // Empty list item: escape to text block
         updateBlockType(id, 'text');
         return;
       }
-      // Non-empty list item: continue list
       const newId = addBlock(id, block.type, '');
       if (block.type === 'todo') {
         updateBlockType(newId, 'todo', { checked: false });
@@ -118,7 +131,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       return;
     }
 
-    // Default enter behavior
     const newId = addBlock(id, 'text', '');
     setFocusBlockId(newId);
   };
@@ -126,7 +138,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const handleBackspaceBlock = (id: string, index: number) => {
     if (blocks.length > 1) {
       deleteBlock(id);
-      // Focus on the previous block, or next block if it was the first
       const focusBlock = index > 0 ? blocks[index - 1] : blocks[1];
       if (focusBlock) {
         setFocusBlockId(focusBlock.id);
@@ -140,13 +151,50 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     setActiveMenuId(null);
   };
 
+  // Calculate word count across document
+  const wordCount = blocks.reduce((acc, b) => acc + (b.content ? b.content.trim().split(/\s+/).filter(Boolean).length : 0), 0);
+
+  const headingBlock = blocks.find(b => b.type === 'heading' && b.properties?.level === 1);
+  const displayTitle = pageMeta?.title || headingBlock?.content || 'Untitled Document';
+
+  const fontClass = pageMeta?.fontStyle === 'serif' 
+    ? 'font-serif' 
+    : pageMeta?.fontStyle === 'mono' 
+    ? 'font-mono' 
+    : 'font-sans';
+
+  const layoutClass = pageMeta?.fullWidth ? 'max-w-6xl px-8' : 'max-w-3xl px-4';
+
   return (
-    <div className="max-w-3xl mx-auto py-10 space-y-0.5 min-h-[50vh]" onClick={(e) => {
-      // If clicking in the empty space below blocks, focus the last block
+    <div className={`w-full mx-auto py-8 space-y-0.5 min-h-[60vh] transition-all ${fontClass} ${layoutClass}`} onClick={(e) => {
       if (e.target === e.currentTarget && blocks.length > 0) {
         setFocusBlockId(blocks[blocks.length - 1].id);
       }
     }}>
+      {/* Floating Rich Text Format Toolbar */}
+      <FloatingBubbleMenu />
+
+      {/* AFFiNE Document Header */}
+      <PageHeader
+        title={displayTitle}
+        icon={pageMeta?.icon}
+        coverUrl={pageMeta?.coverUrl}
+        createdAt={pageMeta?.createdAt}
+        blocksCount={blocks.length}
+        wordCount={wordCount}
+        onTitleChange={(newTitle) => {
+          updatePageMeta({ title: newTitle });
+          if (headingBlock) {
+            updateBlockContent(headingBlock.id, newTitle);
+          }
+          if (onRenamePage && activePage !== 'root-doc-node') {
+            onRenamePage(pageMeta?.title || '', newTitle);
+          }
+        }}
+        onIconChange={(icon) => updatePageMeta({ icon })}
+        onCoverChange={(coverUrl) => updatePageMeta({ coverUrl })}
+      />
+
       {blocks.length === 0 && (
         <div className="flex flex-col items-center justify-center py-20 text-slate-400 dark:text-zinc-500 opacity-60">
           <span className="text-4xl mb-3">📝</span>
@@ -160,6 +208,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           </button>
         </div>
       )}
+
       {blocks.map((block, index) => {
         const isFocused = focusBlockId === block.id;
 
@@ -170,9 +219,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             onDragStart={(e) => handleDragStart(e, block.id)}
             onDragOver={(e) => handleDragOver(e, block.id)}
             onDrop={(e) => handleDrop(e, block.id)}
-            className={`group flex items-start gap-0 px-4 py-0.5 rounded-lg transition-all hover:bg-slate-50/80 dark:hover:bg-zinc-900/30 hover:shadow-sm hover:ring-1 hover:ring-slate-100 dark:hover:ring-zinc-800/60 ${dragOverBlockId === block.id ? "border-t-2 border-indigo-500" : ""}`}
+            className={`group flex items-start gap-0 px-2 py-0.5 rounded-lg transition-all hover:bg-slate-50/80 dark:hover:bg-zinc-900/30 hover:shadow-sm hover:ring-1 hover:ring-slate-100 dark:hover:ring-zinc-800/60 ${dragOverBlockId === block.id ? "border-t-2 border-indigo-500" : ""}`}
           >
-            {/* Left Block Controls - fixed width gutter, never overlaps content */}
+            {/* Left Block Controls */}
             <div className={`w-10 flex-shrink-0 flex items-start justify-end gap-0.5 ${activeMenuId === block.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} transition-opacity ${
               block.type === 'heading'
                 ? block.properties?.level === 1
@@ -202,7 +251,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 </button>
 
                 {activeMenuId === block.id && (
-                  <div className="absolute left-0 mt-1 w-40 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl shadow-lg z-50 py-1 text-xs">
+                  <div className="absolute left-0 mt-1 w-44 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl shadow-xl z-50 py-1 text-xs">
                     <button
                       onClick={() => {
                         updateBlockType(block.id, 'text');
@@ -232,16 +281,61 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     </button>
                     <button
                       onClick={() => {
-                        updateBlockType(block.id, 'heading', { level: 3 });
+                        updateBlockType(block.id, 'callout', { calloutIcon: '💡', calloutBg: 'indigo' });
                         setActiveMenuId(null);
                       }}
                       className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-200"
                     >
-                      <Heading3 className="w-3.5 h-3.5" /> Heading 3
+                      <Lightbulb className="w-3.5 h-3.5 text-amber-500" /> Callout
+                    </button>
+                    <button
+                      onClick={() => {
+                        updateBlockType(block.id, 'toggle', { expanded: true });
+                        setActiveMenuId(null);
+                      }}
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-200"
+                    >
+                      <ChevronRight className="w-3.5 h-3.5 text-indigo-500" /> Toggle List
+                    </button>
+                    <button
+                      onClick={() => {
+                        updateBlockType(block.id, 'code', { language: 'javascript' });
+                        setActiveMenuId(null);
+                      }}
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-200"
+                    >
+                      <Code className="w-3.5 h-3.5" /> Code Block
+                    </button>
+                    <button
+                      onClick={() => {
+                        updateBlockType(block.id, 'math');
+                        setActiveMenuId(null);
+                      }}
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-200"
+                    >
+                      <Sigma className="w-3.5 h-3.5 text-purple-500" /> Math Formula
+                    </button>
+                    <button
+                      onClick={() => {
+                        updateBlockType(block.id, 'table');
+                        setActiveMenuId(null);
+                      }}
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-200"
+                    >
+                      <TableIcon className="w-3.5 h-3.5 text-emerald-500" /> Table
+                    </button>
+                    <button
+                      onClick={() => {
+                        duplicateBlock(block.id);
+                        setActiveMenuId(null);
+                      }}
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-200"
+                    >
+                      <Copy className="w-3.5 h-3.5" /> Duplicate
                     </button>
                     <button
                       onClick={() => handleAddWidget(block.id)}
-                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-indigo-600 dark:text-indigo-400"
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-indigo-600 dark:text-indigo-400 font-semibold"
                     >
                       <Cpu className="w-3.5 h-3.5" /> Insert AI Widget
                     </button>
@@ -251,7 +345,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                         deleteBlock(block.id);
                         setActiveMenuId(null);
                       }}
-                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-red-500"
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-red-500 font-medium"
                     >
                       <Trash2 className="w-3.5 h-3.5" /> Delete Block
                     </button>
@@ -260,7 +354,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               </div>
             </div>
 
-            {/* Block Content — always to the right of controls */}
+            {/* Block Content Renderers */}
             <div className="flex-1 min-w-0 w-full pl-0">
               {block.type === 'heading' && (
                 <HeadingBlock
@@ -305,6 +399,95 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                   focusOnMount={isFocused}
                   blockType={block.type}
                   onFocus={() => setFocusBlockId(block.id)}
+                />
+              )}
+
+              {/* --- Callout block --- */}
+              {block.type === 'callout' && (
+                <CalloutBlock
+                  id={block.id}
+                  content={block.content}
+                  icon={block.properties?.calloutIcon || '💡'}
+                  bg={block.properties?.calloutBg || 'indigo'}
+                  onChange={(val) => updateBlockContent(block.id, val)}
+                  onUpdateProps={(props) => updateBlockProperties(block.id, props)}
+                  onEnter={() => handleEnterBlock(block.id, index)}
+                  onBackspace={() => handleBackspaceBlock(block.id, index)}
+                  onFocus={() => setFocusBlockId(block.id)}
+                  focusOnMount={isFocused}
+                />
+              )}
+
+              {/* --- Toggle block --- */}
+              {block.type === 'toggle' && (
+                <ToggleBlock
+                  id={block.id}
+                  content={block.content}
+                  expanded={block.properties?.expanded !== false}
+                  onChange={(val) => updateBlockContent(block.id, val)}
+                  onUpdateProps={(props) => updateBlockProperties(block.id, props)}
+                  onEnter={() => handleEnterBlock(block.id, index)}
+                  onBackspace={() => handleBackspaceBlock(block.id, index)}
+                  onFocus={() => setFocusBlockId(block.id)}
+                  focusOnMount={isFocused}
+                />
+              )}
+
+              {/* --- Code block --- */}
+              {block.type === 'code' && (
+                <CodeBlock
+                  id={block.id}
+                  content={block.content}
+                  language={block.properties?.language || 'javascript'}
+                  onChange={(val) => updateBlockContent(block.id, val)}
+                  onUpdateProps={(props) => updateBlockProperties(block.id, props)}
+                  onDelete={() => deleteBlock(block.id)}
+                />
+              )}
+
+              {/* --- Math formula block --- */}
+              {block.type === 'math' && (
+                <MathBlock
+                  id={block.id}
+                  content={block.content}
+                  onChange={(val) => updateBlockContent(block.id, val)}
+                  onDelete={() => deleteBlock(block.id)}
+                />
+              )}
+
+              {/* --- Table grid block --- */}
+              {block.type === 'table' && (
+                <TableBlock
+                  id={block.id}
+                  rows={block.properties?.rows}
+                  onUpdateProps={(props) => updateBlockProperties(block.id, props)}
+                  onDelete={() => deleteBlock(block.id)}
+                />
+              )}
+
+              {/* --- Web bookmark block --- */}
+              {block.type === 'bookmark' && (
+                <BookmarkBlock
+                  id={block.id}
+                  bookmarkUrl={block.properties?.bookmarkUrl}
+                  bookmarkTitle={block.properties?.bookmarkTitle}
+                  bookmarkDescription={block.properties?.bookmarkDescription}
+                  bookmarkFavicon={block.properties?.bookmarkFavicon}
+                  onUpdateProps={(props) => updateBlockProperties(block.id, props)}
+                  onDelete={() => deleteBlock(block.id)}
+                />
+              )}
+
+              {/* --- Image media block --- */}
+              {block.type === 'image' && (
+                <ImageBlock
+                  id={block.id}
+                  url={block.properties?.url}
+                  caption={block.properties?.caption}
+                  width={block.properties?.width}
+                  align={block.properties?.align}
+                  onUpdateProps={(props) => updateBlockProperties(block.id, props)}
+                  onDelete={() => deleteBlock(block.id)}
                 />
               )}
 
@@ -406,20 +589,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 </div>
               )}
 
-              {/* --- Code block --- */}
-              {block.type === 'code' && (
-                <div className="rounded-lg bg-slate-900 dark:bg-zinc-950 border border-slate-700 dark:border-zinc-800 px-4 py-3">
-                  <textarea
-                    value={block.content}
-                    onChange={(e) => updateBlockContent(block.id, e.target.value)}
-                    placeholder="// Code here..."
-                    rows={3}
-                    className="w-full bg-transparent resize-none border-none outline-none focus:ring-0 p-0 text-xs font-mono text-emerald-300 placeholder-slate-600 leading-relaxed"
-                    style={{ minHeight: '3rem' }}
-                  />
-                </div>
-              )}
-
               {/* --- Divider --- */}
               {block.type === 'divider' && (
                 <div className="py-2">
@@ -427,6 +596,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 </div>
               )}
 
+              {/* --- AI Widget --- */}
               {block.type === 'widget' && (
                 block.properties?.srcDoc ? (
                   <div className="w-full my-4 border border-slate-200 dark:border-zinc-800 rounded-2xl bg-white dark:bg-zinc-900 overflow-hidden shadow-sm">

@@ -71,7 +71,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   onCreatePage
 }) => {
   const { blocks, addBlock, updateBlockType, pages, createPage } = useDocumentStore(activePage);
-  console.log(pages);
+  const favoritePages = (pages || []).filter((p: any) => p?.isFavorite);
 
   // Parse document graph nodes
   const graphData = React.useMemo(() => {
@@ -168,6 +168,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
   // Section expand/collapse state
   const [sectionsExpanded, setSectionsExpanded] = useState<Record<string, boolean>>({
+    favorites: true,
     pages: true,
     tags: true,
     widgets: false
@@ -689,6 +690,49 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               )}
 
               <div className="space-y-1.5">
+                {/* 0. Favorites Category */}
+                {favoritePages.length > 0 && (
+                  <div>
+                    <button
+                      onClick={() => toggleSection('favorites')}
+                      className="w-full flex items-center justify-between px-2 py-1.5 hover:bg-slate-100/60 dark:hover:bg-zinc-800/30 rounded-lg text-xs font-semibold text-slate-500 dark:text-zinc-400"
+                    >
+                      <span className="flex items-center gap-1.5">
+                        {sectionsExpanded.favorites ? <ChevronDown className="w-3.5 h-3.5 text-slate-400" /> : <ChevronRight className="w-3.5 h-3.5 text-slate-400" />}
+                        <span className="text-xs">⭐</span>
+                        <span>Favorites</span>
+                      </span>
+                      <span className="text-[9px] bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 px-1.5 py-0.5 rounded-full font-bold">{favoritePages.length}</span>
+                    </button>
+                    {sectionsExpanded.favorites && (
+                      <ul className="pl-4 mt-1 space-y-0.5 border-l border-amber-200 dark:border-amber-900/40 ml-3.5">
+                        {favoritePages.map((node: any) => {
+                          const isActive = activePage === node.id;
+                          const displayLabel = node.title || 'Untitled';
+                          return (
+                            <li key={node.id}>
+                              <button
+                                onClick={() => {
+                                  if (onPageSelect) onPageSelect(node.id);
+                                  onModeChange('doc');
+                                }}
+                                className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
+                                  isActive
+                                    ? 'bg-amber-50 dark:bg-amber-950/30 text-amber-900 dark:text-amber-200 font-medium'
+                                    : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
+                                }`}
+                              >
+                                <span className="text-xs shrink-0">{node.icon || '📄'}</span>
+                                <span className="truncate text-xs">{displayLabel}</span>
+                              </button>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                  </div>
+                )}
+
                 {/* 1. Pages Category */}
                 <div>
                   <button
@@ -720,7 +764,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                   : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
                               }`}
                             >
-                              <FileText className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 shrink-0" />
+                              <span className="text-xs shrink-0">{node.icon || '📄'}</span>
                               <span className="truncate text-xs">{displayLabel}</span>
                             </button>
                           </li>

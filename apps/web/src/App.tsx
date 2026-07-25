@@ -235,6 +235,34 @@ const App: React.FC = () => {
     setActiveMode(mode);
   };
 
+  const { pageMeta, updatePageMeta, deletePage } = useDocumentStore(activePage);
+  const [showPageMenu, setShowPageMenu] = useState(false);
+
+  const handleExportMarkdown = () => {
+    const markdownContent = activeBlocks
+      .map((b) => {
+        if (b.type === 'heading') return `${'#'.repeat(b.properties?.level || 1)} ${b.content}`;
+        if (b.type === 'bullet') return `- ${b.content}`;
+        if (b.type === 'ordered') return `1. ${b.content}`;
+        if (b.type === 'todo') return `- [${b.properties?.checked ? 'x' : ' '}] ${b.content}`;
+        if (b.type === 'quote') return `> ${b.content}`;
+        if (b.type === 'code') return `\`\`\`${b.properties?.language || ''}\n${b.content}\n\`\`\``;
+        if (b.type === 'callout') return `> ${b.properties?.calloutIcon || '💡'} ${b.content}`;
+        if (b.type === 'divider') return `---`;
+        return b.content;
+      })
+      .join('\n\n');
+
+    const blob = new Blob([markdownContent], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${pageTitle.toLowerCase().replace(/\s+/g, '-')}.md`;
+    link.click();
+    URL.revokeObjectURL(url);
+    setShowPageMenu(false);
+  };
+
   const renderHeader = () => {
     return (
       <header className="h-14 px-6 border-b border-slate-200/50 dark:border-zinc-800/50 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md flex items-center justify-between z-20 shrink-0 w-full select-none">
@@ -320,8 +348,101 @@ const App: React.FC = () => {
           })}
         </div>
 
-        {/* Right: Actions, Sync Indicator, User profile */}
-        <div className="flex items-center gap-3">
+        {/* Right: Actions, Star, Page Options, Sync Indicator, User profile */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Favorite / Star Button */}
+          <button
+            type="button"
+            onClick={() => updatePageMeta({ isFavorite: !pageMeta?.isFavorite })}
+            className={`p-1.5 rounded-lg border transition-colors ${
+              pageMeta?.isFavorite
+                ? 'border-amber-400/60 bg-amber-400/10 text-amber-500'
+                : 'border-slate-200/60 dark:border-zinc-800/60 text-slate-400 hover:text-amber-500 hover:bg-slate-50 dark:hover:bg-zinc-800'
+            }`}
+            title={pageMeta?.isFavorite ? 'Unstar page' : 'Star page'}
+          >
+            <span className="text-xs">⭐</span>
+          </button>
+
+          {/* Page Options Dropdown Menu ('...') */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setShowPageMenu(!showPageMenu)}
+              className="p-1.5 border border-slate-200/60 dark:border-zinc-800/60 text-slate-500 hover:text-slate-800 dark:hover:text-zinc-200 hover:bg-slate-50 dark:hover:bg-zinc-800 rounded-lg text-xs flex items-center transition-colors"
+              title="Page options"
+            >
+              <span className="text-xs font-bold px-1">•••</span>
+            </button>
+
+            {showPageMenu && (
+              <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-2xl z-50 py-2 text-xs select-none">
+                <div className="px-3 pb-2 mb-1 border-b border-slate-100 dark:border-zinc-800">
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
+                    Font Style
+                  </p>
+                  <div className="grid grid-cols-3 gap-1 mt-1">
+                    {[
+                      { id: 'sans', label: 'Sans' },
+                      { id: 'serif', label: 'Serif' },
+                      { id: 'mono', label: 'Mono' },
+                    ].map((f) => (
+                      <button
+                        key={f.id}
+                        type="button"
+                        onClick={() => updatePageMeta({ fontStyle: f.id as any })}
+                        className={`py-1 rounded text-center transition-colors ${
+                          pageMeta?.fontStyle === f.id || (!pageMeta?.fontStyle && f.id === 'sans')
+                            ? 'bg-indigo-600 text-white font-bold'
+                            : 'bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 hover:bg-slate-200'
+                        }`}
+                      >
+                        {f.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="px-1 py-1">
+                  <button
+                    type="button"
+                    onClick={() => updatePageMeta({ fullWidth: !pageMeta?.fullWidth })}
+                    className="w-full px-3 py-1.5 text-left flex items-center justify-between hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg text-slate-700 dark:text-zinc-300"
+                  >
+                    <span>Full Width Page</span>
+                    <span className="text-xs">{pageMeta?.fullWidth ? '✓' : ''}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleExportMarkdown}
+                    className="w-full px-3 py-1.5 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-300"
+                  >
+                    <span>Export Markdown (.md)</span>
+                  </button>
+
+                  <div className="my-1 border-t border-slate-100 dark:border-zinc-800" />
+
+                  {activePage !== 'root-doc-node' && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (confirm(`Delete page "${pageTitle}"?`)) {
+                          deletePage(activePage);
+                          setActivePage('root-doc-node');
+                          setShowPageMenu(false);
+                        }
+                      }}
+                      className="w-full px-3 py-1.5 text-left flex items-center gap-2 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-400 font-medium rounded-lg"
+                    >
+                      <span>Delete Page</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
           {status === 'saving' && (
             <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
@@ -338,18 +459,6 @@ const App: React.FC = () => {
             <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-slate-500/10 text-slate-600 dark:text-slate-400 border border-slate-500/20">
               <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
               Offline
-            </span>
-          )}
-          {status === 'conflict' && (
-            <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
-              <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-bounce" />
-              Conflict
-            </span>
-          )}
-          {status === 'error' && (
-            <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
-              <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-              Error
             </span>
           )}
 
@@ -388,6 +497,7 @@ const App: React.FC = () => {
       </header>
     );
   };
+
 
   const renderActiveView = () => {
     switch (activeMode) {

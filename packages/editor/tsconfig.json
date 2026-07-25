@@ -5,6 +5,7 @@
     "moduleResolution": "NodeNext",
     "declaration": true,
     "outDir": "./dist",
+    "rootDir": "src",
     "strict": true,
     "jsx": "react-jsx",
     "esModuleInterop": true,
@@ -12,11 +13,8 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "@catnoted/shared": ["../shared/src/index.ts"],
-      "@catnoted/graph": ["../graph/src/index.ts"],
-      "@catnoted/agent-runtime": ["../agent-runtime/src/index.ts"],
-      "@catnoted/editor": ["src/index.ts"],
-      "@catnoted/canvas": ["../canvas/src/index.ts"]
+      "@catnoted/shared": ["../shared/dist/index.d.ts"],
+      "@catnoted/agent-runtime": ["../agent-runtime/dist/index.d.ts"]
     }
   },
   "include": ["src/**/*"]

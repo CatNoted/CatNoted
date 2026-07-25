@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import * as Y from 'yjs';
-import { BlockNode, BlockType } from '@catnoted/shared';
+import { BlockNode, BlockType, BlockProperties, PageMeta } from '@catnoted/shared';
 import { IndexeddbPersistence } from 'y-indexeddb';
 
 export const ydoc = new Y.Doc();
-export const ypages = ydoc.getMap<any>('pages');
+export const ypages = ydoc.getMap<PageMeta>('pages');
 const yblocks = ydoc.getArray<BlockNode>('blocks');
 const provider = typeof window !== 'undefined' && typeof indexedDB !== 'undefined' 
   ? new IndexeddbPersistence('catnoted-doc', ydoc) 
@@ -31,7 +31,8 @@ if (yblocks.length === 0) {
 
 export function useDocumentStore(pageId: string = 'root-doc-node') {
   const [blocks, setBlocks] = useState<BlockNode[]>([]);
-  const [pages, setPages] = useState<any[]>([]);
+  const [pages, setPages] = useState<PageMeta[]>([]);
+  const [pageMeta, setPageMeta] = useState<PageMeta | null>(null);
 
   useEffect(() => {
     const updateBlocks = () => {
@@ -62,14 +63,33 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
       }
     };
 
+    const updatePageMetadata = () => {
+      const currentMeta = ypages.get(pageId);
+      if (currentMeta) {
+        setPageMeta(currentMeta);
+      } else {
+        setPageMeta({
+          id: pageId,
+          title: pageId === 'root-doc-node' ? 'Root Note' : pageId,
+          icon: '📄',
+          fontStyle: 'sans',
+          fullWidth: false,
+          isFavorite: false,
+          createdAt: Date.now()
+        });
+      }
+      setPages(ypages.toJSON() ? Object.values(ypages.toJSON()) : []);
+    };
+
     updateBlocks();
+    updatePageMetadata();
 
     const observer = () => {
       updateBlocks();
     };
 
     const pagesObserver = () => {
-      setPages(ypages.toJSON() ? Object.values(ypages.toJSON()) : []);
+      updatePageMetadata();
     };
 
     yblocks.observe(observer);
@@ -77,7 +97,7 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
 
     const handleSync = () => {
       setBlocks(yblocks.toArray());
-      setPages(ypages.toJSON() ? Object.values(ypages.toJSON()) : []);
+      updatePageMetadata();
     };
     if (provider && typeof provider.on === 'function') {
       provider.on('synced', handleSync);
@@ -92,12 +112,12 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
     };
   }, [pageId]);
 
-  const addBlock = (afterId: string | null, type: BlockType = 'text', content: string = '') => {
+  const addBlock = (afterId: string | null, type: BlockType = 'text', content: string = '', properties: BlockProperties = {}) => {
     const newBlock: BlockNode = {
       id: `block-${Math.random().toString(36).substring(2, 11)}`,
       type,
       content,
-      properties: type === 'heading' ? { level: 2 } : {},
+      properties: Object.keys(properties).length > 0 ? properties : (type === 'heading' ? { level: 2 } : {}),
       parentId: pageId
     };
 
@@ -145,6 +165,37 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
     });
   };
 
+  const updateBlockProperties = (id: string, propsPartial: Partial<BlockProperties>) => {
+    ydoc.transact(() => {
+      const index = yblocks.toArray().findIndex(b => b.id === id);
+      if (index !== -1) {
+        const current = yblocks.get(index);
+        const updated = {
+          ...current,
+          properties: {
+            ...current.properties,
+            ...propsPartial
+          }
+        };
+        yblocks.delete(index, 1);
+        yblocks.insert(index, [updated]);
+      }
+    });
+  };
+
+  const duplicateBlock = (id: string) => {
+    const targetBlock = blocks.find(b => b.id === id);
+    if (!targetBlock) return null;
+
+    const newId = addBlock(
+      id,
+      targetBlock.type,
+      targetBlock.content,
+      JSON.parse(JSON.stringify(targetBlock.properties || {}))
+    );
+    return newId;
+  };
+
   const deleteBlock = (id: string) => {
     ydoc.transact(() => {
       const index = yblocks.toArray().findIndex(b => b.id === id);
@@ -154,12 +205,34 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
     });
   };
 
-  const createPage = (title: string = 'Untitled') => {
+  const updatePageMeta = (metaPartial: Partial<PageMeta>) => {
+    ydoc.transact(() => {
+      const current = ypages.get(pageId) || {
+        id: pageId,
+        title: pageId === 'root-doc-node' ? 'Root Note' : pageId,
+        icon: '📄',
+        createdAt: Date.now()
+      };
+      const updated = {
+        ...current,
+        ...metaPartial,
+        updatedAt: Date.now()
+      };
+      ypages.set(pageId, updated);
+      setPageMeta(updated);
+    });
+  };
+
+  const createPage = (title: string = 'Untitled', icon: string = '📄') => {
     const newPageId = `page-${Math.random().toString(36).substring(2, 11)}`;
     ydoc.transact(() => {
       ypages.set(newPageId, {
         id: newPageId,
         title,
+        icon,
+        fontStyle: 'sans',
+        fullWidth: false,
+        isFavorite: false,
         createdAt: Date.now()
       });
       // create empty block for new page
@@ -177,7 +250,7 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
     const page = ypages.get(id);
     if (page) {
       ydoc.transact(() => {
-        ypages.set(id, { ...page, title });
+        ypages.set(id, { ...page, title, updatedAt: Date.now() });
       });
     }
   };
@@ -188,7 +261,6 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
       if (fromIndex >= 0 && fromIndex < currentArray.length && toIndex >= 0 && toIndex < currentArray.length) {
         const block = yblocks.get(fromIndex);
         yblocks.delete(fromIndex, 1);
-        // If moving down, the actual insertion index shifts
         const insertIndex = toIndex > fromIndex ? toIndex : toIndex;
         yblocks.insert(insertIndex, [block]);
       }
@@ -205,13 +277,18 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
   return {
     blocks,
     pages,
+    pageMeta,
     addBlock,
     updateBlockContent,
     updateBlockType,
+    updateBlockProperties,
+    duplicateBlock,
     deleteBlock,
+    updatePageMeta,
     createPage,
     renamePage,
     deletePage,
     moveBlock
   };
 }
+
