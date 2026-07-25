@@ -9,10 +9,10 @@ interface MathBlockProps {
 }
 
 export const MathBlock: React.FC<MathBlockProps> = ({
-  id,
+  id: _id,
   content,
   onChange,
-  onDelete,
+  onDelete: _onDelete,
 }) => {
   const [isEditing, setIsEditing] = useState(content === '');
 

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Smile, Palette } from 'lucide-react';
+import { Palette } from 'lucide-react';
 
 interface CalloutBlockProps {
   id: string;
@@ -50,7 +50,7 @@ const CALLOUT_BG_THEMES: Record<string, { bg: string; border: string; text: stri
 };
 
 export const CalloutBlock: React.FC<CalloutBlockProps> = ({
-  id,
+  id: _id,
   content,
   icon = '💡',
   bg = 'indigo',

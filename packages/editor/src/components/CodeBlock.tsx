@@ -26,12 +26,12 @@ const LANGUAGES = [
 ];
 
 export const CodeBlock: React.FC<CodeBlockProps> = ({
-  id,
+  id: _id,
   content,
   language = 'javascript',
   onChange,
   onUpdateProps,
-  onDelete,
+  onDelete: _onDelete,
 }) => {
   const [copied, setCopied] = useState(false);
 

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { ChevronRight } from 'lucide-react';
 
 interface ToggleBlockProps {
@@ -14,7 +14,7 @@ interface ToggleBlockProps {
 }
 
 export const ToggleBlock: React.FC<ToggleBlockProps> = ({
-  id,
+  id: _id,
   content,
   expanded = true,
   onChange,

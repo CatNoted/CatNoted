@@ -19,7 +19,6 @@ import {
   Trash2, 
   Heading1, 
   Heading2, 
-  Heading3, 
   AlignLeft, 
   Cpu, 
   GripVertical,
@@ -28,9 +27,7 @@ import {
   ChevronRight,
   Code,
   Sigma,
-  Table as TableIcon,
-  Bookmark,
-  Image as ImageIcon
+  Table as TableIcon
 } from 'lucide-react';
 
 interface DocumentEditorProps {

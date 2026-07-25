@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Image as ImageIcon, AlignLeft, AlignCenter, AlignRight, Trash2 } from 'lucide-react';
+import { Image as ImageIcon, AlignLeft, AlignCenter, AlignRight } from 'lucide-react';
 
 interface ImageBlockProps {
   id: string;
@@ -12,13 +12,13 @@ interface ImageBlockProps {
 }
 
 export const ImageBlock: React.FC<ImageBlockProps> = ({
-  id,
+  id: _id,
   url = '',
   caption = '',
   width = 100,
   align = 'center',
   onUpdateProps,
-  onDelete,
+  onDelete: _onDelete,
 }) => {
   const [urlInput, setUrlInput] = useState(url);
   const [isEditing, setIsEditing] = useState(!url);

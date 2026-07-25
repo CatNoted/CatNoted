@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, Trash2, Table as TableIcon } from 'lucide-react';
+import { Plus, Table as TableIcon } from 'lucide-react';
 
 interface TableBlockProps {
   id: string;
@@ -15,10 +15,10 @@ const DEFAULT_ROWS = [
 ];
 
 export const TableBlock: React.FC<TableBlockProps> = ({
-  id,
+  id: _id,
   rows = DEFAULT_ROWS,
   onUpdateProps,
-  onDelete,
+  onDelete: _onDelete,
 }) => {
   const currentRows = rows && rows.length > 0 ? rows : DEFAULT_ROWS;
 
@@ -40,7 +40,7 @@ export const TableBlock: React.FC<TableBlockProps> = ({
     onUpdateProps({ rows: updated });
   };
 
-  const handleRemoveRow = (rIndex: number) => {
+  const _handleRemoveRow = (rIndex: number) => {
     if (currentRows.length <= 1) return;
     const updated = currentRows.filter((_, r) => r !== rIndex);
     onUpdateProps({ rows: updated });

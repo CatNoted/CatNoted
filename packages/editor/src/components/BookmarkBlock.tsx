@@ -17,13 +17,13 @@ interface BookmarkBlockProps {
 }
 
 export const BookmarkBlock: React.FC<BookmarkBlockProps> = ({
-  id,
+  id: _id,
   bookmarkUrl = '',
   bookmarkTitle = '',
   bookmarkDescription = '',
   bookmarkFavicon = '',
   onUpdateProps,
-  onDelete,
+  onDelete: _onDelete,
 }) => {
   const [urlInput, setUrlInput] = useState(bookmarkUrl);
   const [isEditing, setIsEditing] = useState(!bookmarkUrl);
