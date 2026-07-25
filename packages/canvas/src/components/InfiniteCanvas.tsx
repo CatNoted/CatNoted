@@ -13,6 +13,8 @@ import { CanvasProperties } from './CanvasProperties.js';
 export const ycanvas = ydoc.getMap<CanvasElement>('canvas');
 
 export const InfiniteCanvas: React.FC = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
   const { blocks } = useDocumentStore();
   const [elements, setElements] = useState<Record<string, CanvasElement>>({});
 
