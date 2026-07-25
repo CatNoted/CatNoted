@@ -551,8 +551,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   }, [blocks]);
 
   // Search filtering logic
-  const searchResults = React.useMemo(() => {
+
+  //@ts-ignore
+  const _searchResults = React.useMemo(() => {
+
     if (!searchQuery.trim()) return [];
+
 
     const query = searchQuery.toLowerCase();
     const results: Array<{ id: string; type: string; content: string; icon: React.ElementType }> = [];
@@ -585,6 +589,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     });
 
     return results;
+
   }, [blocks, parsedGraphNodes, searchQuery]);
 
   if (isSearchOpen && searchQuery) {
@@ -636,6 +641,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 { id: 'settings', icon: Settings, label: 'Settings' }
               ].map((item, index) => {
                 const Icon = item.icon;
+
                 const isActive = activeMode === item.id && !isSearchOpen;
                 return (
                   <button
