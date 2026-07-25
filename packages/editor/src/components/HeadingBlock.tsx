@@ -20,7 +20,7 @@ interface HeadingBlockProps {
 
 const HeadingBlockBase: React.FC<HeadingBlockProps> = ({
   content,
-  type,
+  type: _type,
   level,
   onChange,
   onEnter,

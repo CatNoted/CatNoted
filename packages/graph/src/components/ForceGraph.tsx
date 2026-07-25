@@ -29,8 +29,6 @@ export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const nodesRef = useRef<PhysNode[]>([]);
   const dragNodeRef = useRef<PhysNode | null>(null);
-  const isPanning = useRef(false);
-  const panStart = useRef({ x: 0, y: 0 });
   const dragStartCoords = useRef({ x: 0, y: 0 });
   const hasDraggedRef = useRef(false);
 

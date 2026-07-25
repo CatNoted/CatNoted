@@ -3,7 +3,7 @@ import { useDocumentStore } from '@catnoted/editor';
 import { parseDocumentGraph } from '../utils/parser.js';
 import { ForceGraph, ForceGraphRef } from './ForceGraph.js';
 import { GraphNode } from '@catnoted/shared';
-import { Network, Info, Download, Filter, FileQuestion } from 'lucide-react';
+import { Network, Info, Download, Filter } from 'lucide-react';
 
 interface GraphViewProps {
   onNavigateToNode: (nodeId: string) => void;
