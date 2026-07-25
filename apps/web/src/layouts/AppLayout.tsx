@@ -178,7 +178,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   };
 
   const [chatInput, setChatInput] = useState('');
-  const [messages, setMessages] = useState<Array<{ sender: 'user' | 'agent'; text: string }>>([
+  const [messages, setMessages] = useState<Array<{ sender: 'user' | 'agent'; text: string; isStreaming?: boolean; isError?: boolean }>>([
     { sender: 'agent', text: "Hello! I am your Space Agent. What would you like to build or note down today?" }
   ]);
 
@@ -345,9 +345,16 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     setMessages(prev => [...prev, { sender: 'user', text: userMsg }]);
     setChatInput('');
 
+    // Add streaming placeholder message
+    setMessages(prev => [...prev, { sender: 'agent', text: '', isStreaming: true }]);
+
     try {
       const response = await requestLlmWidget(userMsg);
-      setMessages(prev => [...prev, { sender: 'agent', text: response.text }]);
+      // Remove streaming placeholder and add final response
+      setMessages(prev => {
+        const filtered = prev.filter(m => !m.isStreaming);
+        return [...filtered, { sender: 'agent', text: response.text }];
+      });
 
       const newBlockId = addBlock(null, 'widget', '');
       updateBlockType(newBlockId, 'widget', {
@@ -355,7 +362,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         srcDoc: response.code
       });
     } catch (error) {
-      setMessages(prev => [...prev, { sender: 'agent', text: 'Failed to request LLM widget sandbox compiles.' }]);
+      // Remove streaming placeholder and add error response
+      setMessages(prev => {
+        const filtered = prev.filter(m => !m.isStreaming);
+        return [...filtered, { sender: 'agent', text: 'Failed to request LLM widget sandbox compiles.', isError: true }];
+      });
     }
   };
 
@@ -885,9 +896,19 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     <div className={`p-3 rounded-2xl text-xs leading-relaxed ${
                       msg.sender === 'user'
                         ? 'bg-indigo-600 text-white rounded-tr-none shadow-sm shadow-indigo-600/20'
-                        : 'bg-slate-100 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-200 rounded-tl-none border border-transparent dark:border-zinc-700/40'
+                        : msg.isError
+                          ? 'bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-400 rounded-tl-none border border-red-200 dark:border-red-900/50'
+                          : 'bg-slate-100 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-200 rounded-tl-none border border-transparent dark:border-zinc-700/40'
                     }`}>
-                      {msg.text}
+                      {msg.isStreaming ? (
+                        <div className="flex items-center space-x-1 h-4">
+                          <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                          <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                          <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                        </div>
+                      ) : (
+                        msg.text
+                      )}
                     </div>
                   </div>
                 ))}

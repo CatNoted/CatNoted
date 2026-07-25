@@ -134,7 +134,13 @@ const App: React.FC = () => {
   };
   
   // E2EE Sync credentials
-  const [passphrase, setPassphrase] = useState('super-secret-default-passphrase');
+  const [passphrase, setPassphrase] = useState(() => {
+    return localStorage.getItem('catnoted_e2ee_passphrase') || 'super-secret-default-passphrase';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('catnoted_e2ee_passphrase', passphrase);
+  }, [passphrase]);
   const [userEmail, setUserEmail] = useState('guest@catnoted.com');
 
   // Modals state

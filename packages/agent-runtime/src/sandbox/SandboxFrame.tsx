@@ -51,9 +51,14 @@ export const SandboxFrame: React.FC<SandboxFrameProps> = ({
 
   useEffect(() => {
     const handleMessage = (e: MessageEvent) => {
+      if (e.origin !== 'null' && e.origin !== window.location.origin) {
+        return;
+      }
       if (iframeRef.current && e.source === iframeRef.current.contentWindow) {
-        if (e.data && e.data.type === 'state_change') {
-          onStateChange?.(e.data.payload);
+        if (e.data && typeof e.data === 'object' && e.data.type === 'state_change') {
+          if (e.data.payload && typeof e.data.payload === 'object') {
+            onStateChange?.(e.data.payload);
+          }
         }
       }
     };

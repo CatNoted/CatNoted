@@ -1,66 +1,115 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { BrowserVFS } from '../vfs.js';
 
+// Setup a simple in-memory mock for indexedDB
+const mockStore = new Map();
+const mockIDB = {
+  open: vi.fn(() => {
+    const request: any = {};
+    setTimeout(() => {
+      request.result = {
+        objectStoreNames: { contains: () => true },
+        transaction: () => ({
+          objectStore: () => ({
+            put: (node: any) => {
+              const req: any = {};
+              setTimeout(() => {
+                mockStore.set(node.path, node);
+                if (req.onsuccess) req.onsuccess();
+              }, 0);
+              return req;
+            },
+            get: (path: string) => {
+              const req: any = {};
+              setTimeout(() => {
+                req.result = mockStore.get(path);
+                if (req.onsuccess) req.onsuccess();
+              }, 0);
+              return req;
+            },
+            delete: (path: string) => {
+              const req: any = {};
+              setTimeout(() => {
+                mockStore.delete(path);
+                if (req.onsuccess) req.onsuccess();
+              }, 0);
+              return req;
+            },
+            getAll: () => {
+              const req: any = {};
+              setTimeout(() => {
+                req.result = Array.from(mockStore.values());
+                if (req.onsuccess) req.onsuccess();
+              }, 0);
+              return req;
+            }
+          })
+        })
+      };
+      if (request.onsuccess) request.onsuccess();
+    }, 0);
+    return request;
+  }),
+  deleteDatabase: vi.fn(() => {
+    const request: any = {};
+    setTimeout(() => {
+      mockStore.clear();
+      if (request.onsuccess) request.onsuccess();
+    }, 0);
+    return request;
+  })
+};
+
+vi.stubGlobal('indexedDB', mockIDB);
+
 describe('Whitebox Test: BrowserVFS (Virtual File System)', () => {
-  beforeEach(() => {
-    localStorage.clear();
+  beforeEach(async () => {
+    mockStore.clear();
   });
 
-  it('should initialize default skills and settings when VFS is empty', () => {
+  it('should initialize default skills and settings when VFS is empty', async () => {
     const vfs = new BrowserVFS();
-    const files = vfs.list();
+    await vfs.initDefaults();
+    const files = await vfs.list();
 
     expect(files.length).toBeGreaterThanOrEqual(2);
-    expect(vfs.read('skills/widget_maker.md')).toContain('# Widget Maker Skill');
-    expect(vfs.read('settings/keys.json')).toContain('geminiKey');
+    expect(await vfs.read('skills/widget_maker.md')).toContain('# Widget Maker Skill');
+    expect(await vfs.read('settings/keys.json')).toContain('geminiKey');
   });
 
-  it('should write and read files from VFS accurately', () => {
+  it('should write and read files from VFS accurately', async () => {
     const vfs = new BrowserVFS();
     const sampleContent = 'export function hello() { return "world"; }';
     
-    vfs.write('scripts/hello.js', sampleContent);
-    const content = vfs.read('scripts/hello.js');
+    await vfs.write('scripts/hello.js', sampleContent);
+    const content = await vfs.read('scripts/hello.js');
 
     expect(content).toBe(sampleContent);
   });
 
-  it('should return null when reading non-existent paths', () => {
+  it('should return null when reading non-existent paths', async () => {
     const vfs = new BrowserVFS();
-    expect(vfs.read('non/existent/file.txt')).toBeNull();
+    expect(await vfs.read('non/existent/file.txt')).toBeNull();
   });
 
-  it('should delete existing files from VFS', () => {
+  it('should delete existing files from VFS', async () => {
     const vfs = new BrowserVFS();
-    vfs.write('temp/draft.md', '# Temporary Draft');
-    expect(vfs.read('temp/draft.md')).not.toBeNull();
+    await vfs.write('temp/draft.md', '# Temporary Draft');
+    expect(await vfs.read('temp/draft.md')).not.toBeNull();
 
-    vfs.delete('temp/draft.md');
-    expect(vfs.read('temp/draft.md')).toBeNull();
+    await vfs.delete('temp/draft.md');
+    expect(await vfs.read('temp/draft.md')).toBeNull();
   });
 
-  it('should list all stored VFS nodes correctly', () => {
+  it('should list all stored VFS nodes correctly', async () => {
     const vfs = new BrowserVFS();
-    vfs.write('notes/note1.txt', 'Note 1');
-    vfs.write('notes/note2.txt', 'Note 2');
+    await vfs.write('notes/note1.txt', 'Note 1');
+    await vfs.write('notes/note2.txt', 'Note 2');
 
-    const list = vfs.list();
+    const list = await vfs.list();
     const paths = list.map((n) => n.path);
 
     expect(paths).toContain('notes/note1.txt');
     expect(paths).toContain('notes/note2.txt');
-  });
-
-  it('should ignore invalid JSON in list() gracefully', () => {
-    const vfs = new BrowserVFS();
-    vfs.write('valid/file.txt', 'Valid content');
-
-    localStorage.setItem('catnoted_vfs:invalid/file.txt', '{ invalid json }');
-
-    const list = vfs.list();
-    const paths = list.map((n) => n.path);
-
-    expect(paths).toContain('valid/file.txt');
-    expect(paths).not.toContain('invalid/file.txt');
   });
 });
