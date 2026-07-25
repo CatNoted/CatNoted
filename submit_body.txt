@@ -1,0 +1,10 @@
+🎯 **What:** The application previously used a hardcoded default passphrase ('super-secret-default-passphrase') for end-to-end encryption if the user didn't explicitly set one. This fix removes the hardcoded default, enforces user-provided passphrases, and saves the user-provided sync passphrase securely in `localStorage` to ensure real zero-knowledge E2EE across sessions.
+
+⚠️ **Risk:** Hardcoding the E2EE key in the frontend bundle completely defeats the purpose of end-to-end encryption. Any attacker intercepting the ciphertext could simply use the default key (which is publicly visible in the source code/bundle) to decrypt the user's data, leading to a complete compromise of confidentiality.
+
+🛡️ **Solution:**
+- Initialized the `passphrase` state as an empty string instead of the hardcoded default.
+- Added a `useEffect` hook in `App.tsx` to load the `catnoted_e2ee_passphrase` securely from `localStorage` to avoid hydration issues, based on the documented architecture.
+- Added guard clauses (`if (!passphrase) return;`) to the Yjs sync logic so that the application safely halts sync and avoids sending unencrypted or improperly encrypted broadcasts when no passphrase is set.
+- Updated `SettingsModal.tsx` E2EE sync form to include an explicit `onSubmit` action that saves the passphrase to `localStorage` and provides visual feedback.
+- Updated the Share Link button to copy the generated link to the clipboard and show an alert as visual feedback.

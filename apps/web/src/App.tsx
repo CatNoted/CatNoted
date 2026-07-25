@@ -135,15 +135,20 @@ const App: React.FC = () => {
   };
   
   // E2EE Sync credentials
-  const [passphrase, setPassphrase] = useState(
-    "super-secret-default-passphrase",
-  );
+  const [passphrase, setPassphrase] = useState("");
   const [userEmail, setUserEmail] = useState("guest@catnoted.com");
 
   // Modals state
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
+
+  useEffect(() => {
+    const savedPassphrase = localStorage.getItem("catnoted_e2ee_passphrase");
+    if (savedPassphrase) {
+      setPassphrase(savedPassphrase);
+    }
+  }, []);
 
   // Initialize theme class on documentElement
   useEffect(() => {
@@ -172,6 +177,8 @@ const App: React.FC = () => {
   // 1. Local E2EE Sync Loop: Listen to local Yjs changes, encrypt them, and broadcast
   useEffect(() => {
     const handleUpdate = async (update: Uint8Array, origin: any) => {
+      if (!passphrase) return;
+
       if (origin === "remote-sync") return; // Ignore updates received from other devices to prevent loops
 
       try {
@@ -196,6 +203,8 @@ const App: React.FC = () => {
 
   // 2. Incoming Sync Loop: Listen to incoming messages, decrypt, and merge
   useEffect(() => {
+    if (!passphrase) return;
+
     const unsubscribe = mockSyncChannel.subscribe(async (msg) => {
       if (msg.sender === "local-tab") return; // Ignore own changes
 
@@ -348,7 +357,14 @@ const App: React.FC = () => {
             type="button"
             onClick={() => {
               const link = `${window.location.origin}/space/${session?.user?.id || 'guest'}`;
-              alert(`Share Link generated:\n${link}\n\n(Anyone with this link and the workspace passphrase can access the E2EE sync room)`);
+              navigator.clipboard.writeText(link)
+                .then(() => {
+                  alert(`Share Link copied to clipboard:\n${link}\n\n(Anyone with this link and the workspace passphrase can access the E2EE sync room)`);
+                })
+                .catch(err => {
+                  console.error('Failed to copy link: ', err);
+                  alert(`Share Link generated:\n${link}\n\n(Anyone with this link and the workspace passphrase can access the E2EE sync room)`);
+                });
             }}
             className="p-1.5 border border-slate-200/60 dark:border-zinc-800/60 hover:bg-slate-50 dark:hover:bg-zinc-850 text-slate-500 hover:text-indigo-550 rounded-lg text-xs flex items-center gap-1.5 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 shadow-sm"
             title="Share document link"
