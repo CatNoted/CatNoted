@@ -457,6 +457,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 <TableBlock
                   id={block.id}
                   rows={block.properties?.rows}
+                  hasHeader={block.properties?.hasHeader}
                   onUpdateProps={(props) => updateBlockProperties(block.id, props)}
                   onDelete={() => deleteBlock(block.id)}
                 />
