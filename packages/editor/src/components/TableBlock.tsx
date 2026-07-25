@@ -40,12 +40,6 @@ export const TableBlock: React.FC<TableBlockProps> = ({
     onUpdateProps({ rows: updated });
   };
 
-  const _handleRemoveRow = (rIndex: number) => {
-    if (currentRows.length <= 1) return;
-    const updated = currentRows.filter((_, r) => r !== rIndex);
-    onUpdateProps({ rows: updated });
-  };
-
   const handleRemoveColumn = (cIndex: number) => {
     if (currentRows[0].length <= 1) return;
     const updated = currentRows.map((row) => row.filter((_, c) => c !== cIndex));
