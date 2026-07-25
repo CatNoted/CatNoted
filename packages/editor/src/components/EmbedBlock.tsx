@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDocumentStore } from '../store.js';
-import { FileText, Link2, Trash2, RotateCcw, ChevronDown } from 'lucide-react';
+import { Link2, Trash2, RotateCcw, ChevronDown } from 'lucide-react';
 
 interface EmbedBlockProps {
   id: string;

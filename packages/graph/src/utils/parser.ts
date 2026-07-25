@@ -33,12 +33,22 @@ export function parseDocumentGraph(blocks: BlockNode[], pages?: PageMeta[]): { n
 
   const rootId = 'root-doc-node';
 
+  // Determine root document title
+  const rootPageMeta = pages?.find(p => p.id === rootId);
+  let rootTitle = rootPageMeta?.title;
+  if (!rootTitle) {
+    const rootHeadingBlock = blocks.find(
+      b => b.type === 'heading' && b.properties?.level === 1 && (!b.parentId || b.parentId === rootId)
+    );
+    rootTitle = rootHeadingBlock?.content || 'Untitled Note';
+  }
+
   // Make sure we have a node for the root note
   nodesMap.set(rootId, {
     id: rootId,
     type: 'page',
     val: 20,
-    _rawName: 'Untitled Note',
+    _rawName: rootTitle,
     count: 0
   });
 

@@ -44,11 +44,34 @@ describe('Whitebox Test: parseDocumentGraph (Graph Parsing Logic)', () => {
     expect(result.nodes).toHaveLength(2);
 
     const rootNode = result.nodes.find(n => n.id === 'root-doc-node');
-    expect(rootNode?.label).toBe('✨ Untitled Note'); // n._rawName is still from parser, but icon is getDisplayIcon('lucide:Sparkles')
+    expect(rootNode?.label).toBe('✨ Custom Root Title');
+    expect(rootNode?.rawName).toBe('Custom Root Title');
 
     const pageNode = result.nodes.find(n => n.id === 'page-system-design');
     expect(pageNode?.label).toBe('❤️ System Design Spec (1)');
     expect(pageNode?.icon).toBe('lucide:Heart');
+  });
+
+  it('should derive root document title from level-1 heading block if page metadata is absent', () => {
+    const blocks: BlockNode[] = [
+      {
+        id: 'b1',
+        type: 'heading',
+        content: 'My Awesome Root Document Title',
+        properties: { level: 1 },
+      },
+      {
+        id: 'b2',
+        type: 'text',
+        content: 'Check out [[System Design]] for details.',
+        parentId: 'root-doc-node',
+      },
+    ];
+
+    const result = parseDocumentGraph(blocks);
+    const rootNode = result.nodes.find(n => n.id === 'root-doc-node');
+    expect(rootNode?.label).toBe('📁 My Awesome Root Document Title');
+    expect(rootNode?.rawName).toBe('My Awesome Root Document Title');
   });
 
   it('should parse single wiki-link [[Target Page]] correctly', () => {
