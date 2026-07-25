@@ -273,7 +273,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 </button>
 
                 {activeMenuId === block.id && (
-                  <div className="absolute left-0 mt-1 w-44 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl shadow-xl z-50 py-1 text-xs">
+                  <div
+                    data-block-menu={block.id}
+                    className="absolute left-0 mt-1 w-44 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl shadow-xl z-50 py-1 text-xs"
+                  >
                     <button
                       onClick={() => {
                         updateBlockType(block.id, 'text');
