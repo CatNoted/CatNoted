@@ -1,6 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDocumentStore } from '../store.js';
 import { BlockRow } from './BlockRow.js';
+import { HeadingBlock } from './HeadingBlock.js';
+import { TextBlock } from './TextBlock.js';
+import { WidgetBlockPlaceholder } from './WidgetBlockPlaceholder.js';
+import { SandboxFrame } from '@catnoted/agent-runtime';
 
 import { 
   Plus, 
@@ -27,13 +31,15 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     addBlock, 
     updateBlockContent, 
     updateBlockType, 
-    deleteBlock 
+    deleteBlock,
+    moveBlock
   } = useDocumentStore(activePage);
 
   const [focusBlockId, setFocusBlockId] = useState<string | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [draggedBlockId, setDraggedBlockId] = useState<string | null>(null);
   const [dragOverBlockId, setDragOverBlockId] = useState<string | null>(null);
+  const titleOnFocusRef = useRef('');
 
 
   const handleDragStart = (e: React.DragEvent, id: string) => {

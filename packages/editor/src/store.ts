@@ -5,6 +5,8 @@ import { IndexeddbPersistence } from 'y-indexeddb';
 
 export const ydoc = new Y.Doc();
 export const ypages = ydoc.getMap<any>('pages');
+const yblocks = ydoc.getArray<BlockNode>('blocks');
+const provider = new IndexeddbPersistence('catnoted-doc', ydoc);
 
 // Prepopulate if empty
 if (yblocks.length === 0) {
@@ -27,6 +29,7 @@ if (yblocks.length === 0) {
 
 export function useDocumentStore(pageId: string = 'root-doc-node') {
   const [blocks, setBlocks] = useState<BlockNode[]>([]);
+  const [pages, setPages] = useState<any[]>([]);
 
   useEffect(() => {
     const updateBlocks = () => {
@@ -64,7 +67,7 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
     };
 
     const pagesObserver = () => {
-      setPages(ypages.toJSON());
+      setPages(ypages.toJSON() ? Object.values(ypages.toJSON()) : []);
     };
 
     yblocks.observe(observer);
@@ -72,14 +75,18 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
 
     const handleSync = () => {
       setBlocks(yblocks.toArray());
-      setPages(ypages.toJSON());
+      setPages(ypages.toJSON() ? Object.values(ypages.toJSON()) : []);
     };
-    provider.on('synced', handleSync);
+    if (provider && typeof provider.on === 'function') {
+      provider.on('synced', handleSync);
+    }
 
     return () => {
       yblocks.unobserve(observer);
       ypages.unobserve(pagesObserver);
-      provider.off('synced', handleSync);
+      if (provider && typeof provider.off === 'function') {
+        provider.off('synced', handleSync);
+      }
     };
   }, [pageId]);
 
