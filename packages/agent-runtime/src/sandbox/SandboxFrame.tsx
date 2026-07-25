@@ -5,13 +5,15 @@ interface SandboxFrameProps {
   theme?: 'light' | 'dark';
   height?: string;
   onStateChange?: (state: Record<string, any>) => void;
+  onError?: (error: { message: string }) => void;
 }
 
 export const SandboxFrame: React.FC<SandboxFrameProps> = ({
   srcDoc,
   theme = 'dark',
   height = '180px',
-  onStateChange
+  onStateChange,
+  onError
 }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
@@ -20,6 +22,20 @@ export const SandboxFrame: React.FC<SandboxFrameProps> = ({
     <html class="${theme}">
       <head>
         <meta charset="UTF-8" />
+        <script>
+          window.addEventListener('error', function(e) {
+            window.parent.postMessage({
+              type: 'sandbox_error',
+              payload: { message: e.message || 'Unknown runtime error' }
+            }, '*');
+          });
+          window.addEventListener('unhandledrejection', function(e) {
+            window.parent.postMessage({
+              type: 'sandbox_error',
+              payload: { message: e.reason ? (e.reason.message || String(e.reason)) : 'Promise rejected' }
+            }, '*');
+          });
+        </script>
         <style>
           :root {
             --background: ${theme === 'dark' ? '#09090b' : '#ffffff'};
@@ -55,12 +71,15 @@ export const SandboxFrame: React.FC<SandboxFrameProps> = ({
         if (e.data && e.data.type === 'state_change') {
           onStateChange?.(e.data.payload);
         }
+        if (e.data && e.data.type === 'sandbox_error') {
+          onError?.(e.data.payload);
+        }
       }
     };
 
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
-  }, [onStateChange]);
+  }, [onStateChange, onError]);
 
   return (
     <iframe

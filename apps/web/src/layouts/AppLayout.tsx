@@ -25,10 +25,130 @@ import {
   Tag,
   Cpu,
   Trash2,
-  Menu
+  Menu,
+  Copy
 } from 'lucide-react';
 
 export type ActiveMode = "doc" | "canvas" | "graph" | "settings";
+
+const WIDGET_TEMPLATES = {
+  clock: `
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+      <div id="clock-face" style="width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--primary); position: relative; background: transparent;">
+        <div id="hour-hand" style="width: 4px; height: 30px; background: var(--foreground); position: absolute; left: 48px; top: 20px; transform-origin: bottom center; border-radius: 2px;"></div>
+        <div id="minute-hand" style="width: 2.5px; height: 40px; background: var(--foreground); position: absolute; left: 48.75px; top: 10px; transform-origin: bottom center; border-radius: 1px;"></div>
+        <div id="second-hand" style="width: 1px; height: 45px; background: #ef4444; position: absolute; left: 49.5px; top: 5px; transform-origin: bottom center;"></div>
+        <div style="width: 6px; height: 6px; background: var(--primary); border-radius: 50%; position: absolute; left: 47px; top: 47px;"></div>
+      </div>
+      <div id="digital-time" style="font-size: 14px; font-weight: bold; font-family: monospace;">12:00:00 PM</div>
+    </div>
+    <script>
+      function updateClock() {
+        const now = new Date();
+        const hrs = now.getHours();
+        const mins = now.getMinutes();
+        const secs = now.getSeconds();
+
+        const hrDeg = (hrs % 12) * 30 + mins * 0.5;
+        const minDeg = mins * 6;
+        const secDeg = secs * 6;
+
+        document.getElementById('hour-hand').style.transform = 'rotate(' + hrDeg + 'deg)';
+        document.getElementById('minute-hand').style.transform = 'rotate(' + minDeg + 'deg)';
+        document.getElementById('second-hand').style.transform = 'rotate(' + secDeg + 'deg)';
+
+        document.getElementById('digital-time').innerText = now.toLocaleTimeString();
+      }
+      setInterval(updateClock, 1000);
+      updateClock();
+    </script>
+  `,
+  calculator: `
+    <div style="background: var(--background); border: 1px solid var(--border); border-radius: 12px; padding: 12px; display: grid; gap: 8px; width: 180px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+      <input id="calc-display" type="text" readonly style="width: 100%; border: 1px solid var(--border); background: var(--background); color: var(--foreground); text-align: right; padding: 8px; border-radius: 6px; font-size: 14px; box-sizing: border-box;" value="0" />
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
+        <button onclick="press('C')" style="grid-column: span 2; background: #ef4444; color: white; border: none; padding: 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">C</button>
+        <button onclick="press('/')" style="background: var(--primary); color: white; border: none; padding: 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">/</button>
+        <button onclick="press('*')" style="background: var(--primary); color: white; border: none; padding: 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">*</button>
+
+        <button onclick="press('7')" style="background: var(--border); color: var(--foreground); border: none; padding: 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">7</button>
+        <button onclick="press('8')" style="background: var(--border); color: var(--foreground); border: none; padding: 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">8</button>
+        <button onclick="press('9')" style="background: var(--border); color: var(--foreground); border: none; padding: 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">9</button>
+        <button onclick="press('-')" style="background: var(--primary); color: white; border: none; padding: 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">-</button>
+
+        <button onclick="press('4')" style="background: var(--border); color: var(--foreground); border: none; padding: 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">4</button>
+        <button onclick="press('5')" style="background: var(--border); color: var(--foreground); border: none; padding: 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">5</button>
+        <button onclick="press('6')" style="background: var(--border); color: var(--foreground); border: none; padding: 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">6</button>
+        <button onclick="press('+')" style="background: var(--primary); color: white; border: none; padding: 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">+</button>
+
+        <button onclick="press('1')" style="background: var(--border); color: var(--foreground); border: none; padding: 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">1</button>
+        <button onclick="press('2')" style="background: var(--border); color: var(--foreground); border: none; padding: 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">2</button>
+        <button onclick="press('3')" style="background: var(--border); color: var(--foreground); border: none; padding: 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">3</button>
+        <button onclick="press('=')" style="grid-row: span 2; background: #10b981; color: white; border: none; padding: 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">=</button>
+
+        <button onclick="press('0')" style="grid-column: span 2; background: var(--border); color: var(--foreground); border: none; padding: 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">0</button>
+        <button onclick="press('.')" style="background: var(--border); color: var(--foreground); border: none; padding: 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">.</button>
+      </div>
+    </div>
+    <script>
+      const display = document.getElementById('calc-display');
+      window.press = function(val) {
+        if (val === 'C') {
+          display.value = '0';
+        } else if (val === '=') {
+          try {
+            if (/^[0-9+*/. -]+$/.test(display.value)) {
+              display.value = new Function('return (' + display.value + ')')() || '0';
+            } else {
+              display.value = 'Error';
+            }
+          } catch(e) {
+            display.value = 'Error';
+          }
+        } else {
+          if (display.value === '0' || display.value === 'Error') {
+            display.value = val;
+          } else {
+            display.value += val;
+          }
+        }
+      }
+    </script>
+  `,
+  todo: `
+    <div style="width: 100%; max-width: 220px; border: 1px solid var(--border); padding: 12px; border-radius: 12px; display: flex; flex-direction: column; gap: 8px;">
+      <h4 style="margin: 0; font-size: 12px; font-weight: bold;">Quick Tasks</h4>
+      <div style="display: flex; gap: 4px;">
+        <input id="todo-in" type="text" style="flex: 1; border: 1px solid var(--border); background: var(--background); color: var(--foreground); font-size: 10px; padding: 4px; border-radius: 4px;" placeholder="Add new task..." />
+        <button onclick="addTodo()" style="background: var(--primary); border: none; color: white; padding: 4px 8px; border-radius: 4px; font-size: 10px; cursor: pointer;">Add</button>
+      </div>
+      <ul id="todo-list" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; max-height: 80px; overflow-y: auto; font-size: 10px;">
+        <li style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding: 2px 0;">
+          <span>Draft proposal</span>
+          <button onclick="this.parentNode.remove()" style="background: none; border: none; color: red; font-size: 9px; cursor: pointer;">✕</button>
+        </li>
+      </ul>
+    </div>
+    <script>
+      window.addTodo = function() {
+        const input = document.getElementById('todo-in');
+        if (!input.value.trim()) return;
+        const li = document.createElement('li');
+        li.style.display = 'flex';
+        li.style.justifyContent = 'space-between';
+        li.style.alignItems = 'center';
+        li.style.borderBottom = '1px solid var(--border)';
+        li.style.padding = '2px 0';
+        const sanitizedVal = input.value.replace(/[&<>"']/g, function(m) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+        });
+        li.innerHTML = '<span>' + sanitizedVal + '</span><button onclick="this.parentNode.remove()" style="background: none; border: none; color: red; font-size: 9px; cursor: pointer;">✕</button>';
+        document.getElementById('todo-list').appendChild(li);
+        input.value = '';
+      }
+    </script>
+  `
+};
 
 interface AppLayoutProps {
   activeMode: ActiveMode;
@@ -71,8 +191,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   onAuthTrigger: _onAuthTrigger,
   onCreatePage
 }) => {
-  const { blocks, addBlock, updateBlockType, pages, createPage, deletePage } = useDocumentStore(activePage);
+  const { blocks, addBlock, updateBlockType, pages, createPage, deletePage, deleteBlock } = useDocumentStore(activePage);
   const favoritePages = (pages || []).filter((p: any) => p?.isFavorite);
+
+  const [activeAgentTab, setActiveAgentTab] = useState<'chat' | 'widgets'>('chat');
 
   const handleDeletePage = (pageId: string, pageTitle: string) => {
     if (pageId === 'root-doc-node') return;
@@ -1024,131 +1146,317 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           {/* ── Panel Body (hidden when minimized) ────────────────────── */}
           {!isMinimized && (
             <>
-              {/* Widget sharing toolbar catalog */}
-              <div
-                className="px-3 py-2 flex gap-2 justify-between shrink-0"
-                style={{
-                  borderBottom: isDarkMode
-                    ? "1px solid rgba(99, 102, 241, 0.08)"
-                    : "1px solid rgba(99, 102, 241, 0.06)",
-                }}
-              >
+              {/* Tab Switcher */}
+              <div className="flex border-b border-slate-150 dark:border-zinc-800 text-xs shrink-0 bg-slate-50/50 dark:bg-zinc-900/30">
                 <button
-                  onClick={handleExportWidgets}
-                  title="Export widget codes"
-                  className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 border border-slate-200 dark:border-zinc-700/60 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:border-indigo-300 dark:hover:border-indigo-500/30 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-lg text-[10px] font-semibold text-slate-500 dark:text-zinc-400 transition-all duration-200"
+                  type="button"
+                  onClick={() => setActiveAgentTab('chat')}
+                  className={`flex-1 py-2 text-center font-medium transition-colors cursor-pointer ${
+                    activeAgentTab === 'chat'
+                      ? 'text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-500 font-semibold bg-indigo-500/5'
+                      : 'text-slate-500 hover:text-slate-700 dark:text-zinc-400 dark:hover:text-zinc-200'
+                  }`}
                 >
-                  <Download className="w-3.5 h-3.5" /> Export Catalog
+                  AI Chat
                 </button>
-                <label className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 border border-slate-200 dark:border-zinc-700/60 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:border-indigo-300 dark:hover:border-indigo-500/30 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-lg text-[10px] font-semibold text-slate-500 dark:text-zinc-400 cursor-pointer text-center transition-all duration-200">
-                  <Upload className="w-3.5 h-3.5" /> Import Catalog
-                  <input
-                    type="file"
-                    accept=".json"
-                    onChange={handleImportWidgets}
-                    className="hidden"
-                  />
-                </label>
+                <button
+                  type="button"
+                  onClick={() => setActiveAgentTab('widgets')}
+                  className={`flex-1 py-2 text-center font-medium transition-colors cursor-pointer ${
+                    activeAgentTab === 'widgets'
+                      ? 'text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-500 font-semibold bg-indigo-500/5'
+                      : 'text-slate-500 hover:text-slate-700 dark:text-zinc-400 dark:hover:text-zinc-200'
+                  }`}
+                >
+                  Widgets List & Tools
+                </button>
               </div>
 
-              {/* Messages list */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                {messages.map((msg, index) => (
+              {activeAgentTab === 'chat' ? (
+                <>
+                  {/* Widget sharing toolbar catalog */}
                   <div
-                    key={index}
-                    className={`flex gap-2 max-w-[85%] ${msg.sender === "user" ? "ml-auto flex-row-reverse" : ""}`}
+                    className="px-3 py-2 flex gap-2 justify-between shrink-0"
+                    style={{
+                      borderBottom: isDarkMode
+                        ? "1px solid rgba(99, 102, 241, 0.08)"
+                        : "1px solid rgba(99, 102, 241, 0.06)",
+                    }}
                   >
-                    <div
-                      className={`w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0 ${
-                        msg.sender === "user"
-                          ? "bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300"
-                          : "bg-indigo-100 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400"
-                      }`}
+                    <button
+                      onClick={handleExportWidgets}
+                      title="Export widget codes"
+                      className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 border border-slate-200 dark:border-zinc-700/60 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:border-indigo-300 dark:hover:border-indigo-500/30 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-lg text-[10px] font-semibold text-slate-500 dark:text-zinc-400 transition-all duration-200"
                     >
-                      {msg.sender === "user" ? (
-                        <User className="w-3.5 h-3.5" />
-                      ) : (
-                        <Bot className="w-3.5 h-3.5" />
-                      )}
-                    </div>
-                    <div
-                      className={`p-3 rounded-2xl text-xs leading-relaxed ${
-                        msg.sender === "user"
-                          ? "bg-indigo-600 text-white rounded-tr-none shadow-sm shadow-indigo-600/20"
-                          : "bg-slate-100 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-200 rounded-tl-none border border-transparent dark:border-zinc-700/40"
-                      }`}
-                    >
-                      {msg.text}
-                    </div>
-                    {msg.code && (
-                      <div className="w-full mt-1 border border-indigo-200 dark:border-indigo-500/30 rounded-xl overflow-hidden shadow-sm bg-white dark:bg-zinc-900">
-                        <div className="h-[150px] w-full">
-                          <SandboxFrame srcDoc={msg.code} theme={isDarkMode ? 'dark' : 'light'} height="150px" />
+                      <Download className="w-3.5 h-3.5" /> Export Catalog
+                    </button>
+                    <label className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 border border-slate-200 dark:border-zinc-700/60 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:border-indigo-300 dark:hover:border-indigo-500/30 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-lg text-[10px] font-semibold text-slate-500 dark:text-zinc-400 cursor-pointer text-center transition-all duration-200">
+                      <Upload className="w-3.5 h-3.5" /> Import Catalog
+                      <input
+                        type="file"
+                        accept=".json"
+                        onChange={handleImportWidgets}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+
+                  {/* Messages list */}
+                  <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                    {messages.map((msg, index) => (
+                      <div
+                        key={index}
+                        className={`flex gap-2 max-w-[85%] ${msg.sender === "user" ? "ml-auto flex-row-reverse" : ""}`}
+                      >
+                        <div
+                          className={`w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0 ${
+                            msg.sender === "user"
+                              ? "bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300"
+                              : "bg-indigo-100 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400"
+                          }`}
+                        >
+                          {msg.sender === "user" ? (
+                            <User className="w-3.5 h-3.5" />
+                          ) : (
+                            <Bot className="w-3.5 h-3.5" />
+                          )}
                         </div>
-                        <div className="p-2 border-t border-indigo-100 dark:border-indigo-500/20 bg-slate-50 dark:bg-zinc-800/50 flex justify-end">
+                        <div
+                          className={`p-3 rounded-2xl text-xs leading-relaxed ${
+                            msg.sender === "user"
+                              ? "bg-indigo-600 text-white rounded-tr-none shadow-sm shadow-indigo-600/20"
+                              : "bg-slate-100 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-200 rounded-tl-none border border-transparent dark:border-zinc-700/40"
+                          }`}
+                        >
+                          {msg.text}
+                        </div>
+                        {msg.code && (
+                          <div className="w-full mt-1 border border-indigo-200 dark:border-indigo-500/30 rounded-xl overflow-hidden shadow-sm bg-white dark:bg-zinc-900">
+                            <div className="h-[150px] w-full">
+                              <SandboxFrame srcDoc={msg.code} theme={isDarkMode ? 'dark' : 'light'} height="150px" />
+                            </div>
+                            <div className="p-2 border-t border-indigo-100 dark:border-indigo-500/20 bg-slate-50 dark:bg-zinc-800/50 flex justify-end">
+                              <button
+                                onClick={() => {
+                                  const newBlockId = addBlock(null, 'widget', '');
+                                  updateBlockType(newBlockId, 'widget', {
+                                    widgetId: `ai-widget-${Math.random().toString(36).substring(2, 6)}`,
+                                    srcDoc: msg.code!
+                                  });
+                                }}
+                                className="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-md text-[10px] font-semibold transition-colors"
+                              >
+                                Insert Widget
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                        {msg.editProposal && (
+                          <div className="w-full mt-1 border border-emerald-200 dark:border-emerald-500/30 rounded-xl overflow-hidden shadow-sm bg-emerald-50/50 dark:bg-emerald-900/10">
+                            <div className="p-3 text-xs text-slate-700 dark:text-zinc-300 whitespace-pre-wrap font-mono">
+                              {msg.editProposal}
+                            </div>
+                            <div className="p-2 border-t border-emerald-100 dark:border-emerald-500/20 flex justify-end">
+                              <button
+                                onClick={() => {
+                                  // Just append the proposed edit as a text block
+                                  addBlock(null, 'text', msg.editProposal!);
+                                }}
+                                className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-md text-[10px] font-semibold transition-colors"
+                              >
+                                Append to Document
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Chat input form */}
+                  <form
+                    onSubmit={handleSendMessage}
+                    className="p-3 shrink-0"
+                    style={{
+                      borderTop: isDarkMode
+                        ? "1px solid rgba(99, 102, 241, 0.08)"
+                        : "1px solid rgba(99, 102, 241, 0.06)",
+                    }}
+                  >
+                    <div className="relative flex items-center">
+                      <input
+                        type="text"
+                        value={chatInput}
+                        onChange={(e) => setChatInput(e.target.value)}
+                        placeholder="Ask agent to generate a widget..."
+                        className="w-full pl-3 pr-10 py-2.5 rounded-xl border border-slate-200 dark:border-zinc-700/60 bg-white/80 dark:bg-zinc-900/60 text-xs text-slate-800 dark:text-zinc-200 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 dark:focus:ring-indigo-400/30 focus:border-indigo-400 dark:focus:border-indigo-500/50 hover:border-slate-300 dark:hover:border-zinc-600 transition-all duration-200"
+                      />
+                      <button
+                        type="submit"
+                        className="absolute right-1.5 p-1.5 bg-indigo-600 hover:bg-indigo-500 dark:hover:bg-indigo-500 text-white rounded-lg transition-all duration-200 hover:scale-110 hover:shadow-md hover:shadow-indigo-500/30 active:scale-95"
+                      >
+                        <Send className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </form>
+                </>
+              ) : (
+                <div className="flex-1 overflow-y-auto flex flex-col h-full select-text text-slate-800 dark:text-zinc-200">
+                  {/* Widget sharing toolbar catalog */}
+                  <div
+                    className="px-3 py-2 flex gap-2 justify-between shrink-0"
+                    style={{
+                      borderBottom: isDarkMode
+                        ? "1px solid rgba(99, 102, 241, 0.08)"
+                        : "1px solid rgba(99, 102, 241, 0.06)",
+                    }}
+                  >
+                    <button
+                      onClick={handleExportWidgets}
+                      title="Export widget codes"
+                      className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 border border-slate-200 dark:border-zinc-700/60 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:border-indigo-300 dark:hover:border-indigo-500/30 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-lg text-[10px] font-semibold text-slate-500 dark:text-zinc-400 transition-all duration-200"
+                    >
+                      <Download className="w-3.5 h-3.5" /> Export Catalog
+                    </button>
+                    <label className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 border border-slate-200 dark:border-zinc-700/60 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:border-indigo-300 dark:hover:border-indigo-500/30 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-lg text-[10px] font-semibold text-slate-500 dark:text-zinc-400 cursor-pointer text-center transition-all duration-200">
+                      <Upload className="w-3.5 h-3.5" /> Import Catalog
+                      <input
+                        type="file"
+                        accept=".json"
+                        onChange={handleImportWidgets}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+
+                  <div className="p-4 space-y-5 flex-1">
+                    {/* Preset Library */}
+                    <div>
+                      <h4 className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                        <Sparkles className="w-3 h-3 text-indigo-500" /> Preset Library
+                      </h4>
+                      <div className="grid grid-cols-1 gap-2">
+                        <div className="p-3 rounded-xl bg-slate-50 dark:bg-zinc-900/50 border border-slate-150 dark:border-zinc-800/60 flex items-center justify-between text-xs transition-all hover:border-indigo-500/30">
+                          <div className="flex flex-col">
+                            <span className="font-semibold text-slate-700 dark:text-zinc-200">Analog Clock</span>
+                            <span className="text-[10px] text-slate-400 dark:text-zinc-500">Live time widget with smooth animation</span>
+                          </div>
                           <button
                             onClick={() => {
-                              const newBlockId = addBlock(null, 'widget', '');
-                              updateBlockType(newBlockId, 'widget', {
-                                widgetId: `ai-widget-${Math.random().toString(36).substring(2, 6)}`,
-                                srcDoc: msg.code!
+                              const newId = addBlock(null, 'widget', '');
+                              updateBlockType(newId, 'widget', {
+                                widgetId: `clock-${Math.random().toString(36).substring(2, 6)}`,
+                                srcDoc: WIDGET_TEMPLATES.clock
                               });
                             }}
-                            className="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-md text-[10px] font-semibold transition-colors"
+                            className="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-md text-[10px] font-semibold transition-colors cursor-pointer shrink-0"
                           >
-                            Insert Widget
+                            Insert
                           </button>
                         </div>
-                      </div>
-                    )}
-                    {msg.editProposal && (
-                      <div className="w-full mt-1 border border-emerald-200 dark:border-emerald-500/30 rounded-xl overflow-hidden shadow-sm bg-emerald-50/50 dark:bg-emerald-900/10">
-                        <div className="p-3 text-xs text-slate-700 dark:text-zinc-300 whitespace-pre-wrap font-mono">
-                          {msg.editProposal}
-                        </div>
-                        <div className="p-2 border-t border-emerald-100 dark:border-emerald-500/20 flex justify-end">
+
+                        <div className="p-3 rounded-xl bg-slate-50 dark:bg-zinc-900/50 border border-slate-150 dark:border-zinc-800/60 flex items-center justify-between text-xs transition-all hover:border-indigo-500/30">
+                          <div className="flex flex-col">
+                            <span className="font-semibold text-slate-700 dark:text-zinc-200">Mini Calculator</span>
+                            <span className="text-[10px] text-slate-400 dark:text-zinc-500">Grid based mathematical calculator</span>
+                          </div>
                           <button
                             onClick={() => {
-                              // Just append the proposed edit as a text block
-                              addBlock(null, 'text', msg.editProposal!);
+                              const newId = addBlock(null, 'widget', '');
+                              updateBlockType(newId, 'widget', {
+                                widgetId: `calc-${Math.random().toString(36).substring(2, 6)}`,
+                                srcDoc: WIDGET_TEMPLATES.calculator
+                              });
                             }}
-                            className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-md text-[10px] font-semibold transition-colors"
+                            className="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-md text-[10px] font-semibold transition-colors cursor-pointer shrink-0"
                           >
-                            Append to Document
+                            Insert
+                          </button>
+                        </div>
+
+                        <div className="p-3 rounded-xl bg-slate-50 dark:bg-zinc-900/50 border border-slate-150 dark:border-zinc-800/60 flex items-center justify-between text-xs transition-all hover:border-indigo-500/30">
+                          <div className="flex flex-col">
+                            <span className="font-semibold text-slate-700 dark:text-zinc-200">Quick Tasks Todo</span>
+                            <span className="text-[10px] text-slate-400 dark:text-zinc-500">Interactive todo list with state</span>
+                          </div>
+                          <button
+                            onClick={() => {
+                              const newId = addBlock(null, 'widget', '');
+                              updateBlockType(newId, 'widget', {
+                                widgetId: `todo-${Math.random().toString(36).substring(2, 6)}`,
+                                srcDoc: WIDGET_TEMPLATES.todo
+                              });
+                            }}
+                            className="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-md text-[10px] font-semibold transition-colors cursor-pointer shrink-0"
+                          >
+                            Insert
                           </button>
                         </div>
                       </div>
-                    )}
-                  </div>
-                ))}
-              </div>
+                    </div>
 
-              {/* Chat input form */}
-              <form
-                onSubmit={handleSendMessage}
-                className="p-3 shrink-0"
-                style={{
-                  borderTop: isDarkMode
-                    ? "1px solid rgba(99, 102, 241, 0.08)"
-                    : "1px solid rgba(99, 102, 241, 0.06)",
-                }}
-              >
-                <div className="relative flex items-center">
-                  <input
-                    type="text"
-                    value={chatInput}
-                    onChange={(e) => setChatInput(e.target.value)}
-                    placeholder="Ask agent to generate a widget..."
-                    className="w-full pl-3 pr-10 py-2.5 rounded-xl border border-slate-200 dark:border-zinc-700/60 bg-white/80 dark:bg-zinc-900/60 text-xs text-slate-800 dark:text-zinc-200 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 dark:focus:ring-indigo-400/30 focus:border-indigo-400 dark:focus:border-indigo-500/50 hover:border-slate-300 dark:hover:border-zinc-600 transition-all duration-200"
-                  />
-                  <button
-                    type="submit"
-                    className="absolute right-1.5 p-1.5 bg-indigo-600 hover:bg-indigo-500 dark:hover:bg-indigo-500 text-white rounded-lg transition-all duration-200 hover:scale-110 hover:shadow-md hover:shadow-indigo-500/30 active:scale-95"
-                  >
-                    <Send className="w-3 h-3" />
-                  </button>
+                    {/* Current Page Widgets List */}
+                    <div>
+                      <h4 className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                        <Cpu className="w-3 h-3 text-emerald-500" /> Page Widgets List
+                      </h4>
+                      {blocks.filter(b => b.type === 'widget').length === 0 ? (
+                        <div className="p-6 text-center border border-dashed border-slate-200 dark:border-zinc-800 rounded-xl text-xs text-slate-400 dark:text-zinc-500">
+                          No widgets on this page yet.
+                        </div>
+                      ) : (
+                        <div className="space-y-2">
+                          {blocks.filter(b => b.type === 'widget').map(block => {
+                            const widgetId = block.properties?.widgetId || 'unassigned';
+                            return (
+                              <div key={block.id} className="p-3 rounded-xl bg-slate-50 dark:bg-zinc-900/40 border border-slate-150 dark:border-zinc-800/60 flex items-center justify-between text-xs">
+                                <div className="flex flex-col min-w-0 pr-2">
+                                  <span className="font-semibold truncate text-slate-700 dark:text-zinc-200">ID: {widgetId}</span>
+                                  <span className="text-[9px] text-slate-400 truncate">Block ID: {block.id}</span>
+                                </div>
+                                <div className="flex items-center gap-1.5 shrink-0">
+                                  <button
+                                    onClick={() => {
+                                      navigator.clipboard.writeText(block.properties?.srcDoc || '');
+                                      alert('Widget code copied to clipboard!');
+                                    }}
+                                    title="Copy Code"
+                                    className="p-1 hover:bg-slate-200 dark:hover:bg-zinc-800 rounded text-slate-500 dark:text-zinc-400 cursor-pointer"
+                                  >
+                                    <Copy className="w-3.5 h-3.5" />
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      const newId = addBlock(block.id, 'widget', '');
+                                      updateBlockType(newId, 'widget', {
+                                        widgetId: `${widgetId}-copy`,
+                                        srcDoc: block.properties?.srcDoc || ''
+                                      });
+                                    }}
+                                    title="Duplicate Widget"
+                                    className="p-1 hover:bg-slate-200 dark:hover:bg-zinc-800 rounded text-slate-500 dark:text-zinc-400 cursor-pointer"
+                                  >
+                                    <Minus className="w-3.5 h-3.5 rotate-90" />
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      deleteBlock(block.id);
+                                    }}
+                                    title="Delete Widget"
+                                    className="p-1 hover:bg-slate-200 dark:hover:bg-zinc-800 rounded text-red-500 cursor-pointer"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              </form>
+              )}
 
               {/* ── Resize handle (bottom-left corner) ────────────────── */}
               <div

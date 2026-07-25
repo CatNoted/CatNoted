@@ -58,6 +58,29 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const [dragOverBlockId, setDragOverBlockId] = useState<string | null>(null);
   const titleOnFocusRef = useRef('');
 
+  const [editingWidgetId, setEditingWidgetId] = useState<string | null>(null);
+  const [editorCode, setEditorCode] = useState<Record<string, string>>({});
+  const [rerunKeys, setRerunKeys] = useState<Record<string, number>>({});
+  const [widgetErrors, setWidgetErrors] = useState<Record<string, { message: string }>>({});
+
+  const handleEditClick = (id: string, initialCode: string) => {
+    setEditingWidgetId(id);
+    setEditorCode(prev => ({ ...prev, [id]: initialCode || '' }));
+  };
+
+  const handleRerun = (id: string) => {
+    setRerunKeys(prev => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
+    setWidgetErrors(prev => {
+      const updated = { ...prev };
+      delete updated[id];
+      return updated;
+    });
+  };
+
+  const handleWidgetError = (id: string, err: { message: string }) => {
+    setWidgetErrors(prev => ({ ...prev, [id]: err }));
+  };
+
   const handleDragStart = (e: React.DragEvent, id: string) => {
     setDraggedBlockId(id);
     e.dataTransfer.effectAllowed = 'move';
@@ -599,14 +622,87 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                   <div className="w-full my-4 border border-slate-200 dark:border-zinc-800 rounded-2xl bg-white dark:bg-zinc-900 overflow-hidden shadow-sm">
                     <div className="h-8 border-b border-slate-100 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-900/50 px-3 flex items-center justify-between text-[10px] font-mono text-slate-400">
                       <span>Widget Render Sandbox</span>
-                      <button 
-                        onClick={() => deleteBlock(block.id)}
-                        className="text-red-400 hover:text-red-500 font-sans"
-                      >
-                        ✕ Remove
-                      </button>
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center gap-3">
+                        <button
+                          onClick={() => handleEditClick(block.id, block.properties?.srcDoc || '')}
+                          className="text-indigo-500 hover:text-indigo-600 dark:text-indigo-400 dark:hover:text-indigo-300 font-sans flex items-center gap-1 cursor-pointer font-medium"
+                        >
+                          ✎ Edit
+                        </button>
+                        <button
+                          onClick={() => handleRerun(block.id)}
+                          className="text-indigo-500 hover:text-indigo-600 dark:text-indigo-400 dark:hover:text-indigo-300 font-sans flex items-center gap-1 cursor-pointer font-medium"
+                        >
+                          ↻ Rerun
+                        </button>
+                        <button
+                          onClick={() => deleteBlock(block.id)}
+                          className="text-red-400 hover:text-red-500 font-sans cursor-pointer font-medium"
+                        >
+                          ✕ Delete
+                        </button>
+                      </div>
                     </div>
-                    <SandboxFrame srcDoc={block.properties.srcDoc} theme="dark" />
+
+                    {editingWidgetId === block.id && (
+                      <div className="p-3 border-b border-slate-100 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-900/40 space-y-2">
+                        <textarea
+                          value={editorCode[block.id] ?? block.properties?.srcDoc ?? ''}
+                          onChange={(e) => setEditorCode(prev => ({ ...prev, [block.id]: e.target.value }))}
+                          className="w-full h-40 p-2 font-mono text-xs bg-slate-900 text-emerald-400 dark:bg-zinc-950 dark:text-emerald-400 rounded-lg border border-slate-200 dark:border-zinc-800 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-y"
+                          placeholder="Write widget code here..."
+                        />
+                        <div className="flex justify-end gap-2">
+                          <button
+                            onClick={() => setEditingWidgetId(null)}
+                            className="px-2 py-1 text-[10px] font-sans font-medium text-slate-500 hover:text-slate-700 dark:text-zinc-400 dark:hover:text-zinc-200 cursor-pointer"
+                          >
+                            Close
+                          </button>
+                          <button
+                            onClick={() => {
+                              const newCode = editorCode[block.id] ?? block.properties?.srcDoc ?? '';
+                              updateBlockProperties(block.id, { srcDoc: newCode });
+                              handleRerun(block.id);
+                            }}
+                            className="px-2.5 py-1 text-[10px] font-sans font-semibold bg-indigo-600 text-white hover:bg-indigo-500 rounded-md transition-colors cursor-pointer"
+                          >
+                            Run Code
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {widgetErrors[block.id] ? (
+                      <div className="p-4 mx-3 my-2 bg-red-50 dark:bg-rose-950/20 border border-red-200 dark:border-rose-900/50 rounded-xl flex flex-col items-center justify-center text-center gap-2">
+                        <div className="w-8 h-8 rounded-full bg-red-100 dark:bg-rose-950/40 flex items-center justify-center text-red-600 dark:text-rose-400">
+                          ⚠
+                        </div>
+                        <p className="text-xs font-semibold text-red-700 dark:text-rose-300">Widget Render Failed</p>
+                        <p className="text-[10px] font-mono text-red-500 max-w-md break-all">{widgetErrors[block.id].message}</p>
+                        <div className="flex gap-2 mt-1">
+                          <button
+                            onClick={() => handleEditClick(block.id, block.properties?.srcDoc || '')}
+                            className="px-3 py-1 bg-white hover:bg-slate-50 dark:bg-zinc-800 dark:hover:bg-zinc-700 border border-slate-200 dark:border-zinc-700 text-slate-700 dark:text-zinc-200 rounded-lg text-[10px] font-semibold transition-colors cursor-pointer"
+                          >
+                            Edit Code
+                          </button>
+                          <button
+                            onClick={() => handleRerun(block.id)}
+                            className="px-3 py-1 bg-red-600 hover:bg-red-500 text-white rounded-lg text-[10px] font-semibold transition-colors cursor-pointer"
+                          >
+                            Retry
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <SandboxFrame
+                        key={rerunKeys[block.id] || 0}
+                        srcDoc={block.properties?.srcDoc || ''}
+                        theme="dark"
+                        onError={(err) => handleWidgetError(block.id, err)}
+                      />
+                    )}
                   </div>
                 ) : (
                   <WidgetBlockPlaceholder
