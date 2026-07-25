@@ -1,12 +1,18 @@
 import React from 'react';
-import { Type, Square, MessageSquare, Network } from 'lucide-react';
+import { Type, Square, MessageSquare, Network, Grid } from 'lucide-react';
 import { CanvasElementType } from '@catnoted/shared';
 
 interface CanvasToolbarProps {
   onAddElement: (type: CanvasElementType) => void;
+  snapToGrid: boolean;
+  onToggleSnapToGrid: () => void;
 }
 
-export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({ onAddElement }) => {
+export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
+  onAddElement,
+  snapToGrid,
+  onToggleSnapToGrid
+}) => {
   return (
     <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-slate-200/60 dark:border-zinc-800/60 rounded-2xl p-2 flex items-center gap-1.5 shadow-xl shadow-slate-200/20 dark:shadow-black/20 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
       <button
@@ -49,6 +55,22 @@ export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({ onAddElement }) =>
         type="button"
       >
         <Network className="w-5 h-5 group-hover:scale-110 transition-transform" />
+      </button>
+
+      <div className="w-px h-6 bg-slate-200 dark:bg-zinc-800 mx-1" />
+
+      <button
+        onClick={onToggleSnapToGrid}
+        className={`p-2.5 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 transition-colors flex items-center justify-center gap-2 group ${
+          snapToGrid
+            ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 font-semibold'
+            : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-zinc-800 hover:text-indigo-600 dark:hover:text-indigo-400'
+        }`}
+        title="Toggle Grid Snap (S)"
+        aria-label="Toggle Grid Snap"
+        type="button"
+      >
+        <Grid className="w-5 h-5 group-hover:scale-110 transition-transform" />
       </button>
     </div>
   );

@@ -6,8 +6,7 @@ interface MinimapProps {
   pan: { x: number; y: number };
   scale: number;
   onPanChange: (pan: { x: number; y: number }) => void;
-  viewportWidth?: number;
-  viewportHeight?: number;
+  selectedIds?: string[];
 }
 
 export const Minimap: React.FC<MinimapProps> = ({
@@ -15,24 +14,46 @@ export const Minimap: React.FC<MinimapProps> = ({
   pan,
   scale,
   onPanChange,
-  viewportWidth = 900,
-  viewportHeight = 500
+  selectedIds = []
 }) => {
   const minimapRef = useRef<HTMLDivElement>(null);
-  const [isCollapsed] = useState(false);
   const isDraggingRef = useRef(false);
+  const [viewportSize, setViewportSize] = useState({ width: 900, height: 500 });
+
+  // Dynamically obtain the parent container's visible bounds
+  useEffect(() => {
+    if (!minimapRef.current) return;
+    const parentContainer = minimapRef.current.closest('.h-\\[75vh\\]');
+    if (parentContainer) {
+      const resizeObserver = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          setViewportSize({
+            width: entry.contentRect.width,
+            height: entry.contentRect.height
+          });
+        }
+      });
+      resizeObserver.observe(parentContainer);
+      return () => resizeObserver.disconnect();
+    }
+  }, []);
+
+  const viewportWidth = viewportSize.width;
+  const viewportHeight = viewportSize.height;
 
   // Constants for minimap container dimensions
   const minimapWidth = 160;
   const minimapHeight = 100;
 
   // 1. Calculate boundaries of all elements on the canvas
-  const elementList = Object.values(elements).filter(el => el.type === 'card');
+  const elementList = Object.values(elements).filter(
+    el => el.type === 'card' || el.type === 'note' || el.type === 'shape' || el.type === 'frame'
+  );
 
   const boundsMinX = Math.min(-200, ...elementList.map(el => el.x)) - 200;
-  const boundsMaxX = Math.max(1200, ...elementList.map(el => el.x + (el.width || 260))) + 200;
+  const boundsMaxX = Math.max(1200, ...elementList.map(el => el.x + (el.width || 200))) + 200;
   const boundsMinY = Math.min(-200, ...elementList.map(el => el.y)) - 200;
-  const boundsMaxY = Math.max(800, ...elementList.map(el => el.y + (el.height || 120))) + 200;
+  const boundsMaxY = Math.max(800, ...elementList.map(el => el.y + (el.height || 100))) + 200;
 
   const boundsWidth = boundsMaxX - boundsMinX;
   const boundsHeight = boundsMaxY - boundsMinY;
@@ -52,6 +73,29 @@ export const Minimap: React.FC<MinimapProps> = ({
   const viewY = Math.max(0, Math.min(minimapHeight, scaleY(visibleTop)));
   const viewWidth = Math.max(10, Math.min(minimapWidth, (visibleWidth / boundsWidth) * minimapWidth));
   const viewHeight = Math.max(10, Math.min(minimapHeight, (visibleHeight / boundsHeight) * minimapHeight));
+
+  // Calculate bounding box of selected elements
+  const selectedElements = selectedIds.map(id => elements[id]).filter(Boolean);
+  let selectionBox: { left: number; top: number; width: number; height: number } | null = null;
+
+  if (selectedElements.length > 0) {
+    const selMinX = Math.min(...selectedElements.map(el => el.x));
+    const selMaxX = Math.max(...selectedElements.map(el => el.x + (el.width || 200)));
+    const selMinY = Math.min(...selectedElements.map(el => el.y));
+    const selMaxY = Math.max(...selectedElements.map(el => el.y + (el.height || 100)));
+
+    const sx = scaleX(selMinX);
+    const sy = scaleY(selMinY);
+    const sw = scaleX(selMaxX) - sx;
+    const sh = scaleY(selMaxY) - sy;
+
+    selectionBox = {
+      left: Math.max(0, sx),
+      top: Math.max(0, sy),
+      width: Math.max(6, Math.min(minimapWidth, sw)),
+      height: Math.max(6, Math.min(minimapHeight, sh))
+    };
+  }
 
   const handleDragUpdate = (clientX: number, clientY: number) => {
     if (!minimapRef.current) return;
@@ -101,14 +145,14 @@ export const Minimap: React.FC<MinimapProps> = ({
         ref={minimapRef}
         onMouseDown={handleMouseDown}
         style={{ width: minimapWidth, height: minimapHeight }}
-        className="bg-white/70 dark:bg-zinc-950/70 border border-slate-200/80 dark:border-zinc-800/80 rounded-2xl relative overflow-hidden shadow-lg shadow-slate-100/30 dark:shadow-none cursor-crosshair select-none backdrop-blur-md"
+        className="bg-white/85 dark:bg-zinc-900/85 border border-slate-200 dark:border-zinc-800 rounded-xl relative overflow-hidden shadow-lg cursor-crosshair select-none backdrop-blur-md transition-all"
       >
         {/* Dynamic mini representations of cards */}
         {elementList.map(el => {
           const mx = scaleX(el.x);
           const my = scaleY(el.y);
-          const mw = ((el.width || 260) / boundsWidth) * minimapWidth;
-          const mh = ((el.height || 120) / boundsHeight) * minimapHeight;
+          const mw = ((el.width || 200) / boundsWidth) * minimapWidth;
+          const mh = ((el.height || 100) / boundsHeight) * minimapHeight;
 
           return (
             <div
@@ -116,13 +160,26 @@ export const Minimap: React.FC<MinimapProps> = ({
               style={{
                 left: mx,
                 top: my,
-                width: Math.max(6, mw),
-                height: Math.max(4, mh),
+                width: Math.max(4, mw),
+                height: Math.max(3, mh),
               }}
-              className="absolute bg-indigo-100/60 dark:bg-indigo-950/40 border border-indigo-200/30 dark:border-indigo-900/40 rounded-sm"
+              className="absolute bg-slate-300 dark:bg-zinc-700 border border-slate-400/20 dark:border-zinc-600/50 rounded-sm"
             />
           );
         })}
+
+        {/* Selection Bounding Box Outline */}
+        {selectionBox && (
+          <div
+            style={{
+              left: selectionBox.left,
+              top: selectionBox.top,
+              width: selectionBox.width,
+              height: selectionBox.height
+            }}
+            className="absolute border border-dashed border-amber-500 bg-amber-500/5 rounded pointer-events-none transition-[left,top,width,height] duration-75"
+          />
+        )}
 
         {/* Viewport Overlay Box */}
         <div
@@ -132,50 +189,9 @@ export const Minimap: React.FC<MinimapProps> = ({
             width: viewWidth,
             height: viewHeight,
           }}
-          className="absolute border border-indigo-500 bg-indigo-500/10 rounded-md pointer-events-none transition-[left,top,width,height] duration-75 shadow-[0_0_8px_rgba(99,102,241,0.15)]"
+          className="absolute border-2 border-indigo-500/80 bg-indigo-500/10 rounded-md pointer-events-none transition-[left,top,width,height] duration-75 shadow-[0_0_0_9999px_rgba(0,0,0,0.1)] dark:shadow-[0_0_0_9999px_rgba(0,0,0,0.3)]"
         />
       </div>
-
-      {!isCollapsed && (
-        <div
-          ref={minimapRef}
-          onMouseDown={handleMouseDown}
-          style={{ width: minimapWidth, height: minimapHeight }}
-          className="bg-white/85 dark:bg-zinc-900/85 border border-slate-200 dark:border-zinc-800 rounded-xl relative overflow-hidden shadow-lg cursor-crosshair select-none backdrop-blur-md transition-all"
-        >
-          {/* Dynamic mini representations of cards */}
-          {elementList.map(el => {
-            const mx = scaleX(el.x);
-            const my = scaleY(el.y);
-            const mw = ((el.width || 260) / boundsWidth) * minimapWidth;
-            const mh = ((el.height || 120) / boundsHeight) * minimapHeight;
-
-            return (
-              <div
-                key={`mini-${el.id}`}
-                style={{
-                  left: mx,
-                  top: my,
-                  width: Math.max(4, mw),
-                  height: Math.max(3, mh),
-                }}
-                className="absolute bg-slate-300 dark:bg-zinc-700 border border-slate-400/20 dark:border-zinc-600/50 rounded-sm"
-              />
-            );
-          })}
-
-          {/* Viewport Overlay Box */}
-          <div
-            style={{
-              left: viewX,
-              top: viewY,
-              width: viewWidth,
-              height: viewHeight,
-            }}
-            className="absolute border-2 border-indigo-500/80 bg-indigo-500/10 rounded-md pointer-events-none transition-[left,top,width,height] duration-75 shadow-[0_0_0_9999px_rgba(0,0,0,0.1)] dark:shadow-[0_0_0_9999px_rgba(0,0,0,0.3)]"
-          />
-        </div>
-      )}
     </div>
   );
 };

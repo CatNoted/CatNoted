@@ -12,6 +12,13 @@ import { CanvasProperties } from './CanvasProperties.js';
 
 export const ycanvas = ydoc.getMap<CanvasElement>('canvas');
 
+const getGridSize = (scale: number): number => {
+  if (scale >= 1.8) return 12;
+  if (scale >= 0.8) return 24;
+  if (scale >= 0.4) return 48;
+  return 96;
+};
+
 export const InfiniteCanvas: React.FC = () => {
   const { blocks } = useDocumentStore();
   const [elements, setElements] = useState<Record<string, CanvasElement>>({});
@@ -129,7 +136,7 @@ export const InfiniteCanvas: React.FC = () => {
         setConnectorMousePos(null);
         setMarqueeStart(null);
         setMarqueeEnd(null);
-      } else if (e.shiftKey && e.key.toLowerCase() === 'g') {
+      } else if (e.key.toLowerCase() === 's') {
         setSnapToGrid(prev => !prev);
       } else if (e.ctrlKey && e.key.toLowerCase() === 'l') {
         e.preventDefault();
@@ -319,6 +326,7 @@ export const InfiniteCanvas: React.FC = () => {
     if (activeDragId.current) {
       const deltaX = (e.clientX - dragStartMouse.current.x) / scale;
       const deltaY = (e.clientY - dragStartMouse.current.y) / scale;
+      const gridSize = getGridSize(scale);
 
       ydoc.transact(() => {
         Object.keys(dragStartCoords.current).forEach(id => {
@@ -328,8 +336,8 @@ export const InfiniteCanvas: React.FC = () => {
             let targetX = start.x + deltaX;
             let targetY = start.y + deltaY;
             if (snapToGrid) {
-              targetX = Math.round(targetX / 24) * 24;
-              targetY = Math.round(targetY / 24) * 24;
+              targetX = Math.round(targetX / gridSize) * gridSize;
+              targetY = Math.round(targetY / gridSize) * gridSize;
             }
             ycanvas.set(id, {
               ...current,
@@ -561,6 +569,7 @@ export const InfiniteCanvas: React.FC = () => {
   const nonBlockElements = Object.values(elements).filter(el => el.type !== 'card' && el.type !== 'connector');
 
   const hasContent = blocks.length > 0 || nonBlockElements.length > 0 || customConnectors.length > 0;
+  const currentGridSize = getGridSize(scale);
 
   return (
     <div
@@ -574,7 +583,7 @@ export const InfiniteCanvas: React.FC = () => {
       <div 
         style={{
           transform: `translate(${pan.x}px, ${pan.y}px)`,
-          backgroundSize: `${24 * scale}px ${24 * scale}px`,
+          backgroundSize: `${currentGridSize * scale}px ${currentGridSize * scale}px`,
           backgroundImage: 'radial-gradient(#cbd5e1 1.5px, transparent 1.5px)',
         }}
         className="absolute inset-0 dark:opacity-30 pointer-events-none opacity-60 bg-repeat"
@@ -582,7 +591,7 @@ export const InfiniteCanvas: React.FC = () => {
       <div 
         style={{
           transform: `translate(${pan.x}px, ${pan.y}px)`,
-          backgroundSize: `${24 * scale}px ${24 * scale}px`,
+          backgroundSize: `${currentGridSize * scale}px ${currentGridSize * scale}px`,
           backgroundImage: 'radial-gradient(#27272a 1.5px, transparent 1.5px)',
         }}
         className="absolute inset-0 hidden dark:block pointer-events-none opacity-50 bg-repeat"
@@ -717,7 +726,11 @@ export const InfiniteCanvas: React.FC = () => {
         })}
       </div>
 
-      <CanvasToolbar onAddElement={handleAddElement} />
+      <CanvasToolbar
+        onAddElement={handleAddElement}
+        snapToGrid={snapToGrid}
+        onToggleSnapToGrid={() => setSnapToGrid(prev => !prev)}
+      />
 
       <CanvasProperties
         selectedElements={selectedElements}
@@ -732,6 +745,7 @@ export const InfiniteCanvas: React.FC = () => {
           pan={pan}
           scale={scale}
           onPanChange={setPan}
+          selectedIds={selectedIds}
         />
       </div>
 
@@ -740,7 +754,7 @@ export const InfiniteCanvas: React.FC = () => {
         <button
           onClick={() => setSnapToGrid(prev => !prev)}
           className={`px-2 py-0.5 rounded-lg transition-colors text-[10px] font-mono font-semibold ${snapToGrid ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300' : 'text-slate-400 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-zinc-800 dark:hover:text-indigo-400'}`}
-          title="Toggle Grid Snap (Shift+G)"
+          title="Toggle Grid Snap (S)"
           aria-label="Toggle Grid Snap"
           type="button"
         >
