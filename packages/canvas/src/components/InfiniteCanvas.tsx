@@ -12,6 +12,42 @@ import { CanvasProperties } from './CanvasProperties.js';
 
 export const ycanvas = ydoc.getMap<CanvasElement>('canvas');
 
+function getIntersectionPoint(
+  fromX: number,
+  fromY: number,
+  toX: number,
+  toY: number,
+  rectX: number,
+  rectY: number,
+  rectW: number,
+  rectH: number
+): { x: number; y: number } {
+  const cx = rectX + rectW / 2;
+  const cy = rectY + rectH / 2;
+  const dx = toX - fromX;
+  const dy = toY - fromY;
+
+  if (dx === 0 && dy === 0) return { x: fromX, y: fromY };
+
+  const hW = rectW / 2;
+  const hH = rectH / 2;
+
+  const rectRatio = hH / hW;
+  const lineRatio = Math.abs(dy / dx);
+
+  if (lineRatio <= rectRatio) {
+    const signX = dx > 0 ? 1 : -1;
+    const x = cx + signX * hW;
+    const y = cy + (signX * hW * dy) / dx;
+    return { x, y };
+  } else {
+    const signY = dy > 0 ? 1 : -1;
+    const y = cy + signY * hH;
+    const x = cx + (signY * hH * dx) / dy;
+    return { x, y };
+  }
+}
+
 export const InfiniteCanvas: React.FC = () => {
   const { blocks } = useDocumentStore();
   const [elements, setElements] = useState<Record<string, CanvasElement>>({});
@@ -186,6 +222,7 @@ export const InfiniteCanvas: React.FC = () => {
   // Handle starting a connection drag
   const handleStartConnector = (e: React.MouseEvent, fromId: string) => {
     e.stopPropagation();
+    console.log("Connection drag started from:", fromId);
     setActiveConnectorStart(fromId);
 
     // Convert client coordinates to canvas coordinates
@@ -392,6 +429,8 @@ export const InfiniteCanvas: React.FC = () => {
           }
         });
       }
+
+      console.log("Connection drag released. canvasX:", canvasX, "canvasY:", canvasY, "targetId:", targetId);
 
       if (targetId) {
         const connId = `connector-${activeConnectorStart}-${targetId}`;
@@ -643,22 +682,39 @@ export const InfiniteCanvas: React.FC = () => {
 
           if (!sourceElem || !targetElem) return null;
 
-          const startX = sourceElem.x + (sourceElem.width || 260) / 2;
-          const startY = sourceElem.y + (sourceElem.height || 120) / 2;
-          const endX = targetElem.x + (targetElem.width || 260) / 2;
-          const endY = targetElem.y + (targetElem.height || 120) / 2;
+          const sourceW = sourceElem.width || (sourceElem.type === 'card' ? 240 : (sourceElem.type === 'frame' ? 400 : 200));
+          const sourceH = sourceElem.height || (sourceElem.type === 'card' ? 120 : (sourceElem.type === 'frame' ? 300 : 100));
+          const targetW = targetElem.width || (targetElem.type === 'card' ? 240 : (targetElem.type === 'frame' ? 400 : 200));
+          const targetH = targetElem.height || (targetElem.type === 'card' ? 120 : (targetElem.type === 'frame' ? 300 : 100));
 
-          const midX = (startX + endX) / 2;
-          const midY = (startY + endY) / 2;
+          const sourceCx = sourceElem.x + sourceW / 2;
+          const sourceCy = sourceElem.y + sourceH / 2;
+          const targetCx = targetElem.x + targetW / 2;
+          const targetCy = targetElem.y + targetH / 2;
+
+          const start = getIntersectionPoint(sourceCx, sourceCy, targetCx, targetCy, sourceElem.x, sourceElem.y, sourceW, sourceH);
+          const end = getIntersectionPoint(targetCx, targetCy, sourceCx, sourceCy, targetElem.x, targetElem.y, targetW, targetH);
+
+          const midX = (start.x + end.x) / 2;
+          const midY = (start.y + end.y) / 2;
 
           return (
             <React.Fragment key={elem.id}>
               <ConnectorLine
-                startX={startX}
-                startY={startY}
-                endX={endX}
-                endY={endY}
+                startX={start.x}
+                startY={start.y}
+                endX={end.x}
+                endY={end.y}
                 label={conn.label}
+                type={conn.type}
+                arrowStart={conn.arrowStart}
+                arrowEnd={conn.arrowEnd}
+                color={conn.color}
+                isSelected={selectedIds.includes(elem.id)}
+                onClick={(e) => {
+                  handleSelectToggle(e, elem.id);
+                }}
+                forceShowLabel={selectedIds.includes(elem.id) || activeDragId.current !== null}
               />
               {/* Floating connector delete trigger */}
               <div
@@ -687,16 +743,30 @@ export const InfiniteCanvas: React.FC = () => {
         {activeConnectorStart && connectorMousePos && (() => {
           const sourceElem = elements[activeConnectorStart];
           if (!sourceElem) return null;
-          const startX = sourceElem.x + (sourceElem.width || 260) / 2;
-          const startY = sourceElem.y + (sourceElem.height || 120) / 2;
+          const sourceW = sourceElem.width || (sourceElem.type === 'card' ? 240 : (sourceElem.type === 'frame' ? 400 : 200));
+          const sourceH = sourceElem.height || (sourceElem.type === 'card' ? 120 : (sourceElem.type === 'frame' ? 300 : 100));
+          const sourceCx = sourceElem.x + sourceW / 2;
+          const sourceCy = sourceElem.y + sourceH / 2;
+
+          const start = getIntersectionPoint(
+            sourceCx,
+            sourceCy,
+            connectorMousePos.x,
+            connectorMousePos.y,
+            sourceElem.x,
+            sourceElem.y,
+            sourceW,
+            sourceH
+          );
 
           return (
             <ConnectorLine
-              startX={startX}
-              startY={startY}
+              startX={start.x}
+              startY={start.y}
               endX={connectorMousePos.x}
               endY={connectorMousePos.y}
               label="Connecting..."
+              forceShowLabel
             />
           );
         })()}
