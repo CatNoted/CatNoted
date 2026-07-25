@@ -1,5 +1,5 @@
 import React from 'react';
-import { CanvasElement } from '@catnoted/shared';
+import { CanvasElement, ConnectorInfo } from '@catnoted/shared';
 import { Palette, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Square, CircleDashed, AlignLeft, AlignCenter, AlignRight, Lock, Unlock, ArrowUpToLine, ArrowDownToLine, Layers } from 'lucide-react';
 
 interface CanvasPropertiesProps {
@@ -15,6 +15,19 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
 
   const handleUpdate = (updates: Partial<CanvasElement>) => {
     selectedElements.forEach(el => onUpdateElement(el.id, updates));
+  };
+
+  const handleUpdateConnector = (updates: Partial<ConnectorInfo>) => {
+    selectedElements.forEach(el => {
+      if (el.connector) {
+        onUpdateElement(el.id, {
+          connector: {
+            ...el.connector,
+            ...updates
+          }
+        });
+      }
+    });
   };
 
   const handleBringToFront = () => {
@@ -37,6 +50,106 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
   const handleNudge = (dx: number, dy: number) => {
     selectedElements.forEach(el => onUpdateElement(el.id, { x: el.x + dx, y: el.y + dy }));
   };
+
+  if (element.type === 'connector') {
+    const conn = element.connector;
+    if (!conn) return null;
+
+    const curveType = conn.type || 'bezier';
+    const arrowStart = conn.arrowStart || false;
+    const arrowEnd = conn.arrowEnd || false;
+    const labelVal = conn.label || '';
+
+    return (
+      <div className="absolute top-6 right-6 z-40 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-slate-200/60 dark:border-zinc-800/60 rounded-2xl p-4 flex flex-col gap-5 shadow-xl shadow-slate-200/20 dark:shadow-black/20 w-64 animate-in fade-in slide-in-from-right-4 duration-200">
+        <div className="text-[10px] font-mono font-semibold text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-zinc-800 pb-2 flex items-center justify-between">
+          <span>Properties</span>
+          <span className="bg-indigo-50 dark:bg-indigo-950 text-indigo-500 px-1.5 py-0.5 rounded text-[9px]">connector</span>
+        </div>
+
+        {/* Curve Type */}
+        <div className="flex flex-col gap-2.5">
+          <span className="text-xs text-slate-500 dark:text-zinc-400 font-medium flex items-center gap-1.5">
+            <Layers className="w-3.5 h-3.5" /> Curve Style
+          </span>
+          <div className="grid grid-cols-3 gap-1 bg-slate-100 dark:bg-zinc-800/50 p-1 rounded-lg">
+            <button
+              onClick={() => handleUpdateConnector({ type: 'bezier' })}
+              className={`py-1 text-[10px] font-semibold rounded-md transition-colors ${
+                curveType === 'bezier'
+                  ? 'bg-white dark:bg-zinc-700 shadow-sm text-indigo-600 dark:text-indigo-400'
+                  : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+              }`}
+              type="button"
+            >
+              Bezier
+            </button>
+            <button
+              onClick={() => handleUpdateConnector({ type: 'straight' })}
+              className={`py-1 text-[10px] font-semibold rounded-md transition-colors ${
+                curveType === 'straight'
+                  ? 'bg-white dark:bg-zinc-700 shadow-sm text-indigo-600 dark:text-indigo-400'
+                  : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+              }`}
+              type="button"
+            >
+              Straight
+            </button>
+            <button
+              onClick={() => handleUpdateConnector({ type: 'stepped' })}
+              className={`py-1 text-[10px] font-semibold rounded-md transition-colors ${
+                curveType === 'stepped' || curveType === 'orthogonal'
+                  ? 'bg-white dark:bg-zinc-700 shadow-sm text-indigo-600 dark:text-indigo-400'
+                  : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+              }`}
+              type="button"
+            >
+              Stepped
+            </button>
+          </div>
+        </div>
+
+        {/* Arrowheads */}
+        <div className="flex flex-col gap-2.5">
+          <span className="text-xs text-slate-500 dark:text-zinc-400 font-medium flex items-center gap-1.5">
+            <ArrowUp className="w-3.5 h-3.5" /> Arrowheads
+          </span>
+          <div className="flex flex-col gap-2">
+            <label className="flex items-center gap-2 cursor-pointer text-xs text-slate-600 dark:text-zinc-300">
+              <input
+                type="checkbox"
+                checked={arrowStart}
+                onChange={(e) => handleUpdateConnector({ arrowStart: e.target.checked })}
+                className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 dark:border-zinc-700 dark:bg-zinc-800"
+              />
+              <span>Start arrow</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer text-xs text-slate-600 dark:text-zinc-300">
+              <input
+                type="checkbox"
+                checked={arrowEnd}
+                onChange={(e) => handleUpdateConnector({ arrowEnd: e.target.checked })}
+                className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 dark:border-zinc-700 dark:bg-zinc-800"
+              />
+              <span>End arrow</span>
+            </label>
+          </div>
+        </div>
+
+        {/* Inline Label */}
+        <div className="flex flex-col gap-2.5">
+          <span className="text-xs text-slate-500 dark:text-zinc-400 font-medium">Inline Label</span>
+          <input
+            type="text"
+            value={labelVal}
+            onChange={(e) => handleUpdateConnector({ label: e.target.value })}
+            placeholder="No label"
+            className="w-full text-xs bg-slate-50 dark:bg-zinc-800/50 border border-slate-200 dark:border-zinc-700 rounded-lg px-2.5 py-1.5 outline-none focus:border-indigo-500 dark:focus:border-indigo-400 transition-colors text-slate-800 dark:text-zinc-100 placeholder-slate-400"
+          />
+        </div>
+      </div>
+    );
+  }
 
   const colors = ['bg-white', 'bg-red-100', 'bg-orange-100', 'bg-amber-100', 'bg-green-100', 'bg-emerald-100', 'bg-cyan-100', 'bg-blue-100', 'bg-indigo-100', 'bg-violet-100', 'bg-purple-100', 'bg-fuchsia-100', 'bg-pink-100', 'bg-rose-100'];
 
