@@ -31,13 +31,15 @@ if (yblocks.length === 0) {
 
 export function useDocumentStore(pageId: string = 'root-doc-node') {
   const [blocks, setBlocks] = useState<BlockNode[]>([]);
+  const [allBlocks, setAllBlocks] = useState<BlockNode[]>([]);
   const [pages, setPages] = useState<PageMeta[]>([]);
   const [pageMeta, setPageMeta] = useState<PageMeta | null>(null);
 
   useEffect(() => {
     const updateBlocks = () => {
-      const allBlocks = yblocks.toArray();
-      const pageBlocks = allBlocks.filter(b => (b.parentId || 'root-doc-node') === pageId);
+      const allBlocksArr = yblocks.toArray();
+      setAllBlocks(allBlocksArr);
+      const pageBlocks = allBlocksArr.filter(b => (b.parentId || 'root-doc-node') === pageId);
 
       // Prepopulate sub-page if empty (inside transact, observer will re-fire)
       if (pageId !== 'root-doc-node' && pageBlocks.length === 0) {
@@ -99,8 +101,9 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
 
     const handleSync = () => {
       // Filter by current pageId to avoid cross-page duplicates
-      const allBlocks = yblocks.toArray();
-      setBlocks(allBlocks.filter(b => (b.parentId || 'root-doc-node') === pageId));
+      const allBlocksArr = yblocks.toArray();
+      setAllBlocks(allBlocksArr);
+      setBlocks(allBlocksArr.filter(b => (b.parentId || 'root-doc-node') === pageId));
       updatePageMetadata();
     };
     if (provider && typeof provider.on === 'function') {
@@ -280,6 +283,7 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
 
   return {
     blocks,
+    allBlocks,
     pages,
     pageMeta,
     addBlock,

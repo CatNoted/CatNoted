@@ -33,14 +33,18 @@ import {
 interface DocumentEditorProps {
   activePage?: string;
   onRenamePage?: (oldTitle: string, newTitle: string) => void;
+  onNavigatePage?: (pageId: string) => void;
 }
 
 export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   activePage = 'root-doc-node',
-  onRenamePage
+  onRenamePage,
+  onNavigatePage
 }) => {
   const { 
     blocks, 
+    allBlocks,
+    pages,
     pageMeta,
     addBlock, 
     updateBlockContent, 
@@ -51,6 +55,14 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     moveBlock,
     updatePageMeta
   } = useDocumentStore(activePage);
+
+  const autocompletePages = React.useMemo(() => {
+    const list = [
+      { id: 'root-doc-node', title: 'Root Note' },
+      ...(pages || []).map(p => ({ id: p.id, title: p.title || 'Untitled' }))
+    ];
+    return list.filter(p => p.title && p.title.trim() !== '');
+  }, [pages]);
 
   const [focusBlockId, setFocusBlockId] = useState<string | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
@@ -153,6 +165,26 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   const headingBlock = blocks.find(b => b.type === 'heading' && b.properties?.level === 1);
   const displayTitle = pageMeta?.title || headingBlock?.content || 'Untitled Document';
+
+  const backlinks = React.useMemo(() => {
+    if (!displayTitle || !allBlocks) return [];
+
+    const linkingBlocks = allBlocks.filter(b => {
+      const parentId = b.parentId || 'root-doc-node';
+      if (parentId === activePage) return false;
+      return b.content && b.content.includes(`[[${displayTitle}]]`);
+    });
+
+    const uniquePageIds = Array.from(new Set(linkingBlocks.map(b => b.parentId || 'root-doc-node')));
+
+    return uniquePageIds.map(pid => {
+      if (pid === 'root-doc-node') {
+        return { id: pid, title: 'Root Note' };
+      }
+      const page = pages.find(p => p.id === pid);
+      return { id: pid, title: page?.title || pid };
+    });
+  }, [displayTitle, allBlocks, activePage, pages]);
 
   const fontClass = pageMeta?.fontStyle === 'serif' 
     ? 'font-serif' 
@@ -380,6 +412,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     }
                   }}
                   focusOnMount={isFocused}
+                  pages={autocompletePages}
                 />
               )}
 
@@ -396,6 +429,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                   focusOnMount={isFocused}
                   blockType={block.type}
                   onFocus={() => setFocusBlockId(block.id)}
+                  pages={autocompletePages}
                 />
               )}
 
@@ -510,6 +544,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     focusOnMount={isFocused}
                     blockType={block.type}
                     onFocus={() => setFocusBlockId(block.id)}
+                    pages={autocompletePages}
                   />
                 </div>
               )}
@@ -532,6 +567,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     focusOnMount={isFocused}
                     blockType={block.type}
                     onFocus={() => setFocusBlockId(block.id)}
+                    pages={autocompletePages}
                   />
                 </div>
               )}
@@ -562,6 +598,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     focusOnMount={isFocused}
                     blockType={block.type}
                     onFocus={() => setFocusBlockId(block.id)}
+                    pages={autocompletePages}
                   />
                 </div>
               )}
@@ -582,6 +619,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     focusOnMount={isFocused}
                     blockType={block.type}
                     onFocus={() => setFocusBlockId(block.id)}
+                    pages={autocompletePages}
                   />
                 </div>
               )}
@@ -620,6 +658,31 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           </div>
         );
       })}
+
+      {/* Backlinks Panel Section */}
+      {backlinks.length > 0 && (
+        <div className="mt-12 pt-6 border-t border-slate-200 dark:border-zinc-850 space-y-3">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
+            Backlinks ({backlinks.length})
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {backlinks.map(link => (
+              <button
+                key={link.id}
+                onClick={() => onNavigatePage?.(link.id)}
+                className="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200/60 dark:border-zinc-800/60 hover:bg-slate-50 dark:hover:bg-zinc-900/50 hover:border-indigo-550 transition-all text-left text-xs font-medium text-slate-700 dark:text-zinc-300 group"
+              >
+                <span className="w-5 h-5 rounded-lg bg-indigo-50 dark:bg-indigo-950/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-semibold shrink-0">
+                  📄
+                </span>
+                <span className="truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                  {link.title}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { SlashCommandMenu, buildSlashCommands } from './SlashCommandMenu.js';
+import { WikiLinkMenu } from './WikiLinkMenu.js';
 
 interface TextBlockProps {
   onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
@@ -16,6 +17,7 @@ interface TextBlockProps {
   blockType?: string;
   onFocus?: () => void;
   onBlur?: () => void;
+  pages?: Array<{ id: string; title: string }>;
 }
 
 const TextBlockBase: React.FC<TextBlockProps> = ({
@@ -30,6 +32,7 @@ const TextBlockBase: React.FC<TextBlockProps> = ({
   blockType,
   onFocus,
   onBlur,
+  pages = [],
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -37,6 +40,10 @@ const TextBlockBase: React.FC<TextBlockProps> = ({
   const [slashActive, setSlashActive] = useState(false);
   const [slashQuery, setSlashQuery] = useState('');
   const [menuPos, setMenuPos] = useState({ top: 0, left: 0 });
+
+  // Wiki-link state
+  const [wikiActive, setWikiActive] = useState(false);
+  const [wikiQuery, setWikiQuery] = useState('');
 
   useEffect(() => {
     if (focusOnMount && textareaRef.current) {
@@ -66,28 +73,73 @@ const TextBlockBase: React.FC<TextBlockProps> = ({
     const val = e.target.value;
     onChange(val);
 
-    // Detect slash at start or after whitespace
+    // Detect triggers
     const cursorPos = e.target.selectionStart ?? val.length;
     const textBeforeCursor = val.slice(0, cursorPos);
 
-    // Find the last slash that's either at position 0 or preceded by whitespace
     const slashMatch = textBeforeCursor.match(/(^|\s)\/(\S*)$/);
+    const wikiMatch = textBeforeCursor.match(/(?:^|\s)\[\[([^\]]*)$/);
 
-    if (slashMatch) {
-      const query = slashMatch[2]; // text after the slash
+    if (wikiMatch) {
+      const query = wikiMatch[1];
+      setWikiQuery(query);
+      setMenuPos(getMenuPosition());
+      setWikiActive(true);
+      setSlashActive(false);
+    } else if (slashMatch) {
+      const query = slashMatch[2];
       setSlashQuery(query);
       setMenuPos(getMenuPosition());
       setSlashActive(true);
+      setWikiActive(false);
     } else {
       setSlashActive(false);
       setSlashQuery('');
+      setWikiActive(false);
+      setWikiQuery('');
     }
   };
 
   const closeMenu = useCallback(() => {
     setSlashActive(false);
     setSlashQuery('');
+    setWikiActive(false);
+    setWikiQuery('');
   }, []);
+
+  const handleSelectWikiPage = useCallback(
+    (pageTitle: string) => {
+      const textarea = textareaRef.current;
+      if (!textarea) return;
+
+      const cursorPos = textarea.selectionStart ?? content.length;
+      const textBeforeCursor = content.slice(0, cursorPos);
+      const textAfterCursor = content.slice(cursorPos);
+
+      const wikiMatch = textBeforeCursor.match(/(?:^|\s)\[\[([^\]]*)$/);
+      if (wikiMatch) {
+        const matchStr = wikiMatch[0];
+        const isWhitespacePrefix = /^\s/.test(matchStr);
+        const prefix = isWhitespacePrefix ? matchStr[0] : '';
+        const startIndex = wikiMatch.index ?? 0;
+
+        const newTextBefore = content.slice(0, startIndex) + prefix + `[[${pageTitle}]]`;
+        const updated = newTextBefore + textAfterCursor;
+        onChange(updated);
+
+        const newCursorPos = newTextBefore.length;
+        setTimeout(() => {
+          if (textareaRef.current) {
+            textareaRef.current.selectionStart = textareaRef.current.selectionEnd = newCursorPos;
+            textareaRef.current.focus();
+          }
+        }, 0);
+      }
+      setWikiActive(false);
+      setWikiQuery('');
+    },
+    [content, onChange]
+  );
 
   /** When user picks a command, strip the "/" + query from content */
   const handleSetType = useCallback(
@@ -115,10 +167,9 @@ const TextBlockBase: React.FC<TextBlockProps> = ({
   });
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    // Let the slash menu consume Enter/Arrow keys when open
-    if (slashActive) {
+    // Let the menus consume Enter/Arrow keys when open
+    if (slashActive || wikiActive) {
       if (['Enter', 'ArrowUp', 'ArrowDown', 'Escape'].includes(e.key)) {
-        // The SlashCommandMenu handles these via window keydown (capture phase)
         return;
       }
       if (['ArrowLeft', 'ArrowRight'].includes(e.key)) {
@@ -126,7 +177,16 @@ const TextBlockBase: React.FC<TextBlockProps> = ({
       }
     }
 
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Backspace') {
+      if (slashActive || wikiActive) {
+        if (slashQuery.length === 0 && wikiQuery.length === 0) {
+          closeMenu();
+        }
+      } else if (content.length === 0) {
+        e.preventDefault();
+        onBackspace();
+      }
+    } else if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       if (blockType === 'bullet') {
         const textarea = textareaRef.current;
@@ -172,16 +232,6 @@ const TextBlockBase: React.FC<TextBlockProps> = ({
       } else {
         onEnter();
       }
-    } else if (e.key === 'Backspace') {
-      if (slashActive) {
-        // If query is empty (just typed '/'), close the menu
-        if (slashQuery.length === 0) {
-          closeMenu();
-        }
-      } else if (content.length === 0) {
-        e.preventDefault();
-        onBackspace();
-      }
     }
   };
 
@@ -208,6 +258,18 @@ const TextBlockBase: React.FC<TextBlockProps> = ({
             position={menuPos}
             onClose={closeMenu}
             commands={slashCommands}
+          />,
+          document.body
+        )}
+
+      {wikiActive &&
+        createPortal(
+          <WikiLinkMenu
+            query={wikiQuery}
+            position={menuPos}
+            onClose={closeMenu}
+            pages={pages}
+            onSelect={handleSelectWikiPage}
           />,
           document.body
         )}

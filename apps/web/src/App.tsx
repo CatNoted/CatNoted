@@ -29,12 +29,12 @@ const App: React.FC = () => {
   const [isZenMode, setIsZenMode] = useState<boolean>(false);
   const [activePage, setActivePage] = useState<string>('root-doc-node');
 
-  const { blocks: rootBlocks, addBlock: addRootBlock, updateBlockContent: updateRootBlockContent } = useDocumentStore('root-doc-node');
+  const { blocks: rootBlocks, allBlocks, addBlock: addRootBlock, updateBlockContent: updateRootBlockContent } = useDocumentStore('root-doc-node');
   const { blocks: activeBlocks, updateBlockContent: updateActiveBlockContent } = useDocumentStore(activePage);
 
   const graphData = React.useMemo(() => {
-    return parseDocumentGraph(rootBlocks);
-  }, [rootBlocks]);
+    return parseDocumentGraph(allBlocks);
+  }, [allBlocks]);
 
   const activeHeading = activeBlocks.find(b => b.type === 'heading' && b.properties?.level === 1);
   const docTitle = activeHeading?.content || 'Untitled Document';
@@ -60,6 +60,12 @@ const App: React.FC = () => {
     if (activePage === 'root-doc-node') return;
     if (!oldTitle.trim() || !newTitle.trim() || oldTitle === newTitle) return;
 
+    const oldPageId = activePage;
+    const newPageId = `page-${newTitle.toLowerCase().replace(/\s+/g, '-')}`;
+
+    const escapeRegExp = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const oldRegex = new RegExp(`\\[\\[${escapeRegExp(oldTitle)}\\]\\]`, 'g');
+
     // 1. Rename wiki link in rootBlocks
     const targetBlock = rootBlocks.find(b => b.content.includes(`[[${oldTitle}]]`));
     if (targetBlock) {
@@ -67,18 +73,44 @@ const App: React.FC = () => {
       updateRootBlockContent(targetBlock.id, updatedContent);
     }
 
-    // 2. Migrate blocks in Yjs
-    const oldPageId = activePage;
-    const newPageId = `page-${newTitle.toLowerCase().replace(/\s+/g, '-')}`;
-
-    const oldYarr = ydoc.getArray<any>(`blocks:${oldPageId}`);
-    const newYarr = ydoc.getArray<any>(`blocks:${newPageId}`);
+    // 2. Migrate blocks in Yjs and update parentId / update all [[oldTitle]] occurrences to [[newTitle]]
+    const yblocks = ydoc.getArray<any>('blocks');
+    const ypages = ydoc.getMap<any>('pages');
 
     ydoc.transact(() => {
-      if (newYarr.length === 0 && oldYarr.length > 0) {
-        newYarr.insert(0, oldYarr.toArray());
-        oldYarr.delete(0, oldYarr.length);
+      // Migrate metadata in pages map
+      const oldMeta = ypages.get(oldPageId);
+      if (oldMeta) {
+        ypages.set(newPageId, {
+          ...oldMeta,
+          id: newPageId,
+          title: newTitle,
+          updatedAt: Date.now()
+        });
+        ypages.delete(oldPageId);
       }
+
+      // Update parentId of blocks and rename occurrences of the old title
+      const allBlocksArr = yblocks.toArray();
+      allBlocksArr.forEach((block, index) => {
+        let blockUpdated = false;
+        let updatedBlock = { ...block };
+
+        if (block.parentId === oldPageId) {
+          updatedBlock.parentId = newPageId;
+          blockUpdated = true;
+        }
+
+        if (block.content && block.content.includes(`[[${oldTitle}]]`)) {
+          updatedBlock.content = block.content.replace(oldRegex, `[[${newTitle}]]`);
+          blockUpdated = true;
+        }
+
+        if (blockUpdated) {
+          yblocks.delete(index, 1);
+          yblocks.insert(index, [updatedBlock]);
+        }
+      });
     });
 
     setActivePage(newPageId);
@@ -504,7 +536,14 @@ const App: React.FC = () => {
       case "doc":
         return (
           <div className="h-full overflow-auto">
-            <DocumentEditor activePage={activePage} onRenamePage={handleRenamePage} />
+            <DocumentEditor
+              activePage={activePage}
+              onRenamePage={handleRenamePage}
+              onNavigatePage={(pageId) => {
+                setActivePage(pageId);
+                setActiveMode("doc");
+              }}
+            />
           </div>
         );
       case "canvas":

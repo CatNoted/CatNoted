@@ -149,4 +149,32 @@ describe('TextBlock Bullet Enter Behavior Tests', () => {
 
     document.body.removeChild(container);
   });
+
+  it('should support pages prop in TextBlock', async () => {
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+
+    const onChange = vi.fn();
+
+    await act(async () => {
+      const root = createRoot(container);
+      root.render(
+        <TextBlock
+          id="test-id"
+          content=""
+          onChange={onChange}
+          onEnter={vi.fn()}
+          onBackspace={vi.fn()}
+          onSetType={vi.fn()}
+          onAddWidget={vi.fn()}
+          pages={[{ id: 'page-1', title: 'System Design' }]}
+        />
+      );
+    });
+
+    const textarea = container.querySelector('textarea');
+    expect(textarea).not.toBeNull();
+
+    document.body.removeChild(container);
+  });
 });

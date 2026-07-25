@@ -12,6 +12,7 @@ export { PageHeader } from './components/PageHeader.js';
 export { FloatingBubbleMenu } from './components/FloatingBubbleMenu.js';
 export { WidgetBlockPlaceholder } from './components/WidgetBlockPlaceholder.js';
 export { SlashCommandMenu, buildSlashCommands } from './components/SlashCommandMenu.js';
+export { WikiLinkMenu } from './components/WikiLinkMenu.js';
 export * from './store.js';
 
 

@@ -12,12 +12,12 @@ interface GraphViewProps {
 type FilterType = 'all' | 'page' | 'tag';
 
 export const GraphView: React.FC<GraphViewProps> = ({ onNavigateToNode }) => {
-  const { blocks } = useDocumentStore();
+  const { allBlocks } = useDocumentStore();
   const graphRef = useRef<ForceGraphRef>(null);
   const [filterType, setFilterType] = useState<FilterType>('all');
 
   const { nodes, edges } = useMemo(() => {
-    const parsed = parseDocumentGraph(blocks);
+    const parsed = parseDocumentGraph(allBlocks);
 
     // Apply filters
     if (filterType === 'all') {
@@ -33,7 +33,7 @@ export const GraphView: React.FC<GraphViewProps> = ({ onNavigateToNode }) => {
     });
 
     return { nodes: filteredNodes, edges: filteredEdges };
-  }, [blocks, filterType]);
+  }, [allBlocks, filterType]);
 
   const handleNodeClick = (node: GraphNode) => {
     onNavigateToNode(node.id);
