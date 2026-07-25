@@ -57,6 +57,19 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
               parentId: pageId
             }
           ]);
+
+          // Make sure metadata is also registered in ypages so it is no longer a "ghost" page
+          if (!ypages.has(pageId)) {
+            ypages.set(pageId, {
+              id: pageId,
+              title: pageName,
+              icon: '📄',
+              fontStyle: 'sans',
+              fullWidth: false,
+              isFavorite: false,
+              createdAt: Date.now()
+            });
+          }
         });
         // observer will fire again after insert — don't set blocks here
         return;

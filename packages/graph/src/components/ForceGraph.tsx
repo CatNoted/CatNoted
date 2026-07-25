@@ -11,6 +11,7 @@ interface ForceGraphProps {
   nodes: GraphNode[];
   edges: GraphEdge[];
   onNodeClick: (node: GraphNode) => void;
+  activePageId?: string;
 }
 
 interface PhysNode extends GraphNode {
@@ -24,7 +25,8 @@ interface PhysNode extends GraphNode {
 export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
   nodes: inputNodes,
   edges,
-  onNodeClick
+  onNodeClick,
+  activePageId
 }, ref) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const nodesRef = useRef<PhysNode[]>([]);
@@ -99,7 +101,7 @@ export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
     
     nodesRef.current = inputNodes.map((n) => {
       const prev = existing.get(n.id);
-      if (prev) return { ...prev, label: n.label, type: n.type };
+      if (prev) return { ...prev, label: n.label, type: n.type, isGhost: n.isGhost };
 
       const saved = knownPositionsRef.current[n.id];
       const startX = saved ? saved.x : 300 + (Math.random() - 0.5) * 150;
@@ -152,6 +154,7 @@ export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
       }).join('\n');
 
       const svgNodes = nodesRef.current.map(node => {
+        const isActive = activePageId === node.id;
         let fill = '#6366f1';
         if (node.id === 'root-doc-node') {
           fill = '#4f46e5';
@@ -159,12 +162,28 @@ export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
           fill = '#10b981';
         }
 
+        if (isActive) {
+          fill = isDark ? '#818cf8' : '#4f46e5';
+        } else if (node.isGhost) {
+          fill = isDark ? 'rgba(148, 163, 184, 0.3)' : 'rgba(100, 116, 139, 0.3)';
+        }
+
         const labelFill = isDark ? '#cbd5e1' : '#475569';
+        const labelFontWeight = isActive ? 'bold' : 'normal';
+        const labelFontStyle = node.isGhost ? 'italic' : 'normal';
+
+        let extraGlow = '';
+        if (isActive) {
+          extraGlow = `<circle cx="${node.x}" cy="${node.y}" r="${node.radius + 4}" fill="none" stroke="${isDark ? 'rgba(129, 140, 248, 0.4)' : 'rgba(99, 102, 241, 0.4)'}" stroke-width="6" />`;
+        } else if (node.isGhost) {
+          extraGlow = `<circle cx="${node.x}" cy="${node.y}" r="${node.radius}" fill="none" stroke="${isDark ? 'rgba(148, 163, 184, 0.5)' : 'rgba(100, 116, 139, 0.5)'}" stroke-width="1.5" stroke-dasharray="3,3" />`;
+        }
 
         return `
           <g>
+            ${extraGlow}
             <circle cx="${node.x}" cy="${node.y}" r="${node.radius}" fill="${fill}" />
-            <text x="${node.x}" y="${node.y - node.radius - 6}" font-family="sans-serif" font-size="10px" fill="${labelFill}" text-anchor="middle">${node.label.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</text>
+            <text x="${node.x}" y="${node.y - node.radius - 6}" font-family="sans-serif" font-size="10px" font-weight="${labelFontWeight}" font-style="${labelFontStyle}" fill="${labelFill}" text-anchor="middle">${node.label.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</text>
           </g>
         `;
       }).join('\n');
@@ -320,6 +339,7 @@ export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
         const hoverNode = hoverNodeRef.current;
         const isHovered = hoverNode && hoverNode.id === node.id;
         const isRoot = node.id === 'root-doc-node';
+        const isCurrentlyActivePage = activePageId === node.id;
         const isConnectedToHover = hoverNode && edges.some(e => {
             const sid = typeof e.source === 'object' ? (e.source as any).id : e.source;
             const tid = typeof e.target === 'object' ? (e.target as any).id : e.target;
@@ -329,12 +349,17 @@ export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
         const active = isHovered || isConnectedToHover;
 
         ctx.beginPath();
-        // Dynamic radius
-        const r = node.radius + (isHovered ? 3 : (isConnectedToHover ? 1 : 0));
+        // Dynamic radius (highlight activePageId as well)
+        let r = node.radius + (isHovered ? 3 : (isConnectedToHover ? 1 : 0));
+        if (isCurrentlyActivePage) {
+          r = node.radius + 3;
+        }
         ctx.arc(node.x, node.y, r, 0, 2 * Math.PI);
         
         // Node styling colors based on Obsidian style theme
-        if (isRoot) {
+        if (node.isGhost) {
+          ctx.fillStyle = isDark ? 'rgba(148, 163, 184, 0.4)' : 'rgba(100, 116, 139, 0.4)'; // Faded styling
+        } else if (isRoot) {
           ctx.fillStyle = isDark ? '#a78bfa' : '#7c3aed'; // Violet
         } else if (node.type === 'tag') {
           ctx.fillStyle = isDark ? '#34d399' : '#10b981'; // Emerald
@@ -342,27 +367,40 @@ export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
           ctx.fillStyle = isDark ? '#94a3b8' : '#64748b'; // Slate
         }
 
-        if (active) {
+        if (active || isCurrentlyActivePage) {
           ctx.fillStyle = isDark ? '#818cf8' : '#4f46e5'; // Indigo active
         }
 
         ctx.fill();
 
-        // Node outline/glow for active
-        if (active) {
+        // Node outline/glow for active / activePageId / ghost
+        if (active || isCurrentlyActivePage) {
           ctx.strokeStyle = isDark ? 'rgba(129, 140, 248, 0.4)' : 'rgba(99, 102, 241, 0.4)';
           ctx.lineWidth = 6;
           ctx.stroke();
+        } else if (node.isGhost) {
+          ctx.save();
+          ctx.strokeStyle = isDark ? 'rgba(148, 163, 184, 0.6)' : 'rgba(100, 116, 139, 0.6)';
+          ctx.lineWidth = 1.5;
+          ctx.setLineDash([3, 3]); // Dashed outline for ghost nodes
+          ctx.stroke();
+          ctx.restore();
         }
 
         // Draw Labels
-        // Only show labels for hovered, connected, or large nodes, or root
-        if (active || isRoot || scaleRef.current > 1.2) {
-          ctx.fillStyle = active
+        // Only show labels for hovered, connected, currently active page, or large nodes, or root
+        if (active || isCurrentlyActivePage || isRoot || scaleRef.current > 1.2) {
+          ctx.fillStyle = (active || isCurrentlyActivePage)
             ? (isDark ? '#e0e7ff' : '#312e81')
             : (isDark ? '#94a3b8' : '#475569');
 
-          ctx.font = `${active ? 'bold' : 'normal'} ${10 / Math.max(0.5, scaleRef.current)}px sans-serif`;
+          if (node.isGhost) {
+            ctx.fillStyle = isDark ? '#64748b' : '#94a3b8'; // More faded label for ghost
+          }
+
+          const weight = (active || isCurrentlyActivePage) ? 'bold' : 'normal';
+          const style = node.isGhost ? 'italic' : 'normal';
+          ctx.font = `${style} ${weight} ${10 / Math.max(0.5, scaleRef.current)}px sans-serif`;
           ctx.textAlign = 'center';
           ctx.fillText(node.label, node.x, node.y - r - (6 / scaleRef.current));
         }

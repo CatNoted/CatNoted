@@ -23,11 +23,57 @@ import { SettingsModal } from "./components/settings/SettingsModal.js";
 import { CommandPalette } from "./components/CommandPalette.js";
 
 const App: React.FC = () => {
-  const [activeMode, setActiveMode] = useState<ActiveMode>("doc");
+  const [activeMode, setActiveMode] = useState<ActiveMode>(() => {
+    // Read initial mode from URL hash or path, fallback to "doc"
+    const path = window.location.pathname;
+    if (path.startsWith('/p/')) {
+      return "doc";
+    }
+    return "doc";
+  });
   const [_currentWorkspace] = useState<string>("Personal Space");
   const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
   const [isZenMode, setIsZenMode] = useState<boolean>(false);
-  const [activePage, setActivePage] = useState<string>('root-doc-node');
+  const [activePage, setActivePage] = useState<string>(() => {
+    // Read initial pageId from pathname /p/:pageId
+    const path = window.location.pathname;
+    if (path.startsWith('/p/')) {
+      const pageId = path.slice(3);
+      if (pageId) return pageId;
+    }
+    return 'root-doc-node';
+  });
+
+  // URL synchronization effect
+  useEffect(() => {
+    const handleUrlSync = () => {
+      const targetPath = activePage === 'root-doc-node' ? '/' : `/p/${activePage}`;
+      if (window.location.pathname !== targetPath) {
+        window.history.pushState(null, '', targetPath);
+      }
+    };
+    handleUrlSync();
+  }, [activePage]);
+
+  // Handle browser back/forward buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      const path = window.location.pathname;
+      if (path.startsWith('/p/')) {
+        const pageId = path.slice(3);
+        if (pageId && pageId !== activePage) {
+          setActivePage(pageId);
+          setActiveMode('doc');
+        }
+      } else {
+        if (activePage !== 'root-doc-node') {
+          setActivePage('root-doc-node');
+        }
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [activePage]);
 
   const { blocks: rootBlocks, addBlock: addRootBlock, updateBlockContent: updateRootBlockContent } = useDocumentStore('root-doc-node');
   const { blocks: activeBlocks, updateBlockContent: updateActiveBlockContent } = useDocumentStore(activePage);
@@ -516,7 +562,7 @@ const App: React.FC = () => {
       case "graph":
         return (
           <div className="h-full overflow-hidden">
-            <GraphView onNavigateToNode={(nodeId) => { setActivePage(nodeId); setActiveMode("doc"); }} />
+            <GraphView activePageId={activePage} onNavigateToNode={(nodeId) => { setActivePage(nodeId); setActiveMode("doc"); }} />
           </div>
         );
       default:

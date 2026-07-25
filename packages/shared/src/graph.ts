@@ -5,6 +5,7 @@ export interface GraphNode {
   val?: number;
   color?: string;
   rawName?: string;
+  isGhost?: boolean;
   [key: string]: any;
 }
 

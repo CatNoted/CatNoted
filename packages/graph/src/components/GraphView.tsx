@@ -7,24 +7,35 @@ import { Network, Info, Download, Filter } from 'lucide-react';
 
 interface GraphViewProps {
   onNavigateToNode: (nodeId: string) => void;
+  activePageId?: string;
 }
 
 type FilterType = 'all' | 'page' | 'tag';
 
-export const GraphView: React.FC<GraphViewProps> = ({ onNavigateToNode }) => {
-  const { blocks } = useDocumentStore();
+export const GraphView: React.FC<GraphViewProps> = ({ onNavigateToNode, activePageId }) => {
+  const { blocks, pages } = useDocumentStore();
   const graphRef = useRef<ForceGraphRef>(null);
   const [filterType, setFilterType] = useState<FilterType>('all');
 
   const { nodes, edges } = useMemo(() => {
     const parsed = parseDocumentGraph(blocks);
 
+    // Identify ghost nodes:
+    // A page node is a ghost node if n.id !== 'root-doc-node' and is not found in pages list.
+    const pageIds = new Set((pages || []).map(p => p.id));
+    const processedNodes = parsed.nodes.map(n => {
+      if (n.type === 'page' && n.id !== 'root-doc-node' && !pageIds.has(n.id)) {
+        return { ...n, isGhost: true };
+      }
+      return n;
+    });
+
     // Apply filters
     if (filterType === 'all') {
-      return parsed;
+      return { nodes: processedNodes, edges: parsed.edges };
     }
 
-    const filteredNodes = parsed.nodes.filter(n => n.id === 'root-doc-node' || n.type === filterType);
+    const filteredNodes = processedNodes.filter(n => n.id === 'root-doc-node' || n.type === filterType);
     const validNodeIds = new Set(filteredNodes.map(n => n.id));
     const filteredEdges = parsed.edges.filter(e => {
       const srcId = typeof e.source === 'object' ? (e.source as any).id : e.source;
@@ -33,7 +44,7 @@ export const GraphView: React.FC<GraphViewProps> = ({ onNavigateToNode }) => {
     });
 
     return { nodes: filteredNodes, edges: filteredEdges };
-  }, [blocks, filterType]);
+  }, [blocks, pages, filterType]);
 
   const handleNodeClick = (node: GraphNode) => {
     onNavigateToNode(node.id);
@@ -129,6 +140,7 @@ export const GraphView: React.FC<GraphViewProps> = ({ onNavigateToNode }) => {
           nodes={nodes} 
           edges={edges} 
           onNodeClick={handleNodeClick} 
+          activePageId={activePageId}
         />
         
         {/* Info Overlay */}
