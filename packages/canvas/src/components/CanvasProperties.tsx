@@ -1,6 +1,18 @@
 import React from 'react';
 import { CanvasElement, ConnectorInfo } from '@catnoted/shared';
-import { Palette, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Square, CircleDashed, AlignLeft, AlignCenter, AlignRight, Lock, Unlock, ArrowUpToLine, ArrowDownToLine, Layers } from 'lucide-react';
+import {
+  Palette,
+  Square,
+  CircleDashed,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  Lock,
+  Unlock,
+  ArrowUpToLine,
+  ArrowDownToLine,
+  Layers,
+} from 'lucide-react';
 
 interface CanvasPropertiesProps {
   selectedElements: CanvasElement[];
@@ -23,8 +35,8 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
         onUpdateElement(el.id, {
           connector: {
             ...el.connector,
-            ...updates
-          }
+            ...updates,
+          },
         });
       }
     });
@@ -45,7 +57,6 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
   const handleToggleLock = () => {
     selectedElements.forEach(el => onUpdateElement(el.id, { locked: !el.locked }));
   };
-
 
   const handleNudge = (dx: number, dy: number) => {
     selectedElements.forEach(el => onUpdateElement(el.id, { x: el.x + dx, y: el.y + dy }));
@@ -112,7 +123,7 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
         {/* Arrowheads */}
         <div className="flex flex-col gap-2.5">
           <span className="text-xs text-slate-500 dark:text-zinc-400 font-medium flex items-center gap-1.5">
-            <ArrowUp className="w-3.5 h-3.5" /> Arrowheads
+            <ArrowUpToLine className="w-3.5 h-3.5" /> Arrowheads
           </span>
           <div className="flex flex-col gap-2">
             <label className="flex items-center gap-2 cursor-pointer text-xs text-slate-600 dark:text-zinc-300">
@@ -151,7 +162,22 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
     );
   }
 
-  const colors = ['bg-white', 'bg-red-100', 'bg-orange-100', 'bg-amber-100', 'bg-green-100', 'bg-emerald-100', 'bg-cyan-100', 'bg-blue-100', 'bg-indigo-100', 'bg-violet-100', 'bg-purple-100', 'bg-fuchsia-100', 'bg-pink-100', 'bg-rose-100'];
+  const colors = [
+    'bg-white',
+    'bg-red-100',
+    'bg-orange-100',
+    'bg-amber-100',
+    'bg-green-100',
+    'bg-emerald-100',
+    'bg-cyan-100',
+    'bg-blue-100',
+    'bg-indigo-100',
+    'bg-violet-100',
+    'bg-purple-100',
+    'bg-fuchsia-100',
+    'bg-pink-100',
+    'bg-rose-100',
+  ];
 
   return (
     <div className="absolute top-6 right-6 z-40 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-slate-200/60 dark:border-zinc-800/60 rounded-2xl p-4 flex flex-col gap-5 shadow-xl shadow-slate-200/20 dark:shadow-black/20 w-64 animate-in fade-in slide-in-from-right-4 duration-200">
@@ -162,7 +188,9 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
 
       {/* Fill Color */}
       <div className="flex flex-col gap-2.5">
-        <span className="text-xs text-slate-500 dark:text-zinc-400 font-medium flex items-center gap-1.5"><Palette className="w-3.5 h-3.5" /> Fill Color</span>
+        <span className="text-xs text-slate-500 dark:text-zinc-400 font-medium flex items-center gap-1.5">
+          <Palette className="w-3.5 h-3.5" /> Fill Color
+        </span>
         <div className="flex flex-wrap gap-1.5">
           {colors.map(color => (
             <button
@@ -179,23 +207,28 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
 
       {/* Border Options */}
       <div className="flex flex-col gap-2.5">
-        <span className="text-xs text-slate-500 dark:text-zinc-400 font-medium flex items-center gap-1.5"><Square className="w-3.5 h-3.5" /> Border</span>
+        <span className="text-xs text-slate-500 dark:text-zinc-400 font-medium flex items-center gap-1.5">
+          <Square className="w-3.5 h-3.5" /> Border
+        </span>
         <div className="flex items-center gap-1 bg-slate-100 dark:bg-zinc-800/50 p-1 rounded-lg w-fit">
           <button
             onClick={() => handleUpdate({ borderStyle: 'solid' })}
- pr-145
+            className="py-1 text-[10px] font-semibold rounded-md transition-colors text-slate-600 dark:text-slate-300"
+            type="button"
           >
             <Square className="w-4 h-4" />
           </button>
           <button
             onClick={() => handleUpdate({ borderStyle: 'dashed' })}
- pr-145
+            className="py-1 text-[10px] font-semibold rounded-md transition-colors text-slate-600 dark:text-slate-300"
+            type="button"
           >
             <CircleDashed className="w-4 h-4" />
           </button>
           <button
             onClick={() => handleUpdate({ borderStyle: 'none' })}
- pr-145
+            className="py-1 text-[10px] font-semibold rounded-md transition-colors text-slate-600 dark:text-slate-300"
+            type="button"
           >
             None
           </button>
@@ -206,7 +239,9 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
       <div className="flex flex-col gap-2.5">
         <div className="flex items-center justify-between">
           <span className="text-xs text-slate-500 dark:text-zinc-400 font-medium">Opacity</span>
-          <span className="text-xs font-mono text-slate-400 bg-slate-100 dark:bg-zinc-800 px-1.5 rounded">{Math.round((element.opacity ?? 1) * 100)}%</span>
+          <span className="text-xs font-mono text-slate-400 bg-slate-100 dark:bg-zinc-800 px-1.5 rounded">
+            {Math.round((element.opacity ?? 1) * 100)}%
+          </span>
         </div>
         <input
           type="range"
@@ -215,29 +250,36 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
           step="0.1"
           value={element.opacity ?? 1}
           onChange={(e) => handleUpdate({ opacity: parseFloat(e.target.value) })}
- pr-145
+          className="w-full"
         />
       </div>
 
-
       {/* Arrange & Lock */}
       <div className="flex flex-col gap-2">
-        <span className="text-xs text-slate-600 dark:text-zinc-400 font-medium flex items-center gap-1"><Layers className="w-3 h-3" /> Arrange & Lock</span>
+        <span className="text-xs text-slate-600 dark:text-zinc-400 font-medium flex items-center gap-1">
+          <Layers className="w-3 h-3" /> Arrange & Lock
+        </span>
         <div className="flex items-center gap-2">
           <button
- pr-145
+            onClick={handleBringToFront}
+            className="text-slate-600 dark:text-slate-300 text-[10px] font-semibold rounded-md border border-slate-200 dark:border-zinc-700 px-2 py-1"
+            type="button"
           >
-            <ArrowUpToLine className="w-4 h-4" />
+            Front
           </button>
           <button
- pr-145
+            onClick={handleSendToBack}
+            className="text-slate-600 dark:text-slate-300 text-[10px] font-semibold rounded-md border border-slate-200 dark:border-zinc-700 px-2 py-1"
+            type="button"
           >
-            <ArrowDownToLine className="w-4 h-4" />
+            Back
           </button>
           <button
- pr-145
+            onClick={handleToggleLock}
+            className="text-slate-600 dark:text-slate-300 text-[10px] font-semibold rounded-md border border-slate-200 dark:border-zinc-700 px-2 py-1"
+            type="button"
           >
-            {element.locked ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
+            {element.locked ? 'Unlock' : 'Lock'}
           </button>
         </div>
       </div>
@@ -250,18 +292,21 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
             <button
               onClick={() => handleUpdate({ textAlign: 'left' })}
               className={`p-1.5 rounded-md transition-colors ${element.textAlign === 'left' ? 'bg-white dark:bg-zinc-700 shadow-sm text-indigo-600 dark:text-indigo-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+              type="button"
             >
               <AlignLeft className="w-4 h-4" />
             </button>
             <button
               onClick={() => handleUpdate({ textAlign: 'center' })}
               className={`p-1.5 rounded-md transition-colors ${!element.textAlign || element.textAlign === 'center' ? 'bg-white dark:bg-zinc-700 shadow-sm text-indigo-600 dark:text-indigo-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+              type="button"
             >
               <AlignCenter className="w-4 h-4" />
             </button>
             <button
               onClick={() => handleUpdate({ textAlign: 'right' })}
               className={`p-1.5 rounded-md transition-colors ${element.textAlign === 'right' ? 'bg-white dark:bg-zinc-700 shadow-sm text-indigo-600 dark:text-indigo-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+              type="button"
             >
               <AlignRight className="w-4 h-4" />
             </button>
@@ -272,9 +317,35 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
       {/* Nudge Controls */}
       <div className="flex flex-col gap-2.5 pt-3 border-t border-slate-100 dark:border-zinc-800/80">
         <span className="text-xs text-slate-500 dark:text-zinc-400 font-medium">Nudge</span>
-        <div className="grid grid-cols-3 gap-1 w-fit self-center">
-          <div />
- pr-145
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => handleNudge(0, -1)}
+            className="text-[10px] font-semibold rounded-md border border-slate-200 dark:border-zinc-700 px-2 py-1 text-slate-600 dark:text-slate-300"
+            type="button"
+          >
+            Up
+          </button>
+          <button
+            onClick={() => handleNudge(0, 1)}
+            className="text-[10px] font-semibold rounded-md border border-slate-200 dark:border-zinc-700 px-2 py-1 text-slate-600 dark:text-slate-300"
+            type="button"
+          >
+            Down
+          </button>
+          <button
+            onClick={() => handleNudge(-1, 0)}
+            className="text-[10px] font-semibold rounded-md border border-slate-200 dark:border-zinc-700 px-2 py-1 text-slate-600 dark:text-slate-300"
+            type="button"
+          >
+            Left
+          </button>
+          <button
+            onClick={() => handleNudge(1, 0)}
+            className="text-[10px] font-semibold rounded-md border border-slate-200 dark:border-zinc-700 px-2 py-1 text-slate-600 dark:text-slate-300"
+            type="button"
+          >
+            Right
+          </button>
         </div>
       </div>
     </div>
