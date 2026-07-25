@@ -1057,6 +1057,8 @@ if (isSearchOpen && searchQuery) {
           onClick={() => setIsAgentOpen(true)}
           className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-2xl bg-indigo-600 hover:bg-indigo-500 dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/25 dark:shadow-indigo-500/30 hover:shadow-xl hover:shadow-indigo-500/40 dark:hover:shadow-indigo-400/35 flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 group"
           title="Open Space Agent"
+          aria-label="Open Space Agent"
+          aria-expanded={isAgentOpen}
           style={{
             animation: "floatFab 3s ease-in-out infinite",
           }}
@@ -1128,6 +1130,8 @@ if (isSearchOpen && searchQuery) {
                 onClick={() => setIsMinimized(!isMinimized)}
                 className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 dark:text-zinc-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/15 transition-all duration-200 hover:scale-110"
                 title={isMinimized ? "Expand" : "Minimize"}
+                aria-label={isMinimized ? "Expand Space Agent Panel" : "Minimize Space Agent Panel"}
+                aria-expanded={!isMinimized}
               >
                 <Minus className="w-4 h-4" />
               </button>
@@ -1138,6 +1142,7 @@ if (isSearchOpen && searchQuery) {
                 }}
                 className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 dark:text-zinc-500 hover:text-rose-500 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/15 transition-all duration-200 hover:scale-110"
                 title="Close"
+                aria-label="Close Space Agent Panel"
               >
                 <X className="w-4 h-4" />
               </button>

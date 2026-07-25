@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useState, useRef, useCallback } from 'react';
 
 export function useCanvasViewport() {
