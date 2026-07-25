@@ -40,7 +40,7 @@ export const TableBlock: React.FC<TableBlockProps> = ({
     onUpdateProps({ rows: updated });
   };
 
-  const _handleRemoveRow = (rIndex: number) => {
+  const handleRemoveRow = (rIndex: number) => {
     if (currentRows.length <= 1) return;
     const updated = currentRows.filter((_, r) => r !== rIndex);
     onUpdateProps({ rows: updated });
@@ -108,7 +108,7 @@ export const TableBlock: React.FC<TableBlockProps> = ({
             return (
               <tr
                 key={actualRowIdx}
-                className="border-b border-slate-200/60 dark:border-zinc-800/60 hover:bg-slate-50/50 dark:hover:bg-zinc-850/50 transition-colors group/tr"
+                className="border-b border-slate-200/60 dark:border-zinc-800/60 hover:bg-slate-50/50 dark:hover:bg-zinc-850/50 transition-colors group/tr relative"
               >
                 {row.map((cell, cIdx) => (
                   <td key={cIdx} className="p-2 border-r border-slate-200/60 dark:border-zinc-800/60 relative">
@@ -118,6 +118,16 @@ export const TableBlock: React.FC<TableBlockProps> = ({
                       onChange={(e) => handleCellChange(actualRowIdx, cIdx, e.target.value)}
                       className="w-full bg-transparent text-slate-700 dark:text-zinc-300 outline-none focus:ring-1 focus:ring-indigo-400 rounded px-1"
                     />
+                    {cIdx === row.length - 1 && currentRows.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveRow(actualRowIdx)}
+                        className="absolute right-1 top-1.5 opacity-0 group-hover/tr:opacity-100 p-0.5 text-rose-400 hover:text-rose-600 font-bold"
+                        title="Remove row"
+                      >
+                        ×
+                      </button>
+                    )}
                   </td>
                 ))}
               </tr>

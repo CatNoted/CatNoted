@@ -59,8 +59,8 @@ export const Minimap: React.FC<MinimapProps> = ({
   const boundsHeight = boundsMaxY - boundsMinY;
 
   // Map canvas coordinate to minimap scale
-  const scaleX = (x: number) => ((x - boundsMinX) / boundsWidth) * minimapWidth;
-  const scaleY = (y: number) => ((y - boundsMinY) / boundsHeight) * minimapHeight;
+  const scaleX = (x: number) => ((x - boundsMinX) / (boundsWidth || 1)) * minimapWidth;
+  const scaleY = (y: number) => ((y - boundsMinY) / (boundsHeight || 1)) * minimapHeight;
 
   // Current viewport bounds in canvas space
   const visibleLeft = -pan.x / scale;
@@ -71,8 +71,8 @@ export const Minimap: React.FC<MinimapProps> = ({
   // Map viewport to minimap coordinates
   const viewX = Math.max(0, Math.min(minimapWidth, scaleX(visibleLeft)));
   const viewY = Math.max(0, Math.min(minimapHeight, scaleY(visibleTop)));
-  const viewWidth = Math.max(10, Math.min(minimapWidth, (visibleWidth / boundsWidth) * minimapWidth));
-  const viewHeight = Math.max(10, Math.min(minimapHeight, (visibleHeight / boundsHeight) * minimapHeight));
+  const viewWidth = Math.max(10, Math.min(minimapWidth, (visibleWidth / (boundsWidth || 1)) * minimapWidth));
+  const viewHeight = Math.max(10, Math.min(minimapHeight, (visibleHeight / (boundsHeight || 1)) * minimapHeight));
 
   // Calculate bounding box of selected elements
   const selectedElements = selectedIds.map(id => elements[id]).filter(Boolean);
@@ -104,8 +104,8 @@ export const Minimap: React.FC<MinimapProps> = ({
     const y = Math.max(0, Math.min(rect.height, clientY - rect.top));
 
     // Calculate target center in canvas space
-    const targetCenterX = (x / rect.width) * boundsWidth + boundsMinX;
-    const targetCenterY = (y / rect.height) * boundsHeight + boundsMinY;
+    const targetCenterX = (x / (rect.width || 1)) * boundsWidth + boundsMinX;
+    const targetCenterY = (y / (rect.height || 1)) * boundsHeight + boundsMinY;
 
     onPanChange({
       x: viewportWidth / 2 - targetCenterX * scale,
@@ -151,8 +151,8 @@ export const Minimap: React.FC<MinimapProps> = ({
         {elementList.map(el => {
           const mx = scaleX(el.x);
           const my = scaleY(el.y);
-          const mw = ((el.width || 200) / boundsWidth) * minimapWidth;
-          const mh = ((el.height || 100) / boundsHeight) * minimapHeight;
+          const mw = ((el.width || 200) / (boundsWidth || 1)) * minimapWidth;
+          const mh = ((el.height || 100) / (boundsHeight || 1)) * minimapHeight;
 
           return (
             <div
