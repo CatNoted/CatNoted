@@ -72,14 +72,15 @@ const HeadingBlockBase: React.FC<HeadingBlockProps> = ({
 
     if (!onSetType) return;
 
-    // Detect slash at start or after whitespace
+    // Detect slash at the very start of the block
     const cursorPos = e.target.selectionStart ?? val.length;
     const textBeforeCursor = val.slice(0, cursorPos);
 
-    const slashMatch = textBeforeCursor.match(/(^|\s)\/(\S*)$/);
+    // Find the slash at the start of the text
+    const slashMatch = textBeforeCursor.match(/^\/(\S*)$/);
 
     if (slashMatch) {
-      const query = slashMatch[2]; // text after the slash
+      const query = slashMatch[1]; // text after the slash (group 1)
       setSlashQuery(query);
       setMenuPos(getMenuPosition());
       setSlashActive(true);
@@ -92,7 +93,8 @@ const HeadingBlockBase: React.FC<HeadingBlockProps> = ({
   /** When user picks a command, strip the "/" + query from content */
   const handleSetType = useCallback(
     (type: string, properties?: Record<string, unknown>) => {
-      const cleaned = content.replace(/(^|\s)\/\S*$/, (_, prefix) => prefix);
+      // Remove the slash trigger text from content
+      const cleaned = content.replace(/^\/\S*\s*/, '');
       onChange(cleaned);
       if (onSetType) onSetType(type, properties);
       closeMenu();
@@ -101,7 +103,7 @@ const HeadingBlockBase: React.FC<HeadingBlockProps> = ({
   );
 
   const handleAddWidget = useCallback(() => {
-    const cleaned = content.replace(/(^|\s)\/\S*$/, (_, prefix) => prefix);
+    const cleaned = content.replace(/^\/\S*\s*/, '');
     onChange(cleaned);
     if (onAddWidget) onAddWidget();
     closeMenu();
