@@ -515,25 +515,57 @@ export const InfiniteCanvas: React.FC = () => {
     });
   };
 
-  const handleAddElement = (type: CanvasElement['type']) => {
+  const handleAddElement = (type: CanvasElement['type'], shapeType?: 'rectangle' | 'circle') => {
     ydoc.transact(() => {
       const id = `el-${Date.now()}`;
-      const cx = (-pan.x + window.innerWidth / 2) / scale;
-      const cy = (-pan.y + window.innerHeight / 2) / scale;
+
+      // Get container size to accurately find the center
+      const rect = containerRef.current?.getBoundingClientRect();
+      const containerW = rect ? rect.width : window.innerWidth;
+      const containerH = rect ? rect.height : window.innerHeight;
+
+      const cx = (-pan.x + containerW / 2) / scale;
+      const cy = (-pan.y + containerH / 2) / scale;
+
+      // Define default dimensions
+      let defaultW = 200;
+      let defaultH = 100;
+
+      if (type === 'card') {
+        defaultW = 240;
+        defaultH = 120;
+      } else if (type === 'shape') {
+        if (shapeType === 'circle') {
+          defaultW = 160;
+          defaultH = 160;
+        } else {
+          defaultW = 200;
+          defaultH = 120;
+        }
+      } else if (type === 'note') {
+        defaultW = 180;
+        defaultH = 180;
+      } else if (type === 'frame') {
+        defaultW = 480;
+        defaultH = 360;
+      }
+
+      const spawnX = Math.round(cx - defaultW / 2);
+      const spawnY = Math.round(cy - defaultH / 2);
 
       const el: CanvasElement = {
         id,
         type,
-        x: cx,
-        y: cy,
-        width: type === 'frame' ? 400 : 200,
-        height: type === 'frame' ? 300 : 100,
+        x: spawnX,
+        y: spawnY,
+        width: defaultW,
+        height: defaultH,
         zIndex: 20,
         rotation: 0
       };
 
       if (type === 'shape') {
-        el.shapeType = 'rectangle';
+        el.shapeType = shapeType || 'rectangle';
         el.color = 'bg-white';
       }
 
