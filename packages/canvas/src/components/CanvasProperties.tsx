@@ -50,18 +50,24 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
           <button
             onClick={() => handleUpdate({ borderStyle: 'solid' })}
             className={`p-1.5 rounded border ${element.borderStyle === 'solid' ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+            title="Solid border"
+            aria-label="Solid border"
           >
             <Square className="w-4 h-4" />
           </button>
           <button
             onClick={() => handleUpdate({ borderStyle: 'dashed' })}
             className={`p-1.5 rounded border ${element.borderStyle === 'dashed' ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+            title="Dashed border"
+            aria-label="Dashed border"
           >
             <CircleDashed className="w-4 h-4" />
           </button>
           <button
             onClick={() => handleUpdate({ borderStyle: 'none' })}
             className={`p-1.5 rounded border text-xs font-medium ${!element.borderStyle || element.borderStyle === 'none' ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+            title="No border"
+            aria-label="No border"
           >
             None
           </button>
@@ -82,6 +88,7 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
           value={element.opacity ?? 1}
           onChange={(e) => handleUpdate({ opacity: parseFloat(e.target.value) })}
           className="w-full accent-indigo-500"
+          aria-label="Opacity"
         />
       </div>
 
@@ -92,18 +99,24 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
           <button
             onClick={() => handleUpdate({ textAlign: 'left' })}
             className={`p-1 rounded ${element.textAlign === 'left' ? 'bg-white dark:bg-zinc-700 shadow-sm text-indigo-600' : 'text-slate-500 hover:text-slate-700'}`}
+            title="Align text left"
+            aria-label="Align text left"
           >
             <AlignLeft className="w-4 h-4" />
           </button>
           <button
             onClick={() => handleUpdate({ textAlign: 'center' })}
             className={`p-1 rounded ${!element.textAlign || element.textAlign === 'center' ? 'bg-white dark:bg-zinc-700 shadow-sm text-indigo-600' : 'text-slate-500 hover:text-slate-700'}`}
+            title="Align text center"
+            aria-label="Align text center"
           >
             <AlignCenter className="w-4 h-4" />
           </button>
           <button
             onClick={() => handleUpdate({ textAlign: 'right' })}
             className={`p-1 rounded ${element.textAlign === 'right' ? 'bg-white dark:bg-zinc-700 shadow-sm text-indigo-600' : 'text-slate-500 hover:text-slate-700'}`}
+            title="Align text right"
+            aria-label="Align text right"
           >
             <AlignRight className="w-4 h-4" />
           </button>
@@ -115,11 +128,11 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
         <span className="text-xs text-slate-600 dark:text-zinc-400 font-medium">Nudge</span>
         <div className="grid grid-cols-3 gap-1 w-fit self-center">
           <div />
-          <button onClick={() => handleNudge(0, -10)} className="p-1 bg-slate-100 dark:bg-zinc-800 rounded hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-500" type="button"><ArrowUp className="w-3 h-3" /></button>
+          <button onClick={() => handleNudge(0, -10)} className="p-1 bg-slate-100 dark:bg-zinc-800 rounded hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-500" type="button" title="Nudge up" aria-label="Nudge up"><ArrowUp className="w-3 h-3" /></button>
           <div />
-          <button onClick={() => handleNudge(-10, 0)} className="p-1 bg-slate-100 dark:bg-zinc-800 rounded hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-500" type="button"><ArrowLeft className="w-3 h-3" /></button>
-          <button onClick={() => handleNudge(0, 10)} className="p-1 bg-slate-100 dark:bg-zinc-800 rounded hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-500" type="button"><ArrowDown className="w-3 h-3" /></button>
-          <button onClick={() => handleNudge(10, 0)} className="p-1 bg-slate-100 dark:bg-zinc-800 rounded hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-500" type="button"><ArrowRight className="w-3 h-3" /></button>
+          <button onClick={() => handleNudge(-10, 0)} className="p-1 bg-slate-100 dark:bg-zinc-800 rounded hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-500" type="button" title="Nudge left" aria-label="Nudge left"><ArrowLeft className="w-3 h-3" /></button>
+          <button onClick={() => handleNudge(0, 10)} className="p-1 bg-slate-100 dark:bg-zinc-800 rounded hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-500" type="button" title="Nudge down" aria-label="Nudge down"><ArrowDown className="w-3 h-3" /></button>
+          <button onClick={() => handleNudge(10, 0)} className="p-1 bg-slate-100 dark:bg-zinc-800 rounded hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-500" type="button" title="Nudge right" aria-label="Nudge right"><ArrowRight className="w-3 h-3" /></button>
         </div>
       </div>
     </div>
