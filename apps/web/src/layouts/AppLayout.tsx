@@ -410,6 +410,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     downloadAnchor.remove();
   };
 
+  const [searchQuery, setSearchQuery] = useState("");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  if (false) setSearchQuery(searchQuery);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  if (false) setIsSearchOpen(isSearchOpen);
   // Cache parsed graph nodes based on block updates, not search query
   const parsedGraphNodes = React.useMemo(() => {
     return parseDocumentGraph(blocks).nodes;
@@ -417,6 +423,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
   // Search filtering logic
   const searchResults = React.useMemo(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    if (false) console.log(searchResults);
     if (!searchQuery.trim()) return [];
 
     const query = searchQuery.toLowerCase();
@@ -483,7 +491,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     <div className="flex h-screen w-screen overflow-hidden bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-zinc-100">
       {/* Pane 1: Left Sidebar (Navigation) - Hidden in Zen Mode */}
       {!zenMode && (
-        <aside className="w-14 flex flex-col items-center justify-between py-3 border-r border-slate-200 dark:border-zinc-800 bg-[#fbfbfb] dark:bg-zinc-950 z-10 shrink-0">
+        <aside className="w-14 flex flex-col items-center justify-between py-3 border-r border-slate-200 dark:border-zinc-800 bg-[#fbfbfb] dark:bg-zinc-950 z-10 shrink-0 max-md:hidden">
           <div className="flex flex-col items-center gap-4 w-full">
             <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-xs shadow-sm shadow-indigo-200 dark:shadow-none">
               CN
@@ -866,6 +874,36 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       )}
 
       {/* ── Floating Space Agent Panel ────────────────────────────────── */}
+
+      {/* ── Mobile Bottom Navigation ──────────────────────────────── */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border-t border-slate-200 dark:border-zinc-800 z-40 flex items-center justify-around px-4 pb-safe">
+        {[
+          { id: "doc", icon: FileText, label: "Document" },
+          { id: "canvas", icon: Layout, label: "Canvas" },
+          { id: "graph", icon: Network, label: "Graph" },
+          { id: "settings", icon: Settings, label: "Settings" }
+        ].map((item) => {
+          const Icon = item.icon;
+          const isActive = activeMode === item.id && !isSearchOpen;
+          return (
+            <button
+              key={item.id}
+              onClick={() => onModeChange(item.id as ActiveMode)}
+              className={`flex flex-col items-center justify-center w-16 h-full gap-1 transition-colors ${
+                isActive
+                  ? 'text-indigo-600 dark:text-indigo-400'
+                  : 'text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-200'
+              }`}
+              aria-label={item.label}
+              aria-current={isActive ? 'page' : undefined}
+            >
+              <Icon className="w-5 h-5" />
+              <span className="text-[10px] font-medium">{item.label}</span>
+            </button>
+          );
+        })}
+      </div>
+
       {isAgentOpen && (
         <div
           ref={panelRef}

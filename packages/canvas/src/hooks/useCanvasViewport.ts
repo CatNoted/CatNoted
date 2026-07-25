@@ -1,10 +1,48 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback } from 'react';
 
 export function useCanvasViewport() {
   const [pan, setPan] = useState({ x: 100, y: 100 });
   const [scale, setScale] = useState(1);
   const isDragging = useRef(false);
   const startDrag = useRef({ x: 0, y: 0 });
+
+  const initialPinchDistance = useRef<number | null>(null);
+  const initialScale = useRef<number>(1);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    // Prevent dragging from card clicks
+    if (e.target !== e.currentTarget) return;
+
+    if (e.touches.length === 1) {
+      isDragging.current = true;
+      startDrag.current = { x: e.touches[0].clientX - pan.x, y: e.touches[0].clientY - pan.y };
+    } else if (e.touches.length === 2) {
+      isDragging.current = false;
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      initialPinchDistance.current = Math.sqrt(dx * dx + dy * dy);
+      initialScale.current = scale;
+    }
+  }, [pan, scale]);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (isDragging.current && e.touches.length === 1) {
+      setPan({ x: e.touches[0].clientX - startDrag.current.x, y: e.touches[0].clientY - startDrag.current.y });
+    } else if (e.touches.length === 2 && initialPinchDistance.current !== null) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      const newScale = Math.max(0.1, Math.min(5.0, initialScale.current * (distance / initialPinchDistance.current)));
+
+      setScale(newScale);
+    }
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    isDragging.current = false;
+    initialPinchDistance.current = null;
+  }, []);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     // Prevent dragging from card clicks (we only want workspace background drag)
@@ -75,6 +113,9 @@ export function useCanvasViewport() {
     handleMouseMove,
     handleMouseUp,
     handleWheel,
+    handleTouchStart,
+    handleTouchMove,
+    handleTouchEnd,
     transformStyle: {
       transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale})`,
       transformOrigin: '0 0'

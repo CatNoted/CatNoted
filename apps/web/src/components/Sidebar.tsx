@@ -30,7 +30,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange }) => {
         <div className="px-2 mb-4">
           <button
             onClick={() => setIsRecentOpen(!isRecentOpen)}
-            className="flex items-center w-full px-2 py-1.5 text-xs font-semibold text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200 hover:bg-slate-200/50 dark:hover:bg-zinc-800/50 rounded-lg transition-colors"
+            aria-expanded={isRecentOpen}
+            className="flex items-center w-full px-2 py-1.5 text-xs font-semibold text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200 hover:bg-slate-200/50 dark:hover:bg-zinc-800/50 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
           >
             {isRecentOpen ? <ChevronDown className="w-3.5 h-3.5 mr-1" /> : <ChevronRight className="w-3.5 h-3.5 mr-1" />}
             <Clock className="w-3.5 h-3.5 mr-1.5" />
@@ -59,7 +60,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange }) => {
         <div className="px-2">
           <button
             onClick={() => setIsTreeOpen(!isTreeOpen)}
-            className="flex items-center w-full px-2 py-1.5 text-xs font-semibold text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200 hover:bg-slate-200/50 dark:hover:bg-zinc-800/50 rounded-lg transition-colors"
+            aria-expanded={isTreeOpen}
+            className="flex items-center w-full px-2 py-1.5 text-xs font-semibold text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200 hover:bg-slate-200/50 dark:hover:bg-zinc-800/50 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
           >
             {isTreeOpen ? <ChevronDown className="w-3.5 h-3.5 mr-1" /> : <ChevronRight className="w-3.5 h-3.5 mr-1" />}
             {isTreeOpen ? <FolderOpen className="w-3.5 h-3.5 mr-1.5" /> : <FolderClosed className="w-3.5 h-3.5 mr-1.5" />}

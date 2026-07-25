@@ -49,6 +49,8 @@ export const InfiniteCanvas: React.FC = () => {
     containerRef
   } = useCanvasViewport();
 
+
+
   // Attach native wheel event for zooming/panning
   useEffect(() => {
     const el = containerRef.current;
@@ -58,6 +60,7 @@ export const InfiniteCanvas: React.FC = () => {
         el.removeEventListener('wheel', handleWheel);
       };
     }
+    return undefined;
   }, [handleWheel]);
 
   // Sync elements map from Yjs
