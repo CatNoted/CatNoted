@@ -5,7 +5,7 @@ import { IndexeddbPersistence } from 'y-indexeddb';
 
 export const ydoc = new Y.Doc();
 export const ypages = ydoc.getMap<PageMeta>('pages');
-const yblocks = ydoc.getArray<BlockNode>('blocks');
+export const yblocks = ydoc.getArray<BlockNode>('blocks');
 const provider = typeof window !== 'undefined' && typeof indexedDB !== 'undefined' 
   ? new IndexeddbPersistence('catnoted-doc', ydoc) 
   : null;
