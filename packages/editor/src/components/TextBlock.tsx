@@ -20,7 +20,7 @@ interface TextBlockProps {
 
 const TextBlockBase: React.FC<TextBlockProps> = ({
   content,
-  type,
+  type: _type,
   onChange,
   onEnter,
   onBackspace,

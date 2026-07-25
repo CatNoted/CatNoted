@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 
-export function useCanvasViewport(containerRef?: React.RefObject<HTMLElement | null>) {
+export function useCanvasViewport() {
   const [pan, setPan] = useState({ x: 100, y: 100 });
   const [scale, setScale] = useState(1);
   const isDragging = useRef(false);
@@ -87,13 +87,6 @@ export function useCanvasViewport(containerRef?: React.RefObject<HTMLElement | n
     }
   }, [scale]);
 
-  // Hook to attach native wheel listener to ref with passive: false
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  // Note: users of this hook will now need to attach containerRef to their container
-  // instead of passing handleWheel directly. But for backward compatibility with tests
-  // we'll keep handleWheel in the return object.
-
   return {
     containerRef,
     pan,
@@ -104,7 +97,6 @@ export function useCanvasViewport(containerRef?: React.RefObject<HTMLElement | n
     handleMouseMove,
     handleMouseUp,
     handleWheel,
-    containerRef,
     isSpacePan,
     transformStyle: {
       transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale})`,
@@ -112,3 +104,4 @@ export function useCanvasViewport(containerRef?: React.RefObject<HTMLElement | n
     }
   };
 }
+

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { AppLayout, ActiveMode } from './layouts/AppLayout.js';
 import { DocumentEditor, useDocumentStore } from '@catnoted/editor';
 import { InfiniteCanvas } from '@catnoted/canvas';
-import { GraphView } from '@catnoted/graph';
+import { GraphView, parseDocumentGraph } from '@catnoted/graph';
 import { ydoc } from '@catnoted/editor';
 import * as Y from 'yjs';
 import {
@@ -15,6 +15,7 @@ import {
 // E2EE sync utilities
 import { encryptPayload, decryptPayload } from "./utils/crypto.js";
 import { mockSyncChannel } from "./utils/supabase.js";
+import { usePersistence } from "./utils/sync/persistence.js";
 
 // Modals & Panels
 import { AuthModal } from "./components/auth/AuthModal.js";
@@ -23,8 +24,7 @@ import { CommandPalette } from "./components/CommandPalette.js";
 
 const App: React.FC = () => {
   const [activeMode, setActiveMode] = useState<ActiveMode>("doc");
-  const [currentWorkspace, setCurrentWorkspace] =
-    useState<string>("Personal Space");
+  const [_currentWorkspace] = useState<string>("Personal Space");
   const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
   const [isZenMode, setIsZenMode] = useState<boolean>(false);
   const [activePage, setActivePage] = useState<string>('root-doc-node');
@@ -39,7 +39,7 @@ const App: React.FC = () => {
   const activeHeading = activeBlocks.find(b => b.type === 'heading' && b.properties?.level === 1);
   const docTitle = activeHeading?.content || 'Untitled Document';
 
-  const activePageNode = graphData.nodes.find(n => n.id === activePage);
+  const activePageNode = graphData.nodes.find((n: any) => n.id === activePage);
   const pageTitle = activePage === 'root-doc-node'
     ? docTitle
     : (activePageNode
@@ -111,8 +111,8 @@ const App: React.FC = () => {
 
   const handleCreatePage = () => {
     const existingTitles = graphData.nodes
-      .filter(n => n.type === 'page')
-      .map(n => {
+      .filter((n: any) => n.type === 'page')
+      .map((n: any) => {
         return n.label.startsWith('📁 ') || n.label.startsWith('📄 ')
           ? n.label.slice(2)
           : n.label;
@@ -356,7 +356,7 @@ const App: React.FC = () => {
           <button
             type="button"
             onClick={() => {
-              const link = `${window.location.origin}/space/${session?.user?.id || 'guest'}`;
+              const link = `${window.location.origin}/space/${userEmail || 'guest'}`;
               navigator.clipboard.writeText(link)
                 .then(() => {
                   alert(`Share Link copied to clipboard:\n${link}\n\n(Anyone with this link and the workspace passphrase can access the E2EE sync room)`);

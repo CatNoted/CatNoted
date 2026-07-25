@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useDocumentStore } from '../store.js';
-import { BlockRow } from './BlockRow.js';
 import { HeadingBlock } from './HeadingBlock.js';
 import { TextBlock } from './TextBlock.js';
 import { WidgetBlockPlaceholder } from './WidgetBlockPlaceholder.js';
@@ -14,7 +13,7 @@ import {
   Heading3, 
   AlignLeft, 
   Cpu, 
-  MoreVertical, GripVertical
+  GripVertical
 } from 'lucide-react';
 
 interface DocumentEditorProps {
@@ -64,17 +63,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     setDragOverBlockId(null);
     if (draggedBlockId && draggedBlockId !== id) {
       // Reorder blocks by moving draggedBlockId before/after id
-      // Since store.ts doesn't have an explicit reorderBlock function,
-      // we can simulate it by getting the current block, deleting it, and inserting it at the new index.
       const fromIndex = blocks.findIndex(b => b.id === draggedBlockId);
       const toIndex = blocks.findIndex(b => b.id === id);
 
       if (fromIndex !== -1 && toIndex !== -1) {
-        const blockToMove = blocks[fromIndex];
         deleteBlock(draggedBlockId);
-
-        // Use addBlock or custom logic. addBlock creates a new ID.
-        // We really need a moveBlock function in store.ts.
         moveBlock(fromIndex, toIndex);
       }
     }

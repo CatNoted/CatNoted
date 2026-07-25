@@ -10,10 +10,15 @@
     "test": "vitest run"
   },
   "devDependencies": {
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/react-hooks": "^8.0.1",
     "happy-dom": "^20.11.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "turbo": "^2.0.4",
     "typescript": "^5.4.5",
-    "vitest": "^2.1.9"
+    "vitest": "^2.1.9",
+    "y-indexeddb": "^9.0.12"
   },
   "packageManager": "pnpm@9.1.0"
 }

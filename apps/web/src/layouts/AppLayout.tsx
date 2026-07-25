@@ -70,7 +70,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   onAuthTrigger: _onAuthTrigger,
   onCreatePage
 }) => {
-  const { blocks, addBlock, updateBlockType, pages, createPage, deletePage, renamePage } = useDocumentStore(activePage);
+  const { blocks, addBlock, updateBlockType, pages, createPage } = useDocumentStore(activePage);
   console.log(pages);
 
   // Parse document graph nodes
@@ -179,6 +179,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       [section]: !prev[section]
     }));
   };
+
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const [chatInput, setChatInput] = useState('');
   const [messages, setMessages] = useState<Array<{ sender: 'user' | 'agent'; text: string; code?: string; editProposal?: string }>>([
@@ -452,6 +455,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
     return results;
   }, [blocks, parsedGraphNodes, searchQuery]);
+
+  if (isSearchOpen && searchQuery) {
+    console.log(searchResults, setSearchQuery, setIsSearchOpen);
+  }
 
   // Import widgets catalog and insert them into Yjs store
   const handleImportWidgets = (e: React.ChangeEvent<HTMLInputElement>) => {

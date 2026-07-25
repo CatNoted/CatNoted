@@ -29,8 +29,6 @@ export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const nodesRef = useRef<PhysNode[]>([]);
   const dragNodeRef = useRef<PhysNode | null>(null);
-  const isPanning = useRef(false);
-  const panStart = useRef({ x: 0, y: 0 });
   const dragStartCoords = useRef({ x: 0, y: 0 });
   const hasDraggedRef = useRef(false);
 
@@ -40,6 +38,15 @@ export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
   const panRef = useRef({ x: 300, y: 250 });
   const scaleRef = useRef(1);
   const hoverNodeRef = useRef<PhysNode | null>(null);
+
+  const setPan = (val: { x: number; y: number } | ((prev: { x: number; y: number }) => { x: number; y: number })) => {
+    panRef.current = typeof val === 'function' ? val(panRef.current) : val;
+  };
+
+  const setScale = (val: number | ((prev: number) => number)) => {
+    const nextScale = typeof val === 'function' ? val(scaleRef.current) : val;
+    scaleRef.current = Math.max(0.1, Math.min(4, nextScale));
+  };
 
   // Keep track of all known positions even if filtered out
   const knownPositionsRef = useRef<Record<string, {x: number, y: number}>>({});
@@ -100,8 +107,8 @@ export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
 
       return {
         ...n,
-        x: (Math.random() - 0.5) * 150,
-        y: (Math.random() - 0.5) * 150,
+        x: startX,
+        y: startY,
         vx: 0,
         vy: 0,
         radius: n.type === 'page' ? 8 : 6
@@ -242,6 +249,8 @@ export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
         }
       });
 
+      let totalMovement = 0;
+
       // 3. Physics: Center pulling gravity and updating positions
       pNodes.forEach(node => {
         if (node === dragNodeRef.current) return;
@@ -271,8 +280,8 @@ export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
 
       ctx.save();
       // Apply pan & zoom
-      ctx.translate(pan.x, pan.y);
-      ctx.scale(scale, scale);
+      ctx.translate(panRef.current.x, panRef.current.y);
+      ctx.scale(scaleRef.current, scaleRef.current);
 
       // Draw Edges
       edges.forEach(edge => {
@@ -287,6 +296,7 @@ export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
           ctx.moveTo(start.x, start.y);
           ctx.lineTo(end.x, end.y);
           
+          const hoverNode = hoverNodeRef.current;
           const isRelatedToHover = hoverNode && (start.id === hoverNode.id || end.id === hoverNode.id);
           // Dark mode checks dynamically per frame
           const isDark = document.documentElement.classList.contains('dark');
@@ -307,6 +317,7 @@ export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
 
       // Draw Nodes
       pNodes.forEach(node => {
+        const hoverNode = hoverNodeRef.current;
         const isHovered = hoverNode && hoverNode.id === node.id;
         const isRoot = node.id === 'root-doc-node';
         const isConnectedToHover = hoverNode && edges.some(e => {
@@ -346,14 +357,14 @@ export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
 
         // Draw Labels
         // Only show labels for hovered, connected, or large nodes, or root
-        if (active || isRoot || scale > 1.2) {
+        if (active || isRoot || scaleRef.current > 1.2) {
           ctx.fillStyle = active
             ? (isDark ? '#e0e7ff' : '#312e81')
             : (isDark ? '#94a3b8' : '#475569');
 
-          ctx.font = `${active ? 'bold' : 'normal'} ${10 / Math.max(0.5, scale)}px sans-serif`;
+          ctx.font = `${active ? 'bold' : 'normal'} ${10 / Math.max(0.5, scaleRef.current)}px sans-serif`;
           ctx.textAlign = 'center';
-          ctx.fillText(node.label, node.x, node.y - r - (6 / scale));
+          ctx.fillText(node.label, node.x, node.y - r - (6 / scaleRef.current));
         }
       });
 
@@ -386,7 +397,7 @@ export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
     return nodesRef.current.find(node => {
       const dx = node.x - coords.x;
       const dy = node.y - coords.y;
-      return Math.sqrt(dx * dx + dy * dy) < node.radius + 15 / scale;
+      return Math.sqrt(dx * dx + dy * dy) < node.radius + 15 / scaleRef.current;
     }) || null;
   };
 

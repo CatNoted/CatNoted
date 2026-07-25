@@ -1,5 +1,4 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
 import { CanvasElement } from '@catnoted/shared';
 
 interface MinimapProps {
@@ -20,7 +19,7 @@ export const Minimap: React.FC<MinimapProps> = ({
   viewportHeight = 500
 }) => {
   const minimapRef = useRef<HTMLDivElement>(null);
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed] = useState(false);
   const isDraggingRef = useRef(false);
 
   // Constants for minimap container dimensions
