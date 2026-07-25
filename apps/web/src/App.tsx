@@ -22,12 +22,66 @@ import { AuthModal } from "./components/auth/AuthModal.js";
 import { SettingsModal } from "./components/settings/SettingsModal.js";
 import { CommandPalette } from "./components/CommandPalette.js";
 
+const parseUrl = () => {
+  if (typeof window === 'undefined') return { mode: 'doc' as const, page: 'root-doc-node' };
+  const path = window.location.pathname;
+  if (path === '/c') {
+    return { mode: 'canvas' as const, page: 'root-doc-node' };
+  }
+  if (path === '/g') {
+    return { mode: 'graph' as const, page: 'root-doc-node' };
+  }
+  if (path.startsWith('/p/')) {
+    const pageId = path.slice(3);
+    return { mode: 'doc' as const, page: pageId || 'root-doc-node' };
+  }
+  return { mode: 'doc' as const, page: 'root-doc-node' };
+};
+
+const getUrlForState = (mode: ActiveMode, page: string) => {
+  if (mode === 'canvas') {
+    return '/c';
+  }
+  if (mode === 'graph') {
+    return '/g';
+  }
+  if (mode === 'doc') {
+    return `/p/${page}`;
+  }
+  return window.location.pathname;
+};
+
 const App: React.FC = () => {
-  const [activeMode, setActiveMode] = useState<ActiveMode>("doc");
+  const initialUrlState = parseUrl();
+  const [activeMode, setActiveMode] = useState<ActiveMode>(initialUrlState.mode);
   const [_currentWorkspace] = useState<string>("Personal Space");
   const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
   const [isZenMode, setIsZenMode] = useState<boolean>(false);
-  const [activePage, setActivePage] = useState<string>('root-doc-node');
+  const [activePage, setActivePage] = useState<string>(initialUrlState.page);
+
+  // Synchronize state changes to URL
+  useEffect(() => {
+    const currentUrl = getUrlForState(activeMode, activePage);
+    if (window.location.pathname !== currentUrl) {
+      if (window.location.pathname === '/') {
+        window.history.replaceState({ mode: activeMode, page: activePage }, '', currentUrl);
+      } else {
+        window.history.pushState({ mode: activeMode, page: activePage }, '', currentUrl);
+      }
+    }
+  }, [activeMode, activePage]);
+
+  // Handle browser back/forward buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      const parsed = parseUrl();
+      setActiveMode(parsed.mode);
+      setActivePage(parsed.page);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   const { blocks: rootBlocks, pages, addBlock: addRootBlock, updateBlockContent: updateRootBlockContent } = useDocumentStore('root-doc-node');
   const { blocks: activeBlocks, updateBlockContent: updateActiveBlockContent } = useDocumentStore(activePage);

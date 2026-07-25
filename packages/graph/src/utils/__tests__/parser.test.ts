@@ -44,7 +44,7 @@ describe('Whitebox Test: parseDocumentGraph (Graph Parsing Logic)', () => {
     expect(result.nodes).toHaveLength(2);
 
     const rootNode = result.nodes.find(n => n.id === 'root-doc-node');
-    expect(rootNode?.label).toBe('✨ Untitled Note'); // n._rawName is still from parser, but icon is getDisplayIcon('lucide:Sparkles')
+    expect(rootNode?.label).toBe('✨ Custom Root Title'); // n._rawName is derived from pages metadata now!
 
     const pageNode = result.nodes.find(n => n.id === 'page-system-design');
     expect(pageNode?.label).toBe('❤️ System Design Spec (1)');
