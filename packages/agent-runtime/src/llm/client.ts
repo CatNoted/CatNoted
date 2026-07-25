@@ -173,7 +173,7 @@ export async function requestLlmWidget(prompt: string, config?: LLMConfig): Prom
     setTimeout(() => {
       resolve({
         code: selectedCode,
-        text: `Space Agent: I have processed your request for "${widgetName}".`
+        text: `Successfully compiled a secure HTML/JS widget for "${widgetName}".`
       });
     }, 800);
   });
