@@ -7,25 +7,33 @@ interface ResizeHandlesProps {
 }
 
 export const ResizeHandles: React.FC<ResizeHandlesProps> = ({ width, height, onResizeStart }) => {
+  // Using 6px handles (-3px offset) for slightly more refined vector feel
+  const handleSize = 6;
+  const offset = -3;
+
   const handles = [
-    { id: 'tl', cursor: 'nwse-resize', left: -4, top: -4 },
-    { id: 'tr', cursor: 'nesw-resize', left: width - 4, top: -4 },
-    { id: 'bl', cursor: 'nesw-resize', left: -4, top: height - 4 },
-    { id: 'br', cursor: 'nwse-resize', left: width - 4, top: height - 4 },
-    { id: 't', cursor: 'ns-resize', left: width / 2 - 4, top: -4 },
-    { id: 'b', cursor: 'ns-resize', left: width / 2 - 4, top: height - 4 },
-    { id: 'l', cursor: 'ew-resize', left: -4, top: height / 2 - 4 },
-    { id: 'r', cursor: 'ew-resize', left: width - 4, top: height / 2 - 4 },
+    { id: 'tl', cursor: 'nwse-resize', left: offset, top: offset },
+    { id: 'tr', cursor: 'nesw-resize', left: width + offset, top: offset },
+    { id: 'bl', cursor: 'nesw-resize', left: offset, top: height + offset },
+    { id: 'br', cursor: 'nwse-resize', left: width + offset, top: height + offset },
+    { id: 't', cursor: 'ns-resize', left: width / 2 + offset, top: offset },
+    { id: 'b', cursor: 'ns-resize', left: width / 2 + offset, top: height + offset },
+    { id: 'l', cursor: 'ew-resize', left: offset, top: height / 2 + offset },
+    { id: 'r', cursor: 'ew-resize', left: width + offset, top: height / 2 + offset },
   ];
 
   return (
     <>
-      <div className="absolute inset-0 border-2 border-amber-500 pointer-events-none z-30" />
+      {/* Visual outline connecting handles */}
+      <div className="absolute inset-0 border border-indigo-500 pointer-events-none z-30" />
+
       {handles.map((h) => (
         <div
           key={h.id}
-          className="absolute w-2 h-2 bg-white border border-amber-500 z-40"
+          className="absolute bg-white dark:bg-zinc-900 border border-indigo-500 z-40 hover:bg-indigo-50 dark:hover:bg-indigo-900 shadow-sm"
           style={{
+            width: `${handleSize}px`,
+            height: `${handleSize}px`,
             left: h.left,
             top: h.top,
             cursor: h.cursor,

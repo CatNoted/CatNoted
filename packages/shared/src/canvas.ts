@@ -26,4 +26,5 @@ export interface CanvasElement {
   shapeType?: 'rectangle' | 'circle' | 'triangle' | 'star';
   text?: string;
   connector?: ConnectorInfo;
+  locked?: boolean;
 }

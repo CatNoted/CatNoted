@@ -70,7 +70,7 @@ describe('requestLlmWidget', () => {
 
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(console.error).toHaveBeenCalled();
-    expect(result.text).toContain('Space Agent (Mock Mode)');
+    expect(result.text).toContain('Space Agent: I have processed your request for');
     expect(result.code).toContain('id="clock-face"');
   });
 
@@ -104,7 +104,7 @@ describe('requestLlmWidget', () => {
     const result = await promise;
 
     expect(result.code).toContain('id="clock-face"');
-    expect(result.text).toBe('Space Agent (Mock Mode): Successfully compiled a secure HTML/JS widget for "Analog Clock".');
+    expect(result.text).toBe('Space Agent: I have processed your request for "Analog Clock".');
   });
 
   it('should return calculator template when prompt contains calc related keywords', async () => {
@@ -113,7 +113,7 @@ describe('requestLlmWidget', () => {
     const result = await promise;
 
     expect(result.code).toContain('id="calc-display"');
-    expect(result.text).toBe('Space Agent (Mock Mode): Successfully compiled a secure HTML/JS widget for "Mini Calculator".');
+    expect(result.text).toBe('Space Agent: I have processed your request for "Mini Calculator".');
   });
 
   it('should return todo template as default when prompt has no specific keywords', async () => {
@@ -122,6 +122,6 @@ describe('requestLlmWidget', () => {
     const result = await promise;
 
     expect(result.code).toContain('id="todo-in"');
-    expect(result.text).toBe('Space Agent (Mock Mode): Successfully compiled a secure HTML/JS widget for "Quick Tasks Todo".');
+    expect(result.text).toBe('Space Agent: I have processed your request for "Quick Tasks Todo".');
   });
 });

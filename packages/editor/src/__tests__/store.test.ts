@@ -1,10 +1,12 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { yblocks, ydoc } from '../store.js';
+import { ydoc } from '../store.js';
 import { BlockNode } from '@catnoted/shared';
 
 describe('Whitebox Test: Editor Block Store & Yjs CRDT Invariants', () => {
+  let yblocks: any;
   beforeEach(() => {
     // Clear yblocks array for isolation
+    yblocks = ydoc.getArray<BlockNode>('blocks_test-page');
     ydoc.transact(() => {
       yblocks.delete(0, yblocks.length);
     });

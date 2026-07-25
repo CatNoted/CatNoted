@@ -1,11 +1,11 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { 
-  FileText, 
-  Layout, 
-  Network, 
-  Settings, 
-  Moon, 
-  Sun, 
+import React, { useState, useRef, useCallback, useEffect } from "react";
+import {
+  FileText,
+  Layout,
+  Network,
+  Settings,
+  Moon,
+  Sun,
   Send,
   Bot,
   Sparkles,
@@ -24,10 +24,11 @@ import {
   Clock,
   Tag,
   Cpu,
+  Trash2,
   Menu
 } from 'lucide-react';
 
-export type ActiveMode = 'doc' | 'canvas' | 'graph' | 'settings';
+export type ActiveMode = "doc" | "canvas" | "graph" | "settings";
 
 interface AppLayoutProps {
   activeMode: ActiveMode;
@@ -35,6 +36,8 @@ interface AppLayoutProps {
   isDarkMode: boolean;
   onToggleTheme: () => void;
   zenMode?: boolean;
+  currentWorkspace?: string;
+  onWorkspaceChange?: (workspace: string) => void;
   children: React.ReactNode;
   activePage?: string;
   onPageSelect?: (pageId: string) => void;
@@ -44,7 +47,7 @@ interface AppLayoutProps {
   onCreatePage?: () => void;
 }
 
-import { requestLlmWidget } from '@catnoted/agent-runtime';
+import { requestLlmWidget, SandboxFrame } from '@catnoted/agent-runtime';
 import { useDocumentStore } from '@catnoted/editor';
 import { parseDocumentGraph } from '@catnoted/graph';
 
@@ -68,7 +71,16 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   onAuthTrigger: _onAuthTrigger,
   onCreatePage
 }) => {
-  const { blocks, addBlock, updateBlockType } = useDocumentStore();
+  const { blocks, addBlock, updateBlockType, pages, createPage, deletePage } = useDocumentStore(activePage);
+  const favoritePages = (pages || []).filter((p: any) => p?.isFavorite);
+
+  const handleDeletePage = (pageId: string, pageTitle: string) => {
+    if (pageId === 'root-doc-node') return;
+    if (confirm(`Hapus halaman "${pageTitle}"? Tindakan ini tidak dapat dibatalkan.`)) {
+      deletePage(pageId);
+      if (onPageSelect) onPageSelect('root-doc-node');
+    }
+  };
 
   // Parse document graph nodes
   const graphData = React.useMemo(() => {
@@ -165,6 +177,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
   // Section expand/collapse state
   const [sectionsExpanded, setSectionsExpanded] = useState<Record<string, boolean>>({
+    favorites: true,
     pages: true,
     tags: true,
     widgets: false
@@ -177,8 +190,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     }));
   };
 
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
   const [chatInput, setChatInput] = useState('');
-  const [messages, setMessages] = useState<Array<{ sender: 'user' | 'agent'; text: string }>>([
+  const [messages, setMessages] = useState<Array<{ sender: 'user' | 'agent'; text: string; code?: string; editProposal?: string }>>([
     { sender: 'agent', text: "Hello! I am your Space Agent. What would you like to build or note down today?" }
   ]);
 
@@ -258,7 +274,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   const [isAgentOpen, setIsAgentOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [panelPos, setPanelPos] = useState({ x: -1, y: -1 }); // -1 = not yet initialized
-  const [panelSize, setPanelSize] = useState({ w: PANEL_DEFAULT_WIDTH, h: PANEL_DEFAULT_HEIGHT });
+  const [panelSize, setPanelSize] = useState({
+    w: PANEL_DEFAULT_WIDTH,
+    h: PANEL_DEFAULT_HEIGHT,
+  });
 
   // Drag state refs (avoid re-renders during drag)
   const isDragging = useRef(false);
@@ -281,89 +300,123 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   }, [isAgentOpen, panelPos.x]);
 
   // ── Drag handlers ──────────────────────────────────────────────────
-  const handleDragStart = useCallback((e: React.MouseEvent) => {
-    // Only drag from the header grip area
-    if ((e.target as HTMLElement).closest('button')) return;
-    e.preventDefault();
-    isDragging.current = true;
-    dragOffset.current = {
-      x: e.clientX - panelPos.x,
-      y: e.clientY - panelPos.y,
-    };
+  const handleDragStart = useCallback(
+    (e: React.MouseEvent) => {
+      // Only drag from the header grip area
+      if ((e.target as HTMLElement).closest("button")) return;
+      e.preventDefault();
+      isDragging.current = true;
+      dragOffset.current = {
+        x: e.clientX - panelPos.x,
+        y: e.clientY - panelPos.y,
+      };
 
-    const handleMove = (ev: MouseEvent) => {
-      if (!isDragging.current) return;
-      const newX = Math.max(0, Math.min(window.innerWidth - panelSize.w, ev.clientX - dragOffset.current.x));
-      const newY = Math.max(0, Math.min(window.innerHeight - 48, ev.clientY - dragOffset.current.y));
-      setPanelPos({ x: newX, y: newY });
-    };
+      const handleMove = (ev: MouseEvent) => {
+        if (!isDragging.current) return;
+        const newX = Math.max(
+          0,
+          Math.min(
+            window.innerWidth - panelSize.w,
+            ev.clientX - dragOffset.current.x,
+          ),
+        );
+        const newY = Math.max(
+          0,
+          Math.min(window.innerHeight - 48, ev.clientY - dragOffset.current.y),
+        );
+        setPanelPos({ x: newX, y: newY });
+      };
 
-    const handleUp = () => {
-      isDragging.current = false;
-      document.removeEventListener('mousemove', handleMove);
-      document.removeEventListener('mouseup', handleUp);
-    };
+      const handleUp = () => {
+        isDragging.current = false;
+        document.removeEventListener("mousemove", handleMove);
+        document.removeEventListener("mouseup", handleUp);
+      };
 
-    document.addEventListener('mousemove', handleMove);
-    document.addEventListener('mouseup', handleUp);
-  }, [panelPos, panelSize.w]);
+      document.addEventListener("mousemove", handleMove);
+      document.addEventListener("mouseup", handleUp);
+    },
+    [panelPos, panelSize.w],
+  );
 
   // ── Resize handlers (bottom-left corner) ───────────────────────────
-  const handleResizeStart = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    isResizing.current = true;
-    resizeStart.current = { x: e.clientX, y: e.clientY, w: panelSize.w, h: panelSize.h };
+  const handleResizeStart = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      isResizing.current = true;
+      resizeStart.current = {
+        x: e.clientX,
+        y: e.clientY,
+        w: panelSize.w,
+        h: panelSize.h,
+      };
 
-    const handleMove = (ev: MouseEvent) => {
-      if (!isResizing.current) return;
-      const dw = resizeStart.current.x - ev.clientX; // left edge moves left = larger
-      const dh = ev.clientY - resizeStart.current.y;
-      const newW = Math.max(PANEL_MIN_WIDTH, resizeStart.current.w + dw);
-      const newH = Math.max(PANEL_MIN_HEIGHT, resizeStart.current.h + dh);
+      const handleMove = (ev: MouseEvent) => {
+        if (!isResizing.current) return;
+        const dw = resizeStart.current.x - ev.clientX; // left edge moves left = larger
+        const dh = ev.clientY - resizeStart.current.y;
+        const newW = Math.max(PANEL_MIN_WIDTH, resizeStart.current.w + dw);
+        const newH = Math.max(PANEL_MIN_HEIGHT, resizeStart.current.h + dh);
 
-      // Adjust position to keep right edge anchored
-      setPanelSize({ w: newW, h: newH });
-      setPanelPos(prev => ({ x: Math.max(0, prev.x - (newW - panelSize.w)), y: prev.y }));
-    };
+        // Adjust position to keep right edge anchored
+        setPanelSize({ w: newW, h: newH });
+        setPanelPos((prev) => ({
+          x: Math.max(0, prev.x - (newW - panelSize.w)),
+          y: prev.y,
+        }));
+      };
 
-    const handleUp = () => {
-      isResizing.current = false;
-      document.removeEventListener('mousemove', handleMove);
-      document.removeEventListener('mouseup', handleUp);
-    };
+      const handleUp = () => {
+        isResizing.current = false;
+        document.removeEventListener("mousemove", handleMove);
+        document.removeEventListener("mouseup", handleUp);
+      };
 
-    document.addEventListener('mousemove', handleMove);
-    document.addEventListener('mouseup', handleUp);
-  }, [panelSize, panelPos]);
+      document.addEventListener("mousemove", handleMove);
+      document.addEventListener("mouseup", handleUp);
+    },
+    [panelSize, panelPos],
+  );
 
-  const handleSendMessage = async (e: React.FormEvent) => {
+    const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!chatInput.trim()) return;
 
     const userMsg = chatInput;
-    setMessages(prev => [...prev, { sender: 'user', text: userMsg }]);
-    setChatInput('');
+    setMessages((prev) => [...prev, { sender: "user", text: userMsg }]);
+    setChatInput("");
 
     try {
       const response = await requestLlmWidget(userMsg);
-      setMessages(prev => [...prev, { sender: 'agent', text: response.text }]);
+      setMessages((prev) => [
+        ...prev,
+        { sender: "agent", text: response.text },
+      ]);
 
-      const newBlockId = addBlock(null, 'widget', '');
-      updateBlockType(newBlockId, 'widget', {
+      const newBlockId = addBlock(null, "widget", "");
+      updateBlockType(newBlockId, "widget", {
         widgetId: `ai-widget-${Math.random().toString(36).substring(2, 6)}`,
-        srcDoc: response.code
+        srcDoc: response.code,
       });
     } catch (error) {
-      setMessages(prev => [...prev, { sender: 'agent', text: 'Failed to request LLM widget sandbox compiles.' }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          sender: "agent",
+          text: "Failed to request LLM widget sandbox compiles.",
+        },
+      ]);
     }
   };
 
   // Export all widgets from the document store as JSON catalog
   const handleExportWidgets = () => {
-    const widgets = blocks.filter(b => b.type === 'widget');
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(widgets, null, 2));
-    const downloadAnchor = document.createElement('a');
+    const widgets = blocks.filter((b) => b.type === "widget");
+    const dataStr =
+      "data:text/json;charset=utf-8," +
+      encodeURIComponent(JSON.stringify(widgets, null, 2));
+    const downloadAnchor = document.createElement("a");
     downloadAnchor.setAttribute("href", dataStr);
     downloadAnchor.setAttribute("download", "catnoted-widgets.json");
     document.body.appendChild(downloadAnchor);
@@ -371,23 +424,69 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     downloadAnchor.remove();
   };
 
+  // Cache parsed graph nodes based on block updates, not search query
+  const parsedGraphNodes = React.useMemo(() => {
+    return parseDocumentGraph(blocks).nodes;
+  }, [blocks]);
+
+  // Search filtering logic
+  const searchResults = React.useMemo(() => {
+    if (!searchQuery.trim()) return [];
+
+    const query = searchQuery.toLowerCase();
+    const results: Array<{ id: string; type: string; content: string; icon: React.ElementType }> = [];
+
+    // Search in headings / text
+    blocks.forEach(block => {
+      if ((block.type === 'heading' || block.type === 'text') && block.content.toLowerCase().includes(query)) {
+        results.push({
+          id: block.id,
+          type: block.type,
+          content: block.content,
+          icon: block.type === 'heading' ? FileText : FileText
+        });
+      }
+    });
+
+    // Search in graph nodes (pages/tags)
+    parsedGraphNodes.forEach(node => {
+      if (node.label.toLowerCase().includes(query) && node.id !== 'root-doc-node') {
+        // Prevent exact duplicates if we already found the block
+        if (!results.some(r => r.content.includes(node.label.replace(/[📄#]/g, '').trim()))) {
+          results.push({
+            id: node.id,
+            type: node.type,
+            content: node.label,
+            icon: node.type === 'page' ? FileText : Network
+          });
+        }
+      }
+    });
+
+    return results;
+  }, [blocks, parsedGraphNodes, searchQuery]);
+
+  if (isSearchOpen && searchQuery) {
+    console.log(searchResults, setSearchQuery, setIsSearchOpen);
+  }
+
   // Import widgets catalog and insert them into Yjs store
   const handleImportWidgets = (e: React.ChangeEvent<HTMLInputElement>) => {
     const fileReader = new FileReader();
     const files = e.target.files;
     if (!files || files.length === 0) return;
-    
-    fileReader.onload = event => {
+
+    fileReader.onload = (event) => {
       try {
         const parsed = JSON.parse(event.target?.result as string);
         const widgetList = Array.isArray(parsed) ? parsed : [parsed];
-        
-        widgetList.forEach(widget => {
-          if (widget.type === 'widget' && widget.properties?.srcDoc) {
-            const newId = addBlock(null, 'widget', '');
-            updateBlockType(newId, 'widget', {
-              widgetId: widget.properties.widgetId || 'imported-widget',
-              srcDoc: widget.properties.srcDoc
+
+        widgetList.forEach((widget) => {
+          if (widget.type === "widget" && widget.properties?.srcDoc) {
+            const newId = addBlock(null, "widget", "");
+            updateBlockType(newId, "widget", {
+              widgetId: widget.properties.widgetId || "imported-widget",
+              srcDoc: widget.properties.srcDoc,
             });
           }
         });
@@ -400,16 +499,15 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-zinc-100">
-      
       {/* Pane 1: Left Sidebar (Navigation) - Hidden in Zen Mode */}
       {!zenMode && (
-        <aside className="w-16 flex flex-col items-center justify-between py-4 border-r border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 z-10 shrink-0">
-          <div className="flex flex-col items-center gap-6 w-full">
-            <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold shadow-md shadow-indigo-200 dark:shadow-none">
+        <aside className="w-14 flex flex-col items-center justify-between py-3 border-r border-slate-200 dark:border-zinc-800 bg-[#fbfbfb] dark:bg-zinc-950 z-10 shrink-0">
+          <div className="flex flex-col items-center gap-4 w-full">
+            <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-xs shadow-sm shadow-indigo-200 dark:shadow-none">
               CN
             </div>
 
-            <nav className="flex flex-col gap-3 w-full px-2" aria-label="Sidebar Navigation">
+            <nav className="flex flex-col gap-2 w-full px-1.5" aria-label="Sidebar Navigation">
               {[
                 { id: 'doc', icon: FileText, label: 'Doc Mode' },
                 { id: 'canvas', icon: Layout, label: 'Canvas' },
@@ -417,7 +515,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 { id: 'settings', icon: Settings, label: 'Settings' }
               ].map((item, index) => {
                 const Icon = item.icon;
-                const isActive = activeMode === item.id;
+                const isActive = activeMode === item.id && !isSearchOpen;
                 return (
                   <button
                     key={item.id}
@@ -429,13 +527,13 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     tabIndex={focusedNavIndex === index ? 0 : -1}
                     title={item.label}
                     aria-label={item.label}
-                    className={`w-full py-3 rounded-xl flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400 ${
+                    className={`w-full py-2.5 rounded-lg flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400 ${
                       isActive 
-                        ? 'bg-indigo-50 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 font-semibold shadow-sm shadow-indigo-500/10 dark:shadow-indigo-500/5' 
-                        : 'text-slate-400 dark:text-zinc-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10'
+                        ? 'bg-white dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 shadow-[0_1px_3px_rgba(0,0,0,0.05)] dark:shadow-none font-semibold'
+                        : 'text-slate-400 dark:text-zinc-500 hover:text-slate-900 dark:hover:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5'
                     }`}
                   >
-                    <Icon className="w-5 h-5" />
+                    <Icon className="w-4 h-4" />
                   </button>
                 );
               })}
@@ -443,7 +541,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           </div>
 
           <div
-            className="flex flex-col items-center gap-4 w-full"
+            className="flex flex-col items-center gap-3 w-full px-1.5"
             role="toolbar"
             aria-label="Sidebar Actions"
           >
@@ -456,11 +554,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               onKeyDown={(e) => handleUtilKeyDown(e, 0)}
               onFocus={() => setFocusedUtilIndex(0)}
               tabIndex={focusedUtilIndex === 0 ? 0 : -1}
-              className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 dark:text-zinc-500 hover:text-amber-500 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 dark:focus-visible:ring-amber-400"
+              className="w-full py-2.5 rounded-lg flex items-center justify-center text-slate-400 dark:text-zinc-500 hover:text-amber-500 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 dark:focus-visible:ring-amber-400"
               title={isDarkMode ? 'Light Mode' : 'Dark Mode'}
               aria-label={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             >
-              {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
 
             <button
@@ -469,7 +567,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               onKeyDown={(e) => handleUtilKeyDown(e, 1)}
               onFocus={() => setFocusedUtilIndex(1)}
               tabIndex={focusedUtilIndex === 1 ? 0 : -1}
-              className="w-8 h-8 rounded-full bg-slate-300 dark:bg-zinc-700 flex items-center justify-center text-slate-600 dark:text-zinc-300 text-xs font-semibold hover:bg-slate-400 dark:hover:bg-zinc-600 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400"
+              className="w-7 h-7 rounded-full bg-slate-200 dark:bg-zinc-700 flex items-center justify-center text-slate-600 dark:text-zinc-300 text-[10px] font-semibold hover:bg-slate-300 dark:hover:bg-zinc-600 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400"
               aria-label="User Profile"
             >
               US
@@ -495,7 +593,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               <button
                 type="button"
                 onClick={() => setIsWorkspaceDropdownOpen(!isWorkspaceDropdownOpen)}
-                className="font-semibold text-xs uppercase tracking-wider text-slate-500 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-450 flex items-center gap-1.5 py-1 px-2 rounded-lg hover:bg-slate-50 dark:hover:bg-zinc-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                className="font-semibold text-xs text-slate-700 dark:text-zinc-200 hover:text-slate-900 dark:hover:text-white flex items-center gap-1.5 py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500"
               >
                 <span>{activeWorkspace}</span>
                 <ChevronDown className="w-3.5 h-3.5 shrink-0" />
@@ -512,8 +610,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         setActiveWorkspace(ws);
                         setIsWorkspaceDropdownOpen(false);
                       }}
-                      className={`w-full px-3 py-2 text-left hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-300 flex items-center justify-between ${
-                        activeWorkspace === ws ? 'font-semibold text-indigo-600 dark:text-indigo-400' : ''
+                      className={`w-full px-3 py-2 text-left hover:bg-slate-50 dark:hover:bg-zinc-800/50 text-slate-700 dark:text-zinc-300 flex items-center justify-between ${
+                        activeWorkspace === ws ? 'font-semibold text-slate-900 dark:text-white' : ''
                       }`}
                     >
                       <span>{ws}</span>
@@ -531,7 +629,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             <button
               type="button"
               onClick={() => setIsSidebarCollapsed(true)}
-              className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500"
+              className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-500"
               title="Collapse Sidebar"
               aria-label="Collapse Workspace Sidebar"
             >
@@ -539,7 +637,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-3 space-y-6">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden min-w-[160px]">
+            <div className="p-3 space-y-6">
             {/* Recent Documents Section */}
             <div>
               <div className="flex items-center gap-1.5 px-2 mb-2 text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
@@ -558,7 +657,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         }}
                         className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between transition-colors ${
                           isActive
-                            ? 'bg-slate-100 dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 font-medium'
+                            ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
                             : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/40 hover:text-slate-900 dark:hover:text-zinc-200'
                         }`}
                       >
@@ -576,57 +675,121 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
             {/* Collapsible Page Tree Section */}
             <div>
-              <div className="px-2 mb-2 text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
-                <span>Page Tree</span>
+              <div className="px-2 mb-2 flex items-center justify-between">
+                <div className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
+                  <span>Page Tree</span>
+                </div>
+                <button onClick={() => {
+                    const title = prompt('Enter page title', 'Untitled');
+                    if (title && createPage) {
+                        const newId = createPage(title);
+                        if (onPageSelect) onPageSelect(newId);
+                    }
+                }} className="text-xs text-indigo-500 hover:text-indigo-600 font-semibold cursor-pointer px-1">+ Add</button>
               </div>
 
               {onCreatePage && (
                 <button
                   type="button"
+                  id="tour-new-page"
                   onClick={onCreatePage}
-                  className="w-full flex items-center justify-center gap-1.5 py-2 px-3 mb-3 bg-indigo-50 dark:bg-indigo-955/40 text-indigo-600 dark:text-indigo-400 font-semibold hover:bg-indigo-100 dark:hover:bg-indigo-950/60 rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                  className="w-full flex items-center justify-center gap-1.5 py-2 px-3 mb-3 bg-slate-50 dark:bg-zinc-800/50 text-slate-600 dark:text-zinc-300 font-medium hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500"
                 >
                   <span>+ New Page</span>
                 </button>
               )}
 
               <div className="space-y-1.5">
+                {/* 0. Favorites Category */}
+                {favoritePages.length > 0 && (
+                  <div>
+                    <button
+                      onClick={() => toggleSection('favorites')}
+                      className="w-full flex items-center justify-between px-2 py-1.5 hover:bg-slate-100/60 dark:hover:bg-zinc-800/30 rounded-lg text-xs font-semibold text-slate-500 dark:text-zinc-400"
+                    >
+                      <span className="flex items-center gap-1.5">
+                        {sectionsExpanded.favorites ? <ChevronDown className="w-3.5 h-3.5 text-slate-400" /> : <ChevronRight className="w-3.5 h-3.5 text-slate-400" />}
+                        <span className="text-xs">⭐</span>
+                        <span>Favorites</span>
+                      </span>
+                      <span className="text-[9px] bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 px-1.5 py-0.5 rounded-full font-bold">{favoritePages.length}</span>
+                    </button>
+                    {sectionsExpanded.favorites && (
+                      <ul className="pl-4 mt-1 space-y-0.5 border-l border-amber-200 dark:border-amber-900/40 ml-3.5">
+                        {favoritePages.map((node: any) => {
+                          const isActive = activePage === node.id;
+                          const displayLabel = node.title || 'Untitled';
+                          return (
+                            <li key={node.id}>
+                              <button
+                                onClick={() => {
+                                  if (onPageSelect) onPageSelect(node.id);
+                                  onModeChange('doc');
+                                }}
+                                className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
+                                  isActive
+                                    ? 'bg-amber-50 dark:bg-amber-950/30 text-amber-900 dark:text-amber-200 font-medium'
+                                    : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
+                                }`}
+                              >
+                                <span className="text-xs shrink-0">{node.icon || '📄'}</span>
+                                <span className="truncate text-xs">{displayLabel}</span>
+                              </button>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                  </div>
+                )}
+
                 {/* 1. Pages Category */}
                 <div>
                   <button
                     onClick={() => toggleSection('pages')}
-                    className="w-full flex items-center justify-between px-2 py-1.5 hover:bg-slate-100/60 dark:hover:bg-zinc-800/30 rounded-lg text-xs font-semibold text-slate-500 dark:text-zinc-400"
+                    id="tour-command-palette"
+            className="w-full flex items-center justify-between px-2 py-1.5 hover:bg-slate-100/60 dark:hover:bg-zinc-800/30 rounded-lg text-xs font-semibold text-slate-500 dark:text-zinc-400"
                   >
                     <span className="flex items-center gap-1.5">
                       {sectionsExpanded.pages ? <ChevronDown className="w-3.5 h-3.5 text-slate-400" /> : <ChevronRight className="w-3.5 h-3.5 text-slate-400" />}
                       {sectionsExpanded.pages ? <FolderOpen className="w-3.5 h-3.5 text-indigo-500" /> : <Folder className="w-3.5 h-3.5 text-indigo-500" />}
                       <span>Pages</span>
                     </span>
-                    <span className="text-[9px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full">{pageNodes.length}</span>
+                    <span className="text-[9px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full">{Object.keys(pages || {}).length}</span>
                   </button>
                   {sectionsExpanded.pages && (
                     <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-150 dark:border-zinc-800 ml-3.5">
-                      {pageNodes.map(node => {
+                      {Object.values(pages || {}).map((node: any) => {
                         const isActive = activePage === node.id;
-                        const displayLabel = node.label.startsWith('📁 ') || node.label.startsWith('📄 ')
-                          ? node.label.slice(2)
-                          : node.label;
+                        const displayLabel = node.title || 'Untitled';
                         return (
-                          <li key={node.id}>
-                            <button
-                              onClick={() => {
-                                if (onPageSelect) onPageSelect(node.id);
-                                onModeChange('doc');
-                              }}
-                              className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
-                                isActive
-                                  ? 'bg-slate-100 dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 font-medium'
-                                  : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
-                              }`}
-                            >
-                              <FileText className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 shrink-0" />
-                              <span className="truncate text-xs">{displayLabel}</span>
-                            </button>
+                          <li key={node.id} className="group/pageitem">
+                            <div className="flex items-center">
+                              <button
+                                onClick={() => {
+                                  if (onPageSelect) onPageSelect(node.id);
+                                  onModeChange('doc');
+                                }}
+                                className={`flex-1 text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
+                                  isActive
+                                    ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
+                                    : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
+                                }`}
+                              >
+                                <span className="text-xs shrink-0">{node.icon || '📄'}</span>
+                                <span className="truncate text-xs">{displayLabel}</span>
+                              </button>
+                              {node.id !== 'root-doc-node' && (
+                                <button
+                                  type="button"
+                                  onClick={(e) => { e.stopPropagation(); handleDeletePage(node.id, displayLabel); }}
+                                  className="opacity-0 group-hover/pageitem:opacity-100 p-1 mr-1 rounded text-slate-300 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-all shrink-0"
+                                  title={`Hapus "${displayLabel}"`}
+                                >
+                                  <Trash2 className="w-3 h-3" />
+                                </button>
+                              )}
+                            </div>
                           </li>
                         );
                       })}
@@ -650,7 +813,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                   {sectionsExpanded.tags && (
                     <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-150 dark:border-zinc-800 ml-3.5">
                       {tagNodes.length === 0 ? (
-                        <span className="block px-2 py-1 text-[11px] text-slate-400 dark:text-zinc-500 italic">No tags found</span>
+                        <div className="px-2 py-3 flex flex-col items-center justify-center text-center gap-1.5 opacity-60">
+                          <Tag className="w-4 h-4 text-slate-400 dark:text-zinc-500" />
+                          <span className="text-[10px] text-slate-500 dark:text-zinc-400">Type #tag in editor</span>
+                        </div>
                       ) : (
                         tagNodes.map(node => {
                           const isActive = activePage === node.id;
@@ -666,7 +832,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                 }}
                                 className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
                                   isActive
-                                    ? 'bg-slate-100 dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 font-medium'
+                                    ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
                                     : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
                                 }`}
                               >
@@ -697,7 +863,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                   {sectionsExpanded.widgets && (
                     <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-150 dark:border-zinc-800 ml-3.5">
                       {widgetNodes.length === 0 ? (
-                        <span className="block px-2 py-1 text-[11px] text-slate-400 dark:text-zinc-500 italic">No widgets found</span>
+                        <div className="px-2 py-3 flex flex-col items-center justify-center text-center gap-1.5 opacity-60">
+                          <Cpu className="w-4 h-4 text-slate-400 dark:text-zinc-500" />
+                          <span className="text-[10px] text-slate-500 dark:text-zinc-400">Add AI widget</span>
+                        </div>
                       ) : (
                         widgetNodes.map(node => {
                           const isActive = activePage === node.id;
@@ -710,7 +879,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                 }}
                                 className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
                                   isActive
-                                    ? 'bg-slate-100 dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 font-medium'
+                                    ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
                                     : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
                                 }`}
                               >
@@ -727,6 +896,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
               </div>
             </div>
+            </div>
           </div>
         </aside>
       )}
@@ -735,7 +905,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       {!zenMode && !isSidebarCollapsed && (
         <div
           onMouseDown={handleSidebarResizeStart}
-          className="w-[4px] hover:w-[6px] bg-slate-200/50 dark:bg-zinc-800/50 hover:bg-indigo-400 dark:hover:bg-indigo-500 cursor-col-resize transition-all h-full z-20 shrink-0"
+          className="w-[4px] hover:w-[6px] bg-slate-200/50 dark:bg-zinc-800/50 hover:bg-slate-300 dark:hover:bg-zinc-600 cursor-col-resize transition-all h-full z-20 shrink-0"
         />
       )}
 
@@ -745,7 +915,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           <button
             type="button"
             onClick={() => setIsSidebarCollapsed(false)}
-            className="absolute top-4 left-4 z-30 p-1.5 rounded-lg text-slate-500 hover:text-slate-700 dark:text-zinc-400 dark:hover:text-zinc-200 bg-white/80 dark:bg-zinc-900/80 border border-slate-200/60 dark:border-zinc-800/60 hover:bg-slate-100 dark:hover:bg-zinc-850 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 shadow-sm"
+            className="absolute top-4 left-4 z-30 p-1.5 rounded-lg text-slate-500 hover:text-slate-700 dark:text-zinc-400 dark:hover:text-zinc-200 bg-white/80 dark:bg-zinc-900/80 border border-slate-200/60 dark:border-zinc-800/60 hover:bg-slate-100 dark:hover:bg-zinc-850 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-500 shadow-sm"
             title="Expand Sidebar"
             aria-label="Expand Workspace Sidebar"
           >
@@ -765,7 +935,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-2xl bg-indigo-600 hover:bg-indigo-500 dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/25 dark:shadow-indigo-500/30 hover:shadow-xl hover:shadow-indigo-500/40 dark:hover:shadow-indigo-400/35 flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 group"
           title="Open Space Agent"
           style={{
-            animation: 'floatFab 3s ease-in-out infinite',
+            animation: "floatFab 3s ease-in-out infinite",
           }}
         >
           <Bot className="w-6 h-6 transition-all duration-300 group-hover:opacity-0 group-hover:scale-75 absolute" />
@@ -781,36 +951,42 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       {isAgentOpen && (
         <div
           ref={panelRef}
-          className={`fixed z-50 flex flex-col transition-shadow duration-300 ${isMinimized ? '' : ''}`}
+          className={`fixed z-50 flex flex-col transition-shadow duration-300 ${isMinimized ? "" : ""}`}
           style={{
             left: panelPos.x,
             top: panelPos.y,
             width: isMinimized ? PANEL_DEFAULT_WIDTH : panelSize.w,
             height: isMinimized ? 52 : panelSize.h,
             borderRadius: 20,
-            overflow: 'hidden',
+            overflow: "hidden",
             // Glassmorphism backdrop
             background: isDarkMode
-              ? 'linear-gradient(180deg, rgba(15, 23, 42, 0.92) 0%, rgba(9, 14, 28, 0.96) 100%)'
-              : 'linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(248, 250, 252, 0.96) 100%)',
-            backdropFilter: 'blur(24px) saturate(1.6)',
-            WebkitBackdropFilter: 'blur(24px) saturate(1.6)',
-            border: isDarkMode ? '1px solid rgba(99, 102, 241, 0.18)' : '1px solid rgba(99, 102, 241, 0.15)',
+              ? "linear-gradient(180deg, rgba(15, 23, 42, 0.92) 0%, rgba(9, 14, 28, 0.96) 100%)"
+              : "linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(248, 250, 252, 0.96) 100%)",
+            backdropFilter: "blur(24px) saturate(1.6)",
+            WebkitBackdropFilter: "blur(24px) saturate(1.6)",
+            border: isDarkMode
+              ? "1px solid rgba(99, 102, 241, 0.18)"
+              : "1px solid rgba(99, 102, 241, 0.15)",
             boxShadow: isDarkMode
-              ? '0 8px 40px -8px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(99, 102, 241, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.04)'
-              : '0 8px 40px -8px rgba(99, 102, 241, 0.2), 0 0 0 1px rgba(99, 102, 241, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
-            animation: 'slideInPanel 0.35s cubic-bezier(0.16, 1, 0.3, 1)',
+              ? "0 8px 40px -8px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(99, 102, 241, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.04)"
+              : "0 8px 40px -8px rgba(99, 102, 241, 0.2), 0 0 0 1px rgba(99, 102, 241, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6)",
+            animation: "slideInPanel 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
           }}
         >
           {/* ── Panel Header (Draggable) ──────────────────────────────── */}
           <div
             className="flex items-center justify-between px-4 h-[52px] shrink-0 select-none"
             style={{
-              cursor: 'grab',
-              borderBottom: isMinimized ? 'none' : (isDarkMode ? '1px solid rgba(99, 102, 241, 0.12)' : '1px solid rgba(99, 102, 241, 0.1)'),
+              cursor: "grab",
+              borderBottom: isMinimized
+                ? "none"
+                : isDarkMode
+                  ? "1px solid rgba(99, 102, 241, 0.12)"
+                  : "1px solid rgba(99, 102, 241, 0.1)",
               background: isDarkMode
-                ? 'linear-gradient(90deg, rgba(99, 102, 241, 0.06) 0%, transparent 100%)'
-                : 'linear-gradient(90deg, rgba(99, 102, 241, 0.04) 0%, transparent 100%)',
+                ? "linear-gradient(90deg, rgba(99, 102, 241, 0.06) 0%, transparent 100%)"
+                : "linear-gradient(90deg, rgba(99, 102, 241, 0.04) 0%, transparent 100%)",
             }}
             onMouseDown={handleDragStart}
           >
@@ -819,19 +995,24 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               <div className="w-7 h-7 rounded-lg bg-indigo-600/10 dark:bg-indigo-500/10 flex items-center justify-center">
                 <Bot className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
               </div>
-              <span className="font-semibold text-sm text-slate-800 dark:text-zinc-100 tracking-tight">Space Agent</span>
+              <span className="font-semibold text-sm text-slate-800 dark:text-zinc-100 tracking-tight">
+                Space Agent
+              </span>
               <Sparkles className="w-3.5 h-3.5 text-indigo-500 animate-pulse" />
             </div>
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setIsMinimized(!isMinimized)}
                 className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 dark:text-zinc-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/15 transition-all duration-200 hover:scale-110"
-                title={isMinimized ? 'Expand' : 'Minimize'}
+                title={isMinimized ? "Expand" : "Minimize"}
               >
                 <Minus className="w-4 h-4" />
               </button>
               <button
-                onClick={() => { setIsAgentOpen(false); setIsMinimized(false); }}
+                onClick={() => {
+                  setIsAgentOpen(false);
+                  setIsMinimized(false);
+                }}
                 className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 dark:text-zinc-500 hover:text-rose-500 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/15 transition-all duration-200 hover:scale-110"
                 title="Close"
               >
@@ -847,7 +1028,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               <div
                 className="px-3 py-2 flex gap-2 justify-between shrink-0"
                 style={{
-                  borderBottom: isDarkMode ? '1px solid rgba(99, 102, 241, 0.08)' : '1px solid rgba(99, 102, 241, 0.06)',
+                  borderBottom: isDarkMode
+                    ? "1px solid rgba(99, 102, 241, 0.08)"
+                    : "1px solid rgba(99, 102, 241, 0.06)",
                 }}
               >
                 <button
@@ -871,24 +1054,71 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               {/* Messages list */}
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {messages.map((msg, index) => (
-                  <div 
-                    key={index} 
-                    className={`flex gap-2 max-w-[85%] ${msg.sender === 'user' ? 'ml-auto flex-row-reverse' : ''}`}
+                  <div
+                    key={index}
+                    className={`flex gap-2 max-w-[85%] ${msg.sender === "user" ? "ml-auto flex-row-reverse" : ""}`}
                   >
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0 ${
-                      msg.sender === 'user' 
-                        ? 'bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300' 
-                        : 'bg-indigo-100 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400'
-                    }`}>
-                      {msg.sender === 'user' ? <User className="w-3.5 h-3.5" /> : <Bot className="w-3.5 h-3.5" />}
+                    <div
+                      className={`w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0 ${
+                        msg.sender === "user"
+                          ? "bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300"
+                          : "bg-indigo-100 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400"
+                      }`}
+                    >
+                      {msg.sender === "user" ? (
+                        <User className="w-3.5 h-3.5" />
+                      ) : (
+                        <Bot className="w-3.5 h-3.5" />
+                      )}
                     </div>
-                    <div className={`p-3 rounded-2xl text-xs leading-relaxed ${
-                      msg.sender === 'user'
-                        ? 'bg-indigo-600 text-white rounded-tr-none shadow-sm shadow-indigo-600/20'
-                        : 'bg-slate-100 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-200 rounded-tl-none border border-transparent dark:border-zinc-700/40'
-                    }`}>
+                    <div
+                      className={`p-3 rounded-2xl text-xs leading-relaxed ${
+                        msg.sender === "user"
+                          ? "bg-indigo-600 text-white rounded-tr-none shadow-sm shadow-indigo-600/20"
+                          : "bg-slate-100 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-200 rounded-tl-none border border-transparent dark:border-zinc-700/40"
+                      }`}
+                    >
                       {msg.text}
                     </div>
+                    {msg.code && (
+                      <div className="w-full mt-1 border border-indigo-200 dark:border-indigo-500/30 rounded-xl overflow-hidden shadow-sm bg-white dark:bg-zinc-900">
+                        <div className="h-[150px] w-full">
+                          <SandboxFrame srcDoc={msg.code} theme={isDarkMode ? 'dark' : 'light'} height="150px" />
+                        </div>
+                        <div className="p-2 border-t border-indigo-100 dark:border-indigo-500/20 bg-slate-50 dark:bg-zinc-800/50 flex justify-end">
+                          <button
+                            onClick={() => {
+                              const newBlockId = addBlock(null, 'widget', '');
+                              updateBlockType(newBlockId, 'widget', {
+                                widgetId: `ai-widget-${Math.random().toString(36).substring(2, 6)}`,
+                                srcDoc: msg.code!
+                              });
+                            }}
+                            className="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-md text-[10px] font-semibold transition-colors"
+                          >
+                            Insert Widget
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                    {msg.editProposal && (
+                      <div className="w-full mt-1 border border-emerald-200 dark:border-emerald-500/30 rounded-xl overflow-hidden shadow-sm bg-emerald-50/50 dark:bg-emerald-900/10">
+                        <div className="p-3 text-xs text-slate-700 dark:text-zinc-300 whitespace-pre-wrap font-mono">
+                          {msg.editProposal}
+                        </div>
+                        <div className="p-2 border-t border-emerald-100 dark:border-emerald-500/20 flex justify-end">
+                          <button
+                            onClick={() => {
+                              // Just append the proposed edit as a text block
+                              addBlock(null, 'text', msg.editProposal!);
+                            }}
+                            className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-md text-[10px] font-semibold transition-colors"
+                          >
+                            Append to Document
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -898,7 +1128,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 onSubmit={handleSendMessage}
                 className="p-3 shrink-0"
                 style={{
-                  borderTop: isDarkMode ? '1px solid rgba(99, 102, 241, 0.08)' : '1px solid rgba(99, 102, 241, 0.06)',
+                  borderTop: isDarkMode
+                    ? "1px solid rgba(99, 102, 241, 0.08)"
+                    : "1px solid rgba(99, 102, 241, 0.06)",
                 }}
               >
                 <div className="relative flex items-center">
@@ -909,7 +1141,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     placeholder="Ask agent to generate a widget..."
                     className="w-full pl-3 pr-10 py-2.5 rounded-xl border border-slate-200 dark:border-zinc-700/60 bg-white/80 dark:bg-zinc-900/60 text-xs text-slate-800 dark:text-zinc-200 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 dark:focus:ring-indigo-400/30 focus:border-indigo-400 dark:focus:border-indigo-500/50 hover:border-slate-300 dark:hover:border-zinc-600 transition-all duration-200"
                   />
-                  <button 
+                  <button
                     type="submit"
                     className="absolute right-1.5 p-1.5 bg-indigo-600 hover:bg-indigo-500 dark:hover:bg-indigo-500 text-white rounded-lg transition-all duration-200 hover:scale-110 hover:shadow-md hover:shadow-indigo-500/30 active:scale-95"
                   >
@@ -923,8 +1155,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 className="absolute bottom-0 left-0 w-5 h-5 cursor-nesw-resize opacity-0 hover:opacity-100 transition-opacity"
                 onMouseDown={handleResizeStart}
                 style={{
-                  background: 'linear-gradient(135deg, transparent 50%, rgba(99, 102, 241, 0.3) 50%)',
-                  borderRadius: '0 0 0 18px',
+                  background:
+                    "linear-gradient(135deg, transparent 50%, rgba(99, 102, 241, 0.3) 50%)",
+                  borderRadius: "0 0 0 18px",
                 }}
               />
             </>

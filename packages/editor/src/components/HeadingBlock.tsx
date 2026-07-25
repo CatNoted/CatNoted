@@ -4,6 +4,7 @@ import { SlashCommandMenu, buildSlashCommands } from './SlashCommandMenu.js';
 
 interface HeadingBlockProps {
   id: string;
+  type?: string;
   content: string;
   level: 1 | 2 | 3 | 4 | 5 | 6;
   onChange: (value: string) => void;
@@ -14,10 +15,12 @@ interface HeadingBlockProps {
   focusOnMount?: boolean;
   onFocus?: () => void;
   onBlur?: () => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
 }
 
-export const HeadingBlock: React.FC<HeadingBlockProps> = ({
+const HeadingBlockBase: React.FC<HeadingBlockProps> = ({
   content,
+  type: _type,
   level,
   onChange,
   onEnter,
@@ -111,8 +114,13 @@ export const HeadingBlock: React.FC<HeadingBlockProps> = ({
   });
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (slashActive && ['Enter', 'ArrowUp', 'ArrowDown', 'Escape'].includes(e.key)) {
-      return;
+    if (slashActive) {
+      if (['Enter', 'ArrowUp', 'ArrowDown', 'Escape'].includes(e.key)) {
+        return;
+      }
+      if (['ArrowLeft', 'ArrowRight'].includes(e.key)) {
+        closeMenu();
+      }
     }
 
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -146,6 +154,8 @@ export const HeadingBlock: React.FC<HeadingBlockProps> = ({
   return (
     <div className="relative w-full">
       <textarea
+        aria-label={`Heading level ${level}`}
+        role="textbox"
         ref={textareaRef}
         value={content}
         onChange={handleChange}
@@ -170,3 +180,5 @@ export const HeadingBlock: React.FC<HeadingBlockProps> = ({
     </div>
   );
 };
+
+export const HeadingBlock = React.memo(HeadingBlockBase);

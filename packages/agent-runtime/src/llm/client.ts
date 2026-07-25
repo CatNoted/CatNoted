@@ -112,7 +112,11 @@ const WIDGET_TEMPLATES: Record<string, string> = {
         li.style.alignItems = 'center';
         li.style.borderBottom = '1px solid var(--border)';
         li.style.padding = '2px 0';
-        li.innerHTML = '<span>' + input.value + '</span><button onclick="this.parentNode.remove()" style="background: none; border: none; color: red; font-size: 9px; cursor: pointer;">✕</button>';
+        // 🛡️ Sentinel: Prevent XSS by escaping HTML entities
+        const sanitizedVal = input.value.replace(/[&<>"']/g, function(m) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+        });
+        li.innerHTML = '<span>' + sanitizedVal + '</span><button onclick="this.parentNode.remove()" style="background: none; border: none; color: red; font-size: 9px; cursor: pointer;">✕</button>';
         document.getElementById('todo-list').appendChild(li);
         input.value = '';
       }
@@ -148,6 +152,7 @@ export async function requestLlmWidget(prompt: string, config?: LLMConfig): Prom
     }
   }
 
+
   const cleanPrompt = prompt.toLowerCase();
   let selectedCode = WIDGET_TEMPLATES.todo;
   let widgetName = 'Quick Tasks Todo';
@@ -158,13 +163,17 @@ export async function requestLlmWidget(prompt: string, config?: LLMConfig): Prom
   } else if (cleanPrompt.includes('kalkulator') || cleanPrompt.includes('calc') || cleanPrompt.includes('math')) {
     selectedCode = WIDGET_TEMPLATES.calculator;
     widgetName = 'Mini Calculator';
+  } else if (cleanPrompt.includes('edit') || cleanPrompt.includes('rewrite') || cleanPrompt.includes('propose')) {
+    // Return a mock proposed edit
+    selectedCode = `PROPOSED_EDIT: Here is an improved version of the document based on your request.\n- Organized bullet points\n- Refined tone\n- Corrected typos`;
+    widgetName = 'Document Edit';
   }
 
   return new Promise(resolve => {
     setTimeout(() => {
       resolve({
         code: selectedCode,
-        text: `Space Agent (Mock Mode): Successfully compiled a secure HTML/JS widget for "${widgetName}".`
+        text: `Space Agent: I have processed your request for "${widgetName}".`
       });
     }, 800);
   });

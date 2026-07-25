@@ -3,7 +3,9 @@ import { createPortal } from 'react-dom';
 import { SlashCommandMenu, buildSlashCommands } from './SlashCommandMenu.js';
 
 interface TextBlockProps {
+  onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   id: string;
+  type?: string;
   content: string;
   onChange: (value: string) => void;
   onEnter: () => void;
@@ -12,10 +14,13 @@ interface TextBlockProps {
   onAddWidget: () => void;
   focusOnMount?: boolean;
   blockType?: string;
+  onFocus?: () => void;
+  onBlur?: () => void;
 }
 
-export const TextBlock: React.FC<TextBlockProps> = ({
+const TextBlockBase: React.FC<TextBlockProps> = ({
   content,
+  type: _type,
   onChange,
   onEnter,
   onBackspace,
@@ -23,6 +28,8 @@ export const TextBlock: React.FC<TextBlockProps> = ({
   onAddWidget,
   focusOnMount = false,
   blockType,
+  onFocus,
+  onBlur,
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -109,9 +116,14 @@ export const TextBlock: React.FC<TextBlockProps> = ({
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     // Let the slash menu consume Enter/Arrow keys when open
-    if (slashActive && ['Enter', 'ArrowUp', 'ArrowDown', 'Escape'].includes(e.key)) {
-      // The SlashCommandMenu handles these via window keydown (capture phase)
-      return;
+    if (slashActive) {
+      if (['Enter', 'ArrowUp', 'ArrowDown', 'Escape'].includes(e.key)) {
+        // The SlashCommandMenu handles these via window keydown (capture phase)
+        return;
+      }
+      if (['ArrowLeft', 'ArrowRight'].includes(e.key)) {
+        closeMenu();
+      }
     }
 
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -176,10 +188,14 @@ export const TextBlock: React.FC<TextBlockProps> = ({
   return (
     <div className="relative w-full">
       <textarea
+        aria-label={`Text block`}
+        role="textbox"
         ref={textareaRef}
         value={content}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
+        onFocus={onFocus}
+        onBlur={onBlur}
         placeholder="Type '/' for commands..."
         rows={1}
         className="w-full bg-transparent resize-none text-slate-900 dark:text-zinc-100 border-none outline-none focus:ring-0 p-0 text-[15px] leading-7 placeholder-slate-300 dark:placeholder-zinc-600"
@@ -198,3 +214,5 @@ export const TextBlock: React.FC<TextBlockProps> = ({
     </div>
   );
 };
+
+export const TextBlock = React.memo(TextBlockBase);

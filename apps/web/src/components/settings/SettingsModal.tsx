@@ -33,13 +33,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const [openaiKey, setOpenaiKey] = useState('');
   const [geminiKey, setGeminiKey] = useState('');
   const [anthropicKey, setAnthropicKey] = useState('');
-  const [ollamaUrl, setOllamaUrl] = useState(() => localStorage.getItem('byok_ollama_url') || 'http://localhost:11434');
+  const [ollamaUrl, setOllamaUrl] = useState(() => sessionStorage.getItem('byok_ollama_url') || 'http://localhost:11434');
 
   useEffect(() => {
     if (!isOpen) return;
 
     const loadKey = async (keyName: string, setter: (val: string) => void) => {
-      const encryptedBase64 = localStorage.getItem(keyName);
+      const encryptedBase64 = sessionStorage.getItem(keyName);
       if (encryptedBase64) {
         try {
           const encryptedBytes = decodeBase64(encryptedBase64);
@@ -71,22 +71,29 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           const valueBytes = new TextEncoder().encode(value);
           const encryptedBytes = await encryptPayload(valueBytes, passphrase);
           const encryptedBase64 = encodeBase64(encryptedBytes);
-          localStorage.setItem(keyName, encryptedBase64);
+          sessionStorage.setItem(keyName, encryptedBase64);
         } catch (e) {
           console.error(`Failed to encrypt ${keyName}`, e);
         }
       } else {
-        localStorage.removeItem(keyName);
+        sessionStorage.removeItem(keyName);
       }
     };
 
     await saveKey('byok_openai_key', openaiKey);
     await saveKey('byok_gemini_key', geminiKey);
     await saveKey('byok_anthropic_key', anthropicKey);
-    localStorage.setItem('byok_ollama_url', ollamaUrl);
+    sessionStorage.setItem('byok_ollama_url', ollamaUrl);
 
-    alert('BYOK API Keys successfully saved in local secure storage!');
+    alert('BYOK API Keys successfully saved in session secure storage!');
   };
+
+  const handleSaveSyncSettings = (e: React.FormEvent) => {
+    e.preventDefault();
+    localStorage.setItem('catnoted_e2ee_passphrase', passphrase);
+    alert('E2EE Passphrase saved securely in local storage!');
+  };
+
   return (
     <div className="fixed inset-0 bg-slate-900/50 dark:bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-3xl w-full max-w-lg p-6 shadow-2xl relative flex flex-col h-[520px]">
@@ -138,7 +145,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           {activeTab === 'byok' && (
             <form onSubmit={handleSaveKeys} className="space-y-4">
               <p className="text-[10px] text-slate-400 mb-4">
-                Enter your own LLM API keys. These keys are stored encrypted in your local browser storage and never touch CatNoted servers.
+                Enter your own LLM API keys. These keys are stored encrypted in your session browser storage and never touch CatNoted servers.
               </p>
               
               <div>
@@ -196,7 +203,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
           {/* TAB 2: SECURITY & SYNC */}
           {activeTab === 'sync' && (
-            <div className="space-y-4">
+            <form onSubmit={handleSaveSyncSettings} className="space-y-4">
               <div className="p-3 border border-amber-200 dark:border-amber-950/40 bg-amber-50/50 dark:bg-amber-950/20 rounded-2xl flex gap-2 text-xs">
                 <ShieldAlert className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
                 <div>
@@ -218,6 +225,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 />
               </div>
 
+              <button
+                type="submit"
+                className="w-full mt-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs transition-colors"
+              >
+                Save Sync Settings
+              </button>
+
               <div className="border border-slate-100 dark:border-zinc-850 p-4 rounded-2xl space-y-3">
                 <h4 className="font-semibold text-xs">Sync Network Connection Status</h4>
                 
@@ -230,7 +244,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   <span className="font-semibold text-indigo-500">Supabase E2EE Broadcast Active</span>
                 </div>
               </div>
-            </div>
+            </form>
           )}
 
         </div>

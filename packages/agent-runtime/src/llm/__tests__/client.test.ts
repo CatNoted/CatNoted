@@ -54,7 +54,7 @@ describe('Whitebox Test: requestLlmWidget', () => {
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(console.error).toHaveBeenCalledWith('LLM API call failed, falling back to mock generator:', expect.any(Error));
     expect(result.code).toContain('id="todo-list"');
-    expect(result.text).toContain('Space Agent (Mock Mode)');
+    expect(result.text).toContain('Space Agent: I have processed your request for');
   });
 
   it('should use mock generator directly when no config is provided', async () => {
@@ -68,7 +68,7 @@ describe('Whitebox Test: requestLlmWidget', () => {
 
     expect(global.fetch).not.toHaveBeenCalled();
     expect(result.code).toContain('id="clock-face"');
-    expect(result.text).toContain('Space Agent (Mock Mode): Successfully compiled a secure HTML/JS widget for "Analog Clock".');
+    expect(result.text).toContain('Space Agent: I have processed your request for "Analog Clock".');
   });
 
   it('should use calculator mock for math-related prompts', async () => {
