@@ -1,7 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import { usePersistence } from '../sync/persistence.js';
 import { SyncRoom } from '@catnoted/shared';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { act } from 'react';
 
 // A simple implementation of SyncRoom for testing
