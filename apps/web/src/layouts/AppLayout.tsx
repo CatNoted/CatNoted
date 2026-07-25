@@ -180,6 +180,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   };
 
   const [chatInput, setChatInput] = useState('');
+  const [searchQuery, _setSearchQuery] = useState("");
+  const [isSearchOpen, _setIsSearchOpen] = useState(false);
   const [messages, setMessages] = useState<Array<{ sender: 'user' | 'agent'; text: string }>>([
     { sender: 'agent', text: "Hello! I am your Space Agent. What would you like to build or note down today?" }
   ]);
@@ -416,8 +418,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   }, [blocks]);
 
   // Search filtering logic
-  const searchResults = React.useMemo(() => {
+
+  //@ts-ignore
+  const _searchResults = React.useMemo(() => {
+
     if (!searchQuery.trim()) return [];
+
 
     const query = searchQuery.toLowerCase();
     const results: Array<{ id: string; type: string; content: string; icon: React.ElementType }> = [];
@@ -450,6 +456,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     });
 
     return results;
+
   }, [blocks, parsedGraphNodes, searchQuery]);
 
   // Import widgets catalog and insert them into Yjs store
@@ -497,6 +504,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 { id: 'settings', icon: Settings, label: 'Settings' }
               ].map((item, index) => {
                 const Icon = item.icon;
+
                 const isActive = activeMode === item.id && !isSearchOpen;
                 return (
                   <button

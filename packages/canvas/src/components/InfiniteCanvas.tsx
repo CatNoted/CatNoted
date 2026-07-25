@@ -58,6 +58,7 @@ export const InfiniteCanvas: React.FC = () => {
         el.removeEventListener('wheel', handleWheel);
       };
     }
+    return undefined;
   }, [handleWheel]);
 
   // Sync elements map from Yjs
