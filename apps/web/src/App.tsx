@@ -29,12 +29,12 @@ const App: React.FC = () => {
   const [isZenMode, setIsZenMode] = useState<boolean>(false);
   const [activePage, setActivePage] = useState<string>('root-doc-node');
 
-  const { blocks: rootBlocks, addBlock: addRootBlock, updateBlockContent: updateRootBlockContent } = useDocumentStore('root-doc-node');
+  const { blocks: rootBlocks, pages, addBlock: addRootBlock, updateBlockContent: updateRootBlockContent } = useDocumentStore('root-doc-node');
   const { blocks: activeBlocks, updateBlockContent: updateActiveBlockContent } = useDocumentStore(activePage);
 
   const graphData = React.useMemo(() => {
-    return parseDocumentGraph(rootBlocks);
-  }, [rootBlocks]);
+    return parseDocumentGraph(rootBlocks, pages);
+  }, [rootBlocks, pages]);
 
   const activeHeading = activeBlocks.find(b => b.type === 'heading' && b.properties?.level === 1);
   const docTitle = activeHeading?.content || 'Untitled Document';
