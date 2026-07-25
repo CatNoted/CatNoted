@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 
 export function useCanvasViewport() {
   const [pan, setPan] = useState({ x: 100, y: 100 });

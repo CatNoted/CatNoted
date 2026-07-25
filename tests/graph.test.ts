@@ -22,7 +22,7 @@ describe('Graph Parser (parseDocumentGraph)', () => {
 
     const targetNode = nodes.find(n => n.id === 'page-page-2');
     expect(targetNode).toBeDefined();
-    expect(targetNode?.label).toBe('📄 Page 2');
+    expect(targetNode?.label).toBe('📄 Page 2 (1)');
 
     expect(edges).toHaveLength(1);
     expect(edges[0].source).toBe('root-doc-node');
@@ -39,7 +39,7 @@ describe('Graph Parser (parseDocumentGraph)', () => {
 
     const targetNode = nodes.find(n => n.id === 'tag-urgent');
     expect(targetNode).toBeDefined();
-    expect(targetNode?.label).toBe('#urgent');
+    expect(targetNode?.label).toBe('# urgent (1)');
 
     expect(edges).toHaveLength(1);
     expect(edges[0].source).toBe('root-doc-node');

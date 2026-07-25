@@ -28,6 +28,16 @@ interface BlockRowProps {
   updateBlockType: (id: string, type: any, props?: any) => void;
   deleteBlock: (id: string) => void;
   setActiveMenuId: (id: string | null) => void;
+  draggedBlockId: string | null;
+  dragOverBlockId: string | null;
+  handleDragStart: (e: React.DragEvent, id: string) => void;
+  handleDragOver: (e: React.DragEvent, id: string) => void;
+  handleDrop: (e: React.DragEvent, id: string) => void;
+  setFocusBlockId: (id: string | null) => void;
+  titleOnFocusRef: React.MutableRefObject<string>;
+  updateBlockProperties: (id: string, props: any) => void;
+  duplicateBlock: (id: string) => void;
+  handleEnterBlock: (id: string, index: number) => void;
 }
 
 const BlockRowBase: React.FC<BlockRowProps> = ({
@@ -44,9 +54,17 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
   updateBlockType,
   deleteBlock,
   setActiveMenuId,
+  draggedBlockId,
+  dragOverBlockId,
+  handleDragStart,
+  handleDragOver,
+  handleDrop,
+  setFocusBlockId,
+  titleOnFocusRef,
+  updateBlockProperties,
+  duplicateBlock,
+  handleEnterBlock,
 }) => {
-  const titleOnFocusRef = useRef<string>('');
-
   const [editingWidgetId, setEditingWidgetId] = useState<string | null>(null);
   const [editorCode, setEditorCode] = useState<Record<string, string>>({});
   const [rerunKeys, setRerunKeys] = useState<Record<string, number>>({});
@@ -70,7 +88,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
     setWidgetErrors(prev => ({ ...prev, [id]: err }));
   };
 
-  const onEnterBlock = React.useCallback(() => handleCreateBlock(block.id), [handleCreateBlock, block.id]);
+  const onEnterBlock = React.useCallback(() => handleEnterBlock(block.id, index), [handleEnterBlock, block.id, index]);
   const onBackspaceBlockInner = React.useCallback(() => handleBackspaceBlock(block.id, index), [handleBackspaceBlock, block.id, index]);
   const onSetTypeBlock = React.useCallback((type: any, props: any) => updateBlockType(block.id, type, props), [updateBlockType, block.id]);
   const onAddWidgetBlock = React.useCallback(() => handleAddWidget(block.id), [handleAddWidget, block.id]);
