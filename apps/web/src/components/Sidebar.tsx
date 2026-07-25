@@ -1,20 +1,90 @@
 import React, { useState } from 'react';
 import { ChevronRight, ChevronDown, FileText, Clock, FolderClosed, FolderOpen } from 'lucide-react';
 import { useDocumentStore } from '@catnoted/editor';
+import { parseDocumentGraph } from '@catnoted/graph';
 import { ActiveMode } from '../layouts/AppLayout';
 
 interface SidebarProps {
   onModeChange: (mode: ActiveMode) => void;
+  activePage?: string;
+  onPageSelect?: (pageId: string) => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ onModeChange }) => {
-  const { blocks } = useDocumentStore();
+export const Sidebar: React.FC<SidebarProps> = ({
+  onModeChange,
+  activePage = 'root-doc-node',
+  onPageSelect
+}) => {
+  const { blocks: rootBlocks } = useDocumentStore('root-doc-node');
+  const { blocks, pages } = useDocumentStore(activePage);
 
-  // Extract headings or text as mock "docs"
-  const docTitles = blocks
-    .filter(b => b.type === 'heading' || b.type === 'text')
-    .map(b => b.content || 'Untitled Document')
-    .slice(0, 5); // Just taking top 5 for recent docs
+  // Parse document graph nodes from the root note blocks
+  const graphData = React.useMemo(() => {
+    return parseDocumentGraph(rootBlocks);
+  }, [rootBlocks]);
+
+  const mainHeading = blocks.find(b => b.type === 'heading' && b.properties?.level === 1);
+  const docTitle = mainHeading?.content || 'Untitled Document';
+
+  // Merge registered pages from the store with pages discovered from root note blocks scan
+  const combinedPages = React.useMemo(() => {
+    const storePagesMap = new Map<string, { id: string; title: string; icon?: string; updatedAt?: number; createdAt?: number }>();
+
+    // Add all registered pages from useDocumentStore
+    (pages || []).forEach(p => {
+      storePagesMap.set(p.id, {
+        id: p.id,
+        title: p.title || 'Untitled',
+        icon: p.icon || '📄',
+        updatedAt: p.updatedAt || p.createdAt || 0,
+        createdAt: p.createdAt || 0
+      });
+    });
+
+    // Scan root blocks via parseDocumentGraph to find wiki-linked pages
+    const pageNodesFromGraph = graphData.nodes.filter(n => n.type === 'page');
+    pageNodesFromGraph.forEach(n => {
+      if (n.id !== 'root-doc-node') {
+        const rawName = n.rawName || n.label.replace(/^📄\s*/, '').replace(/\s*\(\d+\)$/, '').trim();
+        if (!storePagesMap.has(n.id)) {
+          storePagesMap.set(n.id, {
+            id: n.id,
+            title: rawName,
+            icon: '📄',
+            updatedAt: 0,
+            createdAt: 0
+          });
+        }
+      }
+    });
+
+    return Array.from(storePagesMap.values());
+  }, [pages, graphData.nodes]);
+
+  // Sort Page Tree alphabetically
+  const sortedTreePages = React.useMemo(() => {
+    return [...combinedPages].sort((a, b) => a.title.localeCompare(b.title));
+  }, [combinedPages]);
+
+  // Sort Recent Documents section by updatedAt/createdAt descending
+  const recentDocs = React.useMemo(() => {
+    const otherPages = [...pages].filter(p => p.id !== 'root-doc-node');
+    const sorted = otherPages.sort((a, b) => {
+      const timeA = a.updatedAt || a.createdAt || 0;
+      const timeB = b.updatedAt || b.createdAt || 0;
+      return timeB - timeA;
+    });
+
+    const mapped = sorted.map(p => ({
+      id: p.id,
+      title: p.title || 'Untitled Document'
+    }));
+
+    return [
+      { id: 'root-doc-node', title: docTitle },
+      ...mapped
+    ];
+  }, [pages, docTitle]);
 
   const [isRecentOpen, setIsRecentOpen] = useState(true);
   const [isTreeOpen, setIsTreeOpen] = useState(true);
@@ -39,16 +109,26 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange }) => {
 
           {isRecentOpen && (
             <div className="mt-1 space-y-0.5">
-              {docTitles.length > 0 ? docTitles.map((title, i) => (
-                <button
-                  key={i}
-                  onClick={() => onModeChange('doc')}
-                  className="flex items-center w-full px-2 py-1.5 ml-2 text-sm text-slate-700 dark:text-zinc-300 hover:bg-slate-200/50 dark:hover:bg-zinc-800/50 rounded-lg transition-colors truncate"
-                >
-                  <FileText className="w-4 h-4 mr-2 text-indigo-500 dark:text-indigo-400 shrink-0" />
-                  <span className="truncate">{title}</span>
-                </button>
-              )) : (
+              {recentDocs.length > 0 ? recentDocs.map((doc) => {
+                const isActive = activePage === doc.id;
+                return (
+                  <button
+                    key={doc.id}
+                    onClick={() => {
+                      if (onPageSelect) onPageSelect(doc.id);
+                      onModeChange('doc');
+                    }}
+                    className={`flex items-center w-full px-2 py-1.5 ml-2 text-sm rounded-lg transition-colors truncate ${
+                      isActive
+                        ? 'bg-slate-200 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
+                        : 'text-slate-700 dark:text-zinc-300 hover:bg-slate-200/50 dark:hover:bg-zinc-800/50'
+                    }`}
+                  >
+                    <FileText className="w-4 h-4 mr-2 text-indigo-500 dark:text-indigo-400 shrink-0" />
+                    <span className="truncate">{doc.title}</span>
+                  </button>
+                );
+              }) : (
                 <div className="px-4 py-2 text-xs text-slate-400">No recent docs</div>
               )}
             </div>
@@ -68,27 +148,30 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange }) => {
 
           {isTreeOpen && (
             <div className="mt-1 space-y-0.5 ml-2 border-l border-slate-200 dark:border-zinc-800 pl-1">
-              <button
-                onClick={() => onModeChange('doc')}
-                className="flex items-center w-full px-2 py-1.5 text-sm text-slate-700 dark:text-zinc-300 hover:bg-slate-200/50 dark:hover:bg-zinc-800/50 rounded-lg transition-colors truncate"
-              >
-                <FileText className="w-4 h-4 mr-2 text-slate-400 dark:text-zinc-500 shrink-0" />
-                <span className="truncate">Getting Started</span>
-              </button>
-              <button
-                onClick={() => onModeChange('doc')}
-                className="flex items-center w-full px-2 py-1.5 text-sm text-slate-700 dark:text-zinc-300 hover:bg-slate-200/50 dark:hover:bg-zinc-800/50 rounded-lg transition-colors truncate"
-              >
-                <FileText className="w-4 h-4 mr-2 text-slate-400 dark:text-zinc-500 shrink-0" />
-                <span className="truncate">Architecture Specs</span>
-              </button>
-              <button
-                onClick={() => onModeChange('doc')}
-                className="flex items-center w-full px-2 py-1.5 text-sm text-slate-700 dark:text-zinc-300 hover:bg-slate-200/50 dark:hover:bg-zinc-800/50 rounded-lg transition-colors truncate"
-              >
-                <FileText className="w-4 h-4 mr-2 text-slate-400 dark:text-zinc-500 shrink-0" />
-                <span className="truncate">Weekly Notes</span>
-              </button>
+              {sortedTreePages.length === 0 ? (
+                <div className="px-4 py-2 text-xs text-slate-400 dark:text-zinc-500">No pages exist.</div>
+              ) : (
+                sortedTreePages.map((node: any) => {
+                  const isActive = activePage === node.id;
+                  return (
+                    <button
+                      key={node.id}
+                      onClick={() => {
+                        if (onPageSelect) onPageSelect(node.id);
+                        onModeChange('doc');
+                      }}
+                      className={`flex items-center w-full px-2 py-1.5 text-sm rounded-lg transition-colors truncate ${
+                        isActive
+                          ? 'bg-slate-200 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
+                          : 'text-slate-700 dark:text-zinc-300 hover:bg-slate-200/50 dark:hover:bg-zinc-800/50'
+                      }`}
+                    >
+                      <FileText className="w-4 h-4 mr-2 text-slate-400 dark:text-zinc-500 shrink-0" />
+                      <span className="truncate">{node.title}</span>
+                    </button>
+                  );
+                })
+              )}
             </div>
           )}
         </div>

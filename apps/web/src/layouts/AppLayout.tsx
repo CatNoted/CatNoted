@@ -25,7 +25,8 @@ import {
   Tag,
   Cpu,
   Trash2,
-  Menu
+  Menu,
+  Edit2
 } from 'lucide-react';
 
 export type ActiveMode = "doc" | "canvas" | "graph" | "settings";
@@ -45,6 +46,7 @@ interface AppLayoutProps {
   userEmail?: string;
   onAuthTrigger?: () => void;
   onCreatePage?: () => void;
+  onRenamePage?: (oldTitle: string, newTitle: string, pageId?: string) => void;
 }
 
 import { requestLlmWidget, SandboxFrame } from '@catnoted/agent-runtime';
@@ -69,9 +71,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   pageTitle: _pageTitle,
   userEmail: _userEmail,
   onAuthTrigger: _onAuthTrigger,
-  onCreatePage
+  onCreatePage,
+  onRenamePage
 }) => {
-  const { blocks, addBlock, updateBlockType, pages, createPage, deletePage } = useDocumentStore(activePage);
+  const { blocks, addBlock, updateBlockType, pages, createPage, deletePage, renamePage } = useDocumentStore(activePage);
+  const { blocks: rootBlocks, updateBlockContent: updateRootBlockContent } = useDocumentStore('root-doc-node');
   const favoritePages = (pages || []).filter((p: any) => p?.isFavorite);
 
   const handleDeletePage = (pageId: string, pageTitle: string) => {
@@ -82,15 +86,43 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     }
   };
 
-  // Parse document graph nodes
+  const [editingPageId, setEditingPageId] = useState<string | null>(null);
+  const [editingPageTitle, setEditingPageTitle] = useState('');
+
+  const handleSaveInlineRename = (pageId: string) => {
+    const newTitle = editingPageTitle.trim();
+    setEditingPageId(null);
+    if (!newTitle) return;
+
+    // Find the page in our sortedTreePages list
+    const pageNode = sortedTreePages.find((n: any) => n.id === pageId);
+    if (!pageNode) return;
+    const oldTitle = pageNode.title;
+    if (oldTitle === newTitle) return;
+
+    // 1. Rename page metadata
+    renamePage(pageId, newTitle);
+
+    // 2. Propagate rename
+    if (onRenamePage) {
+      onRenamePage(oldTitle, newTitle, pageId);
+    } else {
+      const targetBlock = rootBlocks.find(b => b.content.includes(`[[${oldTitle}]]`));
+      if (targetBlock) {
+        const updatedContent = targetBlock.content.replace(`[[${oldTitle}]]`, `[[${newTitle}]]`);
+        updateRootBlockContent(targetBlock.id, updatedContent);
+      }
+    }
+  };
+
+  // Parse document graph nodes from the root note blocks
   const graphData = React.useMemo(() => {
-    return parseDocumentGraph(blocks);
-  }, [blocks]);
+    return parseDocumentGraph(rootBlocks);
+  }, [rootBlocks]);
 
   const mainHeading = blocks.find(b => b.type === 'heading' && b.properties?.level === 1);
   const docTitle = mainHeading?.content || 'Untitled Document';
 
-  const pageNodes = graphData.nodes.filter(n => n.type === 'page');
   const tagNodes = graphData.nodes.filter(n => n.type === 'tag');
   const widgetNodes = React.useMemo(() => {
     return blocks
@@ -102,21 +134,67 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       }));
   }, [blocks]);
 
-  const recentDocs = React.useMemo(() => {
-    const otherPages = pageNodes
-      .filter(n => n.id !== 'root-doc-node')
-      .map(n => {
-        const title = n.label.startsWith('📁 ') || n.label.startsWith('📄 ')
-          ? n.label.slice(2)
-          : n.label;
-        return { id: n.id, title };
+  // Merge registered pages from the store with pages discovered from root note blocks scan
+  const combinedPages = React.useMemo(() => {
+    const storePagesMap = new Map<string, { id: string; title: string; icon?: string; isFavorite?: boolean; updatedAt?: number; createdAt?: number }>();
+
+    // Add all registered pages from useDocumentStore
+    (pages || []).forEach(p => {
+      storePagesMap.set(p.id, {
+        id: p.id,
+        title: p.title || 'Untitled',
+        icon: p.icon || '📄',
+        isFavorite: !!p.isFavorite,
+        updatedAt: p.updatedAt || p.createdAt || 0,
+        createdAt: p.createdAt || 0
       });
+    });
+
+    // Scan root blocks via parseDocumentGraph to find wiki-linked pages
+    const pageNodesFromGraph = graphData.nodes.filter(n => n.type === 'page');
+    pageNodesFromGraph.forEach(n => {
+      if (n.id !== 'root-doc-node') {
+        const rawName = n.rawName || n.label.replace(/^📄\s*/, '').replace(/\s*\(\d+\)$/, '').trim();
+        if (!storePagesMap.has(n.id)) {
+          storePagesMap.set(n.id, {
+            id: n.id,
+            title: rawName,
+            icon: '📄',
+            isFavorite: false,
+            updatedAt: 0,
+            createdAt: 0
+          });
+        }
+      }
+    });
+
+    return Array.from(storePagesMap.values());
+  }, [pages, graphData.nodes]);
+
+  // Sort Page Tree alphabetically
+  const sortedTreePages = React.useMemo(() => {
+    return [...combinedPages].sort((a, b) => a.title.localeCompare(b.title));
+  }, [combinedPages]);
+
+  // Sort Recent Documents section by updatedAt/createdAt descending
+  const recentDocs = React.useMemo(() => {
+    const otherPages = [...pages].filter(p => p.id !== 'root-doc-node');
+    const sorted = otherPages.sort((a, b) => {
+      const timeA = a.updatedAt || a.createdAt || 0;
+      const timeB = b.updatedAt || b.createdAt || 0;
+      return timeB - timeA;
+    });
+
+    const mapped = sorted.map(p => ({
+      id: p.id,
+      title: p.title || 'Untitled Document'
+    }));
 
     return [
       { id: 'root-doc-node', title: docTitle },
-      ...otherPages
+      ...mapped
     ];
-  }, [pageNodes, docTitle]);
+  }, [pages, docTitle]);
 
   // Persistent sidebar state - initialized with safe defaults to prevent hydration issues
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
@@ -755,44 +833,81 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                       {sectionsExpanded.pages ? <FolderOpen className="w-3.5 h-3.5 text-indigo-500" /> : <Folder className="w-3.5 h-3.5 text-indigo-500" />}
                       <span>Pages</span>
                     </span>
-                    <span className="text-[9px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full">{Object.keys(pages || {}).length}</span>
+                    <span className="text-[9px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full">{sortedTreePages.length}</span>
                   </button>
                   {sectionsExpanded.pages && (
                     <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-150 dark:border-zinc-800 ml-3.5">
-                      {Object.values(pages || {}).map((node: any) => {
-                        const isActive = activePage === node.id;
-                        const displayLabel = node.title || 'Untitled';
-                        return (
-                          <li key={node.id} className="group/pageitem">
-                            <div className="flex items-center">
-                              <button
-                                onClick={() => {
-                                  if (onPageSelect) onPageSelect(node.id);
-                                  onModeChange('doc');
-                                }}
-                                className={`flex-1 text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
-                                  isActive
-                                    ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
-                                    : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
-                                }`}
-                              >
-                                <span className="text-xs shrink-0">{node.icon || '📄'}</span>
-                                <span className="truncate text-xs">{displayLabel}</span>
-                              </button>
-                              {node.id !== 'root-doc-node' && (
-                                <button
-                                  type="button"
-                                  onClick={(e) => { e.stopPropagation(); handleDeletePage(node.id, displayLabel); }}
-                                  className="opacity-0 group-hover/pageitem:opacity-100 p-1 mr-1 rounded text-slate-300 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-all shrink-0"
-                                  title={`Hapus "${displayLabel}"`}
-                                >
-                                  <Trash2 className="w-3 h-3" />
-                                </button>
-                              )}
-                            </div>
-                          </li>
-                        );
-                      })}
+                      {sortedTreePages.length === 0 ? (
+                        <div className="px-2 py-2 text-xs text-slate-400 dark:text-zinc-500">
+                          No pages exist. Click '+ Add' or '+ New Page' to create one.
+                        </div>
+                      ) : (
+                        sortedTreePages.map((node: any) => {
+                          const isActive = activePage === node.id;
+                          const displayLabel = node.title || 'Untitled';
+                          return (
+                            <li key={node.id} className="group/pageitem">
+                              <div className="flex items-center min-w-0 w-full">
+                                {editingPageId === node.id ? (
+                                  <input
+                                    type="text"
+                                    value={editingPageTitle}
+                                    onChange={(e) => setEditingPageTitle(e.target.value)}
+                                    onBlur={() => handleSaveInlineRename(node.id)}
+                                    onKeyDown={(e) => {
+                                      if (e.key === 'Enter') handleSaveInlineRename(node.id);
+                                      if (e.key === 'Escape') setEditingPageId(null);
+                                    }}
+                                    className="flex-1 px-1.5 py-0.5 border border-indigo-400 dark:border-indigo-500 rounded bg-slate-50 dark:bg-zinc-800 text-xs text-slate-800 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-indigo-500 min-w-0"
+                                    autoFocus
+                                  />
+                                ) : (
+                                  <>
+                                    <button
+                                      onClick={() => {
+                                        if (onPageSelect) onPageSelect(node.id);
+                                        onModeChange('doc');
+                                      }}
+                                      className={`flex-1 text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors min-w-0 ${
+                                        isActive
+                                          ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
+                                          : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
+                                      }`}
+                                    >
+                                      <span className="text-xs shrink-0">{node.icon || '📄'}</span>
+                                      <span className="truncate text-xs">{displayLabel}</span>
+                                    </button>
+                                    {node.id !== 'root-doc-node' && (
+                                      <div className="flex items-center opacity-0 group-hover/pageitem:opacity-100 transition-opacity">
+                                        <button
+                                          type="button"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            setEditingPageId(node.id);
+                                            setEditingPageTitle(displayLabel);
+                                          }}
+                                          className="p-1 rounded text-slate-300 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-all shrink-0"
+                                          title={`Ubah nama "${displayLabel}"`}
+                                        >
+                                          <Edit2 className="w-3 h-3" />
+                                        </button>
+                                        <button
+                                          type="button"
+                                          onClick={(e) => { e.stopPropagation(); handleDeletePage(node.id, displayLabel); }}
+                                          className="p-1 mr-1 rounded text-slate-300 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-all shrink-0"
+                                          title={`Hapus "${displayLabel}"`}
+                                        >
+                                          <Trash2 className="w-3 h-3" />
+                                        </button>
+                                      </div>
+                                    )}
+                                  </>
+                                )}
+                              </div>
+                            </li>
+                          );
+                        })
+                      )}
                     </ul>
                   )}
                 </div>

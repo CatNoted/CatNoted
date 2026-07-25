@@ -29,7 +29,7 @@ const App: React.FC = () => {
   const [isZenMode, setIsZenMode] = useState<boolean>(false);
   const [activePage, setActivePage] = useState<string>('root-doc-node');
 
-  const { blocks: rootBlocks, addBlock: addRootBlock, updateBlockContent: updateRootBlockContent } = useDocumentStore('root-doc-node');
+  const { blocks: rootBlocks, addBlock: addRootBlock, updateBlockContent: updateRootBlockContent, renamePage } = useDocumentStore('root-doc-node');
   const { blocks: activeBlocks, updateBlockContent: updateActiveBlockContent } = useDocumentStore(activePage);
 
   const graphData = React.useMemo(() => {
@@ -56,9 +56,13 @@ const App: React.FC = () => {
     }
   }, [pageTitle, isEditingTitle]);
 
-  const handleRenamePage = (oldTitle: string, newTitle: string) => {
-    if (activePage === 'root-doc-node') return;
+  const handleRenamePage = (oldTitle: string, newTitle: string, pageId?: string) => {
+    const targetPageId = pageId || activePage;
+    if (targetPageId === 'root-doc-node') return;
     if (!oldTitle.trim() || !newTitle.trim() || oldTitle === newTitle) return;
+
+    // 0. Update page metadata in ypages using renamePage
+    renamePage(targetPageId, newTitle);
 
     // 1. Rename wiki link in rootBlocks
     const targetBlock = rootBlocks.find(b => b.content.includes(`[[${oldTitle}]]`));
@@ -68,7 +72,7 @@ const App: React.FC = () => {
     }
 
     // 2. Migrate blocks in Yjs
-    const oldPageId = activePage;
+    const oldPageId = targetPageId;
     const newPageId = `page-${newTitle.toLowerCase().replace(/\s+/g, '-')}`;
 
     const oldYarr = ydoc.getArray<any>(`blocks:${oldPageId}`);
@@ -81,7 +85,9 @@ const App: React.FC = () => {
       }
     });
 
-    setActivePage(newPageId);
+    if (targetPageId === activePage) {
+      setActivePage(newPageId);
+    }
   };
 
   const handleSaveTitle = () => {
@@ -549,6 +555,7 @@ const App: React.FC = () => {
         userEmail={userEmail}
         onAuthTrigger={() => setIsAuthOpen(true)}
         onCreatePage={handleCreatePage}
+        onRenamePage={handleRenamePage}
       >
         {renderContent()}
       </AppLayout>
