@@ -116,8 +116,18 @@ export const TableBlock: React.FC<TableBlockProps> = ({
                       type="text"
                       value={cell}
                       onChange={(e) => handleCellChange(actualRowIdx, cIdx, e.target.value)}
-                      className="w-full bg-transparent text-slate-700 dark:text-zinc-300 outline-none focus:ring-1 focus:ring-indigo-400 rounded px-1"
+                      className="w-full bg-transparent text-slate-700 dark:text-zinc-300 outline-none focus:ring-1 focus:ring-indigo-400 rounded px-1 pr-6"
                     />
+                    {cIdx === row.length - 1 && currentRows.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => _handleRemoveRow(actualRowIdx)}
+                        className="absolute right-1 top-2.5 opacity-0 group-hover/tr:opacity-100 p-0.5 text-rose-400 hover:text-rose-600"
+                        title="Remove row"
+                      >
+                        ×
+                      </button>
+                    )}
                   </td>
                 ))}
               </tr>

@@ -50,6 +50,7 @@ interface AppLayoutProps {
 import { requestLlmWidget, SandboxFrame } from '@catnoted/agent-runtime';
 import { useDocumentStore } from '@catnoted/editor';
 import { parseDocumentGraph } from '@catnoted/graph';
+import { useNavigate } from 'react-router-dom';
 
 // ── Floating panel position & size constants ────────────────────────────
 const PANEL_DEFAULT_WIDTH = 380;
@@ -65,12 +66,13 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   zenMode = false,
   children,
   activePage = 'root-doc-node',
-  onPageSelect,
+  onPageSelect: _onPageSelect,
   pageTitle: _pageTitle,
   userEmail: _userEmail,
   onAuthTrigger: _onAuthTrigger,
   onCreatePage
 }) => {
+  const navigate = useNavigate();
   const { blocks, addBlock, updateBlockType, pages, createPage, deletePage } = useDocumentStore(activePage);
   const favoritePages = (pages || []).filter((p: any) => p?.isFavorite);
 
@@ -78,7 +80,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     if (pageId === 'root-doc-node') return;
     if (confirm(`Hapus halaman "${pageTitle}"? Tindakan ini tidak dapat dibatalkan.`)) {
       deletePage(pageId);
-      if (onPageSelect) onPageSelect('root-doc-node');
+      navigate('/p/root-doc-node');
     }
   };
 
@@ -521,7 +523,17 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     key={item.id}
                     ref={el => { navRefs.current[index] = el; }}
                     type="button"
-                    onClick={() => onModeChange(item.id as ActiveMode)}
+                    onClick={() => {
+                      if (item.id === 'settings') {
+                        onModeChange('settings');
+                      } else if (item.id === 'canvas') {
+                        navigate('/c');
+                      } else if (item.id === 'graph') {
+                        navigate('/g');
+                      } else {
+                        navigate(`/p/${activePage}`);
+                      }
+                    }}
                     onKeyDown={(e) => handleNavKeyDown(e, index)}
                     onFocus={() => setFocusedNavIndex(index)}
                     tabIndex={focusedNavIndex === index ? 0 : -1}
@@ -652,8 +664,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     <li key={doc.id}>
                       <button
                         onClick={() => {
-                          if (onPageSelect) onPageSelect(doc.id);
-                          onModeChange('doc');
+                          navigate(`/p/${doc.id}`);
                         }}
                         className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between transition-colors ${
                           isActive
@@ -683,7 +694,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     const title = prompt('Enter page title', 'Untitled');
                     if (title && createPage) {
                         const newId = createPage(title);
-                        if (onPageSelect) onPageSelect(newId);
+                        navigate(`/p/${newId}`);
                     }
                 }} className="text-xs text-indigo-500 hover:text-indigo-600 font-semibold cursor-pointer px-1">+ Add</button>
               </div>
@@ -723,8 +734,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                             <li key={node.id}>
                               <button
                                 onClick={() => {
-                                  if (onPageSelect) onPageSelect(node.id);
-                                  onModeChange('doc');
+                                  navigate(`/p/${node.id}`);
                                 }}
                                 className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
                                   isActive
@@ -767,8 +777,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                             <div className="flex items-center">
                               <button
                                 onClick={() => {
-                                  if (onPageSelect) onPageSelect(node.id);
-                                  onModeChange('doc');
+                                  navigate(`/p/${node.id}`);
                                 }}
                                 className={`flex-1 text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
                                   isActive
@@ -827,8 +836,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                             <li key={node.id}>
                               <button
                                 onClick={() => {
-                                  if (onPageSelect) onPageSelect(node.id);
-                                  onModeChange('doc');
+                                  navigate(`/p/${node.id}`);
                                 }}
                                 className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
                                   isActive
@@ -874,8 +882,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                             <li key={node.id}>
                               <button
                                 onClick={() => {
-                                  if (onPageSelect) onPageSelect(node.id);
-                                  onModeChange('doc');
+                                  navigate(`/p/${node.id}`);
                                 }}
                                 className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
                                   isActive

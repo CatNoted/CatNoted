@@ -9,6 +9,15 @@ vi.mock('@catnoted/agent-runtime', () => ({
   SandboxFrame: () => <div data-testid="sandbox-frame" />
 }));
 
+const mockNavigate = vi.fn();
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual as any,
+    useNavigate: () => mockNavigate,
+  };
+});
+
 describe('AppLayout Sidebar Integration Tests', () => {
   it('should render the workspace sidebar, recent documents list, and page tree categories', async () => {
     const container = document.createElement('div');
@@ -92,7 +101,7 @@ describe('AppLayout Sidebar Integration Tests', () => {
     document.body.removeChild(container);
   });
 
-  it('should trigger onPageSelect and onModeChange callbacks when selecting an item', async () => {
+  it('should trigger navigation when selecting an item', async () => {
     const container = document.createElement('div');
     document.body.appendChild(container);
 
@@ -123,15 +132,16 @@ describe('AppLayout Sidebar Integration Tests', () => {
 
     expect(docItemBtn).toBeDefined();
 
+    mockNavigate.mockClear();
+
     await act(async () => {
       docItemBtn?.click();
     });
 
     await new Promise(resolve => setTimeout(resolve, 50));
 
-    // It should switch activeMode to 'doc' and invoke page select callback
-    expect(onModeChange).toHaveBeenCalledWith('doc');
-    expect(onPageSelect).toHaveBeenCalledWith('root-doc-node');
+    // It should navigate to /p/root-doc-node
+    expect(mockNavigate).toHaveBeenCalledWith('/p/root-doc-node');
 
     // Clean up
     document.body.removeChild(container);

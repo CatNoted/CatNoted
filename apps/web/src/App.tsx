@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Routes, Route, Navigate, useParams, useLocation, useNavigate } from 'react-router-dom';
 import { AppLayout, ActiveMode } from './layouts/AppLayout.js';
 import { DocumentEditor, useDocumentStore } from '@catnoted/editor';
 import { InfiniteCanvas } from '@catnoted/canvas';
@@ -22,12 +23,22 @@ import { AuthModal } from "./components/auth/AuthModal.js";
 import { SettingsModal } from "./components/settings/SettingsModal.js";
 import { CommandPalette } from "./components/CommandPalette.js";
 
-const App: React.FC = () => {
-  const [activeMode, setActiveMode] = useState<ActiveMode>("doc");
+const AppContent: React.FC = () => {
+  const { pageId } = useParams<{ pageId?: string }>();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const activeMode: ActiveMode = location.pathname === '/c'
+    ? 'canvas'
+    : location.pathname === '/g'
+      ? 'graph'
+      : 'doc';
+
+  const activePage = pageId || 'root-doc-node';
+
   const [_currentWorkspace] = useState<string>("Personal Space");
   const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
   const [isZenMode, setIsZenMode] = useState<boolean>(false);
-  const [activePage, setActivePage] = useState<string>('root-doc-node');
 
   const { blocks: rootBlocks, addBlock: addRootBlock, updateBlockContent: updateRootBlockContent } = useDocumentStore('root-doc-node');
   const { blocks: activeBlocks, updateBlockContent: updateActiveBlockContent } = useDocumentStore(activePage);
@@ -81,7 +92,7 @@ const App: React.FC = () => {
       }
     });
 
-    setActivePage(newPageId);
+    navigate(`/p/${newPageId}`);
   };
 
   const handleSaveTitle = () => {
@@ -130,8 +141,7 @@ const App: React.FC = () => {
 
     // Navigate to the newly created page
     const pageId = `page-${newTitle.toLowerCase().replace(/\s+/g, '-')}`;
-    setActivePage(pageId);
-    setActiveMode('doc');
+    navigate(`/p/${pageId}`);
   };
   
   // E2EE Sync credentials
@@ -232,7 +242,13 @@ const App: React.FC = () => {
       setIsSettingsOpen(true);
       return;
     }
-    setActiveMode(mode);
+    if (mode === "canvas") {
+      navigate('/c');
+    } else if (mode === "graph") {
+      navigate('/g');
+    } else {
+      navigate(`/p/${activePage}`);
+    }
   };
 
   const { pageMeta, updatePageMeta, deletePage } = useDocumentStore(activePage);
@@ -275,7 +291,7 @@ const App: React.FC = () => {
             <>
               <button
                 type="button"
-                onClick={() => setActivePage('root-doc-node')}
+                onClick={() => navigate('/p/root-doc-node')}
                 className="text-sm font-medium text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200 transition-colors shrink-0"
                 title="Back to root note"
               >
@@ -429,7 +445,7 @@ const App: React.FC = () => {
                       onClick={() => {
                         if (confirm(`Delete page "${pageTitle}"?`)) {
                           deletePage(activePage);
-                          setActivePage('root-doc-node');
+                          navigate('/p/root-doc-node');
                           setShowPageMenu(false);
                         }
                       }}
@@ -516,7 +532,7 @@ const App: React.FC = () => {
       case "graph":
         return (
           <div className="h-full overflow-hidden">
-            <GraphView onNavigateToNode={(nodeId) => { setActivePage(nodeId); setActiveMode("doc"); }} />
+            <GraphView onNavigateToNode={(nodeId) => { navigate(`/p/${nodeId}`); }} />
           </div>
         );
       default:
@@ -544,7 +560,7 @@ const App: React.FC = () => {
         onToggleTheme={() => setIsDarkMode(!isDarkMode)}
         zenMode={isZenMode}
         activePage={activePage}
-        onPageSelect={setActivePage}
+        onPageSelect={(id) => navigate(`/p/${id}`)}
         pageTitle={pageTitle}
         userEmail={userEmail}
         onAuthTrigger={() => setIsAuthOpen(true)}
@@ -595,6 +611,17 @@ const App: React.FC = () => {
         isDarkMode={isDarkMode}
       />
     </>
+  );
+};
+
+const App: React.FC = () => {
+  return (
+    <Routes>
+      <Route path="/" element={<Navigate to="/p/root-doc-node" replace />} />
+      <Route path="/c" element={<AppContent />} />
+      <Route path="/g" element={<AppContent />} />
+      <Route path="/p/:pageId" element={<AppContent />} />
+    </Routes>
   );
 };
 
