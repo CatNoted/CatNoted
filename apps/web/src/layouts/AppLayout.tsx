@@ -691,6 +691,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               {onCreatePage && (
                 <button
                   type="button"
+                  id="tour-new-page"
                   onClick={onCreatePage}
                   className="w-full flex items-center justify-center gap-1.5 py-2 px-3 mb-3 bg-slate-50 dark:bg-zinc-800/50 text-slate-600 dark:text-zinc-300 font-medium hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500"
                 >
@@ -746,7 +747,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 <div>
                   <button
                     onClick={() => toggleSection('pages')}
-                    className="w-full flex items-center justify-between px-2 py-1.5 hover:bg-slate-100/60 dark:hover:bg-zinc-800/30 rounded-lg text-xs font-semibold text-slate-500 dark:text-zinc-400"
+                    id="tour-command-palette"
+            className="w-full flex items-center justify-between px-2 py-1.5 hover:bg-slate-100/60 dark:hover:bg-zinc-800/30 rounded-lg text-xs font-semibold text-slate-500 dark:text-zinc-400"
                   >
                     <span className="flex items-center gap-1.5">
                       {sectionsExpanded.pages ? <ChevronDown className="w-3.5 h-3.5 text-slate-400" /> : <ChevronRight className="w-3.5 h-3.5 text-slate-400" />}
