@@ -6,7 +6,9 @@ import { IndexeddbPersistence } from 'y-indexeddb';
 export const ydoc = new Y.Doc();
 export const ypages = ydoc.getMap<any>('pages');
 const yblocks = ydoc.getArray<BlockNode>('blocks');
-const provider = new IndexeddbPersistence('catnoted-doc', ydoc);
+const provider = typeof window !== 'undefined' && typeof indexedDB !== 'undefined' 
+  ? new IndexeddbPersistence('catnoted-doc', ydoc) 
+  : null;
 
 // Prepopulate if empty
 if (yblocks.length === 0) {

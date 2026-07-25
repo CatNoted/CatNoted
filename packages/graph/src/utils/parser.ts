@@ -25,9 +25,10 @@ export function parseDocumentGraph(blocks: BlockNode[]): { nodes: GraphNode[]; e
       const pageName = sourceId.replace(/^page-/, '').split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
       nodesMap.set(sourceId, {
         id: sourceId,
-        label: `📄 ${pageName}`,
         type: 'page',
-        val: 15
+        val: 15,
+        _rawName: pageName,
+        count: 0
       });
     }
   });
@@ -44,13 +45,16 @@ export function parseDocumentGraph(blocks: BlockNode[]): { nodes: GraphNode[]; e
       if (!pageName) continue;
       const nodeId = `page-${pageName.toLowerCase().replace(/\s+/g, '-')}`;
       
-      if (!nodesMap.has(nodeId)) {
+      const existing = nodesMap.get(nodeId);
+      if (existing) {
+        existing.count++;
+      } else {
         nodesMap.set(nodeId, {
           id: nodeId,
           type: 'page',
           val: 12,
           _rawName: pageName,
-          count: 0
+          count: 1
         });
       }
 
@@ -72,13 +76,16 @@ export function parseDocumentGraph(blocks: BlockNode[]): { nodes: GraphNode[]; e
       if (!tagName) continue;
       const nodeId = `tag-${tagName.toLowerCase()}`;
 
-      if (!nodesMap.has(nodeId)) {
+      const existing = nodesMap.get(nodeId);
+      if (existing) {
+        existing.count++;
+      } else {
         nodesMap.set(nodeId, {
           id: nodeId,
           type: 'tag',
           val: 10,
           _rawName: tagName,
-          count: 0
+          count: 1
         });
       }
 
@@ -104,9 +111,9 @@ export function parseDocumentGraph(blocks: BlockNode[]): { nodes: GraphNode[]; e
         rawName: n._rawName
       };
     }
-    const prefix = n.type === 'page' ? '📄' : '#';
+    const prefix = n.type === 'page' ? '📄 ' : '# ';
     // Backlink count included in label
-    const label = `${prefix} ${n._rawName} (${n.count})`;
+    const label = `${prefix}${n._rawName} (${n.count})`;
     return {
       id: n.id,
       label,

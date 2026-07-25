@@ -9,15 +9,7 @@
     "jsx": "react-jsx",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "baseUrl": ".",
-    "paths": {
-      "@catnoted/shared": ["../shared/src/index.ts"],
-      "@catnoted/graph": ["../graph/src/index.ts"],
-      "@catnoted/agent-runtime": ["../agent-runtime/src/index.ts"],
-      "@catnoted/editor": ["src/index.ts"],
-      "@catnoted/canvas": ["../canvas/src/index.ts"]
-    }
+    "forceConsistentCasingInFileNames": true
   },
   "include": ["src/**/*"]
 }

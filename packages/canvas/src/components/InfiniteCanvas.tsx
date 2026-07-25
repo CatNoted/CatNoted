@@ -13,8 +13,6 @@ import { CanvasProperties } from './CanvasProperties.js';
 export const ycanvas = ydoc.getMap<CanvasElement>('canvas');
 
 export const InfiniteCanvas: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-
   const { blocks } = useDocumentStore();
   const [elements, setElements] = useState<Record<string, CanvasElement>>({});
 
@@ -39,8 +37,6 @@ export const InfiniteCanvas: React.FC = () => {
   const activeResizeHandle = useRef<{ handle: string, id: string } | null>(null);
   const resizeStartRect = useRef<{ x: number, y: number, w: number, h: number } | null>(null);
 
-  const containerRef = useRef<HTMLDivElement>(null);
-
   const {
     pan,
     scale,
@@ -51,7 +47,8 @@ export const InfiniteCanvas: React.FC = () => {
     handleMouseUp,
     handleWheel,
     transformStyle,
-    containerRef
+    containerRef,
+    isSpacePan
   } = useCanvasViewport();
 
   // Attach native wheel event for zooming/panning
@@ -572,7 +569,6 @@ export const InfiniteCanvas: React.FC = () => {
       onMouseDown={handleBackgroundMouseDown}
       onMouseMove={handleGlobalMouseMove}
       onMouseUp={handleGlobalMouseUp}
-      ref={containerRef}
       className="h-[75vh] w-full border border-slate-200 dark:border-zinc-800 rounded-3xl overflow-hidden bg-slate-50 dark:bg-zinc-950 shadow-inner relative cursor-grab active:cursor-grabbing select-none"
     >
       {/* Dynamic Dot Grid Background */}
