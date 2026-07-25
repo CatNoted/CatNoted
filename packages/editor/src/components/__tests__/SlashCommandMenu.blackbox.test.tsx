@@ -1,5 +1,8 @@
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import { act } from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { buildSlashCommands, SlashCommand } from '../SlashCommandMenu.js';
+import { buildSlashCommands, SlashCommand, SlashCommandMenu } from '../SlashCommandMenu.js';
 
 describe('Blackbox Test: SlashCommandMenu Filtering & Trigger Specifications', () => {
   const onSetType = vi.fn();
@@ -26,6 +29,30 @@ describe('Blackbox Test: SlashCommandMenu Filtering & Trigger Specifications', (
     expect(ids).toContain('divider');
     expect(ids).toContain('widget');
   });
+
+  it('blackbox filter test: empty query should render all commands in SlashCommandMenu', async () => {
+    // vitest environment is happy-dom
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+
+    await act(async () => {
+      const root = createRoot(container);
+      root.render(
+        <SlashCommandMenu
+          query=""
+          position={{ top: 0, left: 0 }}
+          onClose={vi.fn()}
+          commands={commands}
+        />
+      );
+    });
+
+    const buttons = container.querySelectorAll('button');
+    expect(buttons.length).toBe(commands.length);
+
+    document.body.removeChild(container);
+  });
+
 
   it('blackbox filter test: querying "h1" or "title" should match Heading 1 command', () => {
     const query = 'h1';
