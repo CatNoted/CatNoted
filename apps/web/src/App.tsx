@@ -24,7 +24,6 @@ import { CommandPalette } from "./components/CommandPalette.js";
 
 const App: React.FC = () => {
   const [activeMode, setActiveMode] = useState<ActiveMode>("doc");
-  const [_currentWorkspace] = useState<string>("Personal Space");
   const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
   const [isZenMode, setIsZenMode] = useState<boolean>(false);
   const [activePage, setActivePage] = useState<string>('root-doc-node');

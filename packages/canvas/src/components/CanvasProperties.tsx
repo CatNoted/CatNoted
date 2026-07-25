@@ -183,21 +183,19 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
         <div className="flex items-center gap-1 bg-slate-100 dark:bg-zinc-800/50 p-1 rounded-lg w-fit">
           <button
             onClick={() => handleUpdate({ borderStyle: 'solid' })}
-            className={`p-1.5 rounded-md flex items-center justify-center transition-colors ${element.borderStyle === 'solid' ? 'bg-white dark:bg-zinc-700 shadow-sm text-indigo-600 dark:text-indigo-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
-            title="Solid"
+ pr-145
           >
             <Square className="w-4 h-4" />
           </button>
           <button
             onClick={() => handleUpdate({ borderStyle: 'dashed' })}
-            className={`p-1.5 rounded-md flex items-center justify-center transition-colors ${element.borderStyle === 'dashed' ? 'bg-white dark:bg-zinc-700 shadow-sm text-indigo-600 dark:text-indigo-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
-            title="Dashed"
+ pr-145
           >
             <CircleDashed className="w-4 h-4" />
           </button>
           <button
             onClick={() => handleUpdate({ borderStyle: 'none' })}
-            className={`p-1.5 rounded-md text-xs font-medium px-3 transition-colors ${!element.borderStyle || element.borderStyle === 'none' ? 'bg-white dark:bg-zinc-700 shadow-sm text-indigo-600 dark:text-indigo-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+ pr-145
           >
             None
           </button>
@@ -217,7 +215,7 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
           step="0.1"
           value={element.opacity ?? 1}
           onChange={(e) => handleUpdate({ opacity: parseFloat(e.target.value) })}
-          className="w-full accent-indigo-500 h-1.5 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer"
+ pr-145
         />
       </div>
 
@@ -227,26 +225,17 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
         <span className="text-xs text-slate-600 dark:text-zinc-400 font-medium flex items-center gap-1"><Layers className="w-3 h-3" /> Arrange & Lock</span>
         <div className="flex items-center gap-2">
           <button
-            onClick={handleBringToFront}
-            className="p-1.5 rounded border bg-white border-slate-200 text-slate-600 hover:bg-slate-50 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-700"
-            title="Bring to Front (])"
-            type="button"
+ pr-145
           >
             <ArrowUpToLine className="w-4 h-4" />
           </button>
           <button
-            onClick={handleSendToBack}
-            className="p-1.5 rounded border bg-white border-slate-200 text-slate-600 hover:bg-slate-50 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-700"
-            title="Send to Back ([)"
-            type="button"
+ pr-145
           >
             <ArrowDownToLine className="w-4 h-4" />
           </button>
           <button
-            onClick={handleToggleLock}
-            className={`p-1.5 rounded border ${element.locked ? 'bg-indigo-50 border-indigo-200 text-indigo-600 dark:bg-indigo-900/30 dark:border-indigo-800 dark:text-indigo-400' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-700'}`}
-            title="Toggle Lock (Ctrl+L)"
-            type="button"
+ pr-145
           >
             {element.locked ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
           </button>
@@ -285,11 +274,7 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
         <span className="text-xs text-slate-500 dark:text-zinc-400 font-medium">Nudge</span>
         <div className="grid grid-cols-3 gap-1 w-fit self-center">
           <div />
-          <button onClick={() => handleNudge(0, -10)} className="p-1.5 bg-slate-100 dark:bg-zinc-800/80 rounded-md hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-500 transition-colors" type="button"><ArrowUp className="w-3.5 h-3.5" /></button>
-          <div />
-          <button onClick={() => handleNudge(-10, 0)} className="p-1.5 bg-slate-100 dark:bg-zinc-800/80 rounded-md hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-500 transition-colors" type="button"><ArrowLeft className="w-3.5 h-3.5" /></button>
-          <button onClick={() => handleNudge(0, 10)} className="p-1.5 bg-slate-100 dark:bg-zinc-800/80 rounded-md hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-500 transition-colors" type="button"><ArrowDown className="w-3.5 h-3.5" /></button>
-          <button onClick={() => handleNudge(10, 0)} className="p-1.5 bg-slate-100 dark:bg-zinc-800/80 rounded-md hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-500 transition-colors" type="button"><ArrowRight className="w-3.5 h-3.5" /></button>
+ pr-145
         </div>
       </div>
     </div>
