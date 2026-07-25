@@ -24,6 +24,7 @@ import {
   Clock,
   Tag,
   Cpu,
+  Trash2,
   Menu
 } from 'lucide-react';
 
@@ -70,8 +71,16 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   onAuthTrigger: _onAuthTrigger,
   onCreatePage
 }) => {
-  const { blocks, addBlock, updateBlockType, pages, createPage } = useDocumentStore(activePage);
+  const { blocks, addBlock, updateBlockType, pages, createPage, deletePage } = useDocumentStore(activePage);
   const favoritePages = (pages || []).filter((p: any) => p?.isFavorite);
+
+  const handleDeletePage = (pageId: string, pageTitle: string) => {
+    if (pageId === 'root-doc-node') return;
+    if (confirm(`Hapus halaman "${pageTitle}"? Tindakan ini tidak dapat dibatalkan.`)) {
+      deletePage(pageId);
+      if (onPageSelect) onPageSelect('root-doc-node');
+    }
+  };
 
   // Parse document graph nodes
   const graphData = React.useMemo(() => {
@@ -752,21 +761,33 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         const isActive = activePage === node.id;
                         const displayLabel = node.title || 'Untitled';
                         return (
-                          <li key={node.id}>
-                            <button
-                              onClick={() => {
-                                if (onPageSelect) onPageSelect(node.id);
-                                onModeChange('doc');
-                              }}
-                              className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
-                                isActive
-                                  ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
-                                  : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
-                              }`}
-                            >
-                              <span className="text-xs shrink-0">{node.icon || '📄'}</span>
-                              <span className="truncate text-xs">{displayLabel}</span>
-                            </button>
+                          <li key={node.id} className="group/pageitem">
+                            <div className="flex items-center">
+                              <button
+                                onClick={() => {
+                                  if (onPageSelect) onPageSelect(node.id);
+                                  onModeChange('doc');
+                                }}
+                                className={`flex-1 text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
+                                  isActive
+                                    ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
+                                    : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
+                                }`}
+                              >
+                                <span className="text-xs shrink-0">{node.icon || '📄'}</span>
+                                <span className="truncate text-xs">{displayLabel}</span>
+                              </button>
+                              {node.id !== 'root-doc-node' && (
+                                <button
+                                  type="button"
+                                  onClick={(e) => { e.stopPropagation(); handleDeletePage(node.id, displayLabel); }}
+                                  className="opacity-0 group-hover/pageitem:opacity-100 p-1 mr-1 rounded text-slate-300 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-all shrink-0"
+                                  title={`Hapus "${displayLabel}"`}
+                                >
+                                  <Trash2 className="w-3 h-3" />
+                                </button>
+                              )}
+                            </div>
                           </li>
                         );
                       })}

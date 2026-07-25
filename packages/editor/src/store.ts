@@ -39,7 +39,7 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
       const allBlocks = yblocks.toArray();
       const pageBlocks = allBlocks.filter(b => (b.parentId || 'root-doc-node') === pageId);
 
-      // Prepopulate sub-page if empty
+      // Prepopulate sub-page if empty (inside transact, observer will re-fire)
       if (pageId !== 'root-doc-node' && pageBlocks.length === 0) {
         const rawName = pageId.startsWith('page-') ? pageId.slice(5) : pageId;
         const pageName = rawName
@@ -58,9 +58,11 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
             }
           ]);
         });
-      } else {
-        setBlocks(pageBlocks);
+        // observer will fire again after insert — don't set blocks here
+        return;
       }
+
+      setBlocks(pageBlocks);
     };
 
     const updatePageMetadata = () => {
@@ -96,7 +98,9 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
     ypages.observe(pagesObserver);
 
     const handleSync = () => {
-      setBlocks(yblocks.toArray());
+      // Filter by current pageId to avoid cross-page duplicates
+      const allBlocks = yblocks.toArray();
+      setBlocks(allBlocks.filter(b => (b.parentId || 'root-doc-node') === pageId));
       updatePageMetadata();
     };
     if (provider && typeof provider.on === 'function') {
