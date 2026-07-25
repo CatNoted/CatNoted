@@ -7,10 +7,7 @@ import {
   AlignLeft,
   AlignCenter,
   AlignRight,
-  Lock,
-  Unlock,
   ArrowUpToLine,
-  ArrowDownToLine,
   Layers,
 } from 'lucide-react';
 
