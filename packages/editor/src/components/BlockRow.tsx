@@ -219,17 +219,22 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
               )}
 
               {block.type === 'text' && (
-                <TextBlock
-                  id={block.id}
-                  content={block.content}
-                  onChange={onChangeContent}
-                  onEnter={onEnterBlock}
-                  onBackspace={onBackspaceBlockInner}
-                  onSetType={onSetTypeBlock}
-                  onAddWidget={onAddWidgetBlock}
-                  focusOnMount={isFocused}
-                  blockType={block.type}
-                />
+                <div className="group">
+                  <TextBlock
+                    id={block.id}
+                    content={block.content}
+                    onChange={onChangeContent}
+                    onEnter={onEnterBlock}
+                    onBackspace={onBackspaceBlockInner}
+                    onSetType={onSetTypeBlock}
+                    onAddWidget={onAddWidgetBlock}
+                    focusOnMount={isFocused}
+                    showLeftActions={true}
+                    isFocused={isFocused}
+                    onAddClick={() => handleCreateBlock(block.id)}
+                    blockType={block.type}
+                  />
+                </div>
               )}
 
               {/* --- Bullet list --- */}
