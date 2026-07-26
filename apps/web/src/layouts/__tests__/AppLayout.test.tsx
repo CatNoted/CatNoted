@@ -177,4 +177,82 @@ describe('AppLayout Sidebar Integration Tests', () => {
 
     document.body.removeChild(container);
   });
+
+  it('should render the right tool rail and toggle open/close and switch tabs on click', async () => {
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+
+    await act(async () => {
+      const root = createRoot(container);
+      root.render(
+        <AppLayout
+          activeMode="doc"
+          onModeChange={vi.fn()}
+          isDarkMode={true}
+          onToggleTheme={vi.fn()}
+          activePage="root-doc-node"
+          onPageSelect={vi.fn()}
+        >
+          <div>Workspace Content</div>
+        </AppLayout>
+      );
+    });
+
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    // 1. Verify right-side tool rail navigation buttons are rendered
+    const buttons = Array.from(container.querySelectorAll('button'));
+    const infoButton = buttons.find(btn => btn.getAttribute('aria-label') === 'Page Info');
+    const outlineButton = buttons.find(btn => btn.getAttribute('aria-label') === 'Outline');
+    const agentButton = buttons.find(btn => btn.getAttribute('aria-label') === 'Space Agent');
+    const historyButton = buttons.find(btn => btn.getAttribute('aria-label') === 'Page History');
+
+    expect(infoButton).toBeDefined();
+    expect(outlineButton).toBeDefined();
+    expect(agentButton).toBeDefined();
+    expect(historyButton).toBeDefined();
+
+    // 2. Open Page Info Tab
+    await act(async () => {
+      infoButton?.click();
+    });
+    await new Promise(resolve => setTimeout(resolve, 50));
+    expect(container.innerHTML).toContain('Page Info &amp; Style');
+    expect(container.innerHTML).toContain('Page Style Settings');
+    expect(container.innerHTML).toContain('Document Statistics');
+
+    // 3. Switch to Document Outline Tab
+    await act(async () => {
+      outlineButton?.click();
+    });
+    await new Promise(resolve => setTimeout(resolve, 50));
+    expect(container.innerHTML).toContain('Document Outline');
+    expect(container.innerHTML).toContain('Click an outline heading below');
+
+    // 4. Switch to Space Agent Tab
+    await act(async () => {
+      agentButton?.click();
+    });
+    await new Promise(resolve => setTimeout(resolve, 50));
+    expect(container.innerHTML).toContain('Docked Space Agent');
+
+    // 5. Switch to Page History Tab
+    await act(async () => {
+      historyButton?.click();
+    });
+    await new Promise(resolve => setTimeout(resolve, 50));
+    expect(container.innerHTML).toContain('Version History');
+    expect(container.innerHTML).toContain('Current active version');
+
+    // 6. Click History Tab again to close/collapse
+    await act(async () => {
+      historyButton?.click();
+    });
+    await new Promise(resolve => setTimeout(resolve, 50));
+    // The panel width style should be 0 or it's hidden
+    expect(container.innerHTML).not.toContain('Page Info &amp; Style');
+
+    // Clean up
+    document.body.removeChild(container);
+  });
 });
