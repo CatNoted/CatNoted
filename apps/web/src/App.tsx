@@ -17,8 +17,10 @@ import { usePersistence } from './utils/sync/persistence.js';
 import { AuthModal } from './components/auth/AuthModal.js';
 import { SettingsModal } from './components/settings/SettingsModal.js';
 import { CommandPalette } from './components/CommandPalette.js';
+import { useToast } from './components/primitives/Toast.js';
 
 const App: React.FC = () => {
+  const { toast } = useToast();
   const [activeMode, setActiveMode] = useState<ActiveMode>('doc');
   const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
   const [isZenMode, setIsZenMode] = useState<boolean>(false);
@@ -402,10 +404,10 @@ const App: React.FC = () => {
           onClick={() => {
             const link = `${window.location.origin}/space/${userEmail || 'guest'}`;
             navigator.clipboard.writeText(link)
-              .then(() => alert(`Share Link copied to clipboard:\n${link}\n\n(Anyone with this link and the workspace passphrase can access the E2EE sync room)`))
+              .then(() => toast(`Share Link copied to clipboard! (Workspace passphrase required for E2EE room sync)`, { variant: 'success' }))
               .catch((err) => {
                 console.error('Failed to copy link: ', err);
-                alert(`Share Link generated:\n${link}\n\n(Anyone with this link and the workspace passphrase can access the E2EE sync room)`);
+                toast(`Share Link generated: ${link}. Anyone with the passphrase can join.`, { variant: 'warning' });
               });
           }}
           className="inline-flex items-center justify-center rounded-lg gap-1.5 p-1.5 border border-transparent hover:bg-secondary text-muted-foreground hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
