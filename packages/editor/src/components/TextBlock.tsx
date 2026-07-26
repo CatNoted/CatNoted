@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { SlashCommandMenu, buildSlashCommands } from './SlashCommandMenu.js';
+import { Plus, GripVertical } from 'lucide-react';
 
 interface TextBlockProps {
   onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
@@ -16,6 +17,9 @@ interface TextBlockProps {
   blockType?: string;
   onFocus?: () => void;
   onBlur?: () => void;
+  showLeftActions?: boolean;
+  isFocused?: boolean;
+  onAddClick?: () => void;
 }
 
 const TextBlockBase: React.FC<TextBlockProps> = ({
@@ -30,6 +34,9 @@ const TextBlockBase: React.FC<TextBlockProps> = ({
   blockType,
   onFocus,
   onBlur,
+  showLeftActions = true,
+  isFocused = false,
+  onAddClick,
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -185,32 +192,63 @@ const TextBlockBase: React.FC<TextBlockProps> = ({
     }
   };
 
-  return (
-    <div className="relative w-full">
-      <textarea
-        aria-label={`Text block`}
-        role="textbox"
-        ref={textareaRef}
-        value={content}
-        onChange={handleChange}
-        onKeyDown={handleKeyDown}
-        onFocus={onFocus}
-        onBlur={onBlur}
-        placeholder="Type '/' for commands..."
-        rows={1}
-        className="w-full bg-transparent resize-none text-slate-900 dark:text-zinc-100 border-none outline-none focus:ring-0 p-0 text-[15px] leading-7 placeholder-slate-300 dark:placeholder-zinc-600"
-      />
+  const handleFocus = useCallback(() => {
+    onFocus?.();
+  }, [onFocus]);
 
-      {slashActive &&
-        createPortal(
-          <SlashCommandMenu
-            query={slashQuery}
-            position={menuPos}
-            onClose={closeMenu}
-            commands={slashCommands}
-          />,
-          document.body
-        )}
+  const handleBlur = useCallback(() => {
+    onBlur?.();
+  }, [onBlur]);
+
+  const addClick = useCallback(() => {
+    if (onAddClick) onAddClick();
+  }, [onAddClick]);
+
+  return (
+    <div className="relative flex items-start">
+      {showLeftActions && (
+        <div className={`flex flex-col items-center gap-px pr-1 pt-[6px] transition-opacity duration-150 ${
+          isFocused ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+        }`}>
+          <button
+            type="button"
+            onClick={addClick}
+            title="Add block below"
+            className="p-0.5 rounded text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+          >
+            <Plus className="w-3 h-3" />
+          </button>
+          <span className="cursor-grab text-slate-400/70 dark:text-zinc-500/80 select-none">
+            <GripVertical className="w-2.5 h-2.5" />
+          </span>
+        </div>
+      )}
+      <div className="flex-1 min-w-0">
+        <textarea
+          aria-label={`Text block`}
+          role="textbox"
+          ref={textareaRef}
+          value={content}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          placeholder="Type '/' for commands..."
+          rows={1}
+          className="w-full bg-transparent resize-none text-slate-900 dark:text-zinc-100 border-none outline-none focus:ring-0 p-0 text-sm leading-6 placeholder-slate-300 dark:placeholder-zinc-600"
+        />
+
+        {slashActive &&
+          createPortal(
+            <SlashCommandMenu
+              query={slashQuery}
+              position={menuPos}
+              onClose={closeMenu}
+              commands={slashCommands}
+            />,
+            document.body
+          )}
+      </div>
     </div>
   );
 };
