@@ -21,8 +21,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'pnpm'
+          node-version: 22
       - run: npx pnpm@9.1.0 install --frozen-lockfile
       - run: npx pnpm@9.1.0 --filter ./apps/web build-storybook
         env:
