@@ -54,6 +54,125 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
               ]);
             });
             return;
+          } else if (pageId.startsWith('journal-')) {
+            const dateStr = pageId.slice(8);
+            const date = new Date(dateStr);
+            const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = date.toLocaleDateString('en-US', options) !== 'Invalid Date'
+              ? date.toLocaleDateString('en-US', options)
+              : dateStr;
+            const templateId = typeof window !== 'undefined' ? localStorage.getItem('catnoted_journal_template') || 'empty' : 'empty';
+
+            ydoc.transact(() => {
+              // Register page metadata if not present
+              if (!ypages.get(pageId)) {
+                ypages.set(pageId, {
+                  id: pageId,
+                  title: formattedDate,
+                  icon: '📅',
+                  fontStyle: 'sans',
+                  fullWidth: false,
+                  isFavorite: false,
+                  createdAt: Date.now(),
+                  updatedAt: Date.now(),
+                  journalDate: dateStr
+                });
+              }
+
+              const newBlocks: BlockNode[] = [];
+              const headingId = `block-${Math.random().toString(36).substring(2, 11)}`;
+
+              if (templateId === 'reflection') {
+                newBlocks.push({
+                  id: headingId,
+                  type: 'heading',
+                  content: `Daily Reflection — ${formattedDate}`,
+                  properties: { level: 1 },
+                  parentId: pageId
+                });
+                newBlocks.push({
+                  id: `block-${Math.random().toString(36).substring(2, 11)}`,
+                  type: 'heading',
+                  content: 'What went well today? ✨',
+                  properties: { level: 2 },
+                  parentId: pageId
+                });
+                newBlocks.push({
+                  id: `block-${Math.random().toString(36).substring(2, 11)}`,
+                  type: 'text',
+                  content: '',
+                  parentId: pageId
+                });
+                newBlocks.push({
+                  id: `block-${Math.random().toString(36).substring(2, 11)}`,
+                  type: 'heading',
+                  content: 'What could have been better? 🛠️',
+                  properties: { level: 2 },
+                  parentId: pageId
+                });
+                newBlocks.push({
+                  id: `block-${Math.random().toString(36).substring(2, 11)}`,
+                  type: 'text',
+                  content: '',
+                  parentId: pageId
+                });
+                newBlocks.push({
+                  id: `block-${Math.random().toString(36).substring(2, 11)}`,
+                  type: 'heading',
+                  content: 'Three things I am grateful for 🙏',
+                  properties: { level: 2 },
+                  parentId: pageId
+                });
+                newBlocks.push({
+                  id: `block-${Math.random().toString(36).substring(2, 11)}`,
+                  type: 'bullet',
+                  content: 'Today, I am grateful for...',
+                  parentId: pageId
+                });
+              } else if (templateId === 'gratitude') {
+                newBlocks.push({
+                  id: headingId,
+                  type: 'heading',
+                  content: `Gratitude Journal — ${formattedDate}`,
+                  properties: { level: 1 },
+                  parentId: pageId
+                });
+                newBlocks.push({
+                  id: `block-${Math.random().toString(36).substring(2, 11)}`,
+                  type: 'bullet',
+                  content: 'Three wonderful things that happened today:',
+                  parentId: pageId
+                });
+                newBlocks.push({
+                  id: `block-${Math.random().toString(36).substring(2, 11)}`,
+                  type: 'bullet',
+                  content: 'How I will improve my tomorrow:',
+                  parentId: pageId
+                });
+                newBlocks.push({
+                  id: `block-${Math.random().toString(36).substring(2, 11)}`,
+                  type: 'bullet',
+                  content: 'My positive affirmation for today:',
+                  parentId: pageId
+                });
+              } else {
+                newBlocks.push({
+                  id: headingId,
+                  type: 'heading',
+                  content: formattedDate,
+                  properties: { level: 1 },
+                  parentId: pageId
+                });
+                newBlocks.push({
+                  id: `block-${Math.random().toString(36).substring(2, 11)}`,
+                  type: 'text',
+                  content: '',
+                  parentId: pageId
+                });
+              }
+              yblocks.insert(yblocks.length, newBlocks);
+            });
+            return;
           } else {
             const rawName = pageId.startsWith('page-') ? pageId.slice(5) : pageId;
             const pageName = rawName
@@ -336,9 +455,132 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
     deleteBlock,
     updatePageMeta,
     createPage,
+    createJournalPage,
     renamePage,
     deletePage,
     moveBlock
   };
+};
+
+export const createJournalPage = (dateStr: string, templateId: string = 'empty') => {
+  const pageId = `journal-${dateStr}`;
+  const date = new Date(dateStr);
+  const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+  const formattedDate = date.toLocaleDateString('en-US', options) !== 'Invalid Date'
+    ? date.toLocaleDateString('en-US', options)
+    : dateStr;
+
+  const existing = ypages.get(pageId);
+  if (existing) return pageId;
+
+  ydoc.transact(() => {
+    ypages.set(pageId, {
+      id: pageId,
+      title: formattedDate,
+      icon: '📅',
+      fontStyle: 'sans',
+      fullWidth: false,
+      isFavorite: false,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      journalDate: dateStr
+    });
+
+    const newBlocks: BlockNode[] = [];
+    const headingId = `block-${Math.random().toString(36).substring(2, 11)}`;
+
+    if (templateId === 'reflection') {
+      newBlocks.push({
+        id: headingId,
+        type: 'heading',
+        content: `Daily Reflection — ${formattedDate}`,
+        properties: { level: 1 },
+        parentId: pageId
+      });
+      newBlocks.push({
+        id: `block-${Math.random().toString(36).substring(2, 11)}`,
+        type: 'heading',
+        content: 'What went well today? ✨',
+        properties: { level: 2 },
+        parentId: pageId
+      });
+      newBlocks.push({
+        id: `block-${Math.random().toString(36).substring(2, 11)}`,
+        type: 'text',
+        content: '',
+        parentId: pageId
+      });
+      newBlocks.push({
+        id: `block-${Math.random().toString(36).substring(2, 11)}`,
+        type: 'heading',
+        content: 'What could have been better? 🛠️',
+        properties: { level: 2 },
+        parentId: pageId
+      });
+      newBlocks.push({
+        id: `block-${Math.random().toString(36).substring(2, 11)}`,
+        type: 'text',
+        content: '',
+        parentId: pageId
+      });
+      newBlocks.push({
+        id: `block-${Math.random().toString(36).substring(2, 11)}`,
+        type: 'heading',
+        content: 'Three things I am grateful for 🙏',
+        properties: { level: 2 },
+        parentId: pageId
+      });
+      newBlocks.push({
+        id: `block-${Math.random().toString(36).substring(2, 11)}`,
+        type: 'bullet',
+        content: 'Today, I am grateful for...',
+        parentId: pageId
+      });
+    } else if (templateId === 'gratitude') {
+      newBlocks.push({
+        id: headingId,
+        type: 'heading',
+        content: `Gratitude Journal — ${formattedDate}`,
+        properties: { level: 1 },
+        parentId: pageId
+      });
+      newBlocks.push({
+        id: `block-${Math.random().toString(36).substring(2, 11)}`,
+        type: 'bullet',
+        content: 'Three wonderful things that happened today:',
+        parentId: pageId
+      });
+      newBlocks.push({
+        id: `block-${Math.random().toString(36).substring(2, 11)}`,
+        type: 'bullet',
+        content: 'How I will improve my tomorrow:',
+        parentId: pageId
+      });
+      newBlocks.push({
+        id: `block-${Math.random().toString(36).substring(2, 11)}`,
+        type: 'bullet',
+        content: 'My positive affirmation for today:',
+        parentId: pageId
+      });
+    } else {
+      newBlocks.push({
+        id: headingId,
+        type: 'heading',
+        content: formattedDate,
+        properties: { level: 1 },
+        parentId: pageId
+      });
+      newBlocks.push({
+        id: `block-${Math.random().toString(36).substring(2, 11)}`,
+        type: 'text',
+        content: '',
+        parentId: pageId
+      });
+    }
+
+    yblocks.insert(yblocks.length, newBlocks);
+  });
+
+  return pageId;
 }
 

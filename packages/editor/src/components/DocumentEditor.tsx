@@ -144,6 +144,29 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     }
   }, [activePage, blocks]);
 
+  // Handle scrolling to a selected block from search results
+  useEffect(() => {
+    const pendingId = localStorage.getItem('catnoted:pending-scroll-block');
+    if (pendingId) {
+      const targetEl = document.getElementById(pendingId);
+      if (targetEl) {
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setFocusBlockId(pendingId);
+        localStorage.removeItem('catnoted:pending-scroll-block');
+      } else {
+        const timer = setTimeout(() => {
+          const retryEl = document.getElementById(pendingId);
+          if (retryEl) {
+            retryEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setFocusBlockId(pendingId);
+          }
+          localStorage.removeItem('catnoted:pending-scroll-block');
+        }, 150);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [activePage, blocks]);
+
   const handleCreateBlock = (afterId: string) => {
     const block = blocks.find(b => b.id === afterId);
     if (block && (block.type === 'bullet' || block.type === 'ordered' || block.type === 'todo')) {
@@ -278,6 +301,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         createdAt={pageMeta?.createdAt}
         blocksCount={blocks.length}
         wordCount={wordCount}
+        isInfoExpanded={pageMeta?.isInfoExpanded !== false}
+        onInfoExpandedChange={(expanded) => updatePageMeta({ isInfoExpanded: expanded })}
         onTitleChange={(newTitle) => {
           updatePageMeta({ title: newTitle });
           if (headingBlock) {

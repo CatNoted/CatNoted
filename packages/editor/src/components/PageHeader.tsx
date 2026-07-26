@@ -23,6 +23,8 @@ interface PageHeaderProps {
   onTitleChange: (title: string) => void;
   onIconChange: (icon: string | undefined) => void;
   onCoverChange: (coverUrl: string | undefined) => void;
+  isInfoExpanded?: boolean;
+  onInfoExpandedChange?: (expanded: boolean) => void;
 }
 
 const PRESET_EMOJIS = [
@@ -66,6 +68,8 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   onTitleChange,
   onIconChange,
   onCoverChange,
+  isInfoExpanded = true,
+  onInfoExpandedChange,
 }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showCoverPicker, setShowCoverPicker] = useState(false);
@@ -82,8 +86,18 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
         setShowCoverPicker(false);
       }
     };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowEmojiPicker(false);
+        setShowCoverPicker(false);
+      }
+    };
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   }, []);
 
   const readingTime = Math.max(1, Math.ceil(wordCount / 200));
@@ -111,6 +125,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
               onIconChange(undefined);
               setShowEmojiPicker(false);
             }}
+            aria-label="Remove page icon"
             className="text-[10px] text-red-500 hover:underline font-semibold"
           >
             Remove
@@ -135,6 +150,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
                 }}
                 className="p-1.5 text-slate-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg transition-transform hover:scale-110 flex items-center justify-center border border-slate-100 dark:border-zinc-800/40"
                 title={iconName}
+                aria-label={`Select icon ${iconName}`}
               >
                 {IconComponent && <IconComponent className="w-4 h-4" />}
               </button>
@@ -157,6 +173,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
                 setShowEmojiPicker(false);
               }}
               className="text-xl p-1.5 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg transition-transform hover:scale-110 flex items-center justify-center"
+              aria-label={`Select emoji ${emoji}`}
             >
               {emoji}
             </button>
@@ -182,6 +199,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
               onCoverChange(undefined);
               setShowCoverPicker(false);
             }}
+            aria-label="Remove page cover image"
             className="text-[10px] text-red-500 hover:text-red-600 font-semibold"
           >
             Remove
@@ -198,6 +216,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
             <input
               type="file"
               accept="image/*"
+              aria-label="Upload custom cover image file"
               onChange={(e) => {
                 const file = e.target.files?.[0];
                 if (file) {
@@ -233,6 +252,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
                 type="text"
                 placeholder="https://images.unsplash.com/..."
                 value={coverInputUrl}
+                aria-label="Custom cover image URL"
                 onChange={(e) => setCoverInputUrl(e.target.value)}
                 className="flex-1 text-[11px] px-2 py-1 border border-slate-200 dark:border-zinc-800 rounded-lg bg-white dark:bg-zinc-900 text-slate-800 dark:text-zinc-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"
               />
@@ -245,6 +265,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
                     setShowCoverPicker(false);
                   }
                 }}
+                aria-label="Save custom cover URL"
                 className="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-[10px] font-semibold transition-colors"
               >
                 Save
@@ -268,6 +289,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
                 }}
                 className="h-9 rounded-lg border border-slate-200/50 dark:border-zinc-800 hover:scale-105 transition-transform"
                 style={{ background: gradient }}
+                aria-label={`Select gradient cover ${i + 1}`}
                 title={`Gradient ${i + 1}`}
               />
             ))}
@@ -288,6 +310,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
                   setShowCoverPicker(false);
                 }}
                 className="h-10 rounded-lg overflow-hidden border border-slate-200/50 dark:border-zinc-800 hover:scale-105 transition-transform"
+                aria-label={`Select photo cover ${i + 1}`}
               >
                 <img src={url} alt={`Preset ${i + 1}`} className="w-full h-full object-cover" />
               </button>
@@ -318,6 +341,9 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
             <button
               type="button"
               onClick={() => setShowCoverPicker(!showCoverPicker)}
+              aria-expanded={showCoverPicker}
+              aria-haspopup="true"
+              aria-label="Change cover image"
               className="px-2.5 py-1.5 bg-black/60 hover:bg-black/80 text-white rounded-lg text-xs font-medium backdrop-blur-md transition-all flex items-center gap-1.5 shadow-sm"
             >
               <LucideIcons.Image className="w-3.5 h-3.5" />
@@ -326,6 +352,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
             <button
               type="button"
               onClick={() => onCoverChange(undefined)}
+              aria-label="Remove cover image"
               className="px-2.5 py-1.5 bg-black/60 hover:bg-rose-600/90 text-white rounded-lg text-xs font-medium backdrop-blur-md transition-all flex items-center gap-1.5 shadow-sm"
             >
               <LucideIcons.Trash2 className="w-3.5 h-3.5" />
@@ -342,13 +369,16 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
         </div>
       ) : null}
 
-      {/* Spacing & Hover Actions Bar (Add Icon / Add Cover) */}
+      {/* Spacing & Hover Actions Bar (Add Icon / Add Cover / Page Info) */}
       <div className="flex items-center gap-4 mb-4 h-8 text-slate-400 dark:text-zinc-500 -ml-3">
         {!icon && (
           <div className="relative inline-block">
             <button
               type="button"
               onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+              aria-expanded={showEmojiPicker}
+              aria-haspopup="true"
+              aria-label="Add icon"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-zinc-800/50 hover:text-slate-700 dark:hover:text-zinc-200 rounded-lg transition-colors"
             >
               <LucideIcons.Smile className="w-4 h-4" />
@@ -364,6 +394,9 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
             <button
               type="button"
               onClick={() => setShowCoverPicker(!showCoverPicker)}
+              aria-expanded={showCoverPicker}
+              aria-haspopup="true"
+              aria-label="Add cover"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-zinc-800/50 hover:text-slate-700 dark:hover:text-zinc-200 rounded-lg transition-colors"
             >
               <LucideIcons.Image className="w-4 h-4" />
@@ -373,6 +406,20 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
             {showCoverPicker && renderCoverPickerDropdown()}
           </div>
         )}
+
+        {/* Toggle Page Info Button */}
+        <div className="relative inline-block">
+          <button
+            type="button"
+            onClick={() => onInfoExpandedChange?.(!isInfoExpanded)}
+            aria-expanded={isInfoExpanded}
+            aria-label="Toggle page info"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-zinc-800/50 hover:text-slate-700 dark:hover:text-zinc-200 rounded-lg transition-colors"
+          >
+            <LucideIcons.Info className="w-4 h-4" />
+            {isInfoExpanded ? 'Hide info' : 'Page info'}
+          </button>
+        </div>
       </div>
 
       {/* Page Icon (if icon is set) - stacked vertically above title */}
@@ -381,6 +428,9 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
           <button
             type="button"
             onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+            aria-expanded={showEmojiPicker}
+            aria-haspopup="true"
+            aria-label="Change page icon"
             className="text-[44px] p-2 rounded-xl
               border border-transparent
               hover:bg-slate-100 dark:hover:bg-zinc-800/60
@@ -414,31 +464,33 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
         />
       </div>
 
-      {/* Metadata Row */}
-      <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium text-slate-600 dark:text-zinc-300">
-        {formattedDate && (
+      {/* Metadata Row / Collapsible Info block */}
+      {isInfoExpanded && (
+        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium text-slate-600 dark:text-zinc-300 animate-in fade-in slide-in-from-top-1 duration-200">
+          {formattedDate && (
+            <span className="inline-flex items-center gap-1.5">
+              <LucideIcons.Calendar className="w-3.5 h-3.5 opacity-90" />
+              <span className="opacity-80">Created</span>
+              <span className="text-slate-800 dark:text-zinc-200">{formattedDate}</span>
+            </span>
+          )}
           <span className="inline-flex items-center gap-1.5">
-            <LucideIcons.Calendar className="w-3.5 h-3.5 opacity-90" />
-            <span className="opacity-80">Created</span>
-            <span className="text-slate-800 dark:text-zinc-200">{formattedDate}</span>
+            <LucideIcons.FileText className="w-3.5 h-3.5 opacity-90" />
+            <span className="opacity-80">Words</span>
+            <span className="text-slate-800 dark:text-zinc-200">{wordCount}</span>
           </span>
-        )}
-        <span className="inline-flex items-center gap-1.5">
-          <LucideIcons.FileText className="w-3.5 h-3.5 opacity-90" />
-          <span className="opacity-80">Words</span>
-          <span className="text-slate-800 dark:text-zinc-200">{wordCount}</span>
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <LucideIcons.Clock className="w-3.5 h-3.5 opacity-90" />
-          <span className="opacity-80">Read</span>
-          <span className="text-slate-800 dark:text-zinc-200">{readingTime} min</span>
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <LucideIcons.LayoutGrid className="w-3.5 h-3.5 opacity-90" />
-          <span className="opacity-80">Blocks</span>
-          <span className="text-slate-800 dark:text-zinc-200">{blocksCount}</span>
-        </span>
-      </div>
+          <span className="inline-flex items-center gap-1.5">
+            <LucideIcons.Clock className="w-3.5 h-3.5 opacity-90" />
+            <span className="opacity-80">Read</span>
+            <span className="text-slate-800 dark:text-zinc-200">{readingTime} min</span>
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <LucideIcons.LayoutGrid className="w-3.5 h-3.5 opacity-90" />
+            <span className="opacity-80">Blocks</span>
+            <span className="text-slate-800 dark:text-zinc-200">{blocksCount}</span>
+          </span>
+        </div>
+      )}
     </div>
   );
 };
