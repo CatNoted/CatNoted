@@ -261,6 +261,26 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
     });
   };
 
+  const updatePageMetaById = (id: string, metaPartial: Partial<PageMeta>) => {
+    ydoc.transact(() => {
+      const current = ypages.get(id) || {
+        id,
+        title: id === 'root-doc-node' ? 'Root Note' : id,
+        icon: '📄',
+        createdAt: Date.now()
+      };
+      const updated = {
+        ...current,
+        ...metaPartial,
+        updatedAt: Date.now()
+      };
+      ypages.set(id, updated);
+      if (id === pageId) {
+        setPageMeta(updated);
+      }
+    });
+  };
+
   const createPage = (title: string = 'Untitled', icon: string = '📄') => {
     const newPageId = `page-${Math.random().toString(36).substring(2, 11)}`;
     ydoc.transact(() => {
@@ -335,6 +355,7 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
     duplicateBlock,
     deleteBlock,
     updatePageMeta,
+    updatePageMetaById,
     createPage,
     renamePage,
     deletePage,
