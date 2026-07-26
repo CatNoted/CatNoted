@@ -1,3 +1,10 @@
+/**
+ * z-index layering reference:
+ * - Modals & Overlays (e.g. AuthModal, SettingsModal, CommandPalette): z-[100]
+ * - Floating UI & Rails (e.g. Left/Right rails, Floating Space Agent Panel, FAB): z-20 to z-40
+ * - Workspace / Editor Content (e.g. Doc Editor, Canvas elements): z-0 to z-10
+ */
+
 import React, { useState, useEffect } from 'react';
 import { Settings, ShieldAlert, KeyRound, Cloud, X } from 'lucide-react';
 import { encryptPayload, decryptPayload } from '../../utils/crypto.js';
@@ -122,7 +129,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/40 dark:bg-black/60 backdrop-blur-[2px] z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-slate-900/40 dark:bg-black/60 backdrop-blur-[2px] z-[100] flex items-center justify-center p-4">
       <div className="bg-white dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800 rounded-2xl w-full max-w-[760px] h-[580px] shadow-2xl relative flex flex-col md:flex-row overflow-hidden">
 
         {/* Left Sidebar */}

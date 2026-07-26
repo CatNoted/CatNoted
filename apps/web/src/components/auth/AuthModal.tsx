@@ -1,3 +1,10 @@
+/**
+ * z-index layering reference:
+ * - Modals & Overlays (e.g. AuthModal, SettingsModal, CommandPalette): z-[100]
+ * - Floating UI & Rails (e.g. Left/Right rails, Floating Space Agent Panel, FAB): z-20 to z-40
+ * - Workspace / Editor Content (e.g. Doc Editor, Canvas elements): z-0 to z-10
+ */
+
 import React, { useState } from 'react';
 import { LogIn, UserPlus, KeyRound, Sparkles, LogOut } from 'lucide-react';
 import { supabase } from '../../utils/supabase.js';
@@ -70,7 +77,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/30 dark:bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-slate-900/30 dark:bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
       <div className="bg-white dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800/80 rounded-2xl w-full max-w-[340px] p-5 shadow-xl relative transition-all">
         
         {/* Header - Calm AFFiNE design with soft brand accent */}
