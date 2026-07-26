@@ -18,13 +18,32 @@ import { AuthModal } from './components/auth/AuthModal.js';
 import { SettingsModal } from './components/settings/SettingsModal.js';
 import { CommandPalette } from './components/CommandPalette.js';
 
+const getModeFromUrl = (): ActiveMode => {
+  const path = window.location.pathname;
+  const searchParams = new URLSearchParams(window.location.search);
+  if (path.startsWith('/canvas')) return 'canvas';
+  if (path.startsWith('/graph')) return 'graph';
+  if (path.startsWith('/settings')) return 'settings';
+  if (path.startsWith('/journals') || searchParams.has('date')) return 'journals';
+  if (path.startsWith('/search')) return 'search';
+  return 'doc';
+};
+
 const App: React.FC = () => {
-  const [activeMode, setActiveMode] = useState<ActiveMode>('doc');
+  const [activeMode, setActiveMode] = useState<ActiveMode>(getModeFromUrl);
   const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
   const [isZenMode, setIsZenMode] = useState<boolean>(false);
   const [activePage, setActivePage] = useState<string>('root-doc-node');
 
   const { blocks: rootBlocks, pages, addBlock: addRootBlock, updateBlockContent: updateRootBlockContent } = useDocumentStore('root-doc-node');
+
+  useEffect(() => {
+    const handlePopState = () => {
+      setActiveMode(getModeFromUrl());
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
   const { blocks: activeBlocks, updateBlockContent: updateActiveBlockContent } = useDocumentStore(activePage);
 
   const graphData = React.useMemo(() => parseDocumentGraph(rootBlocks, pages), [rootBlocks, pages]);
@@ -125,15 +144,6 @@ const App: React.FC = () => {
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
 
   useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    const hasDate = searchParams.has('date');
-    const isJournalsPath = window.location.pathname.startsWith('/journals');
-    if (hasDate || isJournalsPath) {
-      setActiveMode('journals');
-    }
-  }, []);
-
-  useEffect(() => {
     const savedPassphrase = localStorage.getItem('catnoted_e2ee_passphrase');
     if (savedPassphrase) {
       setPassphrase(savedPassphrase);
@@ -198,11 +208,21 @@ const App: React.FC = () => {
   }, [passphrase]);
 
   const handleModeChange = (mode: ActiveMode) => {
-    if (mode === 'settings') {
-      setIsSettingsOpen(true);
-      return;
-    }
     setActiveMode(mode);
+    let path = mode === 'doc' ? '/' : `/${mode}`;
+    if (mode === 'journals') {
+      const searchParams = new URLSearchParams(window.location.search);
+      const date = searchParams.get('date');
+      if (date) {
+        path += `?date=${date}`;
+      }
+    }
+    const currentModePath = window.location.pathname;
+    const targetBase = mode === 'doc' ? '/' : `/${mode}`;
+    if (currentModePath !== targetBase) {
+      window.history.pushState({}, '', path);
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }
   };
 
   const { pageMeta, updatePageMeta, deletePage } = useDocumentStore(activePage);
@@ -508,6 +528,97 @@ const App: React.FC = () => {
             <JournalsView />
           </div>
         );
+      case 'settings':
+        return (
+          <div className="h-full overflow-auto p-6 md:p-8">
+            <div className="max-w-2xl mx-auto bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-3xl p-8 shadow-xl">
+              <h2 className="text-2xl font-bold text-slate-800 dark:text-zinc-100 tracking-tight mb-6">Settings</h2>
+
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-500 mb-2">E2EE Passphrase</h3>
+                  <p className="text-xs text-slate-500 dark:text-zinc-400 mb-3">
+                    Your passphrase is used to encrypt updates before transmitting them to Supabase.
+                  </p>
+                  <input
+                    type="password"
+                    value={passphrase}
+                    onChange={(e) => {
+                      setPassphrase(e.target.value);
+                      localStorage.setItem('catnoted_e2ee_passphrase', e.target.value);
+                    }}
+                    placeholder="Enter E2EE passphrase..."
+                    className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-zinc-800 bg-slate-50/30 dark:bg-[#16161a]/30 text-xs text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      case 'search': {
+        const SearchPageInner = () => {
+          const [query, setQuery] = useState('');
+          const filtered = React.useMemo(() => {
+            if (!query.trim()) return pages || [];
+            return (pages || []).filter((page: any) =>
+              (page.title || '').toLowerCase().includes(query.toLowerCase())
+            );
+          }, [query]);
+
+          return (
+            <div className="h-full overflow-auto p-6 md:p-8 max-w-2xl mx-auto">
+              <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-850 rounded-2xl p-6 shadow-md space-y-6">
+                <div>
+                  <h2 className="text-xl font-bold text-slate-800 dark:text-zinc-100 mb-2">Workspace Search</h2>
+                  <p className="text-xs text-slate-500 dark:text-zinc-400">Search for pages in your workspace.</p>
+                </div>
+
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Search pages by title..."
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50/30 dark:bg-[#16161a]/30 text-sm text-slate-800 dark:text-zinc-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+                    autoFocus
+                    id="workspace-search-input"
+                  />
+                  <span className="absolute left-3.5 top-3.5 text-slate-400 text-xs">🔍</span>
+                </div>
+
+                <div className="space-y-2">
+                  {filtered.length > 0 ? (
+                    <div className="space-y-1.5">
+                      <h3 className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider mb-2">
+                        {query.trim() ? 'Search Results' : 'All Workspace Pages'}
+                      </h3>
+                      {filtered.map((page: any) => (
+                        <button
+                          key={page.id}
+                          onClick={() => {
+                            setActivePage(page.id);
+                            handleModeChange('doc');
+                          }}
+                          className="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-50/50 dark:bg-zinc-800/20 border border-slate-100 dark:border-zinc-800/40 hover:border-indigo-500/30 flex items-center gap-2.5 transition-all"
+                        >
+                          <span className="text-base shrink-0">{page.icon || '📄'}</span>
+                          <div className="min-w-0 flex-1">
+                            <div className="text-xs font-semibold text-slate-700 dark:text-zinc-200 truncate">{page.title || 'Untitled'}</div>
+                            <div className="text-[10px] text-slate-400 truncate">ID: {page.id}</div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-slate-400 dark:text-zinc-500 text-center py-4">No pages found matching "{query}"</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        };
+        return <SearchPageInner />;
+      }
       default:
         return null;
     }
