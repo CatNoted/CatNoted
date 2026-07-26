@@ -3,7 +3,6 @@ import {
   ChevronRight,
   ChevronDown,
   FileText,
-  Clock,
   FolderOpen,
   Star,
   FolderTree,
@@ -14,60 +13,38 @@ import {
   FileSpreadsheet,
   Trash2,
   Plus,
+  Network,
 } from 'lucide-react';
 import { useDocumentStore } from '@catnoted/editor';
 import { ActiveMode } from '../layouts/AppLayout';
 
 interface SidebarProps {
   onModeChange: (mode: ActiveMode) => void;
+  activeMode?: ActiveMode;
 }
 
-type SidebarAction = {
-  label: string;
-  icon: React.ElementType;
-  mode: ActiveMode;
-  variant?: 'ghost' | 'danger';
-};
+export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'doc' }) => {
+  const { pages } = useDocumentStore();
 
-const DEFAULT_ACTIONS: SidebarAction[] = [
-  { label: 'Import', icon: Download, mode: 'doc' },
-  { label: 'Template', icon: FileSpreadsheet, mode: 'doc' },
-  { label: 'Trash', icon: Trash2, mode: 'doc', variant: 'danger' },
-];
-
-export const Sidebar: React.FC<SidebarProps> = ({ onModeChange }) => {
-  const { blocks } = useDocumentStore();
-
-  const docTitles = useMemo(
-    () =>
-      blocks
-        .filter(b => b.type === 'heading' || b.type === 'text')
-        .map(b => (typeof b.content === 'string' ? b.content : ''))
-        .map(title => (title.trim() ? title : 'Untitled Document'))
-        .slice(0, 5),
-    [blocks]
+  const favoritePages = useMemo(
+    () => (pages || []).filter((p: any) => p?.isFavorite),
+    [pages]
   );
 
-  const [recentCollapsed, setRecentCollapsed] = useState(false);
   const [favoritesCollapsed, setFavoritesCollapsed] = useState(false);
-  const [treeCollapsed, setTreeCollapsed] = useState(false);
+  const [organizeCollapsed, setOrganizeCollapsed] = useState(false);
+  const [tagsCollapsed, setTagsCollapsed] = useState(false);
+  const [collectionsCollapsed, setCollectionsCollapsed] = useState(false);
   const [othersCollapsed, setOthersCollapsed] = useState(true);
 
   const sectionClassName =
-    'px-2 text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-zinc-400';
+    'px-2.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-500';
 
   const itemClassName =
-    'flex items-center w-full px-2 py-1.5 text-[13px] leading-5 text-slate-700 dark:text-zinc-300 rounded-md transition-colors select-none gap-x-2 hover:bg-slate-200/70 dark:hover:bg-zinc-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500';
+    'flex items-center w-full px-3 py-2 text-[13px] leading-5 text-slate-700 dark:text-zinc-300 rounded-lg transition-all select-none gap-x-2.5 hover:bg-slate-100 dark:hover:bg-zinc-850 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 font-medium';
 
   const getItemIconClass = (active: boolean) =>
-    `shrink-0 ${active ? 'text-indigo-500 dark:text-indigo-400' : 'text-slate-400 dark:text-zinc-500'}`;
-
-  const actionClassName = (variant?: 'ghost' | 'danger') =>
-    `inline-flex items-center justify-center gap-x-2 rounded-md px-2.5 py-1.5 text-[13px] font-medium transition-colors ${
-      variant === 'danger'
-        ? 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40'
-        : 'text-slate-700 dark:text-zinc-300 hover:bg-slate-200/70 dark:hover:bg-zinc-800'
-    }`;
+    `shrink-0 ${active ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-zinc-500'}`;
 
   const renderSection = (
     label: string,
@@ -79,121 +56,176 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange }) => {
     const Icon = collapsed ? ChevronRight : ChevronDown;
     const SectionIcon = icon;
     return (
-      <div className="mb-1">
+      <div className="mb-2">
         <button
           type="button"
           onClick={() => setCollapsed(!collapsed)}
-          className={`${sectionClassName} flex items-center w-full px-2 py-1.5 rounded-md hover:bg-slate-200/70 dark:hover:bg-zinc-800 transition-colors gap-x-2`}
+          className={`${sectionClassName} flex items-center justify-between w-full px-3 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-850 transition-all gap-x-2 group`}
         >
-          <Icon className="w-3.5 h-3.5 shrink-0" />
-          {SectionIcon && <SectionIcon className="w-3.5 h-3.5 shrink-0" />}
-          <span className="truncate">{label}</span>
+          <span className="flex items-center gap-x-2">
+            {SectionIcon && <SectionIcon className="w-3.5 h-3.5 shrink-0 text-slate-400 dark:text-zinc-500" />}
+            <span>{label}</span>
+          </span>
+          <Icon className="w-3.5 h-3.5 shrink-0 text-slate-400 dark:text-zinc-500 opacity-60 group-hover:opacity-100 transition-opacity" />
         </button>
-        {!collapsed && <div className="mt-0.5 space-y-0.5">{children}</div>}
+        {!collapsed && <div className="mt-1 space-y-0.5 px-1">{children}</div>}
       </div>
     );
   };
 
   return (
-    <div className="w-64 border-r border-slate-200 dark:border-zinc-800 bg-slate-50/50 dark:bg-zinc-900/50 h-full flex flex-col shrink-0 text-token">
-      <div className="px-3 py-2.5 border-b border-slate-200 dark:border-zinc-800">
-        <h2 className="text-[13px] font-semibold text-slate-800 dark:text-zinc-200 tracking-tight">
-          Workspace
-        </h2>
+    <div className="w-64 border-r border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 h-full flex flex-col shrink-0 text-token select-none">
+      <div className="px-4 pt-4 pb-2">
+        <div className="flex items-center gap-2.5 px-1.5 py-1">
+          <div className="w-6 h-6 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-xs shadow-sm">
+            CN
+          </div>
+          <span className="font-semibold text-[14px] text-slate-800 dark:text-zinc-200 tracking-tight">
+            CatNoted Workspace
+          </span>
+        </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto py-2 space-y-2">
+      <div className="px-3 py-1.5 space-y-0.5">
+        <button
+          type="button"
+          onClick={() => onModeChange('doc')}
+          className={`${itemClassName} ${activeMode === 'doc' ? 'bg-slate-100 dark:bg-zinc-800/80 text-slate-900 dark:text-white font-semibold' : ''}`}
+        >
+          <FileText className={`${getItemIconClass(activeMode === 'doc')} w-4 h-4`} />
+          <span className="truncate">Doc Mode</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => onModeChange('canvas')}
+          className={`${itemClassName} ${activeMode === 'canvas' ? 'bg-slate-100 dark:bg-zinc-800/80 text-slate-900 dark:text-white font-semibold' : ''}`}
+        >
+          <LayoutGrid className={`${getItemIconClass(activeMode === 'canvas')} w-4 h-4`} />
+          <span className="truncate">Canvas</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => onModeChange('graph')}
+          className={`${itemClassName} ${activeMode === 'graph' ? 'bg-slate-100 dark:bg-zinc-800/80 text-slate-900 dark:text-white font-semibold' : ''}`}
+        >
+          <Network className={`${getItemIconClass(activeMode === 'graph')} w-4 h-4`} />
+          <span className="truncate">Graph</span>
+        </button>
+      </div>
+
+      <div className="px-4 my-2">
+        <hr className="border-slate-200 dark:border-zinc-800" />
+      </div>
+
+      <div className="flex-1 overflow-y-auto py-2 space-y-2 px-1">
         {renderSection('Favorites', favoritesCollapsed, setFavoritesCollapsed, Star, (
           <>
-            <button
-              type="button"
-              onClick={() => onModeChange('doc')}
-              className={itemClassName}
-            >
-              <FileText className={`${getItemIconClass(false)} w-4 h-4`} />
-              <span className="truncate">Getting Started</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => onModeChange('doc')}
-              className={itemClassName}
-            >
-              <FileText className={`${getItemIconClass(false)} w-4 h-4`} />
-              <span className="truncate">Architecture Specs</span>
-            </button>
-          </>
-        ))}
-
-        {renderSection('Recent', recentCollapsed, setRecentCollapsed, Clock, (
-          <>
-            {docTitles.length > 0 ? (
-              docTitles.map((title, i) => (
+            {favoritePages.length > 0 ? (
+              favoritePages.map(node => (
                 <button
-                  key={i}
+                  key={node.id}
+                  type="button"
+                  onClick={() => onModeChange('doc')}
+                  className={itemClassName}
+                >
+                  <span className="w-4 h-4 shrink-0 flex items-center justify-center text-xs">
+                    {node.icon || '📄'}
+                  </span>
+                  <span className="truncate">{node.title || 'Untitled'}</span>
+                </button>
+              ))
+            ) : (
+              <>
+                <button
                   type="button"
                   onClick={() => onModeChange('doc')}
                   className={itemClassName}
                 >
                   <FileText className={`${getItemIconClass(false)} w-4 h-4`} />
-                  <span className="truncate">{title}</span>
+                  <span className="truncate">Getting Started</span>
                 </button>
-              ))
-            ) : (
-              <div className="px-2 py-1.5 text-[12px] text-slate-400 dark:text-zinc-500">
-                No recent docs
-              </div>
+                <button
+                  type="button"
+                  onClick={() => onModeChange('doc')}
+                  className={itemClassName}
+                >
+                  <FileText className={`${getItemIconClass(false)} w-4 h-4`} />
+                  <span className="truncate">Architecture Specs</span>
+                </button>
+              </>
             )}
           </>
         ))}
 
-        {renderSection('Organize', treeCollapsed, setTreeCollapsed, FolderTree, (
+        {renderSection('Organize', organizeCollapsed, setOrganizeCollapsed, FolderTree, (
           <>
-            <button
-              type="button"
-              onClick={() => onModeChange('doc')}
-              className={itemClassName}
-            >
-              <FolderOpen className={`${getItemIconClass(false)} w-4 h-4`} />
-              <span className="truncate">Folders</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => onModeChange('doc')}
-              className={`${itemClassName} ml-4`}
-            >
-              <FileText className={`${getItemIconClass(false)} w-4 h-4`} />
-              <span className="truncate">Getting Started</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => onModeChange('doc')}
-              className={`${itemClassName} ml-4`}
-            >
-              <FileText className={`${getItemIconClass(false)} w-4 h-4`} />
-              <span className="truncate">Architecture Specs</span>
-            </button>
+            {pages && pages.length > 0 ? (
+              pages.map(node => (
+                <button
+                  key={node.id}
+                  type="button"
+                  onClick={() => onModeChange('doc')}
+                  className={itemClassName}
+                >
+                  <span className="w-4 h-4 shrink-0 flex items-center justify-center text-xs">
+                    {node.icon || '📄'}
+                  </span>
+                  <span className="truncate">{node.title || 'Untitled'}</span>
+                </button>
+              ))
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={() => onModeChange('doc')}
+                  className={itemClassName}
+                >
+                  <FolderOpen className={`${getItemIconClass(false)} w-4 h-4`} />
+                  <span className="truncate">Folders</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onModeChange('doc')}
+                  className={`${itemClassName} pl-6`}
+                >
+                  <FileText className={`${getItemIconClass(false)} w-4 h-4`} />
+                  <span className="truncate">Getting Started</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onModeChange('doc')}
+                  className={`${itemClassName} pl-6`}
+                >
+                  <FileText className={`${getItemIconClass(false)} w-4 h-4`} />
+                  <span className="truncate">Architecture Specs</span>
+                </button>
+              </>
+            )}
           </>
         ))}
 
-        {renderSection('Tags', othersCollapsed, setOthersCollapsed, Tag, (
-          <>
-            <button type="button" onClick={() => onModeChange('doc')} className={itemClassName}>
-              <span className="inline-flex items-center rounded-full bg-slate-200 dark:bg-zinc-700 px-1.5 py-0.5 text-[11px] font-medium text-slate-700 dark:text-zinc-200">
-                product
-              </span>
+        {renderSection('Tags', tagsCollapsed, setTagsCollapsed, Tag, (
+          <div className="flex flex-wrap gap-1.5 p-2">
+            <button type="button" onClick={() => onModeChange('doc')} className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors">
+              <Tag className="w-3 h-3 text-amber-500" />
+              <span>product</span>
             </button>
-            <button type="button" onClick={() => onModeChange('doc')} className={itemClassName}>
-              <span className="inline-flex items-center rounded-full bg-slate-200 dark:bg-zinc-700 px-1.5 py-0.5 text-[11px] font-medium text-slate-700 dark:text-zinc-200">
-                engineering
-              </span>
+            <button type="button" onClick={() => onModeChange('doc')} className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors">
+              <Tag className="w-3 h-3 text-amber-500" />
+              <span>engineering</span>
             </button>
-          </>
+          </div>
         ))}
 
-        {renderSection('Collections', othersCollapsed, setOthersCollapsed, LayoutGrid, (
+        {renderSection('Collections', collectionsCollapsed, setCollectionsCollapsed, LayoutGrid, (
           <>
             <button type="button" onClick={() => onModeChange('doc')} className={itemClassName}>
+              <LayoutGrid className={`${getItemIconClass(false)} w-4 h-4 text-indigo-500`} />
               <span className="truncate">Design Review</span>
+            </button>
+            <button type="button" onClick={() => onModeChange('doc')} className={itemClassName}>
+              <LayoutGrid className={`${getItemIconClass(false)} w-4 h-4 text-emerald-500`} />
+              <span className="truncate">Weekly Sync</span>
             </button>
           </>
         ))}
@@ -201,40 +233,67 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange }) => {
         {renderSection('Others', othersCollapsed, setOthersCollapsed, CircleHelp, (
           <>
             <button type="button" onClick={() => onModeChange('doc')} className={itemClassName}>
+              <CircleHelp className={`${getItemIconClass(false)} w-4 h-4`} />
               <span className="truncate">Read Only Docs</span>
             </button>
             <button type="button" onClick={() => onModeChange('doc')} className={itemClassName}>
+              <FolderOpen className={`${getItemIconClass(false)} w-4 h-4`} />
               <span className="truncate">Shared Room</span>
             </button>
           </>
         ))}
       </div>
 
-      <div className="border-t border-slate-200 dark:border-zinc-800 px-2 py-2 space-y-2">
+      <div className="border-t border-slate-200 dark:border-zinc-800 p-3 space-y-1">
         <button
           type="button"
           onClick={() => onModeChange('doc')}
-          className={`${actionClassName()} flex w-full`}
+          className={`${itemClassName} text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/30`}
           title="New page"
         >
           <Plus className="w-4 h-4" />
-          <span className="truncate">New</span>
+          <span className="truncate">New Page</span>
         </button>
 
-        <div className="flex items-center gap-x-1">
-          {DEFAULT_ACTIONS.map(({ label, icon: Icon, mode, variant }) => (
-            <button
-              key={label}
-              type="button"
-              onClick={() => onModeChange(mode)}
-              className={`${actionClassName(variant)} flex-1`}
-              title={label}
-            >
-              <Icon className="w-4 h-4" />
-              <span className="truncate">{label}</span>
-            </button>
-          ))}
-        </div>
+        <button
+          type="button"
+          onClick={() => onModeChange('doc')}
+          className={itemClassName}
+          title="Import"
+        >
+          <Download className="w-4 h-4 text-slate-400 dark:text-zinc-500" />
+          <span className="truncate">Import</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => onModeChange('doc')}
+          className={itemClassName}
+          title="Template"
+        >
+          <FileSpreadsheet className="w-4 h-4 text-slate-400 dark:text-zinc-500" />
+          <span className="truncate">Template</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => onModeChange('doc')}
+          className={itemClassName}
+          title="Trash"
+        >
+          <Trash2 className="w-4 h-4 text-red-500/80 dark:text-red-400/80" />
+          <span className="truncate text-red-600 dark:text-red-400">Trash</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => onModeChange('doc')}
+          className={itemClassName}
+          title="Learn more"
+        >
+          <CircleHelp className="w-4 h-4 text-slate-400 dark:text-zinc-500" />
+          <span className="truncate">Learn more</span>
+        </button>
       </div>
     </div>
   );
