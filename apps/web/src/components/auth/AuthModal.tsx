@@ -119,7 +119,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           <>
             <form onSubmit={handleSubmit} className="space-y-3">
               {/* Form Grouping with Clear Visual Boundaries */}
-              <div className="rounded-xl border border-slate-200/80 dark:border-zinc-800/80 bg-slate-50/30 dark:bg-zinc-950/10 p-3 space-y-2.5 shadow-sm">
+              <div className="rounded-xl border border-slate-200/80 dark:border-zinc-800/80 bg-slate-50/30 dark:bg-[#16161a]/10 p-3 space-y-2.5 shadow-sm">
                 <div className="space-y-1">
                   <label className="block text-[10px] font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">
                     Email address
@@ -130,7 +130,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="name@domain.com"
-                    className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-xs text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent transition-all"
+                    className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 bg-white dark:bg-[#16161a] text-xs text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent transition-all"
                   />
                 </div>
 
@@ -144,7 +144,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-xs text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent transition-all"
+                    className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 bg-white dark:bg-[#16161a] text-xs text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent transition-all"
                   />
                 </div>
               </div>

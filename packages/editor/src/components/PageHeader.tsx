@@ -190,7 +190,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
       </div>
 
       <div className="space-y-4">
-        <div className="space-y-3 bg-slate-50 dark:bg-zinc-950 p-2.5 rounded-xl border border-slate-150 dark:border-zinc-800/60">
+        <div className="space-y-3 bg-slate-50 dark:bg-[#16161a] p-2.5 rounded-xl border border-slate-150 dark:border-zinc-800/60">
           <div>
             <label className="block text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase mb-1">
               Upload Cover File
@@ -343,7 +343,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
       ) : null}
 
       {/* Spacing & Hover Actions Bar (Add Icon / Add Cover) */}
-      <div className="flex items-center gap-4 mb-4 h-8 text-slate-400 dark:text-zinc-500">
+      <div className="flex items-center gap-4 mb-4 h-8 text-slate-400 dark:text-zinc-500 -ml-3">
         {!icon && (
           <div className="relative inline-block">
             <button
@@ -377,7 +377,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
 
       {/* Page Icon (if icon is set) - stacked vertically above title */}
       {icon && (
-        <div className="relative inline-block mb-4">
+        <div className="relative inline-block mb-4 -ml-2">
           <button
             type="button"
             onClick={() => setShowEmojiPicker(!showEmojiPicker)}
@@ -405,8 +405,8 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
           onChange={(e) => onTitleChange(e.target.value)}
           placeholder="Untitled"
           className="w-full
-            text-4xl sm:text-5xl
-            font-extrabold
+            text-3xl sm:text-[32px]
+            font-bold
             text-slate-900 dark:text-zinc-100
             bg-transparent border-none outline-none focus:ring-0 p-0
             placeholder-slate-300 dark:placeholder-zinc-600
@@ -415,28 +415,28 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
       </div>
 
       {/* Metadata Row */}
-      <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs font-medium text-slate-500 dark:text-zinc-400 border-t border-slate-100/50 dark:border-zinc-800/30 pt-4">
+      <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium text-slate-600 dark:text-zinc-300">
         {formattedDate && (
           <span className="inline-flex items-center gap-1.5">
-            <LucideIcons.Calendar className="w-3.5 h-3.5 opacity-80" />
-            <span className="opacity-70">Created</span>
-            <span className="text-slate-700 dark:text-zinc-300">{formattedDate}</span>
+            <LucideIcons.Calendar className="w-3.5 h-3.5 opacity-90" />
+            <span className="opacity-80">Created</span>
+            <span className="text-slate-800 dark:text-zinc-200">{formattedDate}</span>
           </span>
         )}
         <span className="inline-flex items-center gap-1.5">
-          <LucideIcons.FileText className="w-3.5 h-3.5 opacity-80" />
-          <span className="opacity-70">Words</span>
-          <span className="text-slate-700 dark:text-zinc-300">{wordCount}</span>
+          <LucideIcons.FileText className="w-3.5 h-3.5 opacity-90" />
+          <span className="opacity-80">Words</span>
+          <span className="text-slate-800 dark:text-zinc-200">{wordCount}</span>
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <LucideIcons.Clock className="w-3.5 h-3.5 opacity-80" />
-          <span className="opacity-70">Read</span>
-          <span className="text-slate-700 dark:text-zinc-300">{readingTime} min</span>
+          <LucideIcons.Clock className="w-3.5 h-3.5 opacity-90" />
+          <span className="opacity-80">Read</span>
+          <span className="text-slate-800 dark:text-zinc-200">{readingTime} min</span>
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <LucideIcons.LayoutGrid className="w-3.5 h-3.5 opacity-80" />
-          <span className="opacity-70">Blocks</span>
-          <span className="text-slate-700 dark:text-zinc-300">{blocksCount}</span>
+          <LucideIcons.LayoutGrid className="w-3.5 h-3.5 opacity-90" />
+          <span className="opacity-80">Blocks</span>
+          <span className="text-slate-800 dark:text-zinc-200">{blocksCount}</span>
         </span>
       </div>
     </div>
