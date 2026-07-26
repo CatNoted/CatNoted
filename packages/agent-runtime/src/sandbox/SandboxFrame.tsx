@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react';
+import { isValidSandboxMessage } from '@catnoted/shared';
 
 interface SandboxFrameProps {
   srcDoc: string;
@@ -68,10 +69,13 @@ export const SandboxFrame: React.FC<SandboxFrameProps> = ({
   useEffect(() => {
     const handleMessage = (e: MessageEvent) => {
       if (iframeRef.current && e.source === iframeRef.current.contentWindow) {
-        if (e.data && e.data.type === 'state_change') {
-          onStateChange?.(e.data.payload);
+        if (!isValidSandboxMessage(e.data)) {
+          return;
         }
-        if (e.data && e.data.type === 'sandbox_error') {
+
+        if (e.data.type === 'state_change') {
+          onStateChange?.(e.data.payload);
+        } else if (e.data.type === 'sandbox_error') {
           onError?.(e.data.payload);
         }
       }
