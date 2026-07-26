@@ -461,7 +461,7 @@ const App: React.FC = () => {
     );
 
     return (
-      <header className="h-14 px-4 sm:px-6 border-b border-slate-200/60 dark:border-zinc-800/60 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md flex items-center justify-between z-20 shrink-0 w-full select-none">
+      <header className="h-14 px-4 sm:px-6 border-b border-slate-200/60 dark:border-zinc-800/60 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md flex items-center justify-between z-10 shrink-0 w-full select-none">
         {left}
         {modeSwitcher}
         {right}
