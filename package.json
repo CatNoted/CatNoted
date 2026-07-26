@@ -8,12 +8,13 @@
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "test": "vitest run",
-    "test:e2e": "npx playwright test",
-    "test:e2e:ui": "npx playwright test --ui",
-    "test:e2e:headed": "npx playwright test --headed",
+    "test:e2e": "npx playwright test -c tests/e2e/playwright.config.ts",
+    "test:e2e:ui": "npx playwright test -c tests/e2e/playwright.config.ts --ui",
+    "test:e2e:headed": "npx playwright test -c tests/e2e/playwright.config.ts --headed",
     "playwright:install": "npx playwright install chromium"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.0",
     "@testing-library/react": "^16.3.2",
     "@testing-library/react-hooks": "^8.0.1",
     "happy-dom": "^20.11.1",
