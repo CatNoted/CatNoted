@@ -69,6 +69,22 @@ export function parseDocumentGraph(
     });
   }
 
+  // Register all non-deleted pages from the pages metadata list to avoid overfiltering empty or unlinked pages.
+  if (pages) {
+    pages.forEach(p => {
+      if (resolvedDeletedPageIds.has(p.id)) return;
+      if (!nodesMap.has(p.id)) {
+        nodesMap.set(p.id, {
+          id: p.id,
+          type: 'page',
+          val: p.id === rootId ? 20 : 15,
+          _rawName: p.title || p.id,
+          count: 0
+        });
+      }
+    });
+  }
+
   const linkRegex = /\[\[(.*?)\]\]/g;
   const tagRegex = /#([a-zA-Z0-9_\-]+)/g;
 
