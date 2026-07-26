@@ -655,7 +655,7 @@ if (isSearchOpen && searchQuery) {
     <div className="flex h-screen w-screen overflow-hidden bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-zinc-100">
       {/* Pane 1: Left Sidebar (Navigation) - Hidden in Zen Mode */}
       {!zenMode && (
-        <aside className="w-14 flex flex-col items-center justify-between py-3 border-r border-slate-200 dark:border-zinc-800 bg-[#fbfbfb] dark:bg-zinc-950 z-10 shrink-0">
+        <aside className="w-14 flex flex-col items-center justify-between py-3 border-r border-slate-200 dark:border-zinc-800/40 bg-[#fbfbfb] dark:bg-zinc-950 z-10 shrink-0">
           <div className="flex flex-col items-center gap-4 w-full">
             <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-xs shadow-sm shadow-indigo-200 dark:shadow-none">
               CN
@@ -735,14 +735,14 @@ if (isSearchOpen && searchQuery) {
       {!zenMode && (
         <aside
           style={{ width: isSidebarCollapsed ? 0 : sidebarWidth }}
-          className={`border-r border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 z-10 shrink-0 flex flex-col h-full text-sm overflow-hidden ${
+          className={`border-r border-slate-200 dark:border-zinc-800/40 bg-white dark:bg-zinc-900 z-10 shrink-0 flex flex-col h-full text-sm overflow-hidden ${
             isSidebarResizing ? '' : 'transition-[width,opacity] duration-300 ease-in-out'
           } ${
             isSidebarCollapsed ? 'opacity-0 pointer-events-none' : 'opacity-100'
           }`}
         >
           {/* Sidebar Header */}
-          <div className="h-14 px-4 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between gap-2 shrink-0">
+          <div className="h-14 px-4 border-b border-slate-200 dark:border-zinc-800/40 flex items-center justify-between gap-2 shrink-0">
             {/* Workspace Switcher Button */}
             <div className="relative">
               <button
@@ -811,6 +811,7 @@ if (isSearchOpen && searchQuery) {
                           if (onPageSelect) onPageSelect(doc.id);
                           onModeChange('doc');
                         }}
+                        title={doc.title}
                         className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between transition-colors ${
                           isActive
                             ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
@@ -882,6 +883,7 @@ if (isSearchOpen && searchQuery) {
                                   if (onPageSelect) onPageSelect(node.id);
                                   onModeChange('doc');
                                 }}
+                                title={displayLabel}
                                 className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
                                   isActive
                                     ? 'bg-amber-50 dark:bg-amber-950/30 text-amber-900 dark:text-amber-200 font-medium'
@@ -914,7 +916,7 @@ if (isSearchOpen && searchQuery) {
                     <span className="text-[9px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full">{Object.keys(pages || {}).length}</span>
                   </button>
                   {sectionsExpanded.pages && (
-                    <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-150 dark:border-zinc-800 ml-3.5">
+                    <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-150 dark:border-zinc-800/40 ml-3.5">
                       {Object.values(pages || {}).map((node: any) => {
                         const isActive = activePage === node.id;
                         const displayLabel = node.title || 'Untitled';
@@ -926,6 +928,7 @@ if (isSearchOpen && searchQuery) {
                                   if (onPageSelect) onPageSelect(node.id);
                                   onModeChange('doc');
                                 }}
+                                title={displayLabel}
                                 className={`flex-1 text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
                                   isActive
                                     ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
@@ -967,11 +970,11 @@ if (isSearchOpen && searchQuery) {
                     <span className="text-[9px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full">{tagNodes.length}</span>
                   </button>
                   {sectionsExpanded.tags && (
-                    <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-150 dark:border-zinc-800 ml-3.5">
+                    <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-150 dark:border-zinc-800/40 ml-3.5">
                       {tagNodes.length === 0 ? (
-                        <div className="px-2 py-3 flex flex-col items-center justify-center text-center gap-1.5 opacity-60">
-                          <Tag className="w-4 h-4 text-slate-400 dark:text-zinc-500" />
-                          <span className="text-[10px] text-slate-500 dark:text-zinc-400">Type #tag in editor</span>
+                        <div className="px-2 py-3 flex flex-col items-center justify-center text-center gap-1.5">
+                          <Tag className="w-4 h-4 text-slate-400 dark:text-zinc-400" />
+                          <span className="text-[10px] text-slate-600 dark:text-zinc-300">Type #tag in editor</span>
                         </div>
                       ) : (
                         tagNodes.map(node => {
@@ -986,6 +989,7 @@ if (isSearchOpen && searchQuery) {
                                   if (onPageSelect) onPageSelect(node.id);
                                   onModeChange('doc');
                                 }}
+                                title={displayLabel}
                                 className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
                                   isActive
                                     ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
@@ -1017,11 +1021,11 @@ if (isSearchOpen && searchQuery) {
                     <span className="text-[9px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full">{widgetNodes.length}</span>
                   </button>
                   {sectionsExpanded.widgets && (
-                    <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-150 dark:border-zinc-800 ml-3.5">
+                    <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-150 dark:border-zinc-800/40 ml-3.5">
                       {widgetNodes.length === 0 ? (
-                        <div className="px-2 py-3 flex flex-col items-center justify-center text-center gap-1.5 opacity-60">
-                          <Cpu className="w-4 h-4 text-slate-400 dark:text-zinc-500" />
-                          <span className="text-[10px] text-slate-500 dark:text-zinc-400">Add AI widget</span>
+                        <div className="px-2 py-3 flex flex-col items-center justify-center text-center gap-1.5">
+                          <Cpu className="w-4 h-4 text-slate-400 dark:text-zinc-400" />
+                          <span className="text-[10px] text-slate-600 dark:text-zinc-300">Add AI widget</span>
                         </div>
                       ) : (
                         widgetNodes.map(node => {
@@ -1033,6 +1037,7 @@ if (isSearchOpen && searchQuery) {
                                   if (onPageSelect) onPageSelect(node.id);
                                   onModeChange('doc');
                                 }}
+                                title={node.label}
                                 className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
                                   isActive
                                     ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
@@ -1091,12 +1096,12 @@ if (isSearchOpen && searchQuery) {
           {/* Right Sidebar Panel */}
           <aside
             style={{ width: isRightSidebarOpen ? 320 : 0 }}
-            className={`border-l border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex flex-col h-full text-sm overflow-hidden transition-[width,opacity] duration-200 ease-in-out ${
+            className={`border-l border-slate-200 dark:border-zinc-800/40 bg-white dark:bg-zinc-900 flex flex-col h-full text-sm overflow-hidden transition-[width,opacity] duration-200 ease-in-out ${
               isRightSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
             } md:relative absolute right-12 top-0 bottom-0 shadow-lg md:shadow-none z-30`}
           >
             {/* Header */}
-            <div className="h-14 px-4 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between shrink-0 bg-[#fbfbfb] dark:bg-zinc-950">
+            <div className="h-14 px-4 border-b border-slate-200 dark:border-zinc-800/40 flex items-center justify-between shrink-0 bg-[#fbfbfb] dark:bg-zinc-950">
               <span className="font-semibold text-xs uppercase tracking-wider text-slate-500 dark:text-zinc-400">
                 {activeRightSidebarTab === 'info' && 'Page Info & Style'}
                 {activeRightSidebarTab === 'outline' && 'Document Outline'}
@@ -1424,9 +1429,9 @@ if (isSearchOpen && searchQuery) {
           </aside>
 
           {/* Right Tool Rail */}
-          <aside className="w-12 flex flex-col items-center justify-between py-3 border-l border-slate-200 dark:border-zinc-800 bg-[#fbfbfb] dark:bg-zinc-950 shrink-0 z-20 h-full">
+          <aside className="w-12 flex flex-col items-center justify-between py-5 border-l border-slate-200 dark:border-zinc-800/40 bg-[#fbfbfb] dark:bg-zinc-950 shrink-0 z-20 h-full">
             <div className="flex flex-col items-center gap-4 w-full">
-              <nav className="flex flex-col gap-2 w-full px-1.5" aria-label="Right Rail Navigation">
+              <nav className="flex flex-col gap-4 w-full px-1.5" aria-label="Right Rail Navigation">
                 {[
                   { id: 'info' as const, icon: Info, label: 'Page Info' },
                   { id: 'outline' as const, icon: List, label: 'Outline' },

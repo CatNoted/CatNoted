@@ -220,12 +220,12 @@ const TextBlockBase: React.FC<TextBlockProps> = ({
             onClick={addClick}
             title="Add block below"
             aria-label="Add block below"
-            className="p-1 rounded-md hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 transition-colors flex items-center justify-center cursor-pointer"
+            className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 transition-colors flex items-center justify-center cursor-pointer"
           >
-            <Plus className="w-3.5 h-3.5" />
+            <Plus className="w-4 h-4" />
           </button>
-          <span className="p-1 rounded-md hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-400/80 dark:text-zinc-500/80 hover:text-slate-600 dark:hover:text-zinc-200 transition-colors cursor-grab flex items-center justify-center select-none">
-            <GripVertical className="w-3.5 h-3.5" />
+          <span className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-400/80 dark:text-zinc-500/80 hover:text-slate-600 dark:hover:text-zinc-200 transition-colors cursor-grab flex items-center justify-center select-none">
+            <GripVertical className="w-4 h-4" />
           </span>
         </div>
       )}

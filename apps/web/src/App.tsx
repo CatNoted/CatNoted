@@ -317,7 +317,7 @@ const App: React.FC = () => {
     );
 
     const actions = (
-      <div className="flex items-center gap-1.5 sm:gap-2">
+      <div className="flex items-center gap-2.5 sm:gap-3.5">
         <button
           type="button"
           onClick={() => updatePageMeta({ isFavorite: !pageMeta?.isFavorite })}
@@ -457,7 +457,7 @@ const App: React.FC = () => {
             : null;
 
     const right = (
-      <div className="flex items-center gap-1.5 sm:gap-3">
+      <div className="flex items-center gap-3 sm:gap-5">
         {syncStatus}
         {actions}
       </div>
