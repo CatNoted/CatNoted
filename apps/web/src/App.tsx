@@ -223,21 +223,21 @@ const App: React.FC = () => {
   const renderTopBar = () => {
     const breadcrumbs = (
       <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
-        <span className="text-xs font-medium text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200 transition-colors cursor-pointer">
+        <span className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
           Workspace
         </span>
-        <span className="text-slate-300 dark:text-zinc-600 font-light select-none">/</span>
+        <span className="text-border font-light select-none">/</span>
         {activePage !== 'root-doc-node' && (
           <>
             <button
               type="button"
               onClick={() => setActivePage('root-doc-node')}
-              className="text-xs font-medium text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200 transition-colors shrink-0"
+              className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors shrink-0"
               title="Back to root note"
             >
               Root
             </button>
-            <span className="text-slate-300 dark:text-zinc-600 font-light select-none">/</span>
+            <span className="text-border font-light select-none">/</span>
           </>
         )}
       </div>
@@ -256,14 +256,14 @@ const App: React.FC = () => {
             setIsEditingTitle(false);
           }
         }}
-        className="px-2 py-0.5 border border-indigo-400 dark:border-indigo-500 rounded bg-slate-50 dark:bg-zinc-850 text-xs font-semibold text-slate-800 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-indigo-500 w-36 sm:w-48"
+        className="px-2 py-0.5 border border-indigo-400 dark:border-indigo-500 rounded bg-secondary text-xs font-semibold text-foreground focus:outline-none focus:ring-1 focus:ring-indigo-500 w-36 sm:w-48"
         autoFocus
       />
     ) : (
       <div className="flex items-center gap-1.5 group/title min-w-0 truncate">
         <span
           onDoubleClick={() => setIsEditingTitle(true)}
-          className="text-xs font-semibold text-slate-800 dark:text-zinc-200 truncate cursor-pointer hover:bg-slate-50 dark:hover:bg-zinc-800/60 px-1.5 py-0.5 rounded transition-colors"
+          className="text-xs font-semibold text-foreground truncate cursor-pointer hover:bg-secondary/60 px-1.5 py-0.5 rounded transition-colors"
           title="Double click to edit title"
         >
           {pageTitle}
@@ -271,7 +271,7 @@ const App: React.FC = () => {
         <button
           type="button"
           onClick={() => setIsEditingTitle(true)}
-          className="inline-flex items-center justify-center rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 p-0.5 opacity-0 group-hover/title:opacity-100"
+          className="inline-flex items-center justify-center rounded-lg text-muted-foreground hover:text-indigo-500 hover:bg-secondary transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 p-0.5 opacity-0 group-hover/title:opacity-100"
           title="Edit page title"
         >
           <Edit2 className="w-3 h-3" />
@@ -287,7 +287,7 @@ const App: React.FC = () => {
     );
 
     const modeSwitcher = (
-      <div className="flex items-center rounded-xl border border-slate-200/60 dark:border-zinc-800/60 bg-slate-50/90 dark:bg-zinc-800/70 p-0.5">
+      <div className="flex items-center rounded-xl border border-border/60 bg-secondary/90 p-0.5">
         {[
           { id: 'doc', label: 'Doc', icon: BookOpen },
           { id: 'canvas', label: 'Canvas', icon: LayoutGrid },
@@ -301,8 +301,8 @@ const App: React.FC = () => {
               onClick={() => handleModeChange(modeItem.id as ActiveMode)}
               className={`px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all duration-150 ${
                 isSelected
-                  ? 'bg-white dark:bg-zinc-900 text-indigo-600 dark:text-indigo-400 shadow-sm shadow-indigo-500/5 font-semibold'
-                  : 'text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200'
+                  ? 'bg-background text-indigo-600 dark:text-indigo-400 shadow-sm shadow-indigo-500/5 font-semibold'
+                  : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               <IconComponent className="w-3.5 h-3.5" />
@@ -321,7 +321,7 @@ const App: React.FC = () => {
           className={`inline-flex items-center justify-center rounded-lg p-1.5 border transition-colors ${
             pageMeta?.isFavorite
               ? 'border-transparent bg-amber-400/10 text-amber-500'
-              : 'border-transparent text-slate-400 hover:text-amber-500 hover:bg-slate-50 dark:hover:bg-[#16161a]'
+              : 'border-transparent text-muted-foreground hover:text-amber-500 hover:bg-secondary'
           }`}
           title={pageMeta?.isFavorite ? 'Unstar page' : 'Star page'}
         >
@@ -332,15 +332,15 @@ const App: React.FC = () => {
           <button
             type="button"
             onClick={() => setShowPageMenu(!showPageMenu)}
-            className="inline-flex items-center justify-center rounded-lg p-1.5 border border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-zinc-200 hover:bg-slate-50 dark:hover:bg-[#16161a] transition-colors"
+            className="inline-flex items-center justify-center rounded-lg p-1.5 border border-transparent text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
             title="Page options"
           >
             <span className="text-xs font-bold px-1">•••</span>
           </button>
           {showPageMenu && (
-            <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-2xl z-50 py-2 text-xs select-none">
-              <div className="px-3 pb-2 mb-1 border-b border-slate-100 dark:border-zinc-800">
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
+            <div className="absolute right-0 mt-2 w-56 bg-card border border-border rounded-2xl shadow-2xl z-50 py-2 text-xs select-none">
+              <div className="px-3 pb-2 mb-1 border-b border-border">
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                   Font Style
                 </p>
                 <div className="grid grid-cols-3 gap-1 mt-1">
@@ -352,7 +352,7 @@ const App: React.FC = () => {
                       className={`py-1 rounded text-center transition-colors ${
                         pageMeta?.fontStyle === f || (!pageMeta?.fontStyle && f === 'sans')
                           ? 'bg-indigo-600 text-white font-bold'
-                          : 'bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 hover:bg-slate-200'
+                          : 'bg-secondary text-muted-foreground hover:bg-accent'
                       }`}
                     >
                       {f[0].toUpperCase() + f.slice(1)}
@@ -364,7 +364,7 @@ const App: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => updatePageMeta({ fullWidth: !pageMeta?.fullWidth })}
-                  className="w-full px-3 py-1.5 text-left flex items-center justify-between hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg text-slate-700 dark:text-zinc-300"
+                  className="w-full px-3 py-1.5 text-left flex items-center justify-between hover:bg-secondary rounded-lg text-foreground"
                 >
                   <span>Full Width Page</span>
                   <span className="text-xs">{pageMeta?.fullWidth ? '✓' : ''}</span>
@@ -372,11 +372,11 @@ const App: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleExportMarkdown}
-                  className="w-full px-3 py-1.5 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-300 rounded-lg"
+                  className="w-full px-3 py-1.5 text-left flex items-center gap-2 hover:bg-secondary text-foreground rounded-lg"
                 >
                   <span>Export Markdown (.md)</span>
                 </button>
-                <div className="my-1 border-t border-slate-100 dark:border-zinc-800" />
+                <div className="my-1 border-t border-border" />
                 {activePage !== 'root-doc-node' && (
                   <button
                     type="button"
@@ -387,7 +387,7 @@ const App: React.FC = () => {
                         setShowPageMenu(false);
                       }
                     }}
-                    className="w-full px-3 py-1.5 text-left flex items-center gap-2 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-400 font-medium rounded-lg"
+                    className="w-full px-3 py-1.5 text-left flex items-center gap-2 hover:bg-destructive/10 hover:dark:bg-destructive/40 text-destructive-foreground font-medium rounded-lg"
                   >
                     Delete Page
                   </button>
@@ -408,7 +408,7 @@ const App: React.FC = () => {
                 alert(`Share Link generated:\n${link}\n\n(Anyone with this link and the workspace passphrase can access the E2EE sync room)`);
               });
           }}
-          className="inline-flex items-center justify-center rounded-lg gap-1.5 p-1.5 border border-transparent hover:bg-slate-50 dark:hover:bg-[#16161a] text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+          className="inline-flex items-center justify-center rounded-lg gap-1.5 p-1.5 border border-transparent hover:bg-secondary text-muted-foreground hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
           title="Share document link"
         >
           <Share2 className="w-3.5 h-3.5" />
@@ -418,7 +418,7 @@ const App: React.FC = () => {
         <button
           type="button"
           onClick={() => setIsAuthOpen(true)}
-          className="inline-flex items-center justify-center gap-2 rounded-lg px-2 py-1 hover:bg-slate-50 dark:hover:bg-zinc-850 text-xs font-medium text-slate-600 dark:text-zinc-300 border border-transparent hover:border-slate-200/60 dark:hover:border-zinc-800/60"
+          className="inline-flex items-center justify-center gap-2 rounded-lg px-2 py-1 hover:bg-secondary text-xs font-medium text-muted-foreground border border-transparent hover:border-border/60"
           title="Auth Settings"
         >
           <span className="w-5 h-5 rounded-full bg-indigo-500 text-white text-[10px] font-bold flex items-center justify-center shadow-sm">
@@ -446,8 +446,8 @@ const App: React.FC = () => {
             )
           : status === 'offline'
             ? (
-                <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-slate-500/10 text-slate-600 dark:text-slate-400 border border-slate-500/20">
-                  <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
+                <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-muted/10 text-muted-foreground border border-muted-foreground/20">
+                  <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground" />
                   Offline
                 </span>
               )
@@ -461,7 +461,7 @@ const App: React.FC = () => {
     );
 
     return (
-      <header className="h-14 px-4 sm:px-6 border-b border-slate-200/60 dark:border-zinc-800/60 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md flex items-center justify-between z-20 shrink-0 w-full select-none">
+      <header className="h-14 px-4 sm:px-6 border-b border-border/60 bg-background/90 backdrop-blur-md flex items-center justify-between z-20 shrink-0 w-full select-none">
         {left}
         {modeSwitcher}
         {right}
@@ -532,17 +532,17 @@ const App: React.FC = () => {
       </AppLayout>
 
       {status === 'conflict' && conflictMsg ? (
-        <div className="fixed bottom-4 right-4 max-w-sm w-full bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 shadow-lg rounded-2xl p-4 z-50 flex items-start gap-3 backdrop-blur-sm animate-in slide-in-from-bottom-5">
-          <div className="w-8 h-8 rounded-full bg-rose-100 dark:bg-rose-900/50 flex items-center justify-center shrink-0">
-            <span className="text-rose-600 dark:text-rose-400 font-bold">!</span>
+        <div className="fixed bottom-4 right-4 max-w-sm w-full bg-destructive border border-destructive-border shadow-lg rounded-2xl p-4 z-50 flex items-start gap-3 backdrop-blur-sm animate-in slide-in-from-bottom-5">
+          <div className="w-8 h-8 rounded-full bg-destructive-accent flex items-center justify-center shrink-0">
+            <span className="text-destructive-foreground font-bold">!</span>
           </div>
           <div className="flex-1 min-w-0">
-            <h4 className="text-sm font-semibold text-rose-800 dark:text-rose-300">Sync Conflict</h4>
-            <p className="text-xs text-rose-600/80 dark:text-rose-400/80 mt-1 break-words">{conflictMsg}</p>
+            <h4 className="text-sm font-semibold text-destructive-foreground">Sync Conflict</h4>
+            <p className="text-xs text-destructive-foreground/80 mt-1 break-words">{conflictMsg}</p>
           </div>
           <button
             onClick={dismissConflict}
-            className="inline-flex items-center justify-center rounded-lg p-1 text-rose-500 hover:text-rose-700 hover:bg-rose-100 dark:hover:bg-rose-900/50"
+            className="inline-flex items-center justify-center rounded-lg p-1 text-destructive-foreground/70 hover:text-destructive-foreground hover:bg-destructive-accent"
           >
             <span className="leading-none">✕</span>
           </button>
