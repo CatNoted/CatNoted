@@ -44,6 +44,52 @@ describe('Editor Store (useDocumentStore)', () => {
     expect(result.current.blocks).toHaveLength(0);
   });
 
+  it('should deduplicate duplicate blocks by ID and robustly delete/update them', () => {
+    // Manually insert duplicate block IDs into yblocks
+    act(() => {
+      yblocks.insert(0, [
+        {
+          id: 'dup-block-id',
+          type: 'text',
+          content: 'I am duplicate 1',
+          parentId: 'root-doc-node'
+        },
+        {
+          id: 'dup-block-id',
+          type: 'text',
+          content: 'I am duplicate 2',
+          parentId: 'root-doc-node'
+        }
+      ]);
+    });
+
+    const { result } = renderHook(() => useDocumentStore('root-doc-node'));
+
+    // Should only show 1 block due to deduplication in React state
+    expect(result.current.blocks).toHaveLength(1);
+    expect(result.current.blocks[0].id).toBe('dup-block-id');
+
+    // Updating duplicate blocks should update all instances in CRDT
+    act(() => {
+      result.current.updateBlockContent('dup-block-id', 'I am updated!');
+    });
+
+    // Both instances in yblocks should be updated
+    const allCrdtBlocks = yblocks.toArray();
+    const matches = allCrdtBlocks.filter(b => b.id === 'dup-block-id');
+    expect(matches).toHaveLength(2);
+    expect(matches[0].content).toBe('I am updated!');
+    expect(matches[1].content).toBe('I am updated!');
+
+    // Deleting the block should delete all matching instances
+    act(() => {
+      result.current.deleteBlock('dup-block-id');
+    });
+
+    expect(result.current.blocks).toHaveLength(0);
+    expect(yblocks.toArray().filter(b => b.id === 'dup-block-id')).toHaveLength(0);
+  });
+
   it('should render the backlinks list and counts correctly for referenced pages', async () => {
     // 1. Setup page metadata in ypages Map
     act(() => {
