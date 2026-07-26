@@ -17,6 +17,7 @@ import { usePersistence } from './utils/sync/persistence.js';
 import { AuthModal } from './components/auth/AuthModal.js';
 import { SettingsModal } from './components/settings/SettingsModal.js';
 import { CommandPalette } from './components/CommandPalette.js';
+import { SearchPalette } from './components/SearchPalette.js';
 
 const App: React.FC = () => {
   const [activeMode, setActiveMode] = useState<ActiveMode>('doc');
@@ -123,6 +124,7 @@ const App: React.FC = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -154,6 +156,14 @@ const App: React.FC = () => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
         setIsPaletteOpen((prev) => !prev);
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'p') {
+        e.preventDefault();
+        setIsSearchOpen(true);
+      }
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'f') {
+        e.preventDefault();
+        setIsSearchOpen(true);
       }
     };
     window.addEventListener('keydown', handleGlobalKeyDown);
@@ -533,6 +543,7 @@ const App: React.FC = () => {
         userEmail={userEmail}
         onAuthTrigger={() => setIsAuthOpen(true)}
         onCreatePage={handleCreatePage}
+        onOpenSearch={() => setIsSearchOpen(true)}
       >
         <div className="flex flex-col h-full w-full overflow-hidden">
           {renderTopBar()}
@@ -569,6 +580,13 @@ const App: React.FC = () => {
           onToggleZen={() => setIsZenMode((prev) => !prev)}
           onOpenSettings={() => setIsSettingsOpen(true)}
           isDarkMode={isDarkMode}
+          onOpenSearch={() => setIsSearchOpen(true)}
+        />
+        <SearchPalette
+          isOpen={isSearchOpen}
+          onClose={() => setIsSearchOpen(false)}
+          onPageSelect={setActivePage}
+          onModeChange={setActiveMode}
         />
       </div>
     </>

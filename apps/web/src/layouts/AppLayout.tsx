@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import {
+  Search,
   FileText,
   Layout,
   Network,
@@ -170,6 +171,7 @@ interface AppLayoutProps {
   userEmail?: string;
   onAuthTrigger?: () => void;
   onCreatePage?: () => void;
+  onOpenSearch?: () => void;
 }
 
 import { requestLlmWidget, SandboxFrame } from '@catnoted/agent-runtime';
@@ -194,7 +196,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   pageTitle: _pageTitle,
   userEmail: _userEmail,
   onAuthTrigger: _onAuthTrigger,
-  onCreatePage
+  onCreatePage,
+  onOpenSearch
 }) => {
   const { blocks, addBlock, updateBlockType, pages, createPage, deletePage, deleteBlock, pageMeta, updatePageMeta } = useDocumentStore(activePage);
   const favoritePages = (pages || []).filter((p: any) => p?.isFavorite);
@@ -342,9 +345,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       [section]: !prev[section]
     }));
   };
-
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
 
   const [chatInput, setChatInput] = useState('');
   const [messages, setMessages] = useState<Array<{ sender: 'user' | 'agent'; text: string; code?: string; editProposal?: string }>>([
@@ -577,54 +577,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     downloadAnchor.remove();
   };
 
-  // Cache parsed graph nodes based on block updates, not search query
-
-  // Search filtering logic
-// Search filtering logic
-
-const parsedGraphNodes = React.useMemo(() => {
-  return parseDocumentGraph(blocks).nodes;
-}, [blocks]);
-
-const searchResults = React.useMemo(() => {
-  if (!searchQuery.trim()) return [];
-
-  const query = searchQuery.toLowerCase();
-  const results: Array<{ id: string; type: string; content: string; icon: React.ElementType }> = [];
-
-  // Search in headings / text
-  blocks.forEach(block => {
-    if ((block.type === 'heading' || block.type === 'text') && block.content.toLowerCase().includes(query)) {
-      results.push({
-        id: block.id,
-        type: block.type,
-        content: block.content,
-        icon: FileText
-      });
-    }
-  });
-
-  // Search in graph nodes (pages/tags)
-  parsedGraphNodes.forEach(node => {
-    if (node.label.toLowerCase().includes(query) && node.id !== 'root-doc-node') {
-      if (!results.some(r => r.content.includes(node.label.replace(/[📄#]/g, '').trim()))) {
-        results.push({
-          id: node.id,
-          type: node.type,
-          content: node.label,
-          icon: FileText
-        });
-      }
-    }
-  });
-
-  return results;
-}, [blocks, parsedGraphNodes, searchQuery]);
-
-if (isSearchOpen && searchQuery) {
-  console.log(searchResults, setSearchQuery, setIsSearchOpen);
-}
-
   // Import widgets catalog and insert them into Yjs store
   const handleImportWidgets = (e: React.ChangeEvent<HTMLInputElement>) => {
     const fileReader = new FileReader();
@@ -797,6 +749,23 @@ if (isSearchOpen && searchQuery) {
 
           <div className="flex-1 overflow-y-auto overflow-x-hidden min-w-[160px]">
             <div className="p-3 space-y-6">
+            {/* Elegant Search Trigger Button */}
+            {onOpenSearch && (
+              <div className="px-1">
+                <button
+                  type="button"
+                  onClick={onOpenSearch}
+                  className="w-full flex items-center justify-between gap-2 px-3 py-2 text-xs text-slate-400 dark:text-zinc-500 bg-slate-50 dark:bg-zinc-850 hover:bg-slate-100 dark:hover:bg-zinc-800 border border-slate-200/60 dark:border-zinc-800/60 rounded-xl transition-all font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-500 shadow-sm"
+                >
+                  <span className="flex items-center gap-2">
+                    <Search className="w-3.5 h-3.5" />
+                    <span>Search...</span>
+                  </span>
+                  <kbd className="text-[10px] font-sans bg-slate-200/50 dark:bg-zinc-700/50 px-1.5 py-0.5 rounded border border-slate-300/40 dark:border-zinc-700/40 shadow-sm">⌘P</kbd>
+                </button>
+              </div>
+            )}
+
             {/* Recent Documents Section */}
             <div>
               <div className="flex items-center gap-1.5 px-2 mb-2 text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
