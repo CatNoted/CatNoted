@@ -112,12 +112,35 @@ const App: React.FC = () => {
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
 
   useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    const hasDate = searchParams.has('date');
-    const isJournalsPath = window.location.pathname.startsWith('/journals');
-    if (hasDate || isJournalsPath) {
-      setActiveMode('journals');
-    }
+    const syncModeFromUrl = () => {
+      const pathname = window.location.pathname;
+      let newMode: ActiveMode = 'doc';
+
+      if (pathname.startsWith('/canvas')) newMode = 'canvas';
+      else if (pathname.startsWith('/graph')) newMode = 'graph';
+      else if (pathname.startsWith('/journals')) newMode = 'journals';
+      else if (pathname.startsWith('/settings')) {
+        newMode = 'doc';
+        setIsSettingsOpen(true);
+      }
+      else if (pathname.startsWith('/search')) newMode = 'search';
+
+      const searchParams = new URLSearchParams(window.location.search);
+      if (searchParams.has('date') && pathname === '/') {
+        newMode = 'journals';
+      }
+
+      setActiveMode(newMode);
+    };
+
+    syncModeFromUrl();
+
+    const handlePopState = () => {
+      syncModeFromUrl();
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
   useEffect(() => {
@@ -185,11 +208,13 @@ const App: React.FC = () => {
   }, [passphrase]);
 
   const handleModeChange = (mode: ActiveMode) => {
-    if (mode === 'settings') {
-      setIsSettingsOpen(true);
-      return;
+    let path = '/';
+    if (mode !== 'doc') {
+      path = `/${mode}`;
     }
-    setActiveMode(mode);
+
+    window.history.pushState(null, '', path);
+    window.dispatchEvent(new PopStateEvent('popstate'));
   };
 
   const { pageMeta, updatePageMeta, deletePage } = useDocumentStore(activePage);
