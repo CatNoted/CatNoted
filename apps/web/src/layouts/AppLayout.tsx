@@ -30,7 +30,8 @@ import {
   Info,
   List,
   Star,
-  History
+  History,
+  MoreHorizontal
 } from 'lucide-react';
 
 export type ActiveMode = "doc" | "canvas" | "graph" | "settings";
@@ -195,7 +196,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   onAuthTrigger: _onAuthTrigger,
   onCreatePage
 }) => {
-  const { blocks, addBlock, updateBlockType, pages, createPage, deletePage, deleteBlock, pageMeta, updatePageMeta } = useDocumentStore(activePage);
+  const { blocks, addBlock, updateBlockType, pages, createPage, deletePage, deleteBlock, pageMeta, updatePageMeta, renamePage, updatePageMetaById } = useDocumentStore(activePage);
   const favoritePages = (pages || []).filter((p: any) => p?.isFavorite);
 
   const [activeAgentTab, setActiveAgentTab] = useState<'chat' | 'widgets'>('chat');
@@ -857,47 +858,95 @@ if (isSearchOpen && searchQuery) {
 
               <div className="space-y-1.5">
                 {/* 0. Favorites Category */}
-                {favoritePages.length > 0 && (
-                  <div>
-                    <button
-                      onClick={() => toggleSection('favorites')}
-                      className="w-full flex items-center justify-between px-2 py-1.5 hover:bg-slate-100/60 dark:hover:bg-zinc-800/30 rounded-lg text-xs font-semibold text-slate-500 dark:text-zinc-400"
-                    >
-                      <span className="flex items-center gap-1.5">
-                        {sectionsExpanded.favorites ? <ChevronDown className="w-3.5 h-3.5 text-slate-400" /> : <ChevronRight className="w-3.5 h-3.5 text-slate-400" />}
-                        <span className="text-xs">⭐</span>
-                        <span>Favorites</span>
-                      </span>
-                      <span className="text-[9px] bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 px-1.5 py-0.5 rounded-full font-bold">{favoritePages.length}</span>
-                    </button>
-                    {sectionsExpanded.favorites && (
-                      <ul className="pl-4 mt-1 space-y-0.5 border-l border-amber-200 dark:border-amber-900/40 ml-3.5">
-                        {favoritePages.map((node: any) => {
+                <div>
+                  <button
+                    onClick={() => toggleSection('favorites')}
+                    className="w-full flex items-center justify-between px-2 py-1.5 hover:bg-slate-100/60 dark:hover:bg-zinc-800/30 rounded-lg text-xs font-semibold text-slate-500 dark:text-zinc-400"
+                  >
+                    <span className="flex items-center gap-1.5">
+                      {sectionsExpanded.favorites ? <ChevronDown className="w-3.5 h-3.5 text-slate-400" /> : <ChevronRight className="w-3.5 h-3.5 text-slate-400" />}
+                      <span className="text-xs">⭐</span>
+                      <span>Favorites</span>
+                    </span>
+                    <span className="text-[9px] bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 px-1.5 py-0.5 rounded-full font-bold">{favoritePages.length}</span>
+                  </button>
+                  {sectionsExpanded.favorites && (
+                    <ul className="pl-4 mt-1 space-y-0.5 border-l border-amber-200 dark:border-amber-900/40 ml-3.5">
+                      {favoritePages.length === 0 ? (
+                        <div className="px-2 py-1.5 text-xs text-slate-400 dark:text-zinc-500 italic select-none">
+                          Star pages to pin them here.
+                        </div>
+                      ) : (
+                        favoritePages.map((node: any) => {
                           const isActive = activePage === node.id;
                           const displayLabel = node.title || 'Untitled';
                           return (
-                            <li key={node.id}>
-                              <button
-                                onClick={() => {
-                                  if (onPageSelect) onPageSelect(node.id);
-                                  onModeChange('doc');
-                                }}
-                                className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
-                                  isActive
-                                    ? 'bg-amber-50 dark:bg-amber-950/30 text-amber-900 dark:text-amber-200 font-medium'
-                                    : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
-                                }`}
-                              >
-                                {renderPageIcon(node.icon, "w-3.5 h-3.5 shrink-0 flex items-center justify-center")}
-                                <span className="truncate text-xs">{displayLabel}</span>
-                              </button>
+                            <li key={node.id} className="group/pageitem">
+                              <div className="flex items-center w-full justify-between pr-1">
+                                <button
+                                  onClick={() => {
+                                    if (onPageSelect) onPageSelect(node.id);
+                                    onModeChange('doc');
+                                  }}
+                                  className={`flex-1 text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
+                                    isActive
+                                      ? 'bg-amber-50 dark:bg-amber-950/30 text-amber-900 dark:text-amber-200 font-medium'
+                                      : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
+                                  }`}
+                                >
+                                  {renderPageIcon(node.icon, "w-3.5 h-3.5 shrink-0 flex items-center justify-center")}
+                                  <span className="truncate text-xs">{displayLabel}</span>
+                                </button>
+                                <div className="flex items-center shrink-0 gap-0.5">
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      updatePageMetaById(node.id, { isFavorite: !node.isFavorite });
+                                    }}
+                                    className={`p-1 rounded transition-colors ${
+                                      node.isFavorite
+                                        ? 'opacity-100 text-amber-500 hover:text-amber-600'
+                                        : 'opacity-0 group-hover/pageitem:opacity-100 text-slate-400 hover:text-amber-500'
+                                    } hover:bg-slate-150 dark:hover:bg-zinc-800`}
+                                    aria-label={node.isFavorite ? "Remove from favorites" : "Add to favorites"}
+                                  >
+                                    <Star className={`w-3 h-3 ${node.isFavorite ? 'fill-amber-500' : ''}`} />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      const newTitle = prompt('Rename page:', node.title || 'Untitled');
+                                      if (newTitle && newTitle.trim() && newTitle.trim() !== node.title) {
+                                        renamePage(node.id, newTitle.trim());
+                                      }
+                                    }}
+                                    className="p-1 rounded opacity-0 group-hover/pageitem:opacity-100 text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 hover:bg-slate-150 dark:hover:bg-zinc-800 transition-colors shrink-0"
+                                    aria-label="Rename page"
+                                  >
+                                    <MoreHorizontal className="w-3 h-3" />
+                                  </button>
+                                  {node.id !== 'root-doc-node' && (
+                                    <button
+                                      type="button"
+                                      onClick={(e) => { e.stopPropagation(); handleDeletePage(node.id, displayLabel); }}
+                                      className="opacity-0 group-hover/pageitem:opacity-100 p-1 rounded text-slate-300 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-all shrink-0"
+                                      aria-label="Delete page"
+                                      title={`Hapus "${displayLabel}"`}
+                                    >
+                                      <Trash2 className="w-3 h-3" />
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
                             </li>
                           );
-                        })}
-                      </ul>
-                    )}
-                  </div>
-                )}
+                        })
+                      )}
+                    </ul>
+                  )}
+                </div>
 
                 {/* 1. Pages Category */}
                 <div>
@@ -920,7 +969,7 @@ if (isSearchOpen && searchQuery) {
                         const displayLabel = node.title || 'Untitled';
                         return (
                           <li key={node.id} className="group/pageitem">
-                            <div className="flex items-center">
+                            <div className="flex items-center w-full justify-between pr-1">
                               <button
                                 onClick={() => {
                                   if (onPageSelect) onPageSelect(node.id);
@@ -935,16 +984,48 @@ if (isSearchOpen && searchQuery) {
                                 {renderPageIcon(node.icon, "w-3.5 h-3.5 shrink-0 flex items-center justify-center")}
                                 <span className="truncate text-xs">{displayLabel}</span>
                               </button>
-                              {node.id !== 'root-doc-node' && (
+                              <div className="flex items-center shrink-0 gap-0.5">
                                 <button
                                   type="button"
-                                  onClick={(e) => { e.stopPropagation(); handleDeletePage(node.id, displayLabel); }}
-                                  className="opacity-0 group-hover/pageitem:opacity-100 p-1 mr-1 rounded text-slate-300 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-all shrink-0"
-                                  title={`Hapus "${displayLabel}"`}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    updatePageMetaById(node.id, { isFavorite: !node.isFavorite });
+                                  }}
+                                  className={`p-1 rounded transition-colors ${
+                                    node.isFavorite
+                                      ? 'opacity-100 text-amber-500 hover:text-amber-600'
+                                      : 'opacity-0 group-hover/pageitem:opacity-100 text-slate-400 hover:text-amber-500'
+                                  } hover:bg-slate-150 dark:hover:bg-zinc-800`}
+                                  aria-label={node.isFavorite ? "Remove from favorites" : "Add to favorites"}
                                 >
-                                  <Trash2 className="w-3 h-3" />
+                                  <Star className={`w-3 h-3 ${node.isFavorite ? 'fill-amber-500' : ''}`} />
                                 </button>
-                              )}
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    const newTitle = prompt('Rename page:', node.title || 'Untitled');
+                                    if (newTitle && newTitle.trim() && newTitle.trim() !== node.title) {
+                                      renamePage(node.id, newTitle.trim());
+                                    }
+                                  }}
+                                  className="p-1 rounded opacity-0 group-hover/pageitem:opacity-100 text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 hover:bg-slate-150 dark:hover:bg-zinc-800 transition-colors shrink-0"
+                                  aria-label="Rename page"
+                                >
+                                  <MoreHorizontal className="w-3 h-3" />
+                                </button>
+                                {node.id !== 'root-doc-node' && (
+                                  <button
+                                    type="button"
+                                    onClick={(e) => { e.stopPropagation(); handleDeletePage(node.id, displayLabel); }}
+                                    className="opacity-0 group-hover/pageitem:opacity-100 p-1 rounded text-slate-300 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-all shrink-0"
+                                    aria-label="Delete page"
+                                    title={`Hapus "${displayLabel}"`}
+                                  >
+                                    <Trash2 className="w-3 h-3" />
+                                  </button>
+                                )}
+                              </div>
                             </div>
                           </li>
                         );

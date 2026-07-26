@@ -22,10 +22,12 @@ import { ActiveMode } from '../layouts/AppLayout';
 interface SidebarProps {
   onModeChange: (mode: ActiveMode) => void;
   activeMode?: ActiveMode;
+  activePage?: string;
+  onPageSelect?: (pageId: string) => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'doc' }) => {
-  const { pages, deletePage } = useDocumentStore();
+export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'doc', activePage, onPageSelect }) => {
+  const { pages, deletePage, renamePage, updatePageMetaById } = useDocumentStore();
 
   const favoritePages = useMemo(
     () => (pages || []).filter((p: any) => p?.isFavorite),
@@ -124,68 +126,77 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         {renderSection('Favorites', favoritesCollapsed, setFavoritesCollapsed, Star, (
           <>
             {favoritePages.length > 0 ? (
-              favoritePages.map(node => (
-                <div
-                  key={node.id}
-                  onClick={() => onModeChange('doc')}
-                  className={`${itemClassName} group/sidebar-row flex items-center justify-between pr-2 cursor-pointer`}
-                >
-                  <div className="flex items-center min-w-0 flex-1 gap-x-2.5">
-                    <span className="w-4 h-4 shrink-0 flex items-center justify-center text-xs">
-                      {node.icon || '📄'}
-                    </span>
-                    <span className="truncate">{node.title || 'Untitled'}</span>
-                  </div>
-                  {/* Hover Actions */}
-                  <div className="opacity-0 group-hover/sidebar-row:opacity-100 flex items-center gap-1 transition-opacity shrink-0">
-                    {node.id !== 'root-doc-node' && (
+              favoritePages.map(node => {
+                const isActive = activePage === node.id;
+                return (
+                  <div
+                    key={node.id}
+                    onClick={() => {
+                      if (onPageSelect) onPageSelect(node.id);
+                      onModeChange('doc');
+                    }}
+                    className={`${itemClassName} ${isActive ? 'bg-slate-100 dark:bg-zinc-800/80 text-slate-900 dark:text-white font-semibold' : ''} group/sidebar-row flex items-center justify-between pr-2 cursor-pointer`}
+                  >
+                    <div className="flex items-center min-w-0 flex-1 gap-x-2.5">
+                      <span className="w-4 h-4 shrink-0 flex items-center justify-center text-xs">
+                        {node.icon || '📄'}
+                      </span>
+                      <span className="truncate">{node.title || 'Untitled'}</span>
+                    </div>
+                    {/* Hover Actions */}
+                    <div className="flex items-center gap-1 shrink-0">
                       <button
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
-                          if (confirm(`Delete page "${node.title || 'Untitled'}"?`)) {
-                            deletePage(node.id);
+                          updatePageMetaById(node.id, { isFavorite: !node.isFavorite });
+                        }}
+                        className={`p-1 rounded transition-colors ${
+                          node.isFavorite
+                            ? 'opacity-100 text-amber-500 hover:text-amber-600'
+                            : 'opacity-0 group-hover/sidebar-row:opacity-100 text-slate-400 hover:text-amber-500'
+                        } hover:bg-slate-200 dark:hover:bg-zinc-800`}
+                        aria-label={node.isFavorite ? "Remove from favorites" : "Add to favorites"}
+                      >
+                        <Star className={`w-3.5 h-3.5 ${node.isFavorite ? 'fill-amber-500' : ''}`} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const newTitle = prompt('Rename page:', node.title || 'Untitled');
+                          if (newTitle && newTitle.trim() && newTitle.trim() !== node.title) {
+                            renamePage(node.id, newTitle.trim());
                           }
                         }}
-                        className="p-1 rounded text-slate-400 hover:text-red-500 hover:bg-slate-200 dark:hover:bg-zinc-800 transition-colors"
-                        aria-label="Delete page"
+                        className="p-1 rounded opacity-0 group-hover/sidebar-row:opacity-100 text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 hover:bg-slate-200 dark:hover:bg-zinc-800 transition-colors"
+                        aria-label="More options"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <MoreHorizontal className="w-3.5 h-3.5" />
                       </button>
-                    )}
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        alert('More options');
-                      }}
-                      className="p-1 rounded text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 hover:bg-slate-200 dark:hover:bg-zinc-800 transition-colors"
-                      aria-label="More options"
-                    >
-                      <MoreHorizontal className="w-3.5 h-3.5" />
-                    </button>
+                      {node.id !== 'root-doc-node' && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (confirm(`Delete page "${node.title || 'Untitled'}"?`)) {
+                              deletePage(node.id);
+                            }
+                          }}
+                          className="p-1 rounded opacity-0 group-hover/sidebar-row:opacity-100 text-slate-400 hover:text-red-500 hover:bg-slate-200 dark:hover:bg-zinc-800 transition-colors"
+                          aria-label="Delete page"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             ) : (
-              <>
-                <button
-                  type="button"
-                  onClick={() => onModeChange('doc')}
-                  className={itemClassName}
-                >
-                  <FileText className={`${getItemIconClass(false)} w-4 h-4`} />
-                  <span className="truncate">Getting Started</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => onModeChange('doc')}
-                  className={itemClassName}
-                >
-                  <FileText className={`${getItemIconClass(false)} w-4 h-4`} />
-                  <span className="truncate">Architecture Specs</span>
-                </button>
-              </>
+              <div className="px-3 py-2 text-center text-xs text-slate-400 dark:text-zinc-500 italic select-none">
+                Star pages to pin them here.
+              </div>
             )}
           </>
         ))}
@@ -193,49 +204,73 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         {renderSection('Organize', organizeCollapsed, setOrganizeCollapsed, FolderTree, (
           <>
             {pages && pages.length > 0 ? (
-              pages.map(node => (
-                <div
-                  key={node.id}
-                  onClick={() => onModeChange('doc')}
-                  className={`${itemClassName} group/sidebar-row flex items-center justify-between pr-2 cursor-pointer`}
-                >
-                  <div className="flex items-center min-w-0 flex-1 gap-x-2.5">
-                    <span className="w-4 h-4 shrink-0 flex items-center justify-center text-xs">
-                      {node.icon || '📄'}
-                    </span>
-                    <span className="truncate">{node.title || 'Untitled'}</span>
-                  </div>
-                  {/* Hover Actions */}
-                  <div className="opacity-0 group-hover/sidebar-row:opacity-100 flex items-center gap-1 transition-opacity shrink-0">
-                    {node.id !== 'root-doc-node' && (
+              pages.map(node => {
+                const isActive = activePage === node.id;
+                return (
+                  <div
+                    key={node.id}
+                    onClick={() => {
+                      if (onPageSelect) onPageSelect(node.id);
+                      onModeChange('doc');
+                    }}
+                    className={`${itemClassName} ${isActive ? 'bg-slate-100 dark:bg-zinc-800/80 text-slate-900 dark:text-white font-semibold' : ''} group/sidebar-row flex items-center justify-between pr-2 cursor-pointer`}
+                  >
+                    <div className="flex items-center min-w-0 flex-1 gap-x-2.5">
+                      <span className="w-4 h-4 shrink-0 flex items-center justify-center text-xs">
+                        {node.icon || '📄'}
+                      </span>
+                      <span className="truncate">{node.title || 'Untitled'}</span>
+                    </div>
+                    {/* Hover Actions */}
+                    <div className="flex items-center gap-1 shrink-0">
                       <button
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
-                          if (confirm(`Delete page "${node.title || 'Untitled'}"?`)) {
-                            deletePage(node.id);
+                          updatePageMetaById(node.id, { isFavorite: !node.isFavorite });
+                        }}
+                        className={`p-1 rounded transition-colors ${
+                          node.isFavorite
+                            ? 'opacity-100 text-amber-500 hover:text-amber-600'
+                            : 'opacity-0 group-hover/sidebar-row:opacity-100 text-slate-400 hover:text-amber-500'
+                        } hover:bg-slate-200 dark:hover:bg-zinc-800`}
+                        aria-label={node.isFavorite ? "Remove from favorites" : "Add to favorites"}
+                      >
+                        <Star className={`w-3.5 h-3.5 ${node.isFavorite ? 'fill-amber-500' : ''}`} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const newTitle = prompt('Rename page:', node.title || 'Untitled');
+                          if (newTitle && newTitle.trim() && newTitle.trim() !== node.title) {
+                            renamePage(node.id, newTitle.trim());
                           }
                         }}
-                        className="p-1 rounded text-slate-400 hover:text-red-500 hover:bg-slate-200 dark:hover:bg-zinc-800 transition-colors"
-                        aria-label="Delete page"
+                        className="p-1 rounded opacity-0 group-hover/sidebar-row:opacity-100 text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 hover:bg-slate-200 dark:hover:bg-zinc-800 transition-colors"
+                        aria-label="More options"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <MoreHorizontal className="w-3.5 h-3.5" />
                       </button>
-                    )}
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        alert('More options');
-                      }}
-                      className="p-1 rounded text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 hover:bg-slate-200 dark:hover:bg-zinc-800 transition-colors"
-                      aria-label="More options"
-                    >
-                      <MoreHorizontal className="w-3.5 h-3.5" />
-                    </button>
+                      {node.id !== 'root-doc-node' && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (confirm(`Delete page "${node.title || 'Untitled'}"?`)) {
+                              deletePage(node.id);
+                            }
+                          }}
+                          className="p-1 rounded opacity-0 group-hover/sidebar-row:opacity-100 text-slate-400 hover:text-red-500 hover:bg-slate-200 dark:hover:bg-zinc-800 transition-colors"
+                          aria-label="Delete page"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             ) : (
               <>
                 <button
