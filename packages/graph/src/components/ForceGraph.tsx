@@ -3,8 +3,8 @@ import { GraphNode, GraphEdge } from '@catnoted/shared';
 import { Ghost } from 'lucide-react';
 
 export interface ForceGraphRef {
-  exportPNG: () => void;
-  exportSVG: () => void;
+  exportPNG: () => boolean;
+  exportSVG: () => boolean;
 }
 
 interface ForceGraphProps {
@@ -125,66 +125,79 @@ export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
 
   useImperativeHandle(ref, () => ({
     exportPNG: () => {
-      if (!canvasRef.current) return;
-      const dataUrl = canvasRef.current.toDataURL('image/png');
-      const link = document.createElement('a');
-      link.download = 'graph.png';
-      link.href = dataUrl;
-      link.click();
+      try {
+        if (!canvasRef.current) return false;
+        const dataUrl = canvasRef.current.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.download = 'graph.png';
+        link.href = dataUrl;
+        link.click();
+        return true;
+      } catch (err) {
+        console.error('Failed to export PNG', err);
+        return false;
+      }
     },
     exportSVG: () => {
-      if (!canvasRef.current) return;
-      const width = canvasRef.current.width;
-      const height = canvasRef.current.height;
-      const isDark = document.documentElement.classList.contains('dark');
-      const bgColor = isDark ? '#09090b' : '#f8fafc'; // zinc-950 or slate-50
+      try {
+        if (!canvasRef.current) return false;
+        const width = canvasRef.current.width;
+        const height = canvasRef.current.height;
+        const isDark = document.documentElement.classList.contains('dark');
+        const bgColor = isDark ? '#09090b' : '#f8fafc'; // zinc-950 or slate-50
 
-      const nodeMap = new Map(nodesRef.current.map(n => [n.id, n]));
+        const nodeMap = new Map(nodesRef.current.map(n => [n.id, n]));
 
-      const svgEdges = edges.map(edge => {
-        const sourceId = typeof edge.source === 'object' ? (edge.source as any).id : edge.source;
-        const targetId = typeof edge.target === 'object' ? (edge.target as any).id : edge.target;
-        const start = nodeMap.get(sourceId);
-        const end = nodeMap.get(targetId);
-        if (!start || !end) return '';
+        const svgEdges = edges.map(edge => {
+          const sourceId = typeof edge.source === 'object' ? (edge.source as any).id : edge.source;
+          const targetId = typeof edge.target === 'object' ? (edge.target as any).id : edge.target;
+          const start = nodeMap.get(sourceId);
+          const end = nodeMap.get(targetId);
+          if (!start || !end) return '';
 
-        return `<line x1="${start.x}" y1="${start.y}" x2="${end.x}" y2="${end.y}" stroke="rgba(203, 213, 225, 0.4)" stroke-width="1" />`;
-      }).join('\n');
+          return `<line x1="${start.x}" y1="${start.y}" x2="${end.x}" y2="${end.y}" stroke="rgba(203, 213, 225, 0.4)" stroke-width="1" />`;
+        }).join('\n');
 
-      const svgNodes = nodesRef.current.map(node => {
-        let fill = '#6366f1';
-        if (node.id === 'root-doc-node') {
-          fill = '#4f46e5';
-        } else if (node.type === 'tag') {
-          fill = '#10b981';
-        }
+        const svgNodes = nodesRef.current.map(node => {
+          let fill = '#6366f1';
+          if (node.id === 'root-doc-node') {
+            fill = '#4f46e5';
+          } else if (node.type === 'tag') {
+            fill = '#10b981';
+          }
 
-        const labelFill = isDark ? '#cbd5e1' : '#475569';
+          const labelFill = isDark ? '#cbd5e1' : '#475569';
 
-        return `
-          <g>
-            <circle cx="${node.x}" cy="${node.y}" r="${node.radius}" fill="${fill}" />
-            <text x="${node.x}" y="${node.y - node.radius - 6}" font-family="sans-serif" font-size="10px" fill="${labelFill}" text-anchor="middle">${node.label.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</text>
-          </g>
+          return `
+            <g>
+              <circle cx="${node.x}" cy="${node.y}" r="${node.radius}" fill="${fill}" />
+              <text x="${node.x}" y="${node.y - node.radius - 6}" font-family="sans-serif" font-size="10px" fill="${labelFill}" text-anchor="middle">${node.label.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</text>
+            </g>
+          `;
+        }).join('\n');
+
+        const svgContent = `
+          <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" style="background-color: ${bgColor};">
+            <g transform="translate(${panRef.current.x}, ${panRef.current.y}) scale(${scaleRef.current})">
+              ${svgEdges}
+              ${svgNodes}
+            </g>
+          </svg>
         `;
-      }).join('\n');
 
-      const svgContent = `
-        <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" style="background-color: ${bgColor};">
-          <g transform="translate(${panRef.current.x}, ${panRef.current.y}) scale(${scaleRef.current})">
-            ${svgEdges}
-            ${svgNodes}
-          </g>
-        </svg>
-      `;
-
-      const blob = new Blob([svgContent], { type: 'image/svg+xml' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.download = 'graph.svg';
-      link.href = url;
-      link.click();
-      URL.revokeObjectURL(url);
+        const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.download = 'graph.svg';
+        link.href = url;
+        link.click();
+        URL.revokeObjectURL(url);
+        return true;
+      } catch (err: any) {
+        console.log('SVG EXPORT ERROR:', err ? err.message : err, err ? err.stack : '');
+        console.error('Failed to export SVG', err);
+        return false;
+      }
     }
   }));
 
