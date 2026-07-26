@@ -956,11 +956,11 @@ if (isSearchOpen && searchQuery) {
                             : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/40 hover:text-slate-900 dark:hover:text-zinc-200'
                         }`}
                       >
-                        <span className="truncate flex items-center gap-2" title={doc.title}>
+                        <div className="flex items-center min-w-0 flex-1 gap-x-2.5" title={doc.title}>
                           {renderPageIcon(doc.icon, "w-4 h-4 text-slate-400 dark:text-zinc-500 shrink-0 flex items-center justify-center")}
                           <span className="truncate min-w-[120px]">{doc.title}</span>
-                        </span>
-                        <span className="text-[10px] text-slate-400 dark:text-zinc-500 opacity-60">Recent</span>
+                        </div>
+                        <span className="text-[10px] text-slate-400 dark:text-zinc-500 opacity-60 shrink-0 ml-1">Recent</span>
                       </button>
                     </li>
                   );
