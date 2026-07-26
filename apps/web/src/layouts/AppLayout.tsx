@@ -857,7 +857,7 @@ if (isSearchOpen && searchQuery) {
 
               {/* Workspace Switcher Dropdown */}
               {isWorkspaceDropdownOpen && (
-                <div className="absolute left-0 mt-1.5 w-48 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl shadow-lg z-40 py-1 text-xs">
+                <div className="absolute left-0 mt-1.5 w-48 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl shadow-lg z-50 py-1 text-xs">
                   {workspaces.map(ws => (
                     <button
                       key={ws}
@@ -952,7 +952,7 @@ if (isSearchOpen && searchQuery) {
                         }}
                         className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between transition-colors ${
                           isActive
-                            ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
+                            ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold'
                             : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/40 hover:text-slate-900 dark:hover:text-zinc-200'
                         }`}
                       >
@@ -1067,7 +1067,7 @@ if (isSearchOpen && searchQuery) {
                                 }}
                                 className={`flex-1 text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
                                   isActive
-                                    ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
+                                    ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold'
                                     : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
                                 }`}
                               >
@@ -1127,7 +1127,7 @@ if (isSearchOpen && searchQuery) {
                                 }}
                                 className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
                                   isActive
-                                    ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
+                                    ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold'
                                     : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
                                 }`}
                               >
