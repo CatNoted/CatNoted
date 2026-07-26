@@ -83,5 +83,7 @@ export interface PageMeta {
   isFavorite?: boolean;
   createdAt?: number;
   updatedAt?: number;
+  isDeleted?: boolean;
+  deletedAt?: number;
 }
 

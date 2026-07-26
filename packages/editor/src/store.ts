@@ -319,8 +319,43 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
 
   const deletePage = (id: string) => {
     if (id === 'root-doc-node') return; // Cannot delete root
+    const page = ypages.get(id);
+    if (page) {
+      ydoc.transact(() => {
+        ypages.set(id, {
+          ...page,
+          isDeleted: true,
+          isFavorite: false,
+          updatedAt: Date.now()
+        });
+      });
+    }
+  };
+
+  const restorePage = (id: string) => {
+    const page = ypages.get(id);
+    if (page) {
+      ydoc.transact(() => {
+        ypages.set(id, {
+          ...page,
+          isDeleted: false,
+          updatedAt: Date.now()
+        });
+      });
+    }
+  };
+
+  const permanentlyDeletePage = (id: string) => {
+    if (id === 'root-doc-node') return; // Cannot delete root
     ydoc.transact(() => {
       ypages.delete(id);
+
+      const arr = yblocks.toArray();
+      for (let i = arr.length - 1; i >= 0; i--) {
+        if (arr[i].parentId === id) {
+          yblocks.delete(i, 1);
+        }
+      }
     });
   };
 
@@ -338,6 +373,8 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
     createPage,
     renamePage,
     deletePage,
+    restorePage,
+    permanentlyDeletePage,
     moveBlock
   };
 }

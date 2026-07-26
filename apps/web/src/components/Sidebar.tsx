@@ -28,7 +28,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
   const { pages, deletePage } = useDocumentStore();
 
   const favoritePages = useMemo(
-    () => (pages || []).filter((p: any) => p?.isFavorite),
+    () => (pages || []).filter((p: any) => p?.isFavorite && !p?.isDeleted),
     [pages]
   );
 
@@ -193,7 +193,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         {renderSection('Organize', organizeCollapsed, setOrganizeCollapsed, FolderTree, (
           <>
             {pages && pages.length > 0 ? (
-              pages.map(node => (
+              pages.filter((node: any) => !node.isDeleted).map(node => (
                 <div
                   key={node.id}
                   onClick={() => onModeChange('doc')}
@@ -340,8 +340,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
 
         <button
           type="button"
-          onClick={() => onModeChange('doc')}
-          className={itemClassName}
+          onClick={() => onModeChange('trash')}
+          className={`${itemClassName} ${activeMode === 'trash' ? 'bg-slate-100 dark:bg-zinc-800/80 text-slate-900 dark:text-white font-semibold' : ''}`}
           title="Trash"
         >
           <Trash2 className="w-4 h-4 text-red-500/80 dark:text-red-400/80" />
