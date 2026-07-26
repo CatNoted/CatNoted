@@ -1,5 +1,9 @@
 name: Jules Agent
 
+concurrency:
+  group: jules-agent
+  cancel-in-progress: false
+
 on:
   schedule:
     - cron: '0 */3 * * *'
@@ -28,7 +32,7 @@ jobs:
       (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'failure') ||
       (github.event_name == 'schedule') ||
       (github.event_name == 'workflow_dispatch') ||
-      (github.event_name == 'issues' && contains(fromJson('["jules","jules-task","ready"]'), github.event.action) && (github.event.issue.labels.*.name | @github.event.issue.labels[].name | contains(['jules','jules-task'])))
+      (github.event_name == 'issues' && contains(fromJson(toJson(github.event.issue.labels.*.name)), 'jules') && contains(fromJson(toJson(github.event.issue.labels.*.name)), 'jules-task') && contains(fromJson(toJson(github.event.issue.labels.*.name)), 'ready'))
     runs-on: ubuntu-latest
     steps:
       - uses: google-labs-code/jules-invoke@v1.0.0
