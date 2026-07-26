@@ -743,13 +743,13 @@ if (isSearchOpen && searchQuery) {
           {/* Sidebar Header */}
           <div className="h-14 px-4 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between gap-2 shrink-0">
             {/* Workspace Switcher Button */}
-            <div className="relative">
+            <div className="relative flex-1 min-w-0">
               <button
                 type="button"
                 onClick={() => setIsWorkspaceDropdownOpen(!isWorkspaceDropdownOpen)}
-                className="font-semibold text-xs text-slate-700 dark:text-zinc-200 hover:text-slate-900 dark:hover:text-white flex items-center gap-1.5 py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500"
+                className="font-semibold text-xs text-slate-700 dark:text-zinc-200 hover:text-slate-900 dark:hover:text-white flex items-center justify-between w-full gap-1.5 py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500"
               >
-                <span>{activeWorkspace}</span>
+                <span className="truncate">{activeWorkspace}</span>
                 <ChevronDown className="w-3.5 h-3.5 shrink-0" />
               </button>
 
