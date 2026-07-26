@@ -179,6 +179,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             <button
               type="button"
               onClick={onClose}
+              aria-label="Close Settings"
               className="h-7 w-7 inline-flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 hover:bg-slate-50 dark:hover:bg-zinc-800 transition-colors"
             >
               <X className="w-4 h-4" />
