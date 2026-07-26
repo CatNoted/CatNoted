@@ -7,6 +7,12 @@ export default defineConfig({
     environment: 'happy-dom',
     setupFiles: ['./vitest.setup.ts'],
     include: ['**/*.{test,spec}.{ts,tsx}'],
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/tests/e2e/**',
+      '**/.{idea,git,cache,output,temp}/**'
+    ],
     alias: {
       '@catnoted/shared': path.resolve(__dirname, './packages/shared/src/index.ts'),
       '@catnoted/graph': path.resolve(__dirname, './packages/graph/src/index.ts'),
