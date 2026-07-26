@@ -255,4 +255,68 @@ describe('AppLayout Sidebar Integration Tests', () => {
     // Clean up
     document.body.removeChild(container);
   });
+
+  it('should filter deleted pages from standard lists and display the Trash section with count', async () => {
+    const { ypages: testYpages } = await import('@catnoted/editor');
+    testYpages.clear();
+    testYpages.set('page-active', {
+      id: 'page-active',
+      title: 'Active Page',
+      isFavorite: false,
+      createdAt: Date.now()
+    });
+    testYpages.set('page-deleted', {
+      id: 'page-deleted',
+      title: 'Deleted Page',
+      isFavorite: false,
+      isDeleted: true,
+      createdAt: Date.now()
+    });
+
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+
+    const onModeChange = vi.fn();
+
+    await act(async () => {
+      const root = createRoot(container);
+      root.render(
+        <AppLayout
+          activeMode="doc"
+          onModeChange={onModeChange}
+          isDarkMode={true}
+          onToggleTheme={vi.fn()}
+          activePage="page-active"
+          onPageSelect={vi.fn()}
+        >
+          <div>Main Content</div>
+        </AppLayout>
+      );
+    });
+
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    // 'Active Page' should be visible
+    expect(container.textContent).toContain('Active Page');
+    // 'Deleted Page' should NOT be visible in active lists
+    expect(container.textContent).not.toContain('Deleted Page');
+
+    // Trash category should be visible and show badge '1'
+    expect(container.textContent).toContain('Trash');
+
+    // Find the Trash button
+    const buttons = Array.from(container.querySelectorAll('button'));
+    const trashButton = buttons.find(btn => btn.textContent?.includes('Trash'));
+    expect(trashButton).toBeDefined();
+
+    // Clicking Trash should trigger onModeChange('trash')
+    await act(async () => {
+      trashButton?.click();
+    });
+
+    expect(onModeChange).toHaveBeenCalledWith('trash');
+
+    // Clean up
+    document.body.removeChild(container);
+  });
 });

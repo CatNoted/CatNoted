@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { AppLayout, ActiveMode } from './layouts/AppLayout.js';
-import { DocumentEditor, useDocumentStore } from '@catnoted/editor';
+import { DocumentEditor, useDocumentStore, renderPageIcon } from '@catnoted/editor';
 import { InfiniteCanvas } from '@catnoted/canvas';
 import { GraphView, parseDocumentGraph } from '@catnoted/graph';
 import { ydoc } from '@catnoted/editor';
 import * as Y from 'yjs';
-import { Share2, Edit2, BookOpen, LayoutGrid } from 'lucide-react';
+import { Share2, Edit2, BookOpen, LayoutGrid, RotateCcw, Trash2 } from 'lucide-react';
 
 // E2EE sync utilities
 import { encryptPayload, decryptPayload } from './utils/crypto.js';
@@ -23,10 +23,17 @@ const App: React.FC = () => {
   const [isZenMode, setIsZenMode] = useState<boolean>(false);
   const [activePage, setActivePage] = useState<string>('root-doc-node');
 
-  const { blocks: rootBlocks, pages, addBlock: addRootBlock, updateBlockContent: updateRootBlockContent } = useDocumentStore('root-doc-node');
+  const {
+    blocks: rootBlocks,
+    pages,
+    addBlock: addRootBlock,
+    updateBlockContent: updateRootBlockContent,
+    restorePage,
+    permanentlyDeletePage
+  } = useDocumentStore('root-doc-node');
   const { blocks: activeBlocks, updateBlockContent: updateActiveBlockContent } = useDocumentStore(activePage);
 
-  const graphData = React.useMemo(() => parseDocumentGraph(rootBlocks, pages), [rootBlocks, pages]);
+  const graphData = React.useMemo(() => parseDocumentGraph(rootBlocks, pages.filter(p => !p.isDeleted)), [rootBlocks, pages]);
 
   const activeHeading = activeBlocks.find(b => b.type === 'heading' && b.properties?.level === 1);
   const docTitle = activeHeading?.content || 'Untitled Document';
@@ -492,6 +499,71 @@ const App: React.FC = () => {
             <GraphView onNavigateToNode={(nodeId) => { setActivePage(nodeId); setActiveMode('doc'); }} />
           </div>
         );
+      case 'trash': {
+        const deletedPages = pages.filter(p => p.isDeleted);
+        if (deletedPages.length === 0) {
+          return (
+            <div className="flex flex-col items-center justify-center h-full py-16 text-center select-none" data-testid="trash-empty-state">
+              <div className="w-16 h-16 rounded-full bg-slate-100 dark:bg-zinc-800/80 flex items-center justify-center mb-4">
+                <Trash2 className="w-8 h-8 text-slate-400 dark:text-zinc-500" />
+              </div>
+              <h3 className="text-sm font-semibold text-slate-800 dark:text-zinc-200 mb-1">Trash is empty</h3>
+              <p className="text-xs text-slate-500 dark:text-zinc-400 max-w-xs leading-relaxed">
+                There are no deleted pages. Deleted pages will stay here in case you need to restore them later.
+              </p>
+            </div>
+          );
+        }
+        return (
+          <div className="max-w-4xl mx-auto px-6 py-10 w-full select-none h-full overflow-auto" data-testid="trash-page">
+            <div className="flex items-center gap-2.5 mb-8">
+              <Trash2 className="w-6 h-6 text-red-500/85" />
+              <h1 className="text-2xl font-bold text-slate-800 dark:text-zinc-100">Trash Bin</h1>
+            </div>
+
+            <p className="text-xs text-slate-500 dark:text-zinc-400 mb-6">
+              Pages in Trash can be restored to active workspace. To completely free space or remove data, delete them permanently.
+            </p>
+
+            <div className="border border-slate-200/60 dark:border-zinc-800/60 rounded-2xl overflow-hidden bg-white dark:bg-zinc-900/40">
+              <div className="divide-y divide-slate-100 dark:divide-zinc-800/60">
+                {deletedPages.map((p) => (
+                  <div key={p.id} className="flex items-center justify-between p-4 hover:bg-slate-50/50 dark:hover:bg-zinc-850/20 transition-colors gap-4" data-testid={`trash-item-${p.id}`}>
+                    <div className="flex items-center gap-3 min-w-0">
+                      <span className="text-lg shrink-0">{renderPageIcon(p.icon, "w-5 h-5 flex items-center justify-center")}</span>
+                      <span className="font-medium text-sm text-slate-700 dark:text-zinc-200 truncate">
+                        {p.title || 'Untitled Note'}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        onClick={() => restorePage?.(p.id)}
+                        className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white flex items-center gap-1.5 transition-all shadow-sm"
+                        aria-label="Restore page"
+                      >
+                        <RotateCcw className="w-3.5 h-3.5" />
+                        Restore
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (confirm(`Permanently delete "${p.title || 'Untitled Page'}"? This action is irreversible.`)) {
+                            permanentlyDeletePage?.(p.id);
+                          }
+                        }}
+                        className="px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 dark:border-zinc-800 text-slate-600 dark:text-zinc-400 hover:bg-red-50 dark:hover:bg-red-950/20 hover:text-red-600 hover:border-red-200 dark:hover:border-red-900/50 flex items-center gap-1.5 transition-all"
+                        aria-label="Delete page permanently"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        Delete Permanently
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+      }
       default:
         return null;
     }

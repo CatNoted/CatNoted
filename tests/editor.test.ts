@@ -151,4 +151,68 @@ describe('Editor Store (useDocumentStore)', () => {
 
     document.body.removeChild(container);
   });
+
+  it('should support soft-delete, restore, and permanent delete of pages', () => {
+    // 1. Setup a page metadata in ypages Map
+    act(() => {
+      ypages.set('page-to-delete', {
+        id: 'page-to-delete',
+        title: 'Delete Me',
+        icon: '🗑️',
+        fontStyle: 'sans',
+        fullWidth: false,
+        isFavorite: true,
+        createdAt: Date.now()
+      });
+    });
+
+    // 2. Add some blocks for this page
+    act(() => {
+      yblocks.insert(0, [
+        {
+          id: 'block-to-delete-1',
+          type: 'text',
+          content: 'Secret content',
+          parentId: 'page-to-delete'
+        }
+      ]);
+    });
+
+    const { result } = renderHook(() => useDocumentStore('root-doc-node'));
+
+    // Check initialized state
+    const originalPage = ypages.get('page-to-delete');
+    expect(originalPage?.isDeleted).toBeUndefined();
+
+    // 3. Soft delete the page
+    act(() => {
+      result.current.deletePage('page-to-delete');
+    });
+
+    const softDeletedPage = ypages.get('page-to-delete');
+    expect(softDeletedPage?.isDeleted).toBe(true);
+    expect(softDeletedPage?.isFavorite).toBe(false); // Unstarred when deleted
+
+    // 4. Restore the page
+    act(() => {
+      result.current.restorePage('page-to-delete');
+    });
+
+    const restoredPage = ypages.get('page-to-delete');
+    expect(restoredPage?.isDeleted).toBe(false);
+
+    // 5. Soft-delete again and then permanently delete
+    act(() => {
+      result.current.deletePage('page-to-delete');
+    });
+    expect(ypages.get('page-to-delete')?.isDeleted).toBe(true);
+
+    act(() => {
+      result.current.permanentlyDeletePage('page-to-delete');
+    });
+
+    // Page metadata and its blocks should be fully removed
+    expect(ypages.has('page-to-delete')).toBe(false);
+    expect(yblocks.toArray().filter(b => b.parentId === 'page-to-delete')).toHaveLength(0);
+  });
 });

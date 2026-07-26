@@ -33,7 +33,7 @@ import {
   History
 } from 'lucide-react';
 
-export type ActiveMode = "doc" | "canvas" | "graph" | "settings";
+export type ActiveMode = "doc" | "canvas" | "graph" | "settings" | "trash";
 
 const WIDGET_TEMPLATES = {
   clock: `
@@ -196,13 +196,13 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   onCreatePage
 }) => {
   const { blocks, addBlock, updateBlockType, pages, createPage, deletePage, deleteBlock, pageMeta, updatePageMeta } = useDocumentStore(activePage);
-  const favoritePages = (pages || []).filter((p: any) => p?.isFavorite);
+  const favoritePages = (pages || []).filter((p: any) => p?.isFavorite && !p?.isDeleted);
 
   const [activeAgentTab, setActiveAgentTab] = useState<'chat' | 'widgets'>('chat');
 
   const handleDeletePage = (pageId: string, pageTitle: string) => {
     if (pageId === 'root-doc-node') return;
-    if (confirm(`Hapus halaman "${pageTitle}"? Tindakan ini tidak dapat dibatalkan.`)) {
+    if (confirm(`Move page "${pageTitle}" to Trash?`)) {
       deletePage(pageId);
       if (onPageSelect) onPageSelect('root-doc-node');
     }
@@ -210,7 +210,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
   // Parse document graph nodes
   const graphData = React.useMemo(() => {
-    return parseDocumentGraph(blocks, pages);
+    return parseDocumentGraph(blocks, pages.filter(p => !p.isDeleted));
   }, [blocks, pages]);
 
   const mainHeading = blocks.find(b => b.type === 'heading' && b.properties?.level === 1);
@@ -231,6 +231,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   const recentDocs = React.useMemo(() => {
     const otherPages = pageNodes
       .filter(n => n.id !== 'root-doc-node')
+      .filter(n => {
+        const p = pages?.find(x => x.id === n.id);
+        return !p?.isDeleted;
+      })
       .map(n => {
         return { id: n.id, title: n.rawName || n.label, icon: n.icon };
       });
@@ -911,44 +915,46 @@ if (isSearchOpen && searchQuery) {
                       {sectionsExpanded.pages ? <FolderOpen className="w-3.5 h-3.5 text-indigo-500" /> : <Folder className="w-3.5 h-3.5 text-indigo-500" />}
                       <span>Pages</span>
                     </span>
-                    <span className="text-[9px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full">{Object.keys(pages || {}).length}</span>
+                    <span className="text-[9px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full">{Object.values(pages || {}).filter((p: any) => !p.isDeleted).length}</span>
                   </button>
                   {sectionsExpanded.pages && (
                     <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-150 dark:border-zinc-800 ml-3.5">
-                      {Object.values(pages || {}).map((node: any) => {
-                        const isActive = activePage === node.id;
-                        const displayLabel = node.title || 'Untitled';
-                        return (
-                          <li key={node.id} className="group/pageitem">
-                            <div className="flex items-center">
-                              <button
-                                onClick={() => {
-                                  if (onPageSelect) onPageSelect(node.id);
-                                  onModeChange('doc');
-                                }}
-                                className={`flex-1 text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
-                                  isActive
-                                    ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
-                                    : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
-                                }`}
-                              >
-                                {renderPageIcon(node.icon, "w-3.5 h-3.5 shrink-0 flex items-center justify-center")}
-                                <span className="truncate text-xs">{displayLabel}</span>
-                              </button>
-                              {node.id !== 'root-doc-node' && (
+                      {Object.values(pages || {})
+                        .filter((node: any) => !node.isDeleted)
+                        .map((node: any) => {
+                          const isActive = activePage === node.id;
+                          const displayLabel = node.title || 'Untitled';
+                          return (
+                            <li key={node.id} className="group/pageitem">
+                              <div className="flex items-center">
                                 <button
-                                  type="button"
-                                  onClick={(e) => { e.stopPropagation(); handleDeletePage(node.id, displayLabel); }}
-                                  className="opacity-0 group-hover/pageitem:opacity-100 p-1 mr-1 rounded text-slate-300 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-all shrink-0"
-                                  title={`Hapus "${displayLabel}"`}
+                                  onClick={() => {
+                                    if (onPageSelect) onPageSelect(node.id);
+                                    onModeChange('doc');
+                                  }}
+                                  className={`flex-1 text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
+                                    isActive
+                                      ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
+                                      : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
+                                  }`}
                                 >
-                                  <Trash2 className="w-3 h-3" />
+                                  {renderPageIcon(node.icon, "w-3.5 h-3.5 shrink-0 flex items-center justify-center")}
+                                  <span className="truncate text-xs">{displayLabel}</span>
                                 </button>
-                              )}
-                            </div>
-                          </li>
-                        );
-                      })}
+                                {node.id !== 'root-doc-node' && (
+                                  <button
+                                    type="button"
+                                    onClick={(e) => { e.stopPropagation(); handleDeletePage(node.id, displayLabel); }}
+                                    className="opacity-0 group-hover/pageitem:opacity-100 p-1 mr-1 rounded text-slate-300 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-all shrink-0"
+                                    title={`Hapus "${displayLabel}"`}
+                                  >
+                                    <Trash2 className="w-3 h-3" />
+                                  </button>
+                                )}
+                              </div>
+                            </li>
+                          );
+                        })}
                     </ul>
                   )}
                 </div>
@@ -1048,6 +1054,26 @@ if (isSearchOpen && searchQuery) {
                       )}
                     </ul>
                   )}
+                </div>
+
+                {/* 4. Trash Category */}
+                <div>
+                  <button
+                    onClick={() => onModeChange('trash')}
+                    className={`w-full flex items-center justify-between px-2 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                      activeMode === 'trash'
+                        ? 'bg-slate-100 dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400'
+                        : 'text-slate-500 hover:text-slate-700 dark:text-zinc-400 dark:hover:text-zinc-200 hover:bg-slate-100/60 dark:hover:bg-zinc-800/30'
+                    }`}
+                  >
+                    <span className="flex items-center gap-1.5">
+                      <Trash2 className={`w-3.5 h-3.5 ${activeMode === 'trash' ? 'text-indigo-600 dark:text-indigo-400' : 'text-red-500/80 dark:text-red-400/80'}`} />
+                      <span>Trash</span>
+                    </span>
+                    <span className="text-[9px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full">
+                      {pages.filter((p: any) => p.isDeleted).length}
+                    </span>
+                  </button>
                 </div>
 
               </div>
