@@ -95,12 +95,12 @@ export const Minimap: React.FC<MinimapProps> = ({
 
   return (
     <div className="flex flex-col gap-1.5 items-end">
-      <span className="text-[9px] font-mono font-semibold text-slate-400 dark:text-zinc-500 uppercase tracking-widest">Minimap navigation</span>
+      <span className="text-[9px] font-mono font-semibold text-muted-foreground/80 uppercase tracking-widest">Minimap navigation</span>
       <div
         ref={minimapRef}
         onMouseDown={handleMouseDown}
         style={{ width: minimapWidth, height: minimapHeight }}
-        className="bg-white/70 dark:bg-zinc-950/70 border border-slate-200/80 dark:border-zinc-800/80 rounded-2xl relative overflow-hidden shadow-lg shadow-slate-100/30 dark:shadow-none cursor-crosshair select-none backdrop-blur-md"
+        className="bg-card/70 border border-border rounded-2xl relative overflow-hidden shadow-lg shadow-border/5 cursor-crosshair select-none backdrop-blur-md"
       >
         {/* Dynamic mini representations of cards */}
         {elementList.map(el => {
@@ -118,7 +118,7 @@ export const Minimap: React.FC<MinimapProps> = ({
                 width: Math.max(6, mw),
                 height: Math.max(4, mh),
               }}
-              className="absolute bg-indigo-100/60 dark:bg-indigo-950/40 border border-indigo-200/30 dark:border-indigo-900/40 rounded-sm"
+              className="absolute bg-primary/10 border border-primary/20 rounded-sm"
             />
           );
         })}
@@ -131,7 +131,7 @@ export const Minimap: React.FC<MinimapProps> = ({
             width: viewWidth,
             height: viewHeight,
           }}
-          className="absolute border-2 border-indigo-500/80 bg-indigo-500/10 rounded-md pointer-events-none transition-[left,top,width,height] duration-75 shadow-[0_0_0_9999px_rgba(0,0,0,0.1)] dark:shadow-[0_0_0_9999px_rgba(0,0,0,0.3)]"
+          className="absolute border-2 border-primary/80 bg-primary/10 rounded-md pointer-events-none transition-[left,top,width,height] duration-75 shadow-[0_0_0_9999px_rgba(0,0,0,0.1)] dark:shadow-[0_0_0_9999px_rgba(0,0,0,0.3)]"
         />
       </div>
     </div>

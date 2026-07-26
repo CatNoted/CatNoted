@@ -66,7 +66,7 @@ export const ConnectorLine: React.FC<ConnectorLineProps> = ({
           markerHeight="5"
           orient="auto-start-reverse"
         >
-          <path d="M 0 1 L 9 5 L 0 9 z" className="fill-indigo-400 dark:fill-indigo-600" />
+          <path d="M 0 1 L 9 5 L 0 9 z" className="fill-primary/60" />
         </marker>
 
         {/* Slightly larger, softer shadow arrow for focus states (if needed later) */}
@@ -79,7 +79,7 @@ export const ConnectorLine: React.FC<ConnectorLineProps> = ({
           markerHeight="5"
           orient="auto-start-reverse"
         >
-          <path d="M 0 1 L 9 5 L 0 9 z" className="fill-indigo-500 dark:fill-indigo-400" />
+          <path d="M 0 1 L 9 5 L 0 9 z" className="fill-primary" />
         </marker>
 
         {/* Broken arrow marker in rose color */}
@@ -101,7 +101,7 @@ export const ConnectorLine: React.FC<ConnectorLineProps> = ({
         <path
           d={path}
           fill="none"
-          className="stroke-indigo-500/25 dark:stroke-indigo-400/25 pointer-events-none"
+          className="stroke-primary/25 pointer-events-none"
           strokeWidth="8"
         />
       )}
@@ -127,8 +127,8 @@ export const ConnectorLine: React.FC<ConnectorLineProps> = ({
           ? `stroke-rose-500/80 dark:stroke-rose-600/80 hover:stroke-rose-600 dark:hover:stroke-rose-500 transition-colors`
           : `${
               isSelected
-                ? 'stroke-indigo-500 dark:stroke-indigo-400'
-                : 'stroke-indigo-400/80 dark:stroke-indigo-600/80 hover:stroke-indigo-500 dark:hover:stroke-indigo-400'
+                ? 'stroke-primary'
+                : 'stroke-primary/60 hover:stroke-primary'
             } transition-colors`
         }
         strokeDasharray={isBroken ? "4,4" : undefined}
@@ -143,7 +143,7 @@ export const ConnectorLine: React.FC<ConnectorLineProps> = ({
           y={(startY + endY) / 2 - 8}
           className={isBroken
             ? `fill-rose-600 dark:fill-rose-400 font-semibold text-[10px] tracking-wide pointer-events-none opacity-100`
-            : `fill-indigo-600 dark:fill-indigo-300 font-medium text-[10px] tracking-wide transition-opacity duration-200 pointer-events-none ${
+            : `fill-primary font-medium text-[10px] tracking-wide transition-opacity duration-200 pointer-events-none ${
                 forceShowLabel ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
               }`
           }
