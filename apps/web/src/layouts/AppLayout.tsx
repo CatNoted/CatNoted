@@ -31,10 +31,11 @@ import {
   List,
   Star,
   History,
-  Calendar
+  Calendar,
+  Search
 } from 'lucide-react';
 
-export type ActiveMode = "doc" | "canvas" | "graph" | "journals" | "settings";
+export type ActiveMode = "doc" | "canvas" | "graph" | "journals" | "settings" | "search";
 
 const WIDGET_TEMPLATES = {
   clock: `
@@ -356,7 +357,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   const [focusedNavIndex, setFocusedNavIndex] = useState(0);
 
   useEffect(() => {
-    const activeIndex = ['doc', 'canvas', 'graph', 'journals', 'settings'].indexOf(activeMode);
+    const activeIndex = ['doc', 'canvas', 'graph', 'journals', 'settings', 'search'].indexOf(activeMode);
     if (activeIndex !== -1) {
       setFocusedNavIndex(activeIndex);
     }
@@ -364,7 +365,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
   const handleNavKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
     let nextIndex = index;
-    const maxIndex = 4; // 5 items (0 to 4)
+    const maxIndex = 5; // 6 items (0 to 5)
 
     switch (e.key) {
       case 'ArrowDown':
@@ -668,7 +669,8 @@ if (isSearchOpen && searchQuery) {
                 { id: 'canvas', icon: Layout, label: 'Canvas' },
                 { id: 'graph', icon: Network, label: 'Graph' },
                 { id: 'journals', icon: Calendar, label: 'Journals' },
-                { id: 'settings', icon: Settings, label: 'Settings' }
+                { id: 'settings', icon: Settings, label: 'Settings' },
+                { id: 'search', icon: Search, label: 'Search' }
               ].map((item, index) => {
                 const Icon = item.icon;
                 const isActive = activeMode === item.id;

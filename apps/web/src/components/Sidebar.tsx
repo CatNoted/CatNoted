@@ -15,6 +15,9 @@ import {
   Plus,
   Network,
   MoreHorizontal,
+  Calendar,
+  Settings,
+  Search,
 } from 'lucide-react';
 import { useDocumentStore } from '@catnoted/editor';
 import { ActiveMode } from '../layouts/AppLayout';
@@ -113,6 +116,30 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         >
           <Network className={`${getItemIconClass(activeMode === 'graph')} w-4 h-4`} />
           <span className="truncate">Graph</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => onModeChange('journals')}
+          className={`${itemClassName} ${activeMode === 'journals' ? 'bg-slate-100 dark:bg-zinc-800/80 text-slate-900 dark:text-white font-semibold' : ''}`}
+        >
+          <Calendar className={`${getItemIconClass(activeMode === 'journals')} w-4 h-4`} />
+          <span className="truncate">Journals</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => onModeChange('settings')}
+          className={`${itemClassName} ${activeMode === 'settings' ? 'bg-slate-100 dark:bg-zinc-800/80 text-slate-900 dark:text-white font-semibold' : ''}`}
+        >
+          <Settings className={`${getItemIconClass(activeMode === 'settings')} w-4 h-4`} />
+          <span className="truncate">Settings</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => onModeChange('search')}
+          className={`${itemClassName} ${activeMode === 'search' ? 'bg-slate-100 dark:bg-zinc-800/80 text-slate-900 dark:text-white font-semibold' : ''}`}
+        >
+          <Search className={`${getItemIconClass(activeMode === 'search')} w-4 h-4`} />
+          <span className="truncate">Search</span>
         </button>
       </div>
 
