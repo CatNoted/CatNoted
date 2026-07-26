@@ -2,65 +2,144 @@
 @tailwind components;
 @tailwind utilities;
 
-/* AFFiNE-style typography and spacing variables */
+/* ============================================================
+   CatNoted Design Tokens — Single Source of Truth
+   Semantic colors only; never use raw hex/slate/zinc/indigo
+   directly after this registry is in place.
+   ============================================================ */
 @layer base {
   :root {
-    /* Lighter, softer background for light mode */
     --background: 0 0% 100%;
-    /* Softer foreground color */
     --foreground: 240 5% 26%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 5% 26%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --border: 240 5.9% 90%;
-    --sidebar: 240 5% 96%;
-    --accent: 240 5% 90%;
+
+    --panel: 0 0% 100%;
+    --panel-soft: 240 5% 98%;
+    --panel-hover: 240 5% 94%;
+
+    --border-soft: 240 5.9% 90%;
+    --border-muted: 240 5% 92%;
+
+    --text-primary: 240 5% 26%;
+    --text-secondary: 240 5% 46%;
+    --text-muted: 240 5% 64%;
+
+    --accent: 243 80% 56%;
+    --accent-hover: 243 80% 50%;
+    --accent-soft: 243 80% 96%;
+
+    --danger: 0 84% 60%;
+    --danger-soft: 0 84% 96%;
+    --danger-foreground: 0 84% 30%;
+
+    --success: 142 72% 42%;
+    --success-soft: 142 72% 96%;
+    --success-foreground: 142 72% 20%;
+
+    --warning: 38 92% 50%;
+    --warning-soft: 38 92% 96%;
+    --warning-foreground: 38 92% 24%;
+
+    --overlay: 240 6% 10%;
+    --focus-ring: 148 188 255;
   }
 
   .dark {
-    /* Dark mode adjustments for softer contrast */
     --background: 240 6% 10%;
     --foreground: 240 5% 84%;
-    --card: 240 6% 12%;
-    --card-foreground: 240 5% 84%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 4% 16%;
-    --secondary-foreground: 0 0% 98%;
-    --border: 240 5% 15%;
-    --sidebar: 240 6% 8%;
-    --accent: 240 5% 18%;
+
+    --panel: 240 6% 12%;
+    --panel-soft: 240 6% 10%;
+    --panel-hover: 240 5% 16%;
+
+    --border-soft: 240 5% 15%;
+    --border-muted: 240 5% 18%;
+
+    --text-primary: 240 5% 84%;
+    --text-secondary: 240 5% 72%;
+    --text-muted: 240 5% 56%;
+
+    --accent: 243 80% 66%;
+    --accent-hover: 243 80% 72%;
+    --accent-soft: 243 80% 10%;
+
+    --danger: 0 84% 70%;
+    --danger-soft: 0 84% 14%;
+    --danger-foreground: 0 84% 84%;
+
+    --success: 142 72% 56%;
+    --success-soft: 142 72% 14%;
+    --success-foreground: 142 72% 80%;
+
+    --warning: 38 92% 60%;
+    --warning-soft: 38 92% 14%;
+    --warning-foreground: 38 92% 84%;
+
+    --overlay: 240 6% 4%;
+    --focus-ring: 148 188 255;
   }
 }
 
 @layer base {
-  /* Tighter typography scale & premium letter spacing */
   h1, h2, h3, h4, h5, h6 {
     letter-spacing: -0.02em;
     line-height: 1.3;
-    color: theme('colors.slate.900');
-  }
-
-  .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
-    color: theme('colors.zinc.100');
+    color: hsl(var(--text-primary));
   }
 
   body {
     letter-spacing: -0.01em;
     line-height: 1.6;
+    background-color: hsl(var(--background));
+    color: hsl(var(--text-primary));
   }
 }
 
-body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* App shell surfaces */
+.surface {
+  background-color: hsl(var(--panel));
+  color: hsl(var(--text-primary));
+}
+.surface-soft {
+  background-color: hsl(var(--panel-soft));
+  color: hsl(var(--text-primary));
+}
+.surface-hover {
+  background-color: hsl(var(--panel-hover));
+}
+.border-soft {
+  border-color: hsl(var(--border-soft));
+}
+.border-muted {
+  border-color: hsl(var(--border-muted));
+}
+.text-primary { color: hsl(var(--text-primary)); }
+.text-secondary { color: hsl(var(--text-secondary)); }
+.text-muted { color: hsl(var(--text-muted)); }
+
+/* Semantic accents */
+.text-accent { color: hsl(var(--accent)); }
+.text-danger { color: hsl(var(--danger)); }
+.text-success { color: hsl(var(--success)); }
+.text-warning { color: hsl(var(--warning)); }
+
+.bg-accent { background-color: hsl(var(--accent)); }
+.bg-accent-soft { background-color: hsl(var(--accent-soft)); }
+.bg-danger-soft { background-color: hsl(var(--danger-soft)); }
+.bg-success-soft { background-color: hsl(var(--success-soft)); }
+.bg-warning-soft { background-color: hsl(var(--warning-soft)); }
+
+/* Overlays */
+.overlay-backdrop {
+  background-color: hsl(var(--overlay));
 }
 
-/* Custom scrollbar */
+/* Focus */
+.focus-ring {
+  outline: none;
+  box-shadow: 0 0 0 2px hsl(var(--focus-ring));
+}
+
+/* Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -69,17 +148,11 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.3);
+  background: hsl(var(--border-soft));
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.5);
-}
-.dark ::-webkit-scrollbar-thumb {
-  background: rgba(63, 63, 70, 0.6);
-}
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: rgba(63, 63, 70, 0.9);
+  background: hsl(var(--text-muted));
 }
 
 @media (prefers-reduced-motion: reduce) {
