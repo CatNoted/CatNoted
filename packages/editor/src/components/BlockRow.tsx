@@ -487,4 +487,17 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
   );
 };
 
-export const BlockRow = React.memo(BlockRowBase);
+export const BlockRow = React.memo(BlockRowBase, (prev, next) => {
+  return (
+    prev.block.id === next.block.id &&
+    prev.block.content === next.block.content &&
+    prev.block.type === next.block.type &&
+    JSON.stringify(prev.block.properties) === JSON.stringify(next.block.properties) &&
+    prev.index === next.index &&
+    prev.isFocused === next.isFocused &&
+    prev.activePage === next.activePage &&
+    prev.activeMenuId === next.activeMenuId &&
+    prev.draggedBlockId === next.draggedBlockId &&
+    prev.dragOverBlockId === next.dragOverBlockId
+  );
+});
