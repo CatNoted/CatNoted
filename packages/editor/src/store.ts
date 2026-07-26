@@ -57,7 +57,7 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
           } else if (pageId.startsWith('journal-')) {
             const dateStr = pageId.slice(8);
             const date = new Date(dateStr);
-            const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+            const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
             const formattedDate = date.toLocaleDateString('en-US', options) !== 'Invalid Date'
               ? date.toLocaleDateString('en-US', options)
               : dateStr;
@@ -465,7 +465,7 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
 export const createJournalPage = (dateStr: string, templateId: string = 'empty') => {
   const pageId = `journal-${dateStr}`;
   const date = new Date(dateStr);
-  const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+  const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
   const formattedDate = date.toLocaleDateString('en-US', options) !== 'Invalid Date'
     ? date.toLocaleDateString('en-US', options)
     : dateStr;
