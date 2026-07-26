@@ -70,43 +70,46 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/50 dark:bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-3xl w-full max-w-md p-6 shadow-2xl relative overflow-hidden">
+    <div className="fixed inset-0 bg-slate-900/40 dark:bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800/80 rounded-2xl w-full max-w-[360px] p-5 shadow-xl relative">
         
-        {/* Header decoration */}
-        <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
-
-        {/* Title */}
-        <div className="flex flex-col items-center text-center mt-3">
-          <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-950/40 rounded-2xl flex items-center justify-center text-indigo-600 dark:text-indigo-400 mb-3 shadow-sm">
-            <KeyRound className="w-6 h-6" />
+        {/* Header */}
+        <div className="flex flex-col items-center text-center mb-5">
+          <div className="w-10 h-10 bg-slate-100 dark:bg-zinc-800 rounded-xl flex items-center justify-center text-slate-700 dark:text-zinc-300 mb-3">
+            <KeyRound className="w-5 h-5" />
           </div>
-          <h2 className="text-xl font-bold text-slate-900 dark:text-zinc-50">
-            {!isGuest ? 'Workspace Account' : isSignUp ? 'Create your workspace' : 'Welcome back to CatNoted'}
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-zinc-100 tracking-tight">
+            {!isGuest ? 'Workspace Account' : isSignUp ? 'Create your workspace' : 'Welcome back'}
           </h2>
-          <p className="text-xs text-slate-400 mt-1 max-w-xs">
-            {!isGuest ? 'You are currently logged in securely.' : 'Client-side End-to-End Encryption keeps your spatial notes completely private.'}
-          </p>
+          {!isGuest ? (
+            <p className="text-[11px] text-slate-500 dark:text-zinc-400 mt-1">
+              You are currently logged in securely.
+            </p>
+          ) : (
+            <p className="text-[11px] text-slate-500 dark:text-zinc-400 mt-1 max-w-[280px] leading-relaxed">
+              End-to-End Encryption keeps your spatial notes completely private.
+            </p>
+          )}
         </div>
 
         {errorMsg && (
-          <div className="mt-4 p-3 bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 text-xs rounded-xl border border-rose-200 dark:border-rose-900/50 text-center">
+          <div className="mb-4 p-2.5 bg-slate-50 dark:bg-zinc-800/50 text-slate-600 dark:text-zinc-300 text-[11px] rounded-lg border border-slate-200 dark:border-zinc-700/60 text-center">
             {errorMsg}
           </div>
         )}
 
         {!isGuest ? (
-          <div className="mt-6 flex flex-col items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400 text-xl font-bold shadow-inner">
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-14 h-14 rounded-full bg-slate-100 dark:bg-zinc-800 flex items-center justify-center text-slate-700 dark:text-zinc-200 text-lg font-semibold">
               {userEmail.charAt(0).toUpperCase()}
             </div>
-            <div className="text-sm font-semibold text-slate-700 dark:text-zinc-300">
+            <div className="text-sm font-medium text-slate-700 dark:text-zinc-300 text-center break-all px-2">
               {userEmail}
             </div>
             <button
               onClick={handleLogout}
               disabled={loading}
-              className="w-full mt-2 py-3 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-rose-100 dark:shadow-none transition-all disabled:opacity-50"
+              className="w-full py-2.5 rounded-lg bg-slate-900 dark:bg-zinc-100 hover:bg-slate-800 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 font-medium text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-50"
             >
               <LogOut className="w-4 h-4" />
               {loading ? 'Logging out...' : 'Log Out'}
@@ -114,63 +117,66 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           </div>
         ) : (
           <>
-            {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-4 mt-6">
-              <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Email Address</label>
+            <form onSubmit={handleSubmit} className="space-y-3">
+              <div className="space-y-1.5">
+                <label className="block text-[11px] font-medium text-slate-600 dark:text-zinc-400">
+                  Email
+                </label>
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/40 text-sm text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1.5 focus:ring-slate-400 dark:focus:ring-zinc-500 focus:border-transparent transition-all"
                 />
               </div>
 
-              <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Secret Password</label>
+              <div className="space-y-1.5">
+                <label className="block text-[11px] font-medium text-slate-600 dark:text-zinc-400">
+                  Password
+                </label>
                 <input
                   type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/40 text-sm text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1.5 focus:ring-slate-400 dark:focus:ring-zinc-500 focus:border-transparent transition-all"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full mt-2 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-100 dark:shadow-none transition-all disabled:opacity-50"
+                className="w-full py-2.5 rounded-lg bg-slate-900 dark:bg-zinc-100 hover:bg-slate-800 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 font-medium text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-50 mt-1"
               >
                 {isSignUp ? <UserPlus className="w-4 h-4" /> : <LogIn className="w-4 h-4" />}
-                {loading ? 'Processing...' : isSignUp ? 'Sign Up' : 'Log In'}
+                {loading ? 'Processing...' : isSignUp ? 'Create Account' : 'Sign In'}
               </button>
             </form>
 
-            <div className="relative flex py-4 items-center">
+            <div className="relative flex py-2 items-center">
               <div className="flex-grow border-t border-slate-100 dark:border-zinc-800"></div>
-              <span className="flex-shrink mx-4 text-[10px] font-bold text-slate-300 uppercase tracking-widest">or</span>
+              <span className="flex-shrink mx-3 text-[10px] font-medium text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
+                or
+              </span>
               <div className="flex-grow border-t border-slate-100 dark:border-zinc-800"></div>
             </div>
 
-            {/* Offline Guest Action */}
             <button
               onClick={handleGuestMode}
-              className="w-full py-3 rounded-xl border border-dashed border-slate-200 dark:border-zinc-800 hover:border-slate-350 hover:bg-slate-50 dark:hover:bg-zinc-850 text-slate-500 dark:text-zinc-400 font-semibold text-sm flex items-center justify-center gap-2 transition-all"
+              className="w-full py-2.5 rounded-lg border border-slate-200 dark:border-zinc-700 hover:border-slate-300 dark:hover:border-zinc-600 hover:bg-slate-50 dark:hover:bg-zinc-800/60 text-slate-600 dark:text-zinc-400 font-medium text-sm flex items-center justify-center gap-2 transition-all"
             >
-              <Sparkles className="w-4 h-4 text-amber-500" />
+              <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400" />
               Continue in Offline Guest Mode
             </button>
 
-            {/* Footer switch state */}
-            <div className="mt-6 text-center text-xs">
+            <div className="pt-1 text-center text-[11px]">
               <button
                 type="button"
                 onClick={() => setIsSignUp(!isSignUp)}
-                className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium"
+                className="text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-200 hover:underline font-medium transition-colors"
               >
                 {isSignUp ? 'Already have an account? Log In' : "Don't have an account? Create one"}
               </button>
