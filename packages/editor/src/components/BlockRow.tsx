@@ -14,6 +14,7 @@ import { TextBlock } from './TextBlock.js';
 import { HeadingBlock } from './HeadingBlock.js';
 import { WidgetBlockPlaceholder } from './WidgetBlockPlaceholder.js';
 import { SandboxFrame } from '@catnoted/agent-runtime';
+import { ToggleBlock } from './ToggleBlock.js';
 
 interface BlockRowProps {
   block: any;
@@ -235,6 +236,21 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                     blockType={block.type}
                   />
                 </div>
+              )}
+
+              {/* --- Toggle list --- */}
+              {block.type === 'toggle' && (
+                <ToggleBlock
+                  id={block.id}
+                  content={block.content}
+                  expanded={block.properties?.expanded !== false}
+                  onChange={onChangeContent}
+                  onUpdateProps={(props) => updateBlockProperties(block.id, props)}
+                  onEnter={onEnterBlock}
+                  onBackspace={onBackspaceBlockInner}
+                  onFocus={() => {}}
+                  focusOnMount={isFocused}
+                />
               )}
 
               {/* --- Bullet list --- */}
