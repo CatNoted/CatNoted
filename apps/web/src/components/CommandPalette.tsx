@@ -195,7 +195,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-start justify-center bg-neutral-950/20 px-4 pt-[10vh] backdrop-blur-[2px] dark:bg-neutral-950/50"
+      className="fixed inset-0 z-[100] flex items-start justify-center bg-overlay/20 px-4 pt-[10vh] backdrop-blur-[2px] dark:bg-overlay/50"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -204,10 +204,10 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         role="dialog"
         aria-modal="true"
         aria-label="Commands"
-        className="flex w-full max-w-[440px] flex-col overflow-hidden rounded-xl border border-gray-100 bg-white shadow-2xl dark:border-gray-800/80 dark:bg-gray-900"
+        className="flex w-full max-w-[440px] flex-col overflow-hidden rounded-xl border border-soft bg-surface shadow-2xl dark:border-soft/80 dark:bg-surface"
       >
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-100/50 dark:border-gray-800/40">
-          <Search className="h-4 w-4 shrink-0 text-gray-400 dark:text-gray-500" />
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-muted/50 dark:border-soft/40">
+          <Search className="h-4 w-4 shrink-0 text-ink-muted" />
           <input
             ref={inputRef}
             type="text"
@@ -217,9 +217,9 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
               setSelectedIndex(0);
             }}
             placeholder="Type a command..."
-            className="w-full bg-transparent text-[14px] text-gray-800 outline-none placeholder:text-gray-400 dark:text-gray-200"
+            className="w-full bg-transparent text-[14px] text-ink outline-none placeholder:text-ink-muted dark:text-ink"
           />
-          <kbd className="hidden rounded bg-gray-50 dark:bg-gray-800/40 px-1.5 py-0.5 font-sans text-[10px] border border-gray-200/60 dark:border-gray-800 text-gray-400 dark:text-gray-500 sm:block">
+          <kbd className="hidden rounded bg-surface-soft dark:bg-surface-hover px-1.5 py-0.5 font-sans text-[10px] border border-soft/60 dark:border-soft text-ink-muted sm:block">
             ESC
           </kbd>
         </div>
@@ -237,13 +237,13 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
           className="flex max-h-[min(320px,60vh)] flex-1 flex-col overflow-y-auto px-2 py-2"
         >
           {visibleGroups.length === 0 && (
-            <div className="px-3 py-10 text-center text-[13px] text-gray-400">
+            <div className="px-3 py-10 text-center text-[13px] text-ink-muted">
               No matching command
             </div>
           )}
           {visibleGroups.map((group) => (
             <div key={group.key} className="mb-1 last:mb-0">
-              <div className="px-3 py-1.5 text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+              <div className="px-3 py-1.5 text-[10px] font-semibold text-ink-muted uppercase tracking-wider">
                 {group.key}
               </div>
               {group.items.map((cmd) => {
@@ -266,16 +266,16 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                       'group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left',
                       'transition-all duration-75',
                       isSelected
-                        ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100'
-                        : 'text-gray-600 hover:bg-gray-50/80 dark:text-gray-300 dark:hover:bg-gray-800/50'
+                        ? 'bg-surface-hover text-ink'
+                        : 'text-ink-secondary hover:bg-surface-soft/80 dark:text-ink-secondary dark:hover:bg-surface-hover/50'
                     ].join(' ')}
                   >
                     <Icon
                       className={[
                         'h-4 w-4 shrink-0 transition-colors',
                         isSelected
-                          ? 'text-gray-800 dark:text-gray-100'
-                          : 'text-gray-400 dark:text-gray-500'
+                          ? 'text-ink dark:text-ink'
+                          : 'text-ink-muted'
                       ].join(' ')}
                     />
                     <span className="min-w-0 truncate text-[13px] font-medium">
@@ -285,8 +285,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                       className={[
                         'ml-auto text-[11px] font-normal transition-colors',
                         isSelected
-                          ? 'text-gray-500 dark:text-gray-400'
-                          : 'text-gray-400/80 dark:text-gray-500/80'
+                          ? 'text-ink-secondary dark:text-ink-secondary'
+                          : 'text-ink-muted/80/80'
                       ].join(' ')}
                     >
                       {cmd.subtitle}
@@ -298,14 +298,14 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
           ))}
         </div>
 
-        <div className="flex items-center justify-between border-t border-gray-100/80 dark:border-gray-800/60 px-4 py-2 text-[10px] text-gray-400/80 dark:text-gray-500">
+        <div className="flex items-center justify-between border-t border-muted/80 dark:border-soft/60 px-4 py-2 text-[10px] text-ink-muted/80">
           <div className="flex items-center gap-1.5">
-            <kbd className="rounded bg-gray-50 dark:bg-gray-800/50 px-1 py-0.5 font-sans text-[10px] font-medium border border-gray-200/60 dark:border-gray-800 text-gray-500 dark:text-gray-400 shadow-sm">↑</kbd>
-            <kbd className="rounded bg-gray-50 dark:bg-gray-800/50 px-1 py-0.5 font-sans text-[10px] font-medium border border-gray-200/60 dark:border-gray-800 text-gray-500 dark:text-gray-400 shadow-sm">↓</kbd>
+            <kbd className="rounded bg-surface-soft dark:bg-surface-hover/50 px-1 py-0.5 font-sans text-[10px] font-medium border border-soft/60 dark:border-soft text-ink-secondary dark:text-ink-secondary shadow-sm">↑</kbd>
+            <kbd className="rounded bg-surface-soft dark:bg-surface-hover/50 px-1 py-0.5 font-sans text-[10px] font-medium border border-soft/60 dark:border-soft text-ink-secondary dark:text-ink-secondary shadow-sm">↓</kbd>
             <span>Navigate</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <kbd className="rounded bg-gray-50 dark:bg-gray-800/50 px-1 py-0.5 font-sans text-[10px] font-medium border border-gray-200/60 dark:border-gray-800 text-gray-500 dark:text-gray-400 shadow-sm">Enter</kbd>
+            <kbd className="rounded bg-surface-soft dark:bg-surface-hover/50 px-1 py-0.5 font-sans text-[10px] font-medium border border-soft/60 dark:border-soft text-ink-secondary dark:text-ink-secondary shadow-sm">Enter</kbd>
             <span>Confirm</span>
           </div>
         </div>

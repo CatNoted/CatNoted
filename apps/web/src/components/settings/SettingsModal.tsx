@@ -135,12 +135,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       <Panel className="w-full max-w-[760px] h-[580px] shadow-2xl flex flex-col md:flex-row overflow-hidden">
 
         {/* Left Sidebar */}
-        <div className="w-full md:w-[220px] border-b md:border-b-0 md:border-r border-slate-100 dark:border-zinc-800 bg-slate-50/50 dark:bg-[#16161a]/10 p-5 flex flex-col justify-between shrink-0">
+        <div className="w-full md:w-[220px] border-b md:border-b-0 md:border-r border-muted dark:border-soft bg-surface-soft dark:bg-surface-soft p-5 flex flex-col justify-between shrink-0">
           <div>
             {/* Sidebar Header */}
             <div className="flex items-center gap-2 mb-6 px-1">
-              <Settings className="w-4 h-4 text-slate-500 dark:text-zinc-400" />
-              <span className="text-sm font-semibold text-slate-800 dark:text-zinc-200">Settings</span>
+              <Settings className="w-4 h-4 text-ink-muted" />
+              <span className="text-sm font-semibold text-ink">Settings</span>
             </div>
 
             {/* Sidebar Nav */}
@@ -150,8 +150,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 onClick={() => setActiveTab('byok')}
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all shrink-0 text-left w-full ${
                   activeTab === 'byok'
-                    ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-zinc-100 font-semibold'
-                    : 'text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200 hover:bg-slate-50 dark:hover:bg-zinc-850/40'
+                    ? 'bg-surface-hover text-ink font-semibold'
+                    : 'text-ink-muted hover:text-ink hover:bg-surface-soft'
                 }`}
               >
                 <KeyRound className="w-4 h-4" />
@@ -162,8 +162,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 onClick={() => setActiveTab('sync')}
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all shrink-0 text-left w-full ${
                   activeTab === 'sync'
-                    ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-zinc-100 font-semibold'
-                    : 'text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200 hover:bg-slate-50 dark:hover:bg-zinc-850/40'
+                    ? 'bg-surface-hover text-ink font-semibold'
+                    : 'text-ink-muted hover:text-ink hover:bg-surface-soft'
                 }`}
               >
                 <Cloud className="w-4 h-4" />
@@ -174,21 +174,21 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
           {/* Sidebar Footer or Meta */}
           <div className="hidden md:block px-1">
-            <span className="text-[10px] text-slate-400 dark:text-zinc-500 font-mono">v1.0.0-affine-style</span>
+            <span className="text-[10px] text-ink-muted font-mono">v1.0.0-affine-style</span>
           </div>
         </div>
 
         {/* Right Content Area */}
-        <div className="flex-1 flex flex-col h-full min-w-0 bg-white dark:bg-zinc-900">
+        <div className="flex-1 flex flex-col h-full min-w-0 bg-surface dark:bg-surface">
           {/* Header */}
           <div className="flex items-center justify-between px-6 pt-5 pb-3 shrink-0">
-            <span className="text-[11px] font-semibold tracking-wider text-slate-400 dark:text-zinc-500 uppercase">
+            <span className="text-[11px] font-semibold tracking-wider text-ink-muted uppercase">
               {activeTab === 'byok' ? 'Bring Your Own Key' : 'Security & Sync Connection'}
             </span>
             <button
               type="button"
               onClick={onClose}
-              className="h-7 w-7 inline-flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 hover:bg-slate-50 dark:hover:bg-zinc-800 transition-colors"
+              className="h-7 w-7 inline-flex items-center justify-center rounded-lg text-ink-muted hover:text-ink hover:bg-surface-soft transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
@@ -199,67 +199,67 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             {activeTab === 'byok' && (
               <form onSubmit={handleSaveKeys} className="flex flex-col h-full justify-between gap-6">
                 <div className="space-y-5">
-                  <div className="p-3.5 rounded-xl border border-slate-100 dark:border-zinc-800/60 bg-slate-50/40 dark:bg-[#16161a]/20">
-                    <p className="text-xs leading-relaxed text-slate-500 dark:text-zinc-400">
+                  <div className="p-3.5 rounded-xl border border-muted dark:border-soft/60 bg-surface-soft dark:bg-surface-soft">
+                    <p className="text-xs leading-relaxed text-ink-muted">
                       Use your own LLM API keys. Keys are stored encrypted in session storage and never touch CatNoted servers.
                     </p>
                   </div>
 
                   {/* Section Title */}
                   <div className="space-y-4">
-                    <h3 className="text-[11px] font-semibold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
+                    <h3 className="text-[11px] font-semibold text-ink-muted uppercase tracking-wider">
                       Provider Credentials
                     </h3>
 
                     <div className="space-y-3.5">
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 items-center">
-                        <label className="text-xs font-medium text-slate-600 dark:text-zinc-300">OpenAI Key</label>
+                        <label className="text-xs font-medium text-ink">OpenAI Key</label>
                         <div className="sm:col-span-2">
                           <input
                             type="password"
                             value={openaiKey}
                             onChange={(e) => setOpenaiKey(e.target.value)}
                             placeholder="sk-..."
-                            className="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 bg-slate-50/30 dark:bg-[#16161a]/30 text-xs placeholder:text-slate-400 dark:placeholder:text-zinc-500 text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-600 transition-all"
+                            className="w-full px-3 py-1.5 rounded-lg border border-soft dark:border-soft bg-surface-soft dark:bg-surface-soft text-xs placeholder:text-ink-muted dark:placeholder:text-ink-muted text-ink focus:outline-none focus:ring-1 focus:ring-accent dark:focus:ring-accent transition-all"
                           />
                         </div>
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 items-center">
-                        <label className="text-xs font-medium text-slate-600 dark:text-zinc-300">Gemini Key</label>
+                        <label className="text-xs font-medium text-ink">Gemini Key</label>
                         <div className="sm:col-span-2">
                           <input
                             type="password"
                             value={geminiKey}
                             onChange={(e) => setGeminiKey(e.target.value)}
                             placeholder="AIzaSy..."
-                            className="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 bg-slate-50/30 dark:bg-[#16161a]/30 text-xs placeholder:text-slate-400 dark:placeholder:text-zinc-500 text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-600 transition-all"
+                            className="w-full px-3 py-1.5 rounded-lg border border-soft dark:border-soft bg-surface-soft dark:bg-surface-soft text-xs placeholder:text-ink-muted dark:placeholder:text-ink-muted text-ink focus:outline-none focus:ring-1 focus:ring-accent dark:focus:ring-accent transition-all"
                           />
                         </div>
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 items-center">
-                        <label className="text-xs font-medium text-slate-600 dark:text-zinc-300">Anthropic Key</label>
+                        <label className="text-xs font-medium text-ink">Anthropic Key</label>
                         <div className="sm:col-span-2">
                           <input
                             type="password"
                             value={anthropicKey}
                             onChange={(e) => setAnthropicKey(e.target.value)}
                             placeholder="sk-ant-..."
-                            className="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 bg-slate-50/30 dark:bg-[#16161a]/30 text-xs placeholder:text-slate-400 dark:placeholder:text-zinc-500 text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-600 transition-all"
+                            className="w-full px-3 py-1.5 rounded-lg border border-soft dark:border-soft bg-surface-soft dark:bg-surface-soft text-xs placeholder:text-ink-muted dark:placeholder:text-ink-muted text-ink focus:outline-none focus:ring-1 focus:ring-accent dark:focus:ring-accent transition-all"
                           />
                         </div>
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 items-center">
-                        <label className="text-xs font-medium text-slate-600 dark:text-zinc-300">Ollama Host URL</label>
+                        <label className="text-xs font-medium text-ink">Ollama Host URL</label>
                         <div className="sm:col-span-2">
                           <input
                             type="text"
                             value={ollamaUrl}
                             onChange={(e) => setOllamaUrl(e.target.value)}
                             placeholder="http://localhost:11434"
-                            className="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 bg-slate-50/30 dark:bg-[#16161a]/30 text-xs placeholder:text-slate-400 dark:placeholder:text-zinc-500 text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-600 transition-all"
+                            className="w-full px-3 py-1.5 rounded-lg border border-soft dark:border-soft bg-surface-soft dark:bg-surface-soft text-xs placeholder:text-ink-muted dark:placeholder:text-ink-muted text-ink focus:outline-none focus:ring-1 focus:ring-accent dark:focus:ring-accent transition-all"
                           />
                         </div>
                       </div>
@@ -267,30 +267,30 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   </div>
 
                   <div className="pt-2">
-                    <label className="flex items-center gap-2.5 rounded-xl border border-slate-100 dark:border-zinc-800/60 bg-slate-50/30 dark:bg-[#16161a]/20 px-3.5 py-2.5 cursor-pointer select-none transition-colors hover:bg-slate-50/70 dark:hover:bg-[#16161a]/30">
+                    <label className="flex items-center gap-2.5 rounded-xl border border-muted dark:border-soft/60 bg-surface-soft dark:bg-surface-soft px-3.5 py-2.5 cursor-pointer select-none transition-colors hover:bg-surface-soft dark:hover:bg-surface-soft">
                       <input
                         type="checkbox"
                         checked={rememberChoice}
                         onChange={(e) => setRememberChoice(e.target.checked)}
-                        className="h-4 w-4 rounded border-slate-200 dark:border-zinc-700 text-blue-600 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-0 bg-transparent"
+                        className="h-4 w-4 rounded border-soft text-accent focus:ring-accent focus:ring-offset-0 bg-transparent"
                       />
-                      <span className="text-xs text-slate-600 dark:text-zinc-300">Use current passphrase for session unlock</span>
+                      <span className="text-xs text-ink">Use current passphrase for session unlock</span>
                     </label>
                   </div>
                 </div>
 
                 {/* Explicit Actions */}
-                <div className="flex items-center justify-end gap-2 pt-4 border-t border-slate-100 dark:border-zinc-800/60 mt-6 shrink-0">
+                <div className="flex items-center justify-end gap-2 pt-4 border-t border-muted dark:border-soft/60 mt-6 shrink-0">
                   <button
                     type="button"
                     onClick={onClose}
-                    className="inline-flex h-8 items-center justify-center rounded-lg px-3.5 text-xs font-medium text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
+                    className="inline-flex h-8 items-center justify-center rounded-lg px-3.5 text-xs font-medium text-ink-muted hover:text-ink hover:bg-surface-hover dark:hover:bg-surface-hover transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="inline-flex h-8 items-center justify-center rounded-lg px-3.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-sm"
+                    className="inline-flex h-8 items-center justify-center rounded-lg px-3.5 text-xs font-semibold text-white bg-accent hover:bg-accent-hover transition-colors shadow-sm"
                   >
                     Save Keys
                   </button>
@@ -301,59 +301,59 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             {activeTab === 'sync' && (
               <form onSubmit={handleSaveSyncSettings} className="flex flex-col h-full justify-between gap-6">
                 <div className="space-y-5">
-                  <div className="flex items-start gap-3 rounded-xl border border-amber-100 dark:border-amber-950/20 bg-amber-50/20 dark:bg-amber-950/10 p-3.5">
-                    <ShieldAlert className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                  <div className="flex items-start gap-3 rounded-xl border border-warning-soft dark:border-warning-soft/20 bg-warning-soft dark:bg-warning-soft p-3.5">
+                    <ShieldAlert className="w-4 h-4 text-warning shrink-0 mt-0.5" />
                     <div>
-                      <h4 className="text-xs font-semibold text-amber-800 dark:text-amber-300">Zero-knowledge storage</h4>
-                      <p className="text-[11px] leading-relaxed text-amber-700/80 dark:text-amber-400/70 mt-1">
+                      <h4 className="text-xs font-semibold text-warning-foreground">Zero-knowledge storage</h4>
+                      <p className="text-[11px] leading-relaxed text-warning-foreground/80 mt-1">
                         Your passphrase derives a local 256-bit AES-GCM encryption key. Without this passphrase, data cannot be decrypted.
                       </p>
                     </div>
                   </div>
 
                   <div className="space-y-4">
-                    <h3 className="text-[11px] font-semibold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
+                    <h3 className="text-[11px] font-semibold text-ink-muted uppercase tracking-wider">
                       Encryption Key
                     </h3>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 items-center">
-                      <label className="text-xs font-medium text-slate-600 dark:text-zinc-300">E2EE Passphrase</label>
+                      <label className="text-xs font-medium text-ink">E2EE Passphrase</label>
                       <div className="sm:col-span-2">
                         <input
                           type="password"
                           value={passphrase}
                           onChange={(e) => onPassphraseChange(e.target.value)}
                           placeholder="Insert secure E2EE passphrase..."
-                          className="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 bg-slate-50/30 dark:bg-[#16161a]/30 text-xs placeholder:text-slate-400 dark:placeholder:text-zinc-500 text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-600 transition-all"
+                          className="w-full px-3 py-1.5 rounded-lg border border-soft dark:border-soft bg-surface-soft dark:bg-surface-soft text-xs placeholder:text-ink-muted dark:placeholder:text-ink-muted text-ink focus:outline-none focus:ring-1 focus:ring-accent dark:focus:ring-accent transition-all"
                         />
                       </div>
                     </div>
                   </div>
 
                   <div className="space-y-3.5">
-                    <h3 className="text-[11px] font-semibold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
+                    <h3 className="text-[11px] font-semibold text-ink-muted uppercase tracking-wider">
                       Connection Status
                     </h3>
 
-                    <div className="rounded-xl border border-slate-100 dark:border-zinc-800/60 bg-slate-50/30 dark:bg-[#16161a]/10 p-4 space-y-2.5">
+                    <div className="rounded-xl border border-muted dark:border-soft/60 bg-surface-soft dark:bg-surface-soft p-4 space-y-2.5">
                       <div className="flex justify-between items-center text-xs">
-                        <span className="text-slate-500 dark:text-zinc-400">Local-First Storage (VFS)</span>
-                        <span className="font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                        <span className="text-ink-muted">Local-First Storage (VFS)</span>
+                        <span className="font-semibold text-success flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-success" />
                           Active (IndexedDB)
                         </span>
                       </div>
-                      <div className="flex justify-between items-center text-xs border-t border-slate-100 dark:border-zinc-800/40 pt-2.5">
-                        <span className="text-slate-500 dark:text-zinc-400">Cloud Sync Provider</span>
-                        <span className="font-semibold text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+                      <div className="flex justify-between items-center text-xs border-t border-muted dark:border-soft/40 pt-2.5">
+                        <span className="text-ink-muted">Cloud Sync Provider</span>
+                        <span className="font-semibold text-accent flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-accent" />
                           Supabase E2EE Broadcast Active
                         </span>
                       </div>
                     </div>
 
-                    <div className="rounded-xl border border-dashed border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3.5 py-2.5">
-                      <p className="text-[11px] leading-relaxed text-slate-400 dark:text-zinc-500">
+                    <div className="rounded-xl border border-dashed border-soft dark:border-soft bg-surface dark:bg-surface px-3.5 py-2.5">
+                      <p className="text-[11px] leading-relaxed text-ink-muted">
                         Sync channel details are derived from the active session.
                       </p>
                     </div>
@@ -361,17 +361,17 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 </div>
 
                 {/* Explicit Actions */}
-                <div className="flex items-center justify-end gap-2 pt-4 border-t border-slate-100 dark:border-zinc-800/60 mt-6 shrink-0">
+                <div className="flex items-center justify-end gap-2 pt-4 border-t border-muted dark:border-soft/60 mt-6 shrink-0">
                   <button
                     type="button"
                     onClick={onClose}
-                    className="inline-flex h-8 items-center justify-center rounded-lg px-3.5 text-xs font-medium text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
+                    className="inline-flex h-8 items-center justify-center rounded-lg px-3.5 text-xs font-medium text-ink-muted hover:text-ink hover:bg-surface-hover dark:hover:bg-surface-hover transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="inline-flex h-8 items-center justify-center rounded-lg px-3.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-sm"
+                    className="inline-flex h-8 items-center justify-center rounded-lg px-3.5 text-xs font-semibold text-white bg-accent hover:bg-accent-hover transition-colors shadow-sm"
                   >
                     Save Sync Settings
                   </button>

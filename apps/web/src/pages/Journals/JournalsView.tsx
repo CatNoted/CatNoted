@@ -198,17 +198,17 @@ export const JournalsView: React.FC = () => {
   // Render Onboarding Screen
   if (!isOnboarded) {
     return (
-      <div className="h-full w-full flex items-center justify-center bg-slate-50 dark:bg-[#141416] p-6 overflow-y-auto">
-        <div className="max-w-2xl w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-3xl p-8 shadow-2xl flex flex-col items-center text-center gap-6 animate-in fade-in zoom-in-95 duration-300">
-          <div className="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shadow-sm mb-2">
+      <div className="h-full w-full flex items-center justify-center bg-surface-soft dark:bg-surface p-6 overflow-y-auto">
+        <div className="max-w-2xl w-full bg-surface dark:bg-surface border border-soft rounded-3xl p-8 shadow-2xl flex flex-col items-center text-center gap-6 animate-in fade-in zoom-in-95 duration-300">
+          <div className="w-16 h-16 rounded-2xl bg-accent-soft flex items-center justify-center text-accent shadow-sm mb-2">
             <CalendarIcon className="w-8 h-8" />
           </div>
 
           <div className="space-y-2">
-            <h2 className="text-2xl font-bold text-slate-800 dark:text-zinc-100 tracking-tight">
+            <h2 className="text-2xl font-bold text-ink tracking-tight">
               Welcome to Journals 📅
             </h2>
-            <p className="text-sm text-slate-500 dark:text-zinc-400 max-w-md">
+            <p className="text-sm text-ink-secondary max-w-md">
               Start your daily journaling practice in CatNoted. Choose a default template structure to guide your writing:
             </p>
           </div>
@@ -218,18 +218,18 @@ export const JournalsView: React.FC = () => {
             {/* Daily Reflection */}
             <button
               onClick={() => handleCompleteOnboarding('reflection')}
-              className="group p-5 rounded-2xl border border-slate-150 dark:border-zinc-800 bg-slate-50/50 dark:bg-zinc-800/20 text-left hover:border-indigo-500 hover:bg-white dark:hover:bg-zinc-900 hover:shadow-lg hover:shadow-indigo-500/5 transition-all flex flex-col gap-3"
+              className="group p-5 rounded-2xl border border-soft dark:border-soft bg-surface-soft dark:bg-surface-hover text-left hover:border-accent hover:bg-surface dark:hover:bg-surface shadow-lg hover:shadow-accent/5 transition-all flex flex-col gap-3"
             >
-              <div className="w-9 h-9 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+              <div className="w-9 h-9 rounded-xl bg-accent-soft text-accent flex items-center justify-center">
                 <Sparkles className="w-4.5 h-4.5" />
               </div>
               <div>
-                <h4 className="text-sm font-semibold text-slate-800 dark:text-zinc-200">Daily Reflection</h4>
-                <p className="text-[11px] text-slate-500 dark:text-zinc-400 mt-1 leading-relaxed">
+                <h4 className="text-sm font-semibold text-ink">Daily Reflection</h4>
+                <p className="text-[11px] text-ink-secondary mt-1 leading-relaxed">
                   Focus on daily highlights, areas for growth, and gratitude elements.
                 </p>
               </div>
-              <span className="text-[10px] font-semibold text-indigo-600 dark:text-indigo-400 mt-auto flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <span className="text-[10px] font-semibold text-accent mt-auto flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 Select <ArrowRight className="w-3 h-3" />
               </span>
             </button>
@@ -237,18 +237,18 @@ export const JournalsView: React.FC = () => {
             {/* Gratitude Journal */}
             <button
               onClick={() => handleCompleteOnboarding('gratitude')}
-              className="group p-5 rounded-2xl border border-slate-150 dark:border-zinc-800 bg-slate-50/50 dark:bg-zinc-800/20 text-left hover:border-indigo-500 hover:bg-white dark:hover:bg-zinc-900 hover:shadow-lg hover:shadow-indigo-500/5 transition-all flex flex-col gap-3"
+              className="group p-5 rounded-2xl border border-soft dark:border-soft bg-surface-soft dark:bg-surface-hover text-left hover:border-accent hover:bg-surface dark:hover:bg-surface shadow-lg hover:shadow-accent/5 transition-all flex flex-col gap-3"
             >
-              <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+              <div className="w-9 h-9 rounded-xl bg-success-soft text-success flex items-center justify-center">
                 <BookOpen className="w-4.5 h-4.5" />
               </div>
               <div>
-                <h4 className="text-sm font-semibold text-slate-800 dark:text-zinc-200">Gratitude Journal</h4>
-                <p className="text-[11px] text-slate-500 dark:text-zinc-400 mt-1 leading-relaxed">
+                <h4 className="text-sm font-semibold text-ink">Gratitude Journal</h4>
+                <p className="text-[11px] text-ink-secondary mt-1 leading-relaxed">
                   Start and end your day on a positive note of constructive affirmation.
                 </p>
               </div>
-              <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 mt-auto flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <span className="text-[10px] font-semibold text-success mt-auto flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 Select <ArrowRight className="w-3 h-3" />
               </span>
             </button>
@@ -256,18 +256,18 @@ export const JournalsView: React.FC = () => {
             {/* Empty Note */}
             <button
               onClick={() => handleCompleteOnboarding('empty')}
-              className="group p-5 rounded-2xl border border-slate-150 dark:border-zinc-800 bg-slate-50/50 dark:bg-zinc-800/20 text-left hover:border-indigo-500 hover:bg-white dark:hover:bg-zinc-900 hover:shadow-lg hover:shadow-indigo-500/5 transition-all flex flex-col gap-3"
+              className="group p-5 rounded-2xl border border-soft dark:border-soft bg-surface-soft dark:bg-surface-hover text-left hover:border-accent hover:bg-surface dark:hover:bg-surface shadow-lg hover:shadow-accent/5 transition-all flex flex-col gap-3"
             >
-              <div className="w-9 h-9 rounded-xl bg-slate-500/10 text-slate-600 dark:text-zinc-400 flex items-center justify-center">
+              <div className="w-9 h-9 rounded-xl bg-surface-hover text-ink flex items-center justify-center">
                 <CheckCircle className="w-4.5 h-4.5" />
               </div>
               <div>
-                <h4 className="text-sm font-semibold text-slate-800 dark:text-zinc-200">Blank slate</h4>
-                <p className="text-[11px] text-slate-500 dark:text-zinc-400 mt-1 leading-relaxed">
+                <h4 className="text-sm font-semibold text-ink">Blank slate</h4>
+                <p className="text-[11px] text-ink-secondary mt-1 leading-relaxed">
                   An empty canvas designed for full structural freedom and direct drafting.
                 </p>
               </div>
-              <span className="text-[10px] font-semibold text-slate-600 dark:text-zinc-400 mt-auto flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <span className="text-[10px] font-semibold text-ink mt-auto flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 Select <ArrowRight className="w-3 h-3" />
               </span>
             </button>
@@ -281,40 +281,40 @@ export const JournalsView: React.FC = () => {
   const activeConflict = hasConflictForDate(selectedDate);
 
   return (
-    <div className="h-full w-full flex bg-slate-50 dark:bg-[#141416] overflow-hidden">
+    <div className="h-full w-full flex bg-surface-soft dark:bg-surface overflow-hidden">
       {/* Sidebar Navigation Panel (Calendar sidebar) */}
-      <aside className="w-80 border-r border-slate-200 dark:border-zinc-800 bg-white dark:bg-[#16161a] shrink-0 flex flex-col h-full select-none">
+      <aside className="w-80 border-r border-soft dark:border-soft bg-surface dark:bg-surface shrink-0 flex flex-col h-full select-none">
         {/* Sidebar Header */}
-        <div className="h-14 px-4 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between bg-slate-50/50 dark:bg-[#18181c] shrink-0">
-          <span className="font-semibold text-xs uppercase tracking-wider text-slate-500 dark:text-zinc-400 flex items-center gap-1.5">
-            <CalendarIcon className="w-3.5 h-3.5 text-indigo-500" />
+        <div className="h-14 px-4 border-b border-soft dark:border-soft flex items-center justify-between bg-surface-soft dark:bg-surface shrink-0">
+          <span className="font-semibold text-xs uppercase tracking-wider text-ink-secondary flex items-center gap-1.5">
+            <CalendarIcon className="w-3.5 h-3.5 text-accent" />
             Journals Calendar
           </span>
           <button
             onClick={handleGoToToday}
-            className="px-2.5 py-1 text-[10px] font-bold bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg shadow-sm shadow-indigo-500/10 transition-colors cursor-pointer"
+            className="px-2.5 py-1 text-[10px] font-bold bg-accent hover:bg-accent-hover text-white rounded-lg shadow-sm shadow-accent/10 transition-colors cursor-pointer"
           >
             Today
           </button>
         </div>
 
         {/* Calendar Navigation Controller */}
-        <div className="p-4 flex flex-col gap-4 border-b border-slate-100 dark:border-zinc-800/40">
+        <div className="p-4 flex flex-col gap-4 border-b border-muted dark:border-soft/40">
           <div className="flex items-center justify-between">
-            <span className="font-bold text-sm text-slate-800 dark:text-zinc-200">
+            <span className="font-bold text-sm text-ink">
               {currentMonthLabel}
             </span>
             <div className="flex items-center gap-1">
               <button
                 onClick={handlePrevMonth}
-                className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-850 text-slate-500 dark:text-zinc-400"
+                className="p-1 rounded-lg hover:bg-surface-hover dark:hover:bg-surface-hover text-ink-secondary"
                 title="Previous Month"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <button
                 onClick={handleNextMonth}
-                className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-850 text-slate-500 dark:text-zinc-400"
+                className="p-1 rounded-lg hover:bg-surface-hover dark:hover:bg-surface-hover text-ink-secondary"
                 title="Next Month"
               >
                 <ChevronRight className="w-4 h-4" />
@@ -326,7 +326,7 @@ export const JournalsView: React.FC = () => {
           <div className="grid grid-cols-7 gap-y-2 text-center">
             {/* Days of week */}
             {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
-              <span key={i} className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase">
+              <span key={i} className="text-[10px] font-bold text-ink-muted uppercase">
                 {day}
               </span>
             ))}
@@ -344,14 +344,14 @@ export const JournalsView: React.FC = () => {
                   onClick={() => handleDateClick(cell.key)}
                   className={`relative w-8 h-8 rounded-full flex flex-col items-center justify-center text-xs font-medium transition-all ${
                     !cell.isCurrentMonth
-                      ? 'text-slate-300 dark:text-zinc-700 hover:bg-slate-50 dark:hover:bg-zinc-900/40'
-                      : 'text-slate-700 dark:text-zinc-300'
+                      ? 'text-ink-muted hover:bg-surface-soft dark:hover:bg-surface/40'
+                      : 'text-ink'
                   } ${
                     isSelected
-                      ? 'bg-indigo-600 text-white font-bold shadow-md shadow-indigo-600/15'
+                      ? 'bg-accent text-white font-bold shadow-md shadow-accent/15'
                       : isToday
-                        ? 'border border-indigo-400 dark:border-indigo-500/50'
-                        : 'hover:bg-slate-100 dark:hover:bg-zinc-800/60'
+                        ? 'border border-accent dark:border-accent/50'
+                        : 'hover:bg-surface-hover'
                   }`}
                 >
                   <span>{cell.date.getDate()}</span>
@@ -360,11 +360,11 @@ export const JournalsView: React.FC = () => {
                   <div className="absolute bottom-0.5 flex gap-0.5 justify-center">
                     {/* Conflict Indicator */}
                     {isConflict && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" title="Duplication Conflict" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-warning animate-pulse" title="Duplication Conflict" />
                     )}
                     {/* Existing Note Indicator */}
                     {hasJournal && !isConflict && (
-                      <span className={`w-1 h-1 rounded-full ${isSelected ? 'bg-white' : 'bg-indigo-400'}`} />
+                      <span className={`w-1 h-1 rounded-full ${isSelected ? 'bg-white' : 'bg-accent'}`} />
                     )}
                   </div>
                 </button>
@@ -374,8 +374,8 @@ export const JournalsView: React.FC = () => {
         </div>
 
         {/* Template Quick Settings */}
-        <div className="p-4 mt-auto border-t border-slate-150 dark:border-zinc-800 bg-slate-50/30 dark:bg-zinc-900/10">
-          <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider mb-2.5">
+        <div className="p-4 mt-auto border-t border-soft dark:border-soft bg-surface-soft dark:bg-surface-soft">
+          <div className="flex items-center gap-1.5 text-[10px] font-bold text-ink-muted uppercase tracking-wider mb-2.5">
             <Settings className="w-3.5 h-3.5" />
             <span>Template Settings</span>
           </div>
@@ -393,12 +393,12 @@ export const JournalsView: React.FC = () => {
                   onClick={() => handleSelectTemplateSetting(tmpl.id)}
                   className={`w-full px-3 py-2 text-left rounded-lg flex items-center justify-between transition-colors ${
                     isSelected
-                      ? 'bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400 font-semibold'
-                      : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-zinc-800/40 hover:text-slate-800 dark:hover:text-zinc-200'
+                      ? 'bg-accent-soft text-accent font-semibold'
+                      : 'text-ink hover:bg-surface-hover hover:text-ink'
                   }`}
                 >
                   <span>{tmpl.label}</span>
-                  {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />}
+                  {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-accent" />}
                 </button>
               );
             })}
@@ -412,11 +412,11 @@ export const JournalsView: React.FC = () => {
         <div className="flex-1 overflow-auto p-6 md:p-8">
           {/* Duplication Warning Banner */}
           {activeConflict && (
-            <div className="mb-6 p-4 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 shadow-sm rounded-2xl flex items-start gap-3 animate-in slide-in-from-top-3">
-              <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+            <div className="mb-6 p-4 bg-warning-soft dark:bg-warning-soft/20 border border-warning-soft dark:border-warning-soft/50 shadow-sm rounded-2xl flex items-start gap-3 animate-in slide-in-from-top-3">
+              <AlertTriangle className="w-5 h-5 text-warning shrink-0 mt-0.5" />
               <div>
-                <h5 className="text-xs font-bold text-amber-800 dark:text-amber-300">Journal Duplication Conflict</h5>
-                <p className="text-[11px] text-amber-700/80 dark:text-amber-400/80 mt-1">
+                <h5 className="text-xs font-bold text-warning-foreground">Journal Duplication Conflict</h5>
+                <p className="text-[11px] text-warning-foreground/80 mt-1">
                   Multiple journal notes exist for {selectedDate}. Changes might sync or display inconsistently across lists.
                 </p>
               </div>
