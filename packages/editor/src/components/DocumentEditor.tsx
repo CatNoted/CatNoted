@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React, { useState, useEffect, useRef } from 'react';
-import { useDocumentStore } from '../store.js';
+import { useDocumentStore, yblocks, ypages } from '../store.js';
 import { HeadingBlock } from './HeadingBlock.js';
 import { TextBlock } from './TextBlock.js';
 import { CalloutBlock } from './CalloutBlock.js';
@@ -37,12 +37,32 @@ import {
 interface DocumentEditorProps {
   activePage?: string;
   onRenamePage?: (oldTitle: string, newTitle: string) => void;
+  onPageSelect?: (pageId: string) => void;
 }
 
 export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   activePage = 'root-doc-node',
-  onRenamePage
+  onRenamePage,
+  onPageSelect
 }) => {
+  const [allBlocks, setAllBlocks] = useState<any[]>([]);
+  const [allPages, setAllPages] = useState<any[]>([]);
+  const [isBacklinksExpanded, setIsBacklinksExpanded] = useState(true);
+
+  useEffect(() => {
+    const update = () => {
+      setAllBlocks(yblocks.toArray());
+      setAllPages(ypages.toJSON() ? Object.values(ypages.toJSON()) : []);
+    };
+    update();
+    yblocks.observe(update);
+    ypages.observe(update);
+    return () => {
+      yblocks.unobserve(update);
+      ypages.unobserve(update);
+    };
+  }, []);
+
   const { 
     blocks, 
     pageMeta,
@@ -189,6 +209,56 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   const layoutClass = pageMeta?.fullWidth ? 'max-w-6xl px-8' : 'max-w-3xl px-4';
 
+  const backlinks = React.useMemo(() => {
+    const list: Array<{ pageId: string; pageTitle: string; pageIcon: string; blockContent: string; blockId: string }> = [];
+    const seenBlockIds = new Set<string>();
+
+    allBlocks.forEach(block => {
+      const sourceId = block.parentId || 'root-doc-node';
+      if (sourceId === activePage) return;
+
+      if (!block.content) return;
+      const matches = [...block.content.matchAll(/\[\[(.*?)\]\]/g)];
+      matches.forEach(match => {
+        const pageName = match[1]?.replace(/[\[\]]/g, '').trim();
+        if (!pageName) return;
+
+        const targetId = `page-${pageName.toLowerCase().replace(/\s+/g, '-')}`;
+        const isMatch = targetId === activePage || (activePage === 'root-doc-node' && pageName.toLowerCase() === 'root note');
+
+        if (isMatch) {
+          if (!seenBlockIds.has(block.id)) {
+            seenBlockIds.add(block.id);
+
+            const sourceMeta = allPages.find(p => p.id === sourceId);
+            let sourceTitle = sourceMeta?.title;
+            if (!sourceTitle) {
+              if (sourceId === 'root-doc-node') {
+                const rootHeading = allBlocks.find(b => b.type === 'heading' && b.properties?.level === 1 && (!b.parentId || b.parentId === 'root-doc-node'));
+                sourceTitle = rootHeading?.content || 'Root Note';
+              } else {
+                const rawName = sourceId.startsWith('page-') ? sourceId.slice(5) : sourceId;
+                sourceTitle = rawName.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+              }
+            }
+
+            const sourceIcon = sourceMeta?.icon || (sourceId === 'root-doc-node' ? '📁' : '📄');
+
+            list.push({
+              pageId: sourceId,
+              pageTitle: sourceTitle,
+              pageIcon: sourceIcon,
+              blockContent: block.content,
+              blockId: block.id
+            });
+          }
+        }
+      });
+    });
+
+    return list;
+  }, [allBlocks, allPages, activePage]);
+
   return (
     <div className={`w-full mx-auto py-8 space-y-0.5 min-h-[60vh] transition-all ${fontClass} ${layoutClass}`} onClick={(e) => {
       if (e.target === e.currentTarget && blocks.length > 0) {
@@ -265,6 +335,63 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           />
         );
       })}
+
+      {/* Backlinks Section */}
+      <div className="mt-12 select-none border-t border-slate-200/40 dark:border-zinc-800/40 pt-8 pb-12">
+        <div className="flex flex-col gap-3">
+          {/* Header Row */}
+          <button
+            type="button"
+            onClick={() => setIsBacklinksExpanded(!isBacklinksExpanded)}
+            className="flex items-center gap-2 text-[11px] font-semibold text-slate-400 dark:text-zinc-500 hover:text-slate-600 dark:hover:text-zinc-300 transition-colors uppercase tracking-wider w-fit"
+            aria-expanded={isBacklinksExpanded}
+            aria-label={`${backlinks.length} backlinks`}
+          >
+            <ChevronRight className={`w-3.5 h-3.5 transition-transform ${isBacklinksExpanded ? 'rotate-90' : ''}`} />
+            <Link2 className="w-3.5 h-3.5" />
+            <span>{backlinks.length} Backlinks</span>
+          </button>
+
+          {/* Collapsible Content */}
+          {isBacklinksExpanded && (
+            <div className="pl-5">
+              {backlinks.length === 0 ? (
+                <p className="text-xs text-slate-400 dark:text-zinc-500 italic font-light">
+                  No pages link to this document.
+                </p>
+              ) : (
+                <div className="max-h-60 overflow-y-auto space-y-2 pr-2 scrollbar-thin">
+                  {backlinks.map((backlink) => (
+                    <button
+                      key={backlink.blockId}
+                      type="button"
+                      onClick={() => {
+                        if (onPageSelect) {
+                          onPageSelect(backlink.pageId);
+                        }
+                      }}
+                      className="w-full text-left p-2.5 rounded-xl border border-slate-100 dark:border-zinc-900/40 bg-slate-50/30 hover:bg-slate-50/80 dark:bg-zinc-900/10 dark:hover:bg-zinc-900/30 hover:border-slate-200 dark:hover:border-zinc-800 transition-all duration-200 flex flex-col gap-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 group"
+                    >
+                      {/* Referencing Page Info */}
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm shrink-0">{backlink.pageIcon}</span>
+                        <span className="text-xs font-semibold text-slate-700 dark:text-zinc-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors truncate">
+                          {backlink.pageTitle}
+                        </span>
+                      </div>
+
+                      {/* Context Content Block Preview */}
+                      <div className="text-[11px] text-slate-500 dark:text-zinc-400 font-normal leading-relaxed truncate pl-6 border-l border-slate-200 dark:border-zinc-800">
+                        {backlink.blockContent}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

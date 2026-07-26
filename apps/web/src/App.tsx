@@ -477,7 +477,7 @@ const App: React.FC = () => {
       case 'doc':
         return (
           <div className="h-full overflow-auto">
-            <DocumentEditor activePage={activePage} onRenamePage={handleRenamePage} />
+            <DocumentEditor activePage={activePage} onRenamePage={handleRenamePage} onPageSelect={setActivePage} />
           </div>
         );
       case 'canvas':
