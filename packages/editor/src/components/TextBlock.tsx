@@ -34,7 +34,7 @@ const TextBlockBase: React.FC<TextBlockProps> = ({
   blockType,
   onFocus,
   onBlur,
-  showLeftActions = true,
+  showLeftActions = false,
   isFocused = false,
   onAddClick,
 }) => {

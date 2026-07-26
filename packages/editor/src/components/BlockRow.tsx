@@ -8,7 +8,8 @@ import {
   Heading3,
   AlignLeft,
   Cpu,
-  MoreVertical
+  MoreVertical,
+  GripVertical
 } from 'lucide-react';
 import { TextBlock } from './TextBlock.js';
 import { HeadingBlock } from './HeadingBlock.js';
@@ -99,10 +100,14 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
   return (
           <div
             key={block.id}
+            onDragOver={(e) => handleDragOver(e, block.id)}
+            onDrop={(e) => handleDrop(e, block.id)}
             className="group flex items-start gap-0 px-4 py-0.5 rounded-lg transition-all hover:bg-slate-50/80 dark:hover:bg-zinc-900/30 hover:shadow-sm hover:ring-1 hover:ring-slate-100 dark:hover:ring-zinc-800/60"
           >
             {/* Left Block Controls - fixed width gutter, never overlaps content */}
-            <div className={`w-10 flex-shrink-0 flex items-start justify-end gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity ${
+            <div className={`w-[84px] flex-shrink-0 flex items-start justify-end gap-1.5 pr-2 transition-opacity duration-150 ${
+              isFocused || activeMenuId === block.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+            } ${
               block.type === 'heading'
                 ? block.properties?.level === 1
                   ? 'pt-[10px]'
@@ -111,23 +116,42 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                   : 'pt-[6px]'
                 : 'pt-[6px]'
             }`}>
+              {/* Add block below */}
               <button
                 type="button"
                 onClick={() => handleCreateBlock(block.id)}
                 title="Add block below"
-                className="p-0.5 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                aria-label="Add block below"
+                className="p-1 hover:bg-slate-100/80 dark:hover:bg-zinc-800/50 rounded-md text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all cursor-pointer flex items-center justify-center"
               >
-                <Plus className="w-3 h-3" />
+                <Plus className="w-3.5 h-3.5" />
               </button>
 
+              {/* Vertical Divider */}
+              <span className="w-px h-3.5 bg-slate-200/50 dark:bg-zinc-800/40 self-center mt-1 select-none" />
+
+              {/* Draggable Grip Handle / Grid Launcher */}
+              <div
+                draggable
+                onDragStart={(e) => handleDragStart(e, block.id)}
+                title="Drag to reorder block"
+                aria-label="Drag handle"
+                className="p-1 hover:bg-slate-100/80 dark:hover:bg-zinc-800/50 rounded-md text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all cursor-grab active:cursor-grabbing flex items-center justify-center select-none"
+              >
+                <GripVertical className="w-3.5 h-3.5" />
+              </div>
+
+              {/* Settings / Menu */}
               <div className="relative">
                 <button
                   type="button"
                   onClick={() => setActiveMenuId(activeMenuId === block.id ? null : block.id)}
                   title="Block settings"
-                  className="p-0.5 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                  aria-label="Block settings"
+                  aria-expanded={activeMenuId === block.id}
+                  className="p-1 hover:bg-slate-100/80 dark:hover:bg-zinc-800/50 rounded-md text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all cursor-pointer flex items-center justify-center"
                 >
-                  <MoreVertical className="w-3 h-3" />
+                  <MoreVertical className="w-3.5 h-3.5" />
                 </button>
 
                 {activeMenuId === block.id && (
@@ -230,7 +254,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                     onSetType={onSetTypeBlock}
                     onAddWidget={onAddWidgetBlock}
                     focusOnMount={isFocused}
-                    showLeftActions={true}
+                    showLeftActions={false}
                     isFocused={isFocused}
                     onAddClick={() => handleCreateBlock(block.id)}
                     blockType={block.type}
@@ -272,6 +296,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                     onSetType={onSetTypeBlock}
                     onAddWidget={onAddWidgetBlock}
                     focusOnMount={isFocused}
+                    showLeftActions={false}
                     blockType={block.type}
                   />
                 </div>
@@ -292,6 +317,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                     onSetType={onSetTypeBlock}
                     onAddWidget={onAddWidgetBlock}
                     focusOnMount={isFocused}
+                    showLeftActions={false}
                     blockType={block.type}
                   />
                 </div>
@@ -320,6 +346,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                     onSetType={onSetTypeBlock}
                     onAddWidget={onAddWidgetBlock}
                     focusOnMount={isFocused}
+                    showLeftActions={false}
                     blockType={block.type}
                   />
                 </div>
@@ -338,6 +365,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                     onSetType={onSetTypeBlock}
                     onAddWidget={onAddWidgetBlock}
                     focusOnMount={isFocused}
+                    showLeftActions={false}
                     blockType={block.type}
                   />
                 </div>
