@@ -252,7 +252,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                     onSetType={onSetTypeBlock}
                     onAddWidget={onAddWidgetBlock}
                     focusOnMount={isFocused}
-                    showLeftActions={true}
+                    showLeftActions={false}
                     isFocused={isFocused}
                     onAddClick={() => handleCreateBlock(block.id)}
                     blockType={block.type}

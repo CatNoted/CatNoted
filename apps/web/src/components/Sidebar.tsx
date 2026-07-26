@@ -92,7 +92,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           <div className="w-6 h-6 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-xs shadow-sm">
             CN
           </div>
-          <span className="font-semibold text-[14px] text-slate-800 dark:text-zinc-200 tracking-tight truncate min-w-[120px]" title="CatNoted Workspace">
+          <span className="font-semibold text-[14px] text-slate-800 dark:text-zinc-200 tracking-tight truncate min-w-0" title="CatNoted Workspace">
             CatNoted Workspace
           </span>
         </div>
@@ -160,7 +160,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                     <span className="w-4 h-4 shrink-0 flex items-center justify-center text-xs">
                       {node.icon || '📄'}
                     </span>
-                    <span className="truncate min-w-[120px]">{node.title || 'Untitled'}</span>
+                    <span className="truncate min-w-0">{node.title || 'Untitled'}</span>
                   </div>
                   {/* Hover Actions */}
                   <div className="opacity-0 group-hover/sidebar-row:opacity-100 flex items-center gap-1 transition-opacity shrink-0">
@@ -230,7 +230,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                     <span className="w-4 h-4 shrink-0 flex items-center justify-center text-xs">
                       {node.icon || '📄'}
                     </span>
-                    <span className="truncate min-w-[120px]">{node.title || 'Untitled'}</span>
+                    <span className="truncate min-w-0">{node.title || 'Untitled'}</span>
                   </div>
                   {/* Hover Actions */}
                   <div className="opacity-0 group-hover/sidebar-row:opacity-100 flex items-center gap-1 transition-opacity shrink-0">
