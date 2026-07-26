@@ -33,12 +33,12 @@ const PRESET_EMOJIS = [
 ];
 
 const PRESET_COVERS = [
-  'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80', // Vibrant Abstract Fluid
-  'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=1200&q=80', // Smooth Gradient Mesh
-  'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80', // Calm Coastal Ocean
-  'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=80', // Deep Space Nebula
-  'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=1200&q=80', // Minimal Dark Geometry
-  'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80', // Matrix Cyberpunk Green
+  'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
+  'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=1200&q=80',
+  'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80',
+  'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=80',
+  'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=1200&q=80',
+  'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80',
 ];
 
 const PRESET_GRADIENTS = [
@@ -73,7 +73,6 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   const emojiMenuRef = useRef<HTMLDivElement>(null);
   const coverMenuRef = useRef<HTMLDivElement>(null);
 
-  // Auto-close dropdowns on click outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (emojiMenuRef.current && !emojiMenuRef.current.contains(e.target as Node)) {
@@ -98,8 +97,8 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
 
   return (
     <div className="group/header relative w-full mb-6 select-none">
-      {/* Cover Image Banner / Default Unstyled Cover */}
-      <div className="relative w-full h-44 sm:h-52 rounded-2xl overflow-hidden mb-4 shadow-sm border border-slate-200/50 dark:border-zinc-800/50 transition-all bg-slate-100 dark:bg-zinc-800/40">
+      {/* Cover Image Banner */}
+      <div className="relative w-full h-44 sm:h-52 rounded-2xl overflow-hidden mb-5 shadow-sm border border-slate-200/50 dark:border-zinc-800/50 transition-all bg-slate-100 dark:bg-zinc-800/40">
         {coverUrl ? (
           coverUrl.startsWith('linear-gradient') ? (
             <div className="w-full h-full" style={{ background: coverUrl }} />
@@ -112,7 +111,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
           )
         ) : null}
 
-        {/* Cover Actions Overlay (visible on hover) */}
+        {/* Cover Actions Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover/header:opacity-100 transition-opacity flex items-end justify-end p-3 gap-2 z-10">
           <button
             type="button"
@@ -160,7 +159,6 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
           </div>
 
           <div className="space-y-4">
-            {/* File Upload & URL input */}
             <div className="space-y-3 bg-slate-50 dark:bg-zinc-950 p-2.5 rounded-xl border border-slate-150 dark:border-zinc-800/60">
               <div>
                 <label className="block text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase mb-1">
@@ -224,7 +222,6 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
               </div>
             </div>
 
-            {/* Gradient Presets */}
             <div>
               <span className="block text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase mb-1.5">
                 Gradient Presets
@@ -246,7 +243,6 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
               </div>
             </div>
 
-            {/* Photo Presets */}
             <div>
               <span className="block text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase mb-1.5">
                 Photo Presets
@@ -271,123 +267,155 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
         </div>
       )}
 
-      {/* Page Icon / Emoji Button */}
-      <div className="relative inline-block mb-3">
-        {icon ? (
-          <button
-            type="button"
-            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-            className="text-4xl p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-800/60 transition-colors cursor-pointer select-none flex items-center justify-center min-w-[56px] min-h-[56px]"
-            title="Change icon"
-          >
-            {renderPageIcon(icon, "w-10 h-10 text-indigo-600 dark:text-indigo-400")}
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-            className="text-2xl p-2 rounded-xl border border-dashed border-slate-300 dark:border-zinc-700 text-slate-400 hover:text-indigo-500 hover:border-indigo-400 transition-colors flex items-center gap-1.5"
-          >
-            <LucideIcons.Smile className="w-5 h-5" />
-            <span className="text-xs font-medium">Icon</span>
-          </button>
-        )}
+      {/* Main Doc Header Row */}
+      <div className="flex items-start gap-3">
+        {/* Page Icon Button */}
+        <div className="relative inline-block shrink-0">
+          {icon ? (
+            <button
+              type="button"
+              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+              className="text-[26px] p-2 rounded-xl
+                border border-transparent
+                hover:border-slate-200 dark:hover:border-zinc-700
+                hover:bg-slate-100 dark:hover:bg-zinc-800/60
+                transition-colors cursor-pointer select-none
+                flex items-center justify-center
+                h-[56px] w-[56px]"
+              title="Change icon"
+            >
+              {renderPageIcon(icon, "w-10 h-10 text-indigo-600 dark:text-indigo-400")}
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+              className="text-2xl p-2 rounded-xl
+                border border-dashed border-slate-300 dark:border-zinc-700
+                text-slate-400 hover:text-indigo-500 hover:border-indigo-400
+                transition-colors flex items-center gap-1.5"
+            >
+              <LucideIcons.Smile className="w-5 h-5" />
+              <span className="text-xs font-medium">Icon</span>
+            </button>
+          )}
 
-        {/* Emoji / Icon Picker Dropdown Popup */}
-        {showEmojiPicker && (
-          <div
-            ref={emojiMenuRef}
-            className="absolute left-0 top-full mt-1.5 z-50 p-4 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-2xl w-72 text-left"
-          >
-            <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-150 dark:border-zinc-800">
-              <span className="text-xs font-bold text-slate-700 dark:text-zinc-300">
-                Choose Icon or Emoji
-              </span>
-              {icon && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    onIconChange(undefined);
-                    setShowEmojiPicker(false);
-                  }}
-                  className="text-[10px] text-red-500 hover:underline font-semibold"
-                >
-                  Remove
-                </button>
-              )}
-            </div>
-
-            {/* Presorted Common Icons Section */}
-            <div className="mb-3.5">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase block mb-1.5">
-                Common Icons
-              </span>
-              <div className="grid grid-cols-5 gap-1.5">
-                {PRESET_ICONS.map((iconName) => {
-                  const IconComponent = (LucideIcons as any)[iconName];
-                  return (
-                    <button
-                      key={iconName}
-                      type="button"
-                      onClick={() => {
-                        onIconChange(`lucide:${iconName}`);
-                        setShowEmojiPicker(false);
-                      }}
-                      className="p-1.5 text-slate-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg transition-transform hover:scale-110 flex items-center justify-center border border-slate-100 dark:border-zinc-800/40"
-                      title={iconName}
-                    >
-                      {IconComponent && <IconComponent className="w-4 h-4" />}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Emojis Section */}
-            <div>
-              <span className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase block mb-1.5">
-                Emojis
-              </span>
-              <div className="grid grid-cols-6 gap-1 max-h-40 overflow-y-auto pr-1">
-                {PRESET_EMOJIS.map((emoji) => (
+          {/* Emoji / Icon Picker Dropdown */}
+          {showEmojiPicker && (
+            <div
+              ref={emojiMenuRef}
+              className="absolute left-0 top-full mt-1.5 z-50 p-4 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-2xl w-72 text-left"
+            >
+              <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-150 dark:border-zinc-800">
+                <span className="text-xs font-bold text-slate-700 dark:text-zinc-300">
+                  Choose Icon or Emoji
+                </span>
+                {icon && (
                   <button
-                    key={emoji}
                     type="button"
                     onClick={() => {
-                      onIconChange(emoji);
+                      onIconChange(undefined);
                       setShowEmojiPicker(false);
                     }}
-                    className="text-xl p-1.5 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg transition-transform hover:scale-110 flex items-center justify-center"
+                    className="text-[10px] text-red-500 hover:underline font-semibold"
                   >
-                    {emoji}
+                    Remove
                   </button>
-                ))}
+                )}
+              </div>
+
+              <div className="mb-3.5">
+                <span className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase block mb-1.5">
+                  Common Icons
+                </span>
+                <div className="grid grid-cols-5 gap-1.5">
+                  {PRESET_ICONS.map((iconName) => {
+                    const IconComponent = (LucideIcons as any)[iconName];
+                    return (
+                      <button
+                        key={iconName}
+                        type="button"
+                        onClick={() => {
+                          onIconChange(`lucide:${iconName}`);
+                          setShowEmojiPicker(false);
+                        }}
+                        className="p-1.5 text-slate-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg transition-transform hover:scale-110 flex items-center justify-center border border-slate-100 dark:border-zinc-800/40"
+                        title={iconName}
+                      >
+                        {IconComponent && <IconComponent className="w-4 h-4" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div>
+                <span className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase block mb-1.5">
+                  Emojis
+                </span>
+                <div className="grid grid-cols-6 gap-1 max-h-40 overflow-y-auto pr-1">
+                  {PRESET_EMOJIS.map((emoji) => (
+                    <button
+                      key={emoji}
+                      type="button"
+                      onClick={() => {
+                        onIconChange(emoji);
+                        setShowEmojiPicker(false);
+                      }}
+                      className="text-xl p-1.5 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg transition-transform hover:scale-110 flex items-center justify-center"
+                    >
+                      {emoji}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
+
+        {/* Editable Document Title */}
+        <div className="flex-1 min-w-0 pt-1">
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => onTitleChange(e.target.value)}
+            placeholder="Untitled"
+            className="w-full
+              text-[clamp(32px,3.8vw,44px)]
+              font-bold
+              text-slate-900 dark:text-zinc-100
+              bg-transparent border-none outline-none focus:ring-0 p-0
+              placeholder-slate-300 dark:placeholder-zinc-600
+              tracking-tight leading-snug"
+          />
+        </div>
       </div>
 
-      {/* Editable Document Title (`h1`) */}
-      <div className="mb-2">
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => onTitleChange(e.target.value)}
-          placeholder="Untitled"
-          className="w-full text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-zinc-100 bg-transparent border-none outline-none focus:ring-0 p-0 placeholder-slate-300 dark:placeholder-zinc-600 tracking-tight leading-tight"
-        />
-      </div>
-
-      {/* Page Metadata Bar (Created Date, Word Count, Reading Time) */}
-      <div className="flex items-center gap-3 text-[11px] font-medium text-slate-400 dark:text-zinc-500">
-        {formattedDate && <span>Created {formattedDate}</span>}
-        <span>·</span>
-        <span>{wordCount} words</span>
-        <span>·</span>
-        <span>{readingTime} min read</span>
-        <span>·</span>
-        <span>{blocksCount} blocks</span>
+      {/* Metadata Row */}
+      <div
+        className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-medium text-slate-400 dark:text-zinc-500"
+      >
+        {formattedDate ? (
+          <span className="inline-flex items-center gap-1">
+            <span className="opacity-70">Created</span>
+            <span className="text-slate-500 dark:text-zinc-400">{formattedDate}</span>
+          </span>
+        ) : null}
+        <span className="hidden sm:inline opacity-30">|</span>
+        <span className="inline-flex items-center gap-1">
+          <span className="opacity-70">Words</span>
+          <span className="text-slate-500 dark:text-zinc-400">{wordCount}</span>
+        </span>
+        <span className="hidden sm:inline opacity-30">|</span>
+        <span className="inline-flex items-center gap-1">
+          <span className="opacity-70">Read</span>
+          <span className="text-slate-500 dark:text-zinc-400">{readingTime} min</span>
+        </span>
+        <span className="hidden sm:inline opacity-30">|</span>
+        <span className="inline-flex items-center gap-1">
+          <span className="opacity-70">Blocks</span>
+          <span className="text-slate-500 dark:text-zinc-400">{blocksCount}</span>
+        </span>
       </div>
     </div>
   );
