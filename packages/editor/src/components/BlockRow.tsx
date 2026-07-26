@@ -244,6 +244,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
               {block.type === 'text' && (
                 <div className="group">
                   <TextBlock
+                    showLeftActions={false}
                     id={block.id}
                     content={block.content}
                     onChange={onChangeContent}
@@ -252,7 +253,6 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                     onSetType={onSetTypeBlock}
                     onAddWidget={onAddWidgetBlock}
                     focusOnMount={isFocused}
-                    showLeftActions={false}
                     isFocused={isFocused}
                     onAddClick={() => handleCreateBlock(block.id)}
                     blockType={block.type}
@@ -286,6 +286,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                     ))}
                   </div>
                   <TextBlock
+                    showLeftActions={false}
                     id={block.id}
                     content={block.content}
                     onChange={onChangeContent}
@@ -306,6 +307,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                     {index + 1}.
                   </span>
                   <TextBlock
+                    showLeftActions={false}
                     id={block.id}
                     content={block.content}
                     onChange={onChangeContent}
@@ -334,6 +336,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                     className="mt-1 w-3.5 h-3.5 rounded border-slate-300 dark:border-zinc-600 accent-indigo-500 flex-shrink-0 cursor-pointer"
                   />
                   <TextBlock
+                    showLeftActions={false}
                     id={block.id}
                     content={block.content}
                     onChange={onChangeContent}
@@ -352,6 +355,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                 <div className="flex gap-3">
                   <div className="w-0.5 bg-indigo-400 dark:bg-indigo-500 rounded-full flex-shrink-0 self-stretch" />
                   <TextBlock
+                    showLeftActions={false}
                     id={block.id}
                     content={block.content}
                     onChange={onChangeContent}
