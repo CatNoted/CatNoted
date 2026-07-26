@@ -51,7 +51,15 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   useEffect(() => {
     const update = () => {
-      setAllBlocks(yblocks.toArray());
+      const allArray = yblocks.toArray();
+      const seen = new Set<string>();
+      const dedupedAll = allArray.filter(b => {
+        if (!b || !b.id) return false;
+        if (seen.has(b.id)) return false;
+        seen.add(b.id);
+        return true;
+      });
+      setAllBlocks(dedupedAll);
       setAllPages(ypages.toJSON() ? Object.values(ypages.toJSON()) : []);
     };
     update();

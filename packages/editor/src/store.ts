@@ -10,24 +10,7 @@ const provider = typeof window !== 'undefined' && typeof indexedDB !== 'undefine
   ? new IndexeddbPersistence('catnoted-doc', ydoc) 
   : null;
 
-// Prepopulate if empty
-if (yblocks.length === 0) {
-  yblocks.insert(0, [
-    {
-      id: 'block-init-1',
-      type: 'heading',
-      content: 'Selamat Datang di CatNoted! 🐱',
-      properties: { level: 1 },
-      parentId: 'root-doc-node'
-    },
-    {
-      id: 'block-init-2',
-      type: 'text',
-      content: 'Ini adalah editor dokumen berbasis blok yang didukung oleh Yjs CRDT. Tekan Enter untuk membuat paragraf baru, atau ubah tipe blok.',
-      parentId: 'root-doc-node'
-    }
-  ]);
-}
+const initializedPages = new Set<string>();
 
 export function useDocumentStore(pageId: string = 'root-doc-node') {
   const [blocks, setBlocks] = useState<BlockNode[]>([]);
@@ -47,27 +30,51 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
         return true;
       });
 
-      // Prepopulate sub-page if empty (inside transact, observer will re-fire)
-      if (pageId !== 'root-doc-node' && deduped.length === 0) {
-        const rawName = pageId.startsWith('page-') ? pageId.slice(5) : pageId;
-        const pageName = rawName
-          .split('-')
-          .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-          .join(' ');
+      const isTest = typeof process !== 'undefined' && (process.env.NODE_ENV === 'test' || process.env.VITEST);
 
-        ydoc.transact(() => {
-          yblocks.insert(yblocks.length, [
-            {
-              id: `block-${Math.random().toString(36).substring(2, 11)}`,
-              type: 'heading',
-              content: pageName,
-              properties: { level: 1 },
-              parentId: pageId
-            }
-          ]);
-        });
-        // observer will fire again after insert — don't set blocks here
-        return;
+      if (!isTest && !initializedPages.has(pageId)) {
+        initializedPages.add(pageId);
+        if (deduped.length === 0) {
+          if (pageId === 'root-doc-node') {
+            ydoc.transact(() => {
+              yblocks.insert(yblocks.length, [
+                {
+                  id: 'block-init-1',
+                  type: 'heading',
+                  content: 'Selamat Datang di CatNoted! 🐱',
+                  properties: { level: 1 },
+                  parentId: 'root-doc-node'
+                },
+                {
+                  id: 'block-init-2',
+                  type: 'text',
+                  content: 'Ini adalah editor dokumen berbasis blok yang didukung oleh Yjs CRDT. Tekan Enter untuk membuat paragraf baru, atau ubah tipe blok.',
+                  parentId: 'root-doc-node'
+                }
+              ]);
+            });
+            return;
+          } else {
+            const rawName = pageId.startsWith('page-') ? pageId.slice(5) : pageId;
+            const pageName = rawName
+              .split('-')
+              .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+              .join(' ');
+
+            ydoc.transact(() => {
+              yblocks.insert(yblocks.length, [
+                {
+                  id: `block-${Math.random().toString(36).substring(2, 11)}`,
+                  type: 'heading',
+                  content: pageName,
+                  properties: { level: 1 },
+                  parentId: pageId
+                }
+              ]);
+            });
+            return;
+          }
+        }
       }
 
       setBlocks(deduped);
@@ -108,7 +115,17 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
     const handleSync = () => {
       // Filter by current pageId to avoid cross-page duplicates
       const allBlocks = yblocks.toArray();
-      setBlocks(allBlocks.filter(b => (b.parentId || 'root-doc-node') === pageId));
+      const pageBlocks = allBlocks.filter(b => (b.parentId || 'root-doc-node') === pageId);
+
+      // Deduplicate blocks by id to avoid duplicate rendering from Yjs observer noise
+      const seen = new Set<string>();
+      const deduped = pageBlocks.filter(b => {
+        if (seen.has(b.id)) return false;
+        seen.add(b.id);
+        return true;
+      });
+
+      setBlocks(deduped);
       updatePageMetadata();
     };
     if (provider && typeof provider.on === 'function') {
@@ -151,46 +168,53 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
 
   const updateBlockContent = (id: string, content: string) => {
     ydoc.transact(() => {
-      const index = yblocks.toArray().findIndex(b => b.id === id);
-      if (index !== -1) {
-        const current = yblocks.get(index);
-        const updated = { ...current, content };
-        yblocks.delete(index, 1);
-        yblocks.insert(index, [updated]);
+      const arr = yblocks.toArray();
+      // Work backwards to avoid index shift issues if there are multiple duplicates
+      for (let i = arr.length - 1; i >= 0; i--) {
+        if (arr[i].id === id) {
+          const current = yblocks.get(i);
+          const updated = { ...current, content };
+          yblocks.delete(i, 1);
+          yblocks.insert(i, [updated]);
+        }
       }
     });
   };
 
   const updateBlockType = (id: string, type: BlockType, properties?: any) => {
     ydoc.transact(() => {
-      const index = yblocks.toArray().findIndex(b => b.id === id);
-      if (index !== -1) {
-        const current = yblocks.get(index);
-        const updated = { 
-          ...current, 
-          type, 
-          properties: properties !== undefined ? properties : (type === 'heading' ? { level: 2 } : {}) 
-        };
-        yblocks.delete(index, 1);
-        yblocks.insert(index, [updated]);
+      const arr = yblocks.toArray();
+      for (let i = arr.length - 1; i >= 0; i--) {
+        if (arr[i].id === id) {
+          const current = yblocks.get(i);
+          const updated = {
+            ...current,
+            type,
+            properties: properties !== undefined ? properties : (type === 'heading' ? { level: 2 } : {})
+          };
+          yblocks.delete(i, 1);
+          yblocks.insert(i, [updated]);
+        }
       }
     });
   };
 
   const updateBlockProperties = (id: string, propsPartial: Partial<BlockProperties>) => {
     ydoc.transact(() => {
-      const index = yblocks.toArray().findIndex(b => b.id === id);
-      if (index !== -1) {
-        const current = yblocks.get(index);
-        const updated = {
-          ...current,
-          properties: {
-            ...current.properties,
-            ...propsPartial
-          }
-        };
-        yblocks.delete(index, 1);
-        yblocks.insert(index, [updated]);
+      const arr = yblocks.toArray();
+      for (let i = arr.length - 1; i >= 0; i--) {
+        if (arr[i].id === id) {
+          const current = yblocks.get(i);
+          const updated = {
+            ...current,
+            properties: {
+              ...current.properties,
+              ...propsPartial
+            }
+          };
+          yblocks.delete(i, 1);
+          yblocks.insert(i, [updated]);
+        }
       }
     });
   };
@@ -210,9 +234,11 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
 
   const deleteBlock = (id: string) => {
     ydoc.transact(() => {
-      const index = yblocks.toArray().findIndex(b => b.id === id);
-      if (index !== -1) {
-        yblocks.delete(index, 1);
+      const arr = yblocks.toArray();
+      for (let i = arr.length - 1; i >= 0; i--) {
+        if (arr[i].id === id) {
+          yblocks.delete(i, 1);
+        }
       }
     });
   };
@@ -281,6 +307,11 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
         if (fromIndex < toIndex) {
           toIndex--;
         }
+
+        // Ensure index is within valid bounds
+        if (toIndex < 0) toIndex = 0;
+        if (toIndex > yblocks.length) toIndex = yblocks.length;
+
         yblocks.insert(toIndex, [block]);
       }
     });
