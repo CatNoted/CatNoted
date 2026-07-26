@@ -27,6 +27,15 @@ function getDisplayIcon(iconStr: string | undefined): string {
   return iconStr;
 }
 
+export function normalizePageName(name: string): string {
+  const cleaned = name.replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim();
+  return cleaned
+    .split(' ')
+    .filter(Boolean)
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+}
+
 export function parseDocumentGraph(blocks: BlockNode[], pages?: PageMeta[]): { nodes: GraphNode[]; edges: GraphEdge[] } {
   const nodesMap = new Map<string, Omit<GraphNode, 'label'> & { _rawName: string; count: number }>();
   const edges: GraphEdge[] = [];
@@ -52,7 +61,7 @@ export function parseDocumentGraph(blocks: BlockNode[], pages?: PageMeta[]): { n
     count: 0
   });
 
-  const linkRegex = /\[\[(.*?)\]\]/g;
+  const linkRegex = /\[\[([^[\]]+)\]\]/g;
   const tagRegex = /#([a-zA-Z0-9_\-]+)/g;
 
   // First pass: register all pages that have blocks
@@ -76,12 +85,26 @@ export function parseDocumentGraph(blocks: BlockNode[], pages?: PageMeta[]): { n
 
     let linkMatch;
     linkRegex.lastIndex = 0;
+    const seenLinksInBlock = new Set<string>();
+
     while ((linkMatch = linkRegex.exec(block.content)) !== null) {
-      // Remove any internal brackets which shouldn't be part of page name
-      const pageName = linkMatch[1].replace(/[\[\]]/g, '').trim();
-      if (!pageName) continue;
-      const nodeId = `page-${pageName.toLowerCase().replace(/\s+/g, '-')}`;
-      
+      // Separate target page from alias if pipe is present
+      const rawLink = linkMatch[1].trim();
+      if (!rawLink) continue;
+
+      const targetPageRaw = rawLink.split('|')[0].trim();
+      if (!targetPageRaw) continue;
+
+      const normalizedName = normalizePageName(targetPageRaw);
+      const nodeId = `page-${normalizedName.toLowerCase().replace(/\s+/g, '-')}`;
+
+      // Skip self-references to avoid self-loop edges
+      if (nodeId === sourceId) continue;
+
+      // Avoid duplicate edges/counts from the same block for the same target
+      if (seenLinksInBlock.has(nodeId)) continue;
+      seenLinksInBlock.add(nodeId);
+
       const existing = nodesMap.get(nodeId);
       if (existing) {
         existing.count++;
@@ -90,7 +113,7 @@ export function parseDocumentGraph(blocks: BlockNode[], pages?: PageMeta[]): { n
           id: nodeId,
           type: 'page',
           val: 12,
-          _rawName: pageName,
+          _rawName: normalizedName,
           count: 1
         });
       }

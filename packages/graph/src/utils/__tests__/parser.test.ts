@@ -171,4 +171,70 @@ describe('Whitebox Test: parseDocumentGraph (Graph Parsing Logic)', () => {
     expect(result.edges).toHaveLength(0);
   });
 
+  it('should support alias wiki-links and map to normalized target page', () => {
+    const blocks: BlockNode[] = [
+      {
+        id: 'b1',
+        type: 'text',
+        content: 'Check out [[System Design|Our Design Specs]] or [[System Design|Alternative Design]]',
+      },
+    ];
+
+    const result = parseDocumentGraph(blocks);
+    expect(result.nodes).toHaveLength(2); // root + page-system-design
+    const pageNode = result.nodes.find((n) => n.id === 'page-system-design');
+    expect(pageNode).toBeDefined();
+    expect(pageNode?.label).toBe('📄 System Design (1)'); // Since they link to the same page, only counted once per block!
+  });
+
+  it('should normalize multiword and dashed page names in wiki-links', () => {
+    const blocks: BlockNode[] = [
+      {
+        id: 'b1',
+        type: 'text',
+        content: 'Links with [[system-design]] and [[system    design_spec]]',
+      },
+    ];
+
+    const result = parseDocumentGraph(blocks);
+    expect(result.nodes).toHaveLength(3); // root + page-system-design + page-system-design-spec
+    const designNode = result.nodes.find((n) => n.id === 'page-system-design');
+    expect(designNode?.label).toBe('📄 System Design (1)');
+
+    const specNode = result.nodes.find((n) => n.id === 'page-system-design-spec');
+    expect(specNode?.label).toBe('📄 System Design Spec (1)');
+  });
+
+  it('should avoid duplicate edges or counts from nested brackets', () => {
+    const blocks: BlockNode[] = [
+      {
+        id: 'b1',
+        type: 'text',
+        content: 'Let us try [[nested [[link]]]] in text.',
+      },
+    ];
+
+    const result = parseDocumentGraph(blocks);
+    expect(result.nodes).toHaveLength(2); // root + page-link
+    const linkNode = result.nodes.find((n) => n.id === 'page-link');
+    expect(linkNode?.label).toBe('📄 Link (1)');
+    expect(result.edges).toHaveLength(1);
+    expect(result.edges[0].target).toBe('page-link');
+  });
+
+  it('should skip self-references to avoid self-loop edges', () => {
+    const blocks: BlockNode[] = [
+      {
+        id: 'b1',
+        parentId: 'page-system-design',
+        type: 'text',
+        content: 'Linking [[System Design]] inside itself.',
+      },
+    ];
+
+    const result = parseDocumentGraph(blocks);
+    expect(result.nodes).toHaveLength(2); // page-system-design + root (defaulted)
+    expect(result.edges).toHaveLength(0); // no self loops!
+  });
+
 });
