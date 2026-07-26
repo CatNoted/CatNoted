@@ -30,10 +30,11 @@ import {
   Info,
   List,
   Star,
-  History
+  History,
+  Calendar
 } from 'lucide-react';
 
-export type ActiveMode = "doc" | "canvas" | "graph" | "settings";
+export type ActiveMode = "doc" | "canvas" | "graph" | "journals" | "settings";
 
 const WIDGET_TEMPLATES = {
   clock: `
@@ -355,7 +356,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   const [focusedNavIndex, setFocusedNavIndex] = useState(0);
 
   useEffect(() => {
-    const activeIndex = ['doc', 'canvas', 'graph', 'settings'].indexOf(activeMode);
+    const activeIndex = ['doc', 'canvas', 'graph', 'journals', 'settings'].indexOf(activeMode);
     if (activeIndex !== -1) {
       setFocusedNavIndex(activeIndex);
     }
@@ -363,7 +364,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
   const handleNavKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
     let nextIndex = index;
-    const maxIndex = 3; // 4 items (0 to 3)
+    const maxIndex = 4; // 5 items (0 to 4)
 
     switch (e.key) {
       case 'ArrowDown':
@@ -666,6 +667,7 @@ if (isSearchOpen && searchQuery) {
                 { id: 'doc', icon: FileText, label: 'Doc Mode' },
                 { id: 'canvas', icon: Layout, label: 'Canvas' },
                 { id: 'graph', icon: Network, label: 'Graph' },
+                { id: 'journals', icon: Calendar, label: 'Journals' },
                 { id: 'settings', icon: Settings, label: 'Settings' }
               ].map((item, index) => {
                 const Icon = item.icon;

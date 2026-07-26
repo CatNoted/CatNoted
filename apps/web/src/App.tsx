@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AppLayout, ActiveMode } from './layouts/AppLayout.js';
 import { DocumentEditor, useDocumentStore } from '@catnoted/editor';
+import { JournalsView } from './pages/Journals/JournalsView.js';
 import { InfiniteCanvas } from '@catnoted/canvas';
 import { GraphView, parseDocumentGraph } from '@catnoted/graph';
 import { ydoc } from '@catnoted/editor';
@@ -122,6 +123,15 @@ const App: React.FC = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const hasDate = searchParams.has('date');
+    const isJournalsPath = window.location.pathname.startsWith('/journals');
+    if (hasDate || isJournalsPath) {
+      setActiveMode('journals');
+    }
+  }, []);
 
   useEffect(() => {
     const savedPassphrase = localStorage.getItem('catnoted_e2ee_passphrase');
@@ -490,6 +500,12 @@ const App: React.FC = () => {
         return (
           <div className="h-full overflow-hidden">
             <GraphView onNavigateToNode={(nodeId) => { setActivePage(nodeId); setActiveMode('doc'); }} />
+          </div>
+        );
+      case 'journals':
+        return (
+          <div className="h-full overflow-hidden">
+            <JournalsView />
           </div>
         );
       default:
