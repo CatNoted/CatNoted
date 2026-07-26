@@ -19,11 +19,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.1.0
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
-      - run: npx pnpm@9.1.0 install --frozen-lockfile
-      - run: npx pnpm@9.1.0 --filter ./apps/web build-storybook
+          node-version: 20
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter ./apps/web build-storybook
         env:
           NODE_OPTIONS: --max-old-space-size=4096
       - uses: actions/upload-pages-artifact@v4
