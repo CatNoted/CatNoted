@@ -13,6 +13,7 @@ interface ConnectorLineProps {
   isSelected?: boolean;
   onClick?: (e: React.MouseEvent) => void;
   forceShowLabel?: boolean;
+  isBroken?: boolean;
 }
 
 export const ConnectorLine: React.FC<ConnectorLineProps> = ({
@@ -26,7 +27,8 @@ export const ConnectorLine: React.FC<ConnectorLineProps> = ({
   arrowEnd = false,
   isSelected = false,
   onClick,
-  forceShowLabel = false
+  forceShowLabel = false,
+  isBroken = false
 }) => {
   let path = '';
   if (type === 'straight') {
@@ -79,6 +81,19 @@ export const ConnectorLine: React.FC<ConnectorLineProps> = ({
         >
           <path d="M 0 1 L 9 5 L 0 9 z" className="fill-indigo-500 dark:fill-indigo-400" />
         </marker>
+
+        {/* Broken arrow marker in rose color */}
+        <marker
+          id="broken-arrow"
+          viewBox="0 0 10 10"
+          refX="8"
+          refY="5"
+          markerWidth="5"
+          markerHeight="5"
+          orient="auto-start-reverse"
+        >
+          <path d="M 0 1 L 9 5 L 0 9 z" className="fill-rose-500 dark:fill-rose-600" />
+        </marker>
       </defs>
 
       {/* Selection highlight glow */}
@@ -108,23 +123,30 @@ export const ConnectorLine: React.FC<ConnectorLineProps> = ({
       <path
         d={path}
         fill="none"
-        className={`${
-          isSelected
-            ? 'stroke-indigo-500 dark:stroke-indigo-400'
-            : 'stroke-indigo-400/80 dark:stroke-indigo-600/80 hover:stroke-indigo-500 dark:hover:stroke-indigo-400'
-        } transition-colors`}
+        className={isBroken
+          ? `stroke-rose-500/80 dark:stroke-rose-600/80 hover:stroke-rose-600 dark:hover:stroke-rose-500 transition-colors`
+          : `${
+              isSelected
+                ? 'stroke-indigo-500 dark:stroke-indigo-400'
+                : 'stroke-indigo-400/80 dark:stroke-indigo-600/80 hover:stroke-indigo-500 dark:hover:stroke-indigo-400'
+            } transition-colors`
+        }
+        strokeDasharray={isBroken ? "4,4" : undefined}
         strokeWidth={isSelected ? "3" : "2.5"}
-        markerStart={arrowStart ? "url(#arrow)" : undefined}
-        markerEnd={arrowEnd ? "url(#arrow)" : undefined}
+        markerStart={arrowStart ? (isBroken ? "url(#broken-arrow)" : "url(#arrow)") : undefined}
+        markerEnd={arrowEnd ? (isBroken ? "url(#broken-arrow)" : "url(#arrow)") : undefined}
       />
 
       {label && (
         <text
           x={(startX + endX) / 2}
           y={(startY + endY) / 2 - 8}
-          className={`fill-indigo-600 dark:fill-indigo-300 font-medium text-[10px] tracking-wide transition-opacity duration-200 pointer-events-none ${
-            forceShowLabel ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
-          }`}
+          className={isBroken
+            ? `fill-rose-600 dark:fill-rose-400 font-semibold text-[10px] tracking-wide pointer-events-none opacity-100`
+            : `fill-indigo-600 dark:fill-indigo-300 font-medium text-[10px] tracking-wide transition-opacity duration-200 pointer-events-none ${
+                forceShowLabel ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+              }`
+          }
           textAnchor="middle"
           style={{ textShadow: '0 1px 2px rgba(255,255,255,0.8)' }}
         >
