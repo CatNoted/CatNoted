@@ -30,7 +30,8 @@ import {
   Info,
   List,
   Star,
-  History
+  History,
+  Edit2
 } from 'lucide-react';
 
 export type ActiveMode = "doc" | "canvas" | "graph" | "settings";
@@ -195,10 +196,22 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   onAuthTrigger: _onAuthTrigger,
   onCreatePage
 }) => {
-  const { blocks, addBlock, updateBlockType, pages, createPage, deletePage, deleteBlock, pageMeta, updatePageMeta } = useDocumentStore(activePage);
+  const { blocks, addBlock, updateBlockType, pages, createPage, deletePage, deleteBlock, pageMeta, updatePageMeta, renamePage } = useDocumentStore(activePage);
   const favoritePages = (pages || []).filter((p: any) => p?.isFavorite);
 
   const [activeAgentTab, setActiveAgentTab] = useState<'chat' | 'widgets'>('chat');
+  const [renamingPageId, setRenamingPageId] = useState<string | null>(null);
+  const [renameValue, setRenameValue] = useState('');
+
+
+
+
+  const handleRenameSubmit = (idToRename: string) => {
+    if (renameValue.trim()) {
+      renamePage(idToRename, renameValue.trim());
+    }
+    setRenamingPageId(null);
+  };
 
   const handleDeletePage = (pageId: string, pageTitle: string) => {
     if (pageId === 'root-doc-node') return;
@@ -805,24 +818,66 @@ if (isSearchOpen && searchQuery) {
                 {recentDocs.map(doc => {
                   const isActive = activePage === doc.id;
                   return (
-                    <li key={doc.id}>
-                      <button
-                        onClick={() => {
-                          if (onPageSelect) onPageSelect(doc.id);
-                          onModeChange('doc');
-                        }}
-                        className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between transition-colors ${
-                          isActive
-                            ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
-                            : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/40 hover:text-slate-900 dark:hover:text-zinc-200'
-                        }`}
-                      >
-                        <span className="truncate flex items-center gap-2">
-                          {renderPageIcon(doc.icon, "w-4 h-4 text-slate-400 dark:text-zinc-500 shrink-0 flex items-center justify-center")}
-                          <span className="truncate">{doc.title}</span>
-                        </span>
-                        <span className="text-[10px] text-slate-400 dark:text-zinc-500 opacity-60">Recent</span>
-                      </button>
+                    <li key={doc.id} className="group/pageitem">
+                      <div className="flex items-center">
+                        {renamingPageId === doc.id ? (
+                          <input
+                            type="text"
+                            autoFocus
+                            value={renameValue}
+                            onChange={(e) => setRenameValue(e.target.value)}
+                            onBlur={() => handleRenameSubmit(doc.id)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') handleRenameSubmit(doc.id);
+                              if (e.key === 'Escape') setRenamingPageId(null);
+                            }}
+                            className="flex-1 text-xs px-2.5 py-1.5 mx-1 rounded bg-white dark:bg-zinc-900 border border-indigo-300 dark:border-indigo-500/50 outline-none focus:ring-1 focus:ring-indigo-500 text-slate-800 dark:text-zinc-200"
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                        ) : (
+                          <button
+                            onClick={() => {
+                              if (onPageSelect) onPageSelect(doc.id);
+                              onModeChange('doc');
+                            }}
+                            className={`flex-1 text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between transition-colors ${
+                              isActive
+                                ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
+                                : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/40 hover:text-slate-900 dark:hover:text-zinc-200'
+                            }`}
+                          >
+                            <span className="truncate flex items-center gap-2">
+                              {renderPageIcon(doc.icon, "w-4 h-4 text-slate-400 dark:text-zinc-500 shrink-0 flex items-center justify-center")}
+                              <span className="truncate">{doc.title}</span>
+                            </span>
+                            <span className="text-[10px] text-slate-400 dark:text-zinc-500 opacity-60">Recent</span>
+                          </button>
+                        )}
+                        {doc.id !== 'root-doc-node' && renamingPageId !== doc.id && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setRenamingPageId(doc.id);
+                                setRenameValue(doc.title);
+                            }}
+                            className="opacity-0 group-hover/pageitem:opacity-100 p-1 mr-1 rounded text-slate-300 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-all shrink-0"
+                            title={`Rename "${doc.title}"`}
+                          >
+                            <Edit2 className="w-3 h-3" />
+                          </button>
+                        )}
+                        {doc.id !== 'root-doc-node' && renamingPageId !== doc.id && (
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); handleDeletePage(doc.id, doc.title); }}
+                            className="opacity-0 group-hover/pageitem:opacity-100 p-1 mr-1 rounded text-slate-300 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-all shrink-0"
+                            title={`Hapus "${doc.title}"`}
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        )}
+                      </div>
                     </li>
                   );
                 })}
@@ -876,22 +931,64 @@ if (isSearchOpen && searchQuery) {
                           const isActive = activePage === node.id;
                           const displayLabel = node.title || 'Untitled';
                           return (
-                            <li key={node.id}>
-                              <button
-                                onClick={() => {
-                                  if (onPageSelect) onPageSelect(node.id);
-                                  onModeChange('doc');
-                                }}
-                                className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
-                                  isActive
-                                    ? 'bg-amber-50 dark:bg-amber-950/30 text-amber-900 dark:text-amber-200 font-medium'
-                                    : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
-                                }`}
-                              >
-                                {renderPageIcon(node.icon, "w-3.5 h-3.5 shrink-0 flex items-center justify-center")}
-                                <span className="truncate text-xs">{displayLabel}</span>
-                              </button>
-                            </li>
+                            <li key={node.id} className="group/pageitem">
+                            <div className="flex items-center">
+                              {renamingPageId === node.id ? (
+                                <input
+                                  type="text"
+                                  autoFocus
+                                  value={renameValue}
+                                  onChange={(e) => setRenameValue(e.target.value)}
+                                  onBlur={() => handleRenameSubmit(node.id)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') handleRenameSubmit(node.id);
+                                    if (e.key === 'Escape') setRenamingPageId(null);
+                                  }}
+                                  className="flex-1 text-xs px-2 py-1 mx-1 rounded bg-white dark:bg-zinc-900 border border-indigo-300 dark:border-indigo-500/50 outline-none focus:ring-1 focus:ring-indigo-500 text-slate-800 dark:text-zinc-200"
+                                  onClick={(e) => e.stopPropagation()}
+                                />
+                              ) : (
+                                <button
+                                  onClick={() => {
+                                    if (onPageSelect) onPageSelect(node.id);
+                                    onModeChange('doc');
+                                  }}
+                                  className={`flex-1 text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
+                                    isActive
+                                      ? 'bg-amber-50 dark:bg-amber-950/30 text-amber-900 dark:text-amber-200 font-medium'
+                                      : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
+                                  }`}
+                                >
+                                  {renderPageIcon(node.icon, "w-3.5 h-3.5 shrink-0 flex items-center justify-center")}
+                                  <span className="truncate text-xs">{displayLabel}</span>
+                                </button>
+                              )}
+                              {node.id !== 'root-doc-node' && renamingPageId !== node.id && (
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                      e.stopPropagation();
+                                      setRenamingPageId(node.id);
+                                      setRenameValue(displayLabel);
+                                  }}
+                                  className="opacity-0 group-hover/pageitem:opacity-100 p-1 mr-1 rounded text-slate-300 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-all shrink-0"
+                                  title={`Rename "${displayLabel}"`}
+                                >
+                                  <Edit2 className="w-3 h-3" />
+                                </button>
+                              )}
+                              {node.id !== 'root-doc-node' && renamingPageId !== node.id && (
+                                <button
+                                  type="button"
+                                  onClick={(e) => { e.stopPropagation(); handleDeletePage(node.id, displayLabel); }}
+                                  className="opacity-0 group-hover/pageitem:opacity-100 p-1 mr-1 rounded text-slate-300 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-all shrink-0"
+                                  title={`Hapus "${displayLabel}"`}
+                                >
+                                  <Trash2 className="w-3 h-3" />
+                                </button>
+                              )}
+                            </div>
+                          </li>
                           );
                         })}
                       </ul>
@@ -921,26 +1018,56 @@ if (isSearchOpen && searchQuery) {
                         return (
                           <li key={node.id} className="group/pageitem">
                             <div className="flex items-center">
-                              <button
-                                onClick={() => {
-                                  if (onPageSelect) onPageSelect(node.id);
-                                  onModeChange('doc');
-                                }}
-                                className={`flex-1 text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
-                                  isActive
-                                    ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
-                                    : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
-                                }`}
-                              >
-                                {renderPageIcon(node.icon, "w-3.5 h-3.5 shrink-0 flex items-center justify-center")}
-                                <span className="truncate text-xs">{displayLabel}</span>
-                              </button>
-                              {node.id !== 'root-doc-node' && (
+                              {renamingPageId === node.id ? (
+                                <input
+                                  type="text"
+                                  autoFocus
+                                  value={renameValue}
+                                  onChange={(e) => setRenameValue(e.target.value)}
+                                  onBlur={() => handleRenameSubmit(node.id)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') handleRenameSubmit(node.id);
+                                    if (e.key === 'Escape') setRenamingPageId(null);
+                                  }}
+                                  className="flex-1 text-xs px-2 py-1 mx-1 rounded bg-white dark:bg-zinc-900 border border-indigo-300 dark:border-indigo-500/50 outline-none focus:ring-1 focus:ring-indigo-500 text-slate-800 dark:text-zinc-200"
+                                  onClick={(e) => e.stopPropagation()}
+                                />
+                              ) : (
+                                <button
+                                  onClick={() => {
+                                    if (onPageSelect) onPageSelect(node.id);
+                                    onModeChange('doc');
+                                  }}
+                                  className={`flex-1 text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
+                                    isActive
+                                      ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
+                                      : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
+                                  }`}
+                                >
+                                  {renderPageIcon(node.icon, "w-3.5 h-3.5 shrink-0 flex items-center justify-center")}
+                                  <span className="truncate text-xs">{displayLabel}</span>
+                                </button>
+                              )}
+                              {node.id !== 'root-doc-node' && renamingPageId !== node.id && (
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                      e.stopPropagation();
+                                      setRenamingPageId(node.id);
+                                      setRenameValue(displayLabel);
+                                  }}
+                                  className="opacity-0 group-hover/pageitem:opacity-100 p-1 mr-1 rounded text-slate-300 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-all shrink-0"
+                                  title={`Rename "${displayLabel}"`}
+                                >
+                                  <Edit2 className="w-3 h-3" />
+                                </button>
+                              )}
+                              {node.id !== 'root-doc-node' && renamingPageId !== node.id && (
                                 <button
                                   type="button"
                                   onClick={(e) => { e.stopPropagation(); handleDeletePage(node.id, displayLabel); }}
                                   className="opacity-0 group-hover/pageitem:opacity-100 p-1 mr-1 rounded text-slate-300 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-all shrink-0"
-                                  title={`Hapus "${displayLabel}"`}
+                                  title={`Delete "${displayLabel}"`}
                                 >
                                   <Trash2 className="w-3 h-3" />
                                 </button>
@@ -980,22 +1107,64 @@ if (isSearchOpen && searchQuery) {
                             ? node.label.slice(2)
                             : node.label;
                           return (
-                            <li key={node.id}>
-                              <button
-                                onClick={() => {
-                                  if (onPageSelect) onPageSelect(node.id);
-                                  onModeChange('doc');
-                                }}
-                                className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
-                                  isActive
-                                    ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
-                                    : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
-                                }`}
-                              >
-                                <FileText className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 shrink-0" />
-                                <span className="truncate text-xs">{displayLabel}</span>
-                              </button>
-                            </li>
+                            <li key={node.id} className="group/pageitem">
+                            <div className="flex items-center">
+                              {renamingPageId === node.id ? (
+                                <input
+                                  type="text"
+                                  autoFocus
+                                  value={renameValue}
+                                  onChange={(e) => setRenameValue(e.target.value)}
+                                  onBlur={() => handleRenameSubmit(node.id)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') handleRenameSubmit(node.id);
+                                    if (e.key === 'Escape') setRenamingPageId(null);
+                                  }}
+                                  className="flex-1 text-xs px-2 py-1 mx-1 rounded bg-white dark:bg-zinc-900 border border-indigo-300 dark:border-indigo-500/50 outline-none focus:ring-1 focus:ring-indigo-500 text-slate-800 dark:text-zinc-200"
+                                  onClick={(e) => e.stopPropagation()}
+                                />
+                              ) : (
+                                <button
+                                  onClick={() => {
+                                    if (onPageSelect) onPageSelect(node.id);
+                                    onModeChange('doc');
+                                  }}
+                                  className={`flex-1 text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
+                                    isActive
+                                      ? 'bg-amber-50 dark:bg-amber-950/30 text-amber-900 dark:text-amber-200 font-medium'
+                                      : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
+                                  }`}
+                                >
+                                  {renderPageIcon(node.icon, "w-3.5 h-3.5 shrink-0 flex items-center justify-center")}
+                                  <span className="truncate text-xs">{displayLabel}</span>
+                                </button>
+                              )}
+                              {node.id !== 'root-doc-node' && renamingPageId !== node.id && (
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                      e.stopPropagation();
+                                      setRenamingPageId(node.id);
+                                      setRenameValue(displayLabel);
+                                  }}
+                                  className="opacity-0 group-hover/pageitem:opacity-100 p-1 mr-1 rounded text-slate-300 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-all shrink-0"
+                                  title={`Rename "${displayLabel}"`}
+                                >
+                                  <Edit2 className="w-3 h-3" />
+                                </button>
+                              )}
+                              {node.id !== 'root-doc-node' && renamingPageId !== node.id && (
+                                <button
+                                  type="button"
+                                  onClick={(e) => { e.stopPropagation(); handleDeletePage(node.id, displayLabel); }}
+                                  className="opacity-0 group-hover/pageitem:opacity-100 p-1 mr-1 rounded text-slate-300 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-all shrink-0"
+                                  title={`Hapus "${displayLabel}"`}
+                                >
+                                  <Trash2 className="w-3 h-3" />
+                                </button>
+                              )}
+                            </div>
+                          </li>
                           );
                         })
                       )}
