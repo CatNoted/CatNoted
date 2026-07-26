@@ -1,10 +1,13 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
-import { useDocumentStore, yblocks } from '@catnoted/editor';
+import { createRoot } from 'react-dom/client';
+import React from 'react';
+import { useDocumentStore, yblocks, ypages, DocumentEditor } from '@catnoted/editor';
 
 describe('Editor Store (useDocumentStore)', () => {
   beforeEach(() => {
     yblocks.delete(0, yblocks.length);
+    ypages.clear();
   });
 
   it('should initialize empty state correctly and allow adding blocks', () => {
@@ -39,5 +42,67 @@ describe('Editor Store (useDocumentStore)', () => {
     });
 
     expect(result.current.blocks).toHaveLength(0);
+  });
+
+  it('should render the backlinks list and counts correctly for referenced pages', async () => {
+    // 1. Setup page metadata in ypages Map
+    act(() => {
+      ypages.set('page-target-page', {
+        id: 'page-target-page',
+        title: 'Target Page',
+        icon: '🎯',
+        fontStyle: 'sans',
+        fullWidth: false,
+        isFavorite: false,
+        createdAt: Date.now()
+      });
+      ypages.set('page-source', {
+        id: 'page-source',
+        title: 'Source Page',
+        icon: '📄',
+        fontStyle: 'sans',
+        fullWidth: false,
+        isFavorite: false,
+        createdAt: Date.now()
+      });
+    });
+
+    // 2. Setup blocks in yblocks Array
+    act(() => {
+      yblocks.insert(0, [
+        {
+          id: 'block-source-1',
+          type: 'text',
+          content: 'This links to [[Target Page]]',
+          parentId: 'page-source'
+        },
+        {
+          id: 'block-target-1',
+          type: 'heading',
+          properties: { level: 1 },
+          content: 'Target Page',
+          parentId: 'page-target-page'
+        }
+      ]);
+    });
+
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+
+    await act(async () => {
+      const root = createRoot(container);
+      root.render(
+        React.createElement(DocumentEditor, { activePage: 'page-target-page' })
+      );
+      // Wait for effects and states to settle
+      await new Promise(resolve => setTimeout(resolve, 50));
+    });
+
+    // 3. Verify that the Backlinks section is rendered with correct count and details
+    expect(container.textContent).toContain('1 Backlinks');
+    expect(container.textContent).toContain('Source Page');
+    expect(container.textContent).toContain('This links to [[Target Page]]');
+
+    document.body.removeChild(container);
   });
 });
