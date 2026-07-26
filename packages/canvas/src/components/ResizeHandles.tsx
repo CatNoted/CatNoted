@@ -25,12 +25,12 @@ export const ResizeHandles: React.FC<ResizeHandlesProps> = ({ width, height, onR
   return (
     <>
       {/* Visual outline connecting handles */}
-      <div className="absolute inset-0 border border-indigo-500 pointer-events-none z-30" />
+      <div className="absolute inset-0 border border-primary pointer-events-none z-30" />
 
       {handles.map((h) => (
         <div
           key={h.id}
-          className="absolute bg-white dark:bg-zinc-900 border border-indigo-500 z-40 hover:bg-indigo-50 dark:hover:bg-indigo-900 shadow-sm"
+          className="absolute bg-background border border-primary z-40 hover:bg-primary/20 shadow-sm"
           style={{
             width: `${handleSize}px`,
             height: `${handleSize}px`,

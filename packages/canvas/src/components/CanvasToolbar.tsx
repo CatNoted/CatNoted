@@ -71,15 +71,15 @@ export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
   }, [onAddElement, onToggleHelp]);
 
   const getButtonClass = (id: string) => {
-    const base = "p-2.5 rounded-xl transition-all flex items-center justify-center gap-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500";
+    const base = "p-2.5 rounded-xl transition-all flex items-center justify-center gap-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary";
     if (activeFeedback === id) {
-      return `${base} bg-indigo-600 text-white scale-90 dark:bg-indigo-500 dark:text-zinc-950`;
+      return `${base} bg-primary text-primary-foreground scale-90`;
     }
-    return `${base} hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400`;
+    return `${base} hover:bg-muted text-muted-foreground hover:text-primary`;
   };
 
   return (
-    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-slate-200/60 dark:border-zinc-800/60 rounded-2xl p-2 flex items-center gap-1.5 shadow-xl shadow-slate-200/20 dark:shadow-black/20 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 bg-card/90 backdrop-blur-md border border-border/60 rounded-2xl p-2 flex items-center gap-1.5 shadow-xl shadow-border/5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
       <button
         onClick={() => triggerAdd('card')}
         className={getButtonClass('card')}
@@ -90,7 +90,7 @@ export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
         <MessageSquare className="w-5 h-5 group-hover:scale-110 transition-transform" />
       </button>
 
-      <div className="w-px h-6 bg-slate-200 dark:bg-zinc-800 mx-1" />
+      <div className="w-px h-6 bg-border mx-1" />
 
       <button
         onClick={() => triggerAdd('shape', 'rectangle')}
@@ -112,7 +112,7 @@ export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
         <Circle className="w-5 h-5 group-hover:scale-110 transition-transform" />
       </button>
 
-      <div className="w-px h-6 bg-slate-200 dark:bg-zinc-800 mx-1" />
+      <div className="w-px h-6 bg-border mx-1" />
 
       <button
         onClick={() => triggerAdd('note')}
@@ -136,10 +136,10 @@ export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
 
       {onToggleHelp && (
         <>
-          <div className="w-px h-6 bg-slate-200 dark:bg-zinc-800 mx-1" />
+          <div className="w-px h-6 bg-border mx-1" />
           <button
             onClick={onToggleHelp}
-            className={`${getButtonClass('help')} ${isHelpActive ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40' : ''}`}
+            className={`${getButtonClass('help')} ${isHelpActive ? 'text-primary bg-muted' : ''}`}
             title="Help & Shortcuts (?)"
             aria-label="Toggle Help & Shortcuts Overlay"
             type="button"

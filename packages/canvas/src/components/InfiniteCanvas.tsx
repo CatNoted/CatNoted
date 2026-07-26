@@ -686,7 +686,7 @@ export const InfiniteCanvas: React.FC = () => {
       onMouseDown={handleBackgroundMouseDown}
       onMouseMove={handleGlobalMouseMove}
       onMouseUp={handleGlobalMouseUp}
-      className="h-[75vh] w-full border border-slate-200 dark:border-zinc-800 rounded-3xl overflow-hidden bg-slate-50 dark:bg-zinc-950 shadow-inner relative cursor-grab active:cursor-grabbing select-none"
+      className="h-[75vh] w-full border border-border rounded-3xl overflow-hidden bg-muted/40 shadow-inner relative cursor-grab active:cursor-grabbing select-none"
     >
       {/* Dynamic Dot Grid Background */}
       <div 
@@ -708,8 +708,8 @@ export const InfiniteCanvas: React.FC = () => {
 
       {!hasContent && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="flex flex-col items-center gap-4 text-slate-400 dark:text-zinc-600 opacity-60">
-             <div className="w-16 h-16 rounded-2xl border-2 border-dashed border-slate-300 dark:border-zinc-700 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-4 text-muted-foreground/60 opacity-60">
+             <div className="w-16 h-16 rounded-2xl border-2 border-dashed border-border flex items-center justify-center">
                <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
              </div>
              <p className="text-sm font-medium tracking-wide">Canvas is empty</p>
@@ -808,7 +808,7 @@ export const InfiniteCanvas: React.FC = () => {
               >
                 <button
                   onClick={() => deleteConnector(elem.id)}
-                  className="w-5 h-5 rounded-full bg-red-500 hover:bg-red-600 border border-white dark:border-zinc-950 flex items-center justify-center text-white text-[10px] shadow-sm cursor-pointer transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+                  className="w-5 h-5 rounded-full bg-red-500 hover:bg-red-600 border border-background flex items-center justify-center text-white text-[10px] shadow-sm cursor-pointer transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
                   title="Delete Connection"
                   aria-label="Delete this connection line"
                   type="button"
@@ -861,7 +861,7 @@ export const InfiniteCanvas: React.FC = () => {
               width: Math.abs(marqueeEnd.x - marqueeStart.x),
               height: Math.abs(marqueeEnd.y - marqueeStart.y),
             }}
-            className="absolute border border-indigo-500 bg-indigo-500/10 rounded-sm pointer-events-none z-50"
+            className="absolute border border-primary bg-primary/10 rounded-sm pointer-events-none z-50"
           />
         )}
 
@@ -923,45 +923,45 @@ export const InfiniteCanvas: React.FC = () => {
       </div>
 
       {/* Floating Zoom Controls */}
-      <div className="absolute bottom-6 left-6 z-40 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border border-slate-200/50 dark:border-zinc-800/60 rounded-2xl px-3 py-2 flex items-center gap-2 shadow-lg shadow-black/5">
+      <div className="absolute bottom-6 left-6 z-40 bg-card/80 backdrop-blur-md border border-border/50 rounded-2xl px-3 py-2 flex items-center gap-2 shadow-lg shadow-black/5">
         <button
           onClick={() => setSnapToGrid(prev => !prev)}
-          className={`px-2 py-0.5 rounded-lg transition-colors text-[10px] font-mono font-semibold ${snapToGrid ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300' : 'text-slate-400 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-zinc-800 dark:hover:text-indigo-400'}`}
+          className={`px-2 py-0.5 rounded-lg transition-colors text-[10px] font-mono font-semibold ${snapToGrid ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-primary hover:bg-muted'}`}
           title="Toggle Grid Snap (Shift+G)"
           aria-label="Toggle Grid Snap"
           type="button"
         >
           Grid Snap
         </button>
-        <div className="w-[1px] h-4 bg-slate-200/80 dark:bg-zinc-800/80 mx-1" />
+        <div className="w-[1px] h-4 bg-border mx-1" />
         <button
           onClick={() => setScale((s: number) => Math.max(0.3, s - 0.1))}
-          className="p-1 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 transition-colors"
+          className="p-1 hover:bg-muted rounded-lg text-muted-foreground hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-colors"
           title="Zoom Out"
           aria-label="Zoom Out"
           type="button"
         >
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 12h-15" /></svg>
         </button>
-        <span className="text-xs font-mono font-semibold text-slate-600 dark:text-zinc-300 min-w-[3.5rem] text-center">
+        <span className="text-xs font-mono font-semibold text-foreground/80 min-w-[3.5rem] text-center">
           {Math.round(scale * 100)}%
         </span>
         <button
           onClick={() => setScale((s: number) => Math.min(2.5, s + 0.1))}
-          className="p-1 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 transition-colors"
+          className="p-1 hover:bg-muted rounded-lg text-muted-foreground hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-colors"
           title="Zoom In"
           aria-label="Zoom In"
           type="button"
         >
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
         </button>
-        <div className="w-[1px] h-4 bg-slate-200/80 dark:bg-zinc-800/80 mx-1" />
+        <div className="w-[1px] h-4 bg-border mx-1" />
         <button
           onClick={() => {
             setPan({ x: 100, y: 100 });
             setScale(1);
           }}
-          className="px-2 py-0.5 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 transition-colors text-[10px] font-mono font-semibold"
+          className="px-2 py-0.5 hover:bg-muted rounded-lg text-muted-foreground hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-colors text-[10px] font-mono font-semibold"
           title="Reset Viewport"
           aria-label="Reset Viewport"
           type="button"
@@ -972,14 +972,14 @@ export const InfiniteCanvas: React.FC = () => {
 
       {/* Help & Shortcuts Overlay */}
       {isHelpActive && (
-        <div className="absolute top-6 left-6 z-50 max-w-sm bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border border-slate-200/80 dark:border-zinc-800/80 rounded-2xl p-5 shadow-2xl animate-in fade-in slide-in-from-left-4 duration-200 select-text">
-          <div className="flex items-center justify-between border-b border-slate-100 dark:border-zinc-800 pb-2.5 mb-3.5">
-            <h3 className="text-sm font-bold text-slate-800 dark:text-zinc-100 flex items-center gap-1.5">
+        <div className="absolute top-6 left-6 z-50 max-w-sm bg-card/95 backdrop-blur-md border border-border rounded-2xl p-5 shadow-2xl animate-in fade-in slide-in-from-left-4 duration-200 select-text">
+          <div className="flex items-center justify-between border-b border-border pb-2.5 mb-3.5">
+            <h3 className="text-sm font-bold text-foreground flex items-center gap-1.5">
               <span>💡</span> Help & Shortcuts
             </h3>
             <button
               onClick={() => setIsHelpActive(false)}
-              className="text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 text-xs transition-colors"
+              className="text-muted-foreground hover:text-foreground text-xs transition-colors"
               aria-label="Close Help Panel"
               type="button"
             >
@@ -989,60 +989,60 @@ export const InfiniteCanvas: React.FC = () => {
           <div className="flex flex-col gap-3.5 overflow-y-auto max-h-[50vh] text-xs">
             {/* Controls */}
             <div>
-              <h4 className="font-semibold text-slate-700 dark:text-zinc-300 mb-1.5 uppercase tracking-wider text-[10px]">Controls & Actions</h4>
-              <ul className="space-y-1 text-slate-600 dark:text-zinc-400">
+              <h4 className="font-semibold text-foreground/90 mb-1.5 uppercase tracking-wider text-[10px]">Controls & Actions</h4>
+              <ul className="space-y-1 text-muted-foreground">
                 <li className="flex justify-between items-center gap-2">
                   <span>Pan Canvas</span>
-                  <span className="font-medium text-slate-500 dark:text-zinc-400">Drag Background</span>
+                  <span className="font-medium text-muted-foreground/90">Drag Background</span>
                 </li>
                 <li className="flex justify-between items-center gap-2">
                   <span>Zoom Canvas</span>
-                  <span className="font-medium text-slate-500 dark:text-zinc-400">Scroll Wheel</span>
+                  <span className="font-medium text-muted-foreground/90">Scroll Wheel</span>
                 </li>
                 <li className="flex justify-between items-center gap-2">
                   <span>Marquee Select</span>
-                  <span className="font-medium text-slate-500 dark:text-zinc-400">Shift + Drag Background</span>
+                  <span className="font-medium text-muted-foreground/90">Shift + Drag Background</span>
                 </li>
                 <li className="flex justify-between items-center gap-2">
                   <span>Draw Connector</span>
-                  <span className="font-medium text-slate-500 dark:text-zinc-400">Drag right card dot</span>
+                  <span className="font-medium text-muted-foreground/90">Drag right card dot</span>
                 </li>
                 <li className="flex justify-between items-center gap-2">
                   <span>Lock Element</span>
-                  <span className="font-medium text-slate-500 dark:text-zinc-400">Ctrl + L</span>
+                  <span className="font-medium text-muted-foreground/90">Ctrl + L</span>
                 </li>
                 <li className="flex justify-between items-center gap-2">
                   <span>Move Depth</span>
-                  <span className="font-medium text-slate-500 dark:text-zinc-400">[ or ]</span>
+                  <span className="font-medium text-muted-foreground/90">[ or ]</span>
                 </li>
               </ul>
             </div>
             {/* Creation Shortcuts */}
             <div>
-              <h4 className="font-semibold text-slate-700 dark:text-zinc-300 mb-1.5 uppercase tracking-wider text-[10px]">Toolbar Shortcuts</h4>
-              <div className="grid grid-cols-2 gap-2 text-slate-600 dark:text-zinc-400">
+              <h4 className="font-semibold text-foreground/90 mb-1.5 uppercase tracking-wider text-[10px]">Toolbar Shortcuts</h4>
+              <div className="grid grid-cols-2 gap-2 text-muted-foreground">
                 <div className="flex items-center gap-1.5">
-                  <kbd className="px-1.5 py-0.5 bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded text-[10px] font-mono font-bold">C</kbd>
+                  <kbd className="px-1.5 py-0.5 bg-muted border border-border rounded text-[10px] font-mono font-bold text-foreground">C</kbd>
                   <span>Add Card</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <kbd className="px-1.5 py-0.5 bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded text-[10px] font-mono font-bold">R</kbd>
+                  <kbd className="px-1.5 py-0.5 bg-muted border border-border rounded text-[10px] font-mono font-bold text-foreground">R</kbd>
                   <span>Add Rectangle</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <kbd className="px-1.5 py-0.5 bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded text-[10px] font-mono font-bold">E / O</kbd>
+                  <kbd className="px-1.5 py-0.5 bg-muted border border-border rounded text-[10px] font-mono font-bold text-foreground">E / O</kbd>
                   <span>Add Ellipse</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <kbd className="px-1.5 py-0.5 bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded text-[10px] font-mono font-bold">T</kbd>
+                  <kbd className="px-1.5 py-0.5 bg-muted border border-border rounded text-[10px] font-mono font-bold text-foreground">T</kbd>
                   <span>Add Text Note</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <kbd className="px-1.5 py-0.5 bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded text-[10px] font-mono font-bold">F</kbd>
+                  <kbd className="px-1.5 py-0.5 bg-muted border border-border rounded text-[10px] font-mono font-bold text-foreground">F</kbd>
                   <span>Add Frame</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <kbd className="px-1.5 py-0.5 bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded text-[10px] font-mono font-bold">Shift + G</kbd>
+                  <kbd className="px-1.5 py-0.5 bg-muted border border-border rounded text-[10px] font-mono font-bold text-foreground">Shift + G</kbd>
                   <span>Grid Snap</span>
                 </div>
               </div>
@@ -1053,7 +1053,7 @@ export const InfiniteCanvas: React.FC = () => {
 
       {/* Undo Toast Banner */}
       {undoToast && (
-        <div className="absolute top-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 dark:bg-zinc-900/95 text-white border border-slate-800 dark:border-zinc-800 rounded-2xl px-4 py-3 flex items-center gap-4 shadow-2xl animate-in slide-in-from-top-4 duration-300 max-w-sm">
+        <div className="absolute top-6 left-1/2 -translate-x-1/2 z-50 bg-primary text-primary-foreground border border-border/40 rounded-2xl px-4 py-3 flex items-center gap-4 shadow-2xl animate-in slide-in-from-top-4 duration-300 max-w-sm">
           <div className="flex-1 text-xs font-medium">
             Deleted {undoToast.elements.length} element(s).
           </div>
@@ -1069,14 +1069,14 @@ export const InfiniteCanvas: React.FC = () => {
               });
               setUndoToast(null);
             }}
-            className="text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors"
+            className="text-xs font-bold text-primary-foreground/90 hover:text-primary-foreground transition-colors"
             type="button"
           >
             Undo
           </button>
           <button
             onClick={() => setUndoToast(null)}
-            className="text-slate-400 hover:text-slate-200 transition-colors text-xs"
+            className="text-primary-foreground/60 hover:text-primary-foreground transition-colors text-xs"
             aria-label="Dismiss Toast"
             type="button"
           >
