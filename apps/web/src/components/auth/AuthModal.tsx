@@ -115,7 +115,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             <div className="text-xs font-medium text-slate-700 dark:text-zinc-300 text-center break-all px-2">
               {userEmail}
             </div>
-            <button
+            <button aria-label="Log Out"
               onClick={handleLogout}
               disabled={loading}
               className="w-full py-2 rounded-lg bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all disabled:opacity-50"
@@ -159,7 +159,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               </div>
 
               {/* Stronger Primary CTA */}
-              <button
+              <button aria-label={isSignUp ? "Sign Up" : "Log In"}
                 type="submit"
                 disabled={loading}
                 className="w-full py-2 rounded-lg bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold text-xs flex items-center justify-center gap-1.5 shadow-sm hover:shadow transition-all disabled:opacity-50 mt-1"
@@ -179,7 +179,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             </div>
 
             {/* Offline Guest Mode Button - Subtle and Calm */}
-            <button
+            <button aria-label="Continue in Offline Guest Mode"
               onClick={handleGuestMode}
               className="w-full py-2 rounded-lg border border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-850/60 text-slate-700 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-zinc-100 font-medium text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm"
             >
@@ -189,7 +189,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
             {/* Navigation Toggle */}
             <div className="pt-2.5 text-center text-[11px]">
-              <button
+              <button aria-label={isSignUp ? "Switch to Log In" : "Switch to Sign Up"}
                 type="button"
                 onClick={() => setIsSignUp(!isSignUp)}
                 className="text-slate-500 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:underline font-medium transition-colors"

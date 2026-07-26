@@ -113,7 +113,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                   : 'pt-1'
                 : 'pt-1'
             }`}>
-              <button
+              <button aria-label="Add block below"
                 type="button"
                 onClick={() => handleCreateBlock(block.id)}
                 title="Add block below"
@@ -123,7 +123,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
               </button>
 
               <div className="relative">
-                <button
+                <button aria-label="Block settings"
                   type="button"
                   onClick={() => setActiveMenuId(activeMenuId === block.id ? null : block.id)}
                   title="Block settings"
@@ -134,7 +134,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
 
                 {activeMenuId === block.id && (
                   <div className="absolute left-0 mt-1 w-40 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl shadow-lg z-50 py-1 text-xs">
-                    <button
+                    <button aria-label="Turn into Text Paragraph"
                       onClick={() => {
                         updateBlockType(block.id, 'text');
                         setActiveMenuId(null);
@@ -143,7 +143,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                     >
                       <AlignLeft className="w-3.5 h-3.5" /> Text Paragraph
                     </button>
-                    <button
+                    <button aria-label="Turn into Heading 1"
                       onClick={() => {
                         updateBlockType(block.id, 'heading', { level: 1 });
                         setActiveMenuId(null);
@@ -152,7 +152,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                     >
                       <Heading1 className="w-3.5 h-3.5" /> Heading 1
                     </button>
-                    <button
+                    <button aria-label="Turn into Heading 2"
                       onClick={() => {
                         updateBlockType(block.id, 'heading', { level: 2 });
                         setActiveMenuId(null);
@@ -161,7 +161,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                     >
                       <Heading2 className="w-3.5 h-3.5" /> Heading 2
                     </button>
-                    <button
+                    <button aria-label="Turn into Heading 3"
                       onClick={() => {
                         updateBlockType(block.id, 'heading', { level: 3 });
                         setActiveMenuId(null);
@@ -170,7 +170,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                     >
                       <Heading3 className="w-3.5 h-3.5" /> Heading 3
                     </button>
-                    <button
+                    <button aria-label="Turn into Kanban Board"
                       onClick={() => {
                         updateBlockType(block.id, 'kanban', { kanbanTitle: 'Kanban Board', columns: [] });
                         setActiveMenuId(null);
@@ -179,14 +179,14 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                     >
                       <Columns className="w-3.5 h-3.5" /> Kanban Board
                     </button>
-                    <button
+                    <button aria-label="Insert AI Widget"
                       onClick={() => handleAddWidget(block.id)}
                       className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-indigo-600 dark:text-indigo-400"
                     >
                       <Cpu className="w-3.5 h-3.5" /> Insert AI Widget
                     </button>
                     <div className="border-t border-slate-100 dark:border-zinc-800 my-1"></div>
-                    <button
+                    <button aria-label="Delete block"
                       onClick={() => {
                         deleteBlock(block.id);
                         setActiveMenuId(null);
@@ -392,19 +392,19 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                     <div className="h-8 border-b border-slate-100 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-900/50 px-3 flex items-center justify-between text-[10px] font-mono text-slate-400">
                       <span>Widget Render Sandbox</span>
                       <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center gap-3">
-                        <button
+                        <button aria-label="Edit widget code"
                           onClick={() => handleEditClick(block.id, block.properties?.srcDoc || '')}
                           className="text-indigo-500 hover:text-indigo-600 dark:text-indigo-400 dark:hover:text-indigo-300 font-sans flex items-center gap-1 cursor-pointer font-medium"
                         >
                           ✎ Edit
                         </button>
-                        <button
+                        <button aria-label="Rerun widget"
                           onClick={() => handleRerun(block.id)}
                           className="text-indigo-500 hover:text-indigo-600 dark:text-indigo-400 dark:hover:text-indigo-300 font-sans flex items-center gap-1 cursor-pointer font-medium"
                         >
                           ↻ Rerun
                         </button>
-                        <button
+                        <button aria-label="Delete widget"
                           onClick={() => deleteBlock(block.id)}
                           className="text-red-400 hover:text-red-500 font-sans cursor-pointer font-medium"
                         >
@@ -422,13 +422,13 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                           placeholder="Write widget code here..."
                         />
                         <div className="flex justify-end gap-2">
-                          <button
+                          <button aria-label="Close widget editor"
                             onClick={() => setEditingWidgetId(null)}
                             className="px-2 py-1 text-[10px] font-sans font-medium text-slate-500 hover:text-slate-700 dark:text-zinc-400 dark:hover:text-zinc-200 cursor-pointer"
                           >
                             Close
                           </button>
-                          <button
+                          <button aria-label="Run widget code"
                             onClick={() => {
                               const newCode = editorCode[block.id] ?? block.properties?.srcDoc ?? '';
                               updateBlockType(block.id, 'widget', { ...block.properties, srcDoc: newCode });
@@ -450,13 +450,13 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                         <p className="text-xs font-semibold text-red-700 dark:text-rose-300">Widget Render Failed</p>
                         <p className="text-[10px] font-mono text-red-500 max-w-md break-all">{widgetErrors[block.id].message}</p>
                         <div className="flex gap-2 mt-1">
-                          <button
+                          <button aria-label="Edit widget code"
                             onClick={() => handleEditClick(block.id, block.properties?.srcDoc || '')}
                             className="px-3 py-1 bg-white hover:bg-slate-50 dark:bg-zinc-800 dark:hover:bg-zinc-700 border border-slate-200 dark:border-zinc-700 text-slate-700 dark:text-zinc-200 rounded-lg text-[10px] font-semibold transition-colors cursor-pointer"
                           >
                             Edit Code
                           </button>
-                          <button
+                          <button aria-label="Retry widget render"
                             onClick={() => handleRerun(block.id)}
                             className="px-3 py-1 bg-red-600 hover:bg-red-500 text-white rounded-lg text-[10px] font-semibold transition-colors cursor-pointer"
                           >

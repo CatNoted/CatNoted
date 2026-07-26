@@ -298,7 +298,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           <span className="text-4xl mb-3">📝</span>
           <p className="text-sm font-medium">This document is empty</p>
           <p className="text-xs mt-1">Start typing or type '/' for commands</p>
-          <button
+          <button aria-label="Create first block"
             onClick={() => handleCreateBlock('root')}
             className="mt-4 px-4 py-1.5 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-md text-xs font-semibold hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition-colors"
           >
@@ -366,7 +366,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               ) : (
                 <div className="max-h-60 overflow-y-auto space-y-2 pr-2 scrollbar-thin">
                   {backlinks.map((backlink) => (
-                    <button
+                    <button aria-label={`Go to backlink ${backlink.pageId}`}
                       key={backlink.blockId}
                       type="button"
                       onClick={() => {

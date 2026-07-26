@@ -67,11 +67,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
     const SectionIcon = icon;
     return (
       <div className="mb-2">
-        <button
+        <button aria-label={collapsed ? `Expand ${label}` : `Collapse ${label}`}
           type="button"
           onClick={() => setCollapsed(!collapsed)}
           className={`${sectionClassName} flex items-center justify-between w-full px-3 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-850 transition-all gap-x-2 group`}
-          aria-label={collapsed ? `Expand ${label}` : `Collapse ${label}`}
           aria-expanded={!collapsed}
         >
           <span className="flex items-center gap-x-2">
@@ -99,7 +98,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
       </div>
 
       <div className="px-3 py-1.5 space-y-0.5">
-        <button
+        <button aria-label="Doc Mode"
           type="button"
           onClick={() => onModeChange('doc')}
           className={`${itemClassName} ${activeMode === 'doc' ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
@@ -107,7 +106,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           <FileText className={`${getItemIconClass(activeMode === 'doc')} w-4 h-4`} />
           <span className="truncate">Doc Mode</span>
         </button>
-        <button
+        <button aria-label="Canvas"
           type="button"
           onClick={() => onModeChange('canvas')}
           className={`${itemClassName} ${activeMode === 'canvas' ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
@@ -115,7 +114,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           <LayoutGrid className={`${getItemIconClass(activeMode === 'canvas')} w-4 h-4`} />
           <span className="truncate">Canvas</span>
         </button>
-        <button
+        <button aria-label="Graph"
           type="button"
           onClick={() => onModeChange('graph')}
           className={`${itemClassName} ${activeMode === 'graph' ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
@@ -123,7 +122,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           <Network className={`${getItemIconClass(activeMode === 'graph')} w-4 h-4`} />
           <span className="truncate">Graph</span>
         </button>
-        <button
+        <button aria-label="Journals"
           type="button"
           onClick={() => onModeChange('journals')}
           className={`${itemClassName} ${activeMode === 'journals' ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
@@ -131,7 +130,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           <Calendar className={`${getItemIconClass(activeMode === 'journals')} w-4 h-4`} />
           <span className="truncate">Journals</span>
         </button>
-        <button
+        <button aria-label="Settings"
           type="button"
           onClick={() => onModeChange('settings')}
           className={`${itemClassName} ${activeMode === 'settings' ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
@@ -165,7 +164,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                   {/* Hover Actions */}
                   <div className="opacity-0 group-hover/sidebar-row:opacity-100 flex items-center gap-1 transition-opacity shrink-0">
                     {node.id !== 'root-doc-node' && (
-                      <button
+                      <button aria-label="Delete page"
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
@@ -174,19 +173,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                           }
                         }}
                         className="p-1 rounded text-slate-400 hover:text-red-500 hover:bg-slate-200 dark:hover:bg-zinc-800 transition-colors"
-                        aria-label="Delete page"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     )}
-                    <button
+                    <button aria-label="More options"
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
                         alert('More options');
                       }}
                       className="p-1 rounded text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 hover:bg-slate-200 dark:hover:bg-zinc-800 transition-colors"
-                      aria-label="More options"
                     >
                       <MoreHorizontal className="w-3.5 h-3.5" />
                     </button>
@@ -195,7 +192,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
               ))
             ) : (
               <>
-                <button
+                <button aria-label="Getting Started"
                   type="button"
                   onClick={() => onModeChange('doc')}
                   className={itemClassName}
@@ -203,7 +200,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                   <FileText className={`${getItemIconClass(false)} w-4 h-4`} />
                   <span className="truncate">Getting Started</span>
                 </button>
-                <button
+                <button aria-label="Architecture Specs"
                   type="button"
                   onClick={() => onModeChange('doc')}
                   className={itemClassName}
@@ -235,7 +232,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                   {/* Hover Actions */}
                   <div className="opacity-0 group-hover/sidebar-row:opacity-100 flex items-center gap-1 transition-opacity shrink-0">
                     {node.id !== 'root-doc-node' && (
-                      <button
+                      <button aria-label="Delete page"
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
@@ -244,19 +241,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                           }
                         }}
                         className="p-1 rounded text-slate-400 hover:text-red-500 hover:bg-slate-200 dark:hover:bg-zinc-800 transition-colors"
-                        aria-label="Delete page"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     )}
-                    <button
+                    <button aria-label="More options"
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
                         alert('More options');
                       }}
                       className="p-1 rounded text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 hover:bg-slate-200 dark:hover:bg-zinc-800 transition-colors"
-                      aria-label="More options"
                     >
                       <MoreHorizontal className="w-3.5 h-3.5" />
                     </button>
@@ -265,7 +260,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
               ))
             ) : (
               <>
-                <button
+                <button aria-label="Folders"
                   type="button"
                   onClick={() => onModeChange('doc')}
                   className={itemClassName}
@@ -273,7 +268,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                   <FolderOpen className={`${getItemIconClass(false)} w-4 h-4`} />
                   <span className="truncate">Folders</span>
                 </button>
-                <button
+                <button aria-label="Getting Started"
                   type="button"
                   onClick={() => onModeChange('doc')}
                   className={`${itemClassName} pl-6`}
@@ -281,7 +276,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                   <FileText className={`${getItemIconClass(false)} w-4 h-4`} />
                   <span className="truncate">Getting Started</span>
                 </button>
-                <button
+                <button aria-label="Architecture Specs"
                   type="button"
                   onClick={() => onModeChange('doc')}
                   className={`${itemClassName} pl-6`}
@@ -296,11 +291,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
 
         {renderSection('Tags', tagsCollapsed, setTagsCollapsed, Tag, (
           <div className="flex flex-wrap gap-1.5 p-2">
-            <button type="button" onClick={() => onModeChange('doc')} className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors">
+            <button aria-label="Product tag" type="button" onClick={() => onModeChange('doc')} className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors">
               <Tag className="w-3 h-3 text-amber-500" />
               <span>product</span>
             </button>
-            <button type="button" onClick={() => onModeChange('doc')} className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors">
+            <button aria-label="Engineering tag" type="button" onClick={() => onModeChange('doc')} className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors">
               <Tag className="w-3 h-3 text-amber-500" />
               <span>engineering</span>
             </button>
@@ -309,11 +304,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
 
         {renderSection('Collections', collectionsCollapsed, setCollectionsCollapsed, LayoutGrid, (
           <>
-            <button type="button" onClick={() => onModeChange('doc')} className={itemClassName}>
+            <button aria-label="Design Review collection" type="button" onClick={() => onModeChange('doc')} className={itemClassName}>
               <LayoutGrid className={`${getItemIconClass(false)} w-4 h-4 text-indigo-500`} />
               <span className="truncate">Design Review</span>
             </button>
-            <button type="button" onClick={() => onModeChange('doc')} className={itemClassName}>
+            <button aria-label="Weekly Sync collection" type="button" onClick={() => onModeChange('doc')} className={itemClassName}>
               <LayoutGrid className={`${getItemIconClass(false)} w-4 h-4 text-emerald-500`} />
               <span className="truncate">Weekly Sync</span>
             </button>
@@ -322,11 +317,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
 
         {renderSection('Others', othersCollapsed, setOthersCollapsed, CircleHelp, (
           <>
-            <button type="button" onClick={() => onModeChange('doc')} className={itemClassName}>
+            <button aria-label="Read Only Docs" type="button" onClick={() => onModeChange('doc')} className={itemClassName}>
               <CircleHelp className={`${getItemIconClass(false)} w-4 h-4`} />
               <span className="truncate">Read Only Docs</span>
             </button>
-            <button type="button" onClick={() => onModeChange('doc')} className={itemClassName}>
+            <button aria-label="Shared Room" type="button" onClick={() => onModeChange('doc')} className={itemClassName}>
               <FolderOpen className={`${getItemIconClass(false)} w-4 h-4`} />
               <span className="truncate">Shared Room</span>
             </button>
@@ -335,7 +330,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
       </div>
 
       <div className="border-t border-slate-200 dark:border-zinc-800 p-3 space-y-1">
-        <button
+        <button aria-label="New page"
           type="button"
           onClick={() => onModeChange('doc')}
           className={`${itemClassName} text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/30`}
@@ -345,7 +340,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           <span className="truncate">New Page</span>
         </button>
 
-        <button
+        <button aria-label="Import"
           type="button"
           onClick={() => onModeChange('doc')}
           className={itemClassName}
@@ -355,7 +350,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           <span className="truncate">Import</span>
         </button>
 
-        <button
+        <button aria-label="Template"
           type="button"
           onClick={() => onModeChange('doc')}
           className={itemClassName}
@@ -365,7 +360,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           <span className="truncate">Template</span>
         </button>
 
-        <button
+        <button aria-label="Trash"
           type="button"
           onClick={() => onModeChange('doc')}
           className={itemClassName}
@@ -375,7 +370,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           <span className="truncate text-red-600 dark:text-red-400">Trash</span>
         </button>
 
-        <button
+        <button aria-label="Learn more"
           type="button"
           onClick={() => onModeChange('doc')}
           className={itemClassName}
