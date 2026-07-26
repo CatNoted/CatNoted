@@ -58,7 +58,7 @@ const PRESET_ICONS = [
 
 export const PageHeader: React.FC<PageHeaderProps> = ({
   title,
-  icon = '📄',
+  icon,
   coverUrl,
   createdAt,
   blocksCount = 0,
@@ -95,12 +95,215 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
       })
     : null;
 
+  const renderEmojiPickerDropdown = () => (
+    <div
+      ref={emojiMenuRef}
+      className="absolute left-0 top-full mt-2 z-50 p-4 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-2xl w-72 text-left select-none animate-in fade-in-50 duration-200"
+    >
+      <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-150 dark:border-zinc-800">
+        <span className="text-xs font-bold text-slate-700 dark:text-zinc-300">
+          Choose Icon or Emoji
+        </span>
+        {icon && (
+          <button
+            type="button"
+            onClick={() => {
+              onIconChange(undefined);
+              setShowEmojiPicker(false);
+            }}
+            className="text-[10px] text-red-500 hover:underline font-semibold"
+          >
+            Remove
+          </button>
+        )}
+      </div>
+
+      <div className="mb-3.5">
+        <span className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase block mb-1.5">
+          Common Icons
+        </span>
+        <div className="grid grid-cols-5 gap-1.5">
+          {PRESET_ICONS.map((iconName) => {
+            const IconComponent = (LucideIcons as any)[iconName];
+            return (
+              <button
+                key={iconName}
+                type="button"
+                onClick={() => {
+                  onIconChange(`lucide:${iconName}`);
+                  setShowEmojiPicker(false);
+                }}
+                className="p-1.5 text-slate-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg transition-transform hover:scale-110 flex items-center justify-center border border-slate-100 dark:border-zinc-800/40"
+                title={iconName}
+              >
+                {IconComponent && <IconComponent className="w-4 h-4" />}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div>
+        <span className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase block mb-1.5">
+          Emojis
+        </span>
+        <div className="grid grid-cols-6 gap-1 max-h-40 overflow-y-auto pr-1">
+          {PRESET_EMOJIS.map((emoji) => (
+            <button
+              key={emoji}
+              type="button"
+              onClick={() => {
+                onIconChange(emoji);
+                setShowEmojiPicker(false);
+              }}
+              className="text-xl p-1.5 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg transition-transform hover:scale-110 flex items-center justify-center"
+            >
+              {emoji}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderCoverPickerDropdown = () => (
+    <div
+      ref={coverMenuRef}
+      className="absolute left-0 top-full mt-2 z-50 p-4 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-2xl w-80 text-left select-none animate-in fade-in-50 duration-200"
+    >
+      <div className="flex items-center justify-between pb-2 mb-3 border-b border-slate-100 dark:border-zinc-800">
+        <span className="text-xs font-bold text-slate-700 dark:text-zinc-300">
+          Page Cover Settings
+        </span>
+        {coverUrl && (
+          <button
+            type="button"
+            onClick={() => {
+              onCoverChange(undefined);
+              setShowCoverPicker(false);
+            }}
+            className="text-[10px] text-red-500 hover:text-red-600 font-semibold"
+          >
+            Remove
+          </button>
+        )}
+      </div>
+
+      <div className="space-y-4">
+        <div className="space-y-3 bg-slate-50 dark:bg-zinc-950 p-2.5 rounded-xl border border-slate-150 dark:border-zinc-800/60">
+          <div>
+            <label className="block text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase mb-1">
+              Upload Cover File
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onload = (event) => {
+                    if (event.target?.result) {
+                      onCoverChange(event.target.result as string);
+                      setShowCoverPicker(false);
+                    }
+                  };
+                  reader.readAsDataURL(file);
+                }
+              }}
+              className="block w-full text-[10px] text-slate-500 dark:text-zinc-400
+                file:mr-2 file:py-1 file:px-2.5
+                file:rounded-md file:border-0
+                file:text-[10px] file:font-semibold
+                file:bg-indigo-50 file:text-indigo-600
+                dark:file:bg-zinc-800 dark:file:text-zinc-300
+                hover:file:bg-indigo-100 dark:hover:file:bg-zinc-700
+                cursor-pointer"
+            />
+          </div>
+
+          <div className="border-t border-slate-200/60 dark:border-zinc-800/40 my-1"></div>
+
+          <div>
+            <label className="block text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase mb-1">
+              Or Paste Cover URL
+            </label>
+            <div className="flex gap-1.5">
+              <input
+                type="text"
+                placeholder="https://images.unsplash.com/..."
+                value={coverInputUrl}
+                onChange={(e) => setCoverInputUrl(e.target.value)}
+                className="flex-1 text-[11px] px-2 py-1 border border-slate-200 dark:border-zinc-800 rounded-lg bg-white dark:bg-zinc-900 text-slate-800 dark:text-zinc-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  if (coverInputUrl.trim()) {
+                    onCoverChange(coverInputUrl.trim());
+                    setCoverInputUrl('');
+                    setShowCoverPicker(false);
+                  }
+                }}
+                className="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-[10px] font-semibold transition-colors"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <span className="block text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase mb-1.5">
+            Gradient Presets
+          </span>
+          <div className="grid grid-cols-3 gap-1.5">
+            {PRESET_GRADIENTS.map((gradient, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => {
+                  onCoverChange(gradient);
+                  setShowCoverPicker(false);
+                }}
+                className="h-9 rounded-lg border border-slate-200/50 dark:border-zinc-800 hover:scale-105 transition-transform"
+                style={{ background: gradient }}
+                title={`Gradient ${i + 1}`}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <span className="block text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase mb-1.5">
+            Photo Presets
+          </span>
+          <div className="grid grid-cols-3 gap-1.5">
+            {PRESET_COVERS.map((url, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => {
+                  onCoverChange(url);
+                  setShowCoverPicker(false);
+                }}
+                className="h-10 rounded-lg overflow-hidden border border-slate-200/50 dark:border-zinc-800 hover:scale-105 transition-transform"
+              >
+                <img src={url} alt={`Preset ${i + 1}`} className="w-full h-full object-cover" />
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="group/header relative w-full mb-6 select-none">
+    <div className="group/header relative w-full mb-8 select-none">
       {/* Cover Image Banner */}
-      <div className="relative w-full h-44 sm:h-52 rounded-2xl overflow-hidden mb-5 shadow-sm border border-slate-200/50 dark:border-zinc-800/50 transition-all bg-slate-100 dark:bg-zinc-800/40">
-        {coverUrl ? (
-          coverUrl.startsWith('linear-gradient') ? (
+      {coverUrl ? (
+        <div className="relative w-full h-44 sm:h-52 rounded-2xl overflow-hidden mb-6 bg-slate-100 dark:bg-zinc-800/40">
+          {coverUrl.startsWith('linear-gradient') ? (
             <div className="w-full h-full" style={{ background: coverUrl }} />
           ) : (
             <img
@@ -108,20 +311,18 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
               alt="Page cover"
               className="w-full h-full object-cover animate-fade-in"
             />
-          )
-        ) : null}
+          )}
 
-        {/* Cover Actions Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover/header:opacity-100 transition-opacity flex items-end justify-end p-3 gap-2 z-10">
-          <button
-            type="button"
-            onClick={() => setShowCoverPicker(!showCoverPicker)}
-            className="px-2.5 py-1.5 bg-black/60 hover:bg-black/80 text-white rounded-lg text-xs font-medium backdrop-blur-md transition-all flex items-center gap-1.5 shadow-sm"
-          >
-            <LucideIcons.Image className="w-3.5 h-3.5" />
-            {coverUrl ? 'Change cover' : 'Add cover'}
-          </button>
-          {coverUrl && (
+          {/* Cover Actions Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover/header:opacity-100 transition-opacity flex items-end justify-end p-3 gap-2 z-10">
+            <button
+              type="button"
+              onClick={() => setShowCoverPicker(!showCoverPicker)}
+              className="px-2.5 py-1.5 bg-black/60 hover:bg-black/80 text-white rounded-lg text-xs font-medium backdrop-blur-md transition-all flex items-center gap-1.5 shadow-sm"
+            >
+              <LucideIcons.Image className="w-3.5 h-3.5" />
+              Change cover
+            </button>
             <button
               type="button"
               onClick={() => onCoverChange(undefined)}
@@ -130,291 +331,112 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
               <LucideIcons.Trash2 className="w-3.5 h-3.5" />
               Remove cover
             </button>
+          </div>
+
+          {/* Cover Picker Modal (when cover exists) */}
+          {showCoverPicker && (
+            <div className="absolute right-3 top-14 z-50">
+              {renderCoverPickerDropdown()}
+            </div>
           )}
         </div>
+      ) : null}
+
+      {/* Spacing & Hover Actions Bar (Add Icon / Add Cover) */}
+      <div className="flex items-center gap-4 mb-4 h-8 text-slate-400 dark:text-zinc-500">
+        {!icon && (
+          <div className="relative inline-block">
+            <button
+              type="button"
+              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-zinc-800/50 hover:text-slate-700 dark:hover:text-zinc-200 rounded-lg transition-colors"
+            >
+              <LucideIcons.Smile className="w-4 h-4" />
+              Add icon
+            </button>
+
+            {showEmojiPicker && renderEmojiPickerDropdown()}
+          </div>
+        )}
+
+        {!coverUrl && (
+          <div className="relative inline-block">
+            <button
+              type="button"
+              onClick={() => setShowCoverPicker(!showCoverPicker)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-zinc-800/50 hover:text-slate-700 dark:hover:text-zinc-200 rounded-lg transition-colors"
+            >
+              <LucideIcons.Image className="w-4 h-4" />
+              Add cover
+            </button>
+
+            {showCoverPicker && renderCoverPickerDropdown()}
+          </div>
+        )}
       </div>
 
-      {/* Cover Picker Modal */}
-      {showCoverPicker && (
-        <div
-          ref={coverMenuRef}
-          className="absolute right-0 top-14 z-50 p-4 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-2xl w-80 text-left select-none animate-in fade-in-50 duration-200"
-        >
-          <div className="flex items-center justify-between pb-2 mb-3 border-b border-slate-100 dark:border-zinc-800">
-            <span className="text-xs font-bold text-slate-700 dark:text-zinc-300">
-              Page Cover Settings
-            </span>
-            {coverUrl && (
-              <button
-                type="button"
-                onClick={() => {
-                  onCoverChange(undefined);
-                  setShowCoverPicker(false);
-                }}
-                className="text-[10px] text-red-500 hover:text-red-600 font-semibold"
-              >
-                Remove
-              </button>
-            )}
-          </div>
+      {/* Page Icon (if icon is set) - stacked vertically above title */}
+      {icon && (
+        <div className="relative inline-block mb-4">
+          <button
+            type="button"
+            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+            className="text-[44px] p-2 rounded-xl
+              border border-transparent
+              hover:bg-slate-100 dark:hover:bg-zinc-800/60
+              transition-colors cursor-pointer select-none
+              flex items-center justify-center
+              h-[64px] w-[64px]"
+            title="Change icon"
+          >
+            {renderPageIcon(icon, "w-12 h-12 text-indigo-600 dark:text-indigo-400")}
+          </button>
 
-          <div className="space-y-4">
-            <div className="space-y-3 bg-slate-50 dark:bg-zinc-950 p-2.5 rounded-xl border border-slate-150 dark:border-zinc-800/60">
-              <div>
-                <label className="block text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase mb-1">
-                  Upload Cover File
-                </label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      const reader = new FileReader();
-                      reader.onload = (event) => {
-                        if (event.target?.result) {
-                          onCoverChange(event.target.result as string);
-                          setShowCoverPicker(false);
-                        }
-                      };
-                      reader.readAsDataURL(file);
-                    }
-                  }}
-                  className="block w-full text-[10px] text-slate-500 dark:text-zinc-400
-                    file:mr-2 file:py-1 file:px-2.5
-                    file:rounded-md file:border-0
-                    file:text-[10px] file:font-semibold
-                    file:bg-indigo-50 file:text-indigo-600
-                    dark:file:bg-zinc-800 dark:file:text-zinc-300
-                    hover:file:bg-indigo-100 dark:hover:file:bg-zinc-700
-                    cursor-pointer"
-                />
-              </div>
-
-              <div className="border-t border-slate-200/60 dark:border-zinc-800/40 my-1"></div>
-
-              <div>
-                <label className="block text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase mb-1">
-                  Or Paste Cover URL
-                </label>
-                <div className="flex gap-1.5">
-                  <input
-                    type="text"
-                    placeholder="https://images.unsplash.com/..."
-                    value={coverInputUrl}
-                    onChange={(e) => setCoverInputUrl(e.target.value)}
-                    className="flex-1 text-[11px] px-2 py-1 border border-slate-200 dark:border-zinc-800 rounded-lg bg-white dark:bg-zinc-900 text-slate-800 dark:text-zinc-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (coverInputUrl.trim()) {
-                        onCoverChange(coverInputUrl.trim());
-                        setCoverInputUrl('');
-                        setShowCoverPicker(false);
-                      }
-                    }}
-                    className="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-[10px] font-semibold transition-colors"
-                  >
-                    Save
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <span className="block text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase mb-1.5">
-                Gradient Presets
-              </span>
-              <div className="grid grid-cols-3 gap-1.5">
-                {PRESET_GRADIENTS.map((gradient, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    onClick={() => {
-                      onCoverChange(gradient);
-                      setShowCoverPicker(false);
-                    }}
-                    className="h-9 rounded-lg border border-slate-200/50 dark:border-zinc-800 hover:scale-105 transition-transform"
-                    style={{ background: gradient }}
-                    title={`Gradient ${i + 1}`}
-                  />
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <span className="block text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase mb-1.5">
-                Photo Presets
-              </span>
-              <div className="grid grid-cols-3 gap-1.5">
-                {PRESET_COVERS.map((url, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    onClick={() => {
-                      onCoverChange(url);
-                      setShowCoverPicker(false);
-                    }}
-                    className="h-10 rounded-lg overflow-hidden border border-slate-200/50 dark:border-zinc-800 hover:scale-105 transition-transform"
-                  >
-                    <img src={url} alt={`Preset ${i + 1}`} className="w-full h-full object-cover" />
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
+          {/* Emoji Picker Dropdown */}
+          {showEmojiPicker && renderEmojiPickerDropdown()}
         </div>
       )}
 
-      {/* Main Doc Header Row */}
-      <div className="flex items-start gap-3">
-        {/* Page Icon Button */}
-        <div className="relative inline-block shrink-0">
-          {icon ? (
-            <button
-              type="button"
-              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-              className="text-[26px] p-2 rounded-xl
-                border border-transparent
-                hover:border-slate-200 dark:hover:border-zinc-700
-                hover:bg-slate-100 dark:hover:bg-zinc-800/60
-                transition-colors cursor-pointer select-none
-                flex items-center justify-center
-                h-[56px] w-[56px]"
-              title="Change icon"
-            >
-              {renderPageIcon(icon, "w-10 h-10 text-indigo-600 dark:text-indigo-400")}
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-              className="text-2xl p-2 rounded-xl
-                border border-dashed border-slate-300 dark:border-zinc-700
-                text-slate-400 hover:text-indigo-500 hover:border-indigo-400
-                transition-colors flex items-center gap-1.5"
-            >
-              <LucideIcons.Smile className="w-5 h-5" />
-              <span className="text-xs font-medium">Icon</span>
-            </button>
-          )}
-
-          {/* Emoji / Icon Picker Dropdown */}
-          {showEmojiPicker && (
-            <div
-              ref={emojiMenuRef}
-              className="absolute left-0 top-full mt-1.5 z-50 p-4 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-2xl w-72 text-left"
-            >
-              <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-150 dark:border-zinc-800">
-                <span className="text-xs font-bold text-slate-700 dark:text-zinc-300">
-                  Choose Icon or Emoji
-                </span>
-                {icon && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onIconChange(undefined);
-                      setShowEmojiPicker(false);
-                    }}
-                    className="text-[10px] text-red-500 hover:underline font-semibold"
-                  >
-                    Remove
-                  </button>
-                )}
-              </div>
-
-              <div className="mb-3.5">
-                <span className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase block mb-1.5">
-                  Common Icons
-                </span>
-                <div className="grid grid-cols-5 gap-1.5">
-                  {PRESET_ICONS.map((iconName) => {
-                    const IconComponent = (LucideIcons as any)[iconName];
-                    return (
-                      <button
-                        key={iconName}
-                        type="button"
-                        onClick={() => {
-                          onIconChange(`lucide:${iconName}`);
-                          setShowEmojiPicker(false);
-                        }}
-                        className="p-1.5 text-slate-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg transition-transform hover:scale-110 flex items-center justify-center border border-slate-100 dark:border-zinc-800/40"
-                        title={iconName}
-                      >
-                        {IconComponent && <IconComponent className="w-4 h-4" />}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div>
-                <span className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase block mb-1.5">
-                  Emojis
-                </span>
-                <div className="grid grid-cols-6 gap-1 max-h-40 overflow-y-auto pr-1">
-                  {PRESET_EMOJIS.map((emoji) => (
-                    <button
-                      key={emoji}
-                      type="button"
-                      onClick={() => {
-                        onIconChange(emoji);
-                        setShowEmojiPicker(false);
-                      }}
-                      className="text-xl p-1.5 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg transition-transform hover:scale-110 flex items-center justify-center"
-                    >
-                      {emoji}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Editable Document Title */}
-        <div className="flex-1 min-w-0 pt-1">
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => onTitleChange(e.target.value)}
-            placeholder="Untitled"
-            className="w-full
-              text-[clamp(32px,3.8vw,44px)]
-              font-bold
-              text-slate-900 dark:text-zinc-100
-              bg-transparent border-none outline-none focus:ring-0 p-0
-              placeholder-slate-300 dark:placeholder-zinc-600
-              tracking-tight leading-snug"
-          />
-        </div>
+      {/* Editable Document Title */}
+      <div className="w-full">
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => onTitleChange(e.target.value)}
+          placeholder="Untitled"
+          className="w-full
+            text-4xl sm:text-5xl
+            font-extrabold
+            text-slate-900 dark:text-zinc-100
+            bg-transparent border-none outline-none focus:ring-0 p-0
+            placeholder-slate-300 dark:placeholder-zinc-600
+            tracking-tight leading-tight"
+        />
       </div>
 
       {/* Metadata Row */}
-      <div
-        className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-medium text-slate-400 dark:text-zinc-500"
-      >
-        {formattedDate ? (
-          <span className="inline-flex items-center gap-1">
+      <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs font-medium text-slate-500 dark:text-zinc-400 border-t border-slate-100/50 dark:border-zinc-800/30 pt-4">
+        {formattedDate && (
+          <span className="inline-flex items-center gap-1.5">
+            <LucideIcons.Calendar className="w-3.5 h-3.5 opacity-80" />
             <span className="opacity-70">Created</span>
-            <span className="text-slate-500 dark:text-zinc-400">{formattedDate}</span>
+            <span className="text-slate-700 dark:text-zinc-300">{formattedDate}</span>
           </span>
-        ) : null}
-        <span className="hidden sm:inline opacity-30">|</span>
-        <span className="inline-flex items-center gap-1">
+        )}
+        <span className="inline-flex items-center gap-1.5">
+          <LucideIcons.FileText className="w-3.5 h-3.5 opacity-80" />
           <span className="opacity-70">Words</span>
-          <span className="text-slate-500 dark:text-zinc-400">{wordCount}</span>
+          <span className="text-slate-700 dark:text-zinc-300">{wordCount}</span>
         </span>
-        <span className="hidden sm:inline opacity-30">|</span>
-        <span className="inline-flex items-center gap-1">
+        <span className="inline-flex items-center gap-1.5">
+          <LucideIcons.Clock className="w-3.5 h-3.5 opacity-80" />
           <span className="opacity-70">Read</span>
-          <span className="text-slate-500 dark:text-zinc-400">{readingTime} min</span>
+          <span className="text-slate-700 dark:text-zinc-300">{readingTime} min</span>
         </span>
-        <span className="hidden sm:inline opacity-30">|</span>
-        <span className="inline-flex items-center gap-1">
+        <span className="inline-flex items-center gap-1.5">
+          <LucideIcons.LayoutGrid className="w-3.5 h-3.5 opacity-80" />
           <span className="opacity-70">Blocks</span>
-          <span className="text-slate-500 dark:text-zinc-400">{blocksCount}</span>
+          <span className="text-slate-700 dark:text-zinc-300">{blocksCount}</span>
         </span>
       </div>
     </div>
