@@ -60,3 +60,7 @@ catnoted_vfs*
 .env*
 /.jules/
 apps/web/storybook-static
+
+# playwright
+/playwright-report
+/test-results

@@ -834,64 +834,70 @@ if (isSearchOpen && searchQuery) {
       {/* Pane 1.5: Workspace Sidebar (Recent & Collapsible Page Tree) - Hidden in Zen Mode */}
       {!zenMode && (
         <aside
-          style={{ width: isSidebarCollapsed ? 0 : sidebarWidth }}
+          style={{ width: isSidebarCollapsed ? 56 : sidebarWidth }}
           className={`border-r border-soft dark:border-soft bg-surface dark:bg-surface z-20 shrink-0 flex flex-col h-full text-sm overflow-hidden ${
             isSidebarResizing ? '' : 'transition-[width,opacity] duration-300 ease-in-out'
-          } ${
-            isSidebarCollapsed ? 'opacity-0 pointer-events-none' : 'opacity-100'
           }`}
         >
-          {/* Sidebar Header */}
-          <div className="h-14 px-4 border-b border-soft dark:border-soft flex items-center justify-between gap-2 shrink-0">
-            {/* Workspace Switcher Button */}
-            <div className="relative flex-1 min-w-0">
+          <div className="h-14 px-3 border-b border-soft dark:border-soft flex items-center justify-between gap-2 shrink-0">
+            {isSidebarCollapsed ? (
               <button
                 type="button"
-                onClick={() => setIsWorkspaceDropdownOpen(!isWorkspaceDropdownOpen)}
-                title={activeWorkspace}
-                className="font-semibold text-xs text-ink hover:text-ink flex items-center justify-between w-full gap-1.5 py-1 px-2 rounded-lg hover:bg-surface-hover transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                onClick={() => setIsSidebarCollapsed(false)}
+                className="mx-auto flex items-center justify-center w-8 h-8 rounded-lg text-ink hover:bg-surface-hover transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                title="Expand Sidebar"
+                aria-label="Expand Workspace Sidebar"
+                aria-expanded={false}
               >
-                <span className="truncate min-w-0" title={activeWorkspace}>{activeWorkspace}</span>
-                <ChevronDown className="w-3.5 h-3.5 shrink-0" />
+                <span className="w-6 h-6 rounded-md bg-accent text-white text-[10px] font-bold flex items-center justify-center shadow-sm">CN</span>
               </button>
+            ) : (
+              <>
+                <div className="relative flex-1 min-w-0">
+                  <button
+                    type="button"
+                    onClick={() => setIsWorkspaceDropdownOpen(!isWorkspaceDropdownOpen)}
+                    title={activeWorkspace}
+                    className="font-semibold text-xs text-ink hover:text-ink flex items-center justify-between w-full gap-1.5 py-1 px-2 rounded-lg hover:bg-surface-hover transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                  >
+                    <span className="truncate min-w-0" title={activeWorkspace}>{activeWorkspace}</span>
+                    <ChevronDown className="w-3.5 h-3.5 shrink-0" />
+                  </button>
 
-              {/* Workspace Switcher Dropdown */}
-              {isWorkspaceDropdownOpen && (
-                <div className="absolute left-0 mt-1.5 w-48 bg-surface dark:bg-surface border border-soft rounded-xl shadow-lg z-50 py-1 text-xs">
-                  {workspaces.map(ws => (
-                    <button
-                      key={ws}
-                      type="button"
-                      onClick={() => {
-                        setActiveWorkspace(ws);
-                        setIsWorkspaceDropdownOpen(false);
-                      }}
-                      className={`w-full px-3 py-2 text-left hover:bg-surface-soft text-ink flex items-center justify-between ${
-                        activeWorkspace === ws ? 'font-semibold text-ink' : ''
-                      }`}
-                    >
-                      <span>{ws}</span>
-                      {activeWorkspace === ws && <span className="w-1.5 h-1.5 rounded-full bg-accent" />}
-                    </button>
-                  ))}
+                  {isWorkspaceDropdownOpen && (
+                    <div className="absolute left-0 mt-1.5 w-48 bg-surface dark:bg-surface border border-soft rounded-xl shadow-lg z-50 py-1 text-xs">
+                      {workspaces.map(ws => (
+                        <button
+                          key={ws}
+                          type="button"
+                          onClick={() => {
+                            setActiveWorkspace(ws);
+                            setIsWorkspaceDropdownOpen(false);
+                          }}
+                          className={`w-full px-3 py-2 text-left hover:bg-surface-soft text-ink flex items-center justify-between ${
+                            activeWorkspace === ws ? 'font-semibold text-ink' : ''
+                          }`}
+                        >
+                          <span>{ws}</span>
+                          {activeWorkspace === ws && <span className="w-1.5 h-1.5 rounded-full bg-accent" />}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
 
-            {/* Hidden elements to satisfy original AppLayout tests */}
-            <span className="hidden">Workspace Library</span>
-
-            {/* Collapse Sidebar Button */}
-            <button
-              type="button"
-              onClick={() => setIsSidebarCollapsed(true)}
-              className="p-1 rounded-lg text-ink-muted hover:text-ink dark:hover:text-ink-muted hover:bg-surface-hover transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent"
-              title="Collapse Sidebar"
-              aria-label="Collapse Workspace Sidebar"
-              aria-expanded={true}
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
+                <button
+                  type="button"
+                  onClick={() => setIsSidebarCollapsed(true)}
+                  className="p-1 rounded-lg text-ink-muted hover:text-ink dark:hover:text-ink-muted hover:bg-surface-hover transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+                  title="Collapse Sidebar"
+                  aria-label="Collapse Workspace Sidebar"
+                  aria-expanded={true}
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+              </>
+            )}
           </div>
 
           <div className="flex-1 overflow-y-auto overflow-x-hidden min-w-[160px]">
