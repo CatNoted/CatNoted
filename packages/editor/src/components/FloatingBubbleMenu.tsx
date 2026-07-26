@@ -88,7 +88,7 @@ export const FloatingBubbleMenu: React.FC<FloatingBubbleMenuProps> = ({
     <div
       ref={menuRef}
       style={{ top: `${position.top}px`, left: `${position.left}px` }}
-      className="fixed z-[9999] flex items-center gap-0.5 p-1 bg-slate-900/90 dark:bg-zinc-900/95 backdrop-blur-md text-white rounded-xl shadow-2xl border border-slate-700/50 dark:border-zinc-800/80 animate-in fade-in zoom-in-95 duration-150 select-none"
+      className="fixed z-[9999] flex items-center gap-0.5 p-1 bg-card/95 border border-border backdrop-blur-md text-card-foreground rounded-xl shadow-2xl animate-in fade-in zoom-in-95 duration-150 select-none"
     >
       <button
         type="button"
@@ -96,7 +96,7 @@ export const FloatingBubbleMenu: React.FC<FloatingBubbleMenuProps> = ({
           e.preventDefault();
           applyFormat('bold');
         }}
-        className="p-1.5 hover:bg-slate-700 dark:hover:bg-zinc-800 rounded-lg transition-colors text-slate-200 hover:text-white"
+        className="p-1.5 hover:bg-accent rounded-lg transition-colors text-foreground/80 hover:text-foreground"
         title="Bold (Ctrl+B)"
       >
         <Bold className="w-3.5 h-3.5" />
@@ -108,7 +108,7 @@ export const FloatingBubbleMenu: React.FC<FloatingBubbleMenuProps> = ({
           e.preventDefault();
           applyFormat('italic');
         }}
-        className="p-1.5 hover:bg-slate-700 dark:hover:bg-zinc-800 rounded-lg transition-colors text-slate-200 hover:text-white"
+        className="p-1.5 hover:bg-accent rounded-lg transition-colors text-foreground/80 hover:text-foreground"
         title="Italic (Ctrl+I)"
       >
         <Italic className="w-3.5 h-3.5" />
@@ -120,7 +120,7 @@ export const FloatingBubbleMenu: React.FC<FloatingBubbleMenuProps> = ({
           e.preventDefault();
           applyFormat('underline');
         }}
-        className="p-1.5 hover:bg-slate-700 dark:hover:bg-zinc-800 rounded-lg transition-colors text-slate-200 hover:text-white"
+        className="p-1.5 hover:bg-accent rounded-lg transition-colors text-foreground/80 hover:text-foreground"
         title="Underline (Ctrl+U)"
       >
         <Underline className="w-3.5 h-3.5" />
@@ -132,7 +132,7 @@ export const FloatingBubbleMenu: React.FC<FloatingBubbleMenuProps> = ({
           e.preventDefault();
           applyFormat('strikeThrough');
         }}
-        className="p-1.5 hover:bg-slate-700 dark:hover:bg-zinc-800 rounded-lg transition-colors text-slate-200 hover:text-white"
+        className="p-1.5 hover:bg-accent rounded-lg transition-colors text-foreground/80 hover:text-foreground"
         title="Strikethrough"
       >
         <Strikethrough className="w-3.5 h-3.5" />
@@ -144,10 +144,10 @@ export const FloatingBubbleMenu: React.FC<FloatingBubbleMenuProps> = ({
           e.preventDefault();
           const sel = window.getSelection();
           if (sel && !sel.isCollapsed) {
-            applyFormat('insertHTML', `<code class="bg-slate-800 px-1 py-0.5 rounded font-mono text-xs text-amber-400">${sel.toString()}</code>`);
+            applyFormat('insertHTML', `<code class="bg-secondary px-1 py-0.5 rounded font-mono text-xs text-amber-500">${sel.toString()}</code>`);
           }
         }}
-        className="p-1.5 hover:bg-slate-700 dark:hover:bg-zinc-800 rounded-lg transition-colors text-slate-200 hover:text-white"
+        className="p-1.5 hover:bg-accent rounded-lg transition-colors text-foreground/80 hover:text-foreground"
         title="Inline Code"
       >
         <Code className="w-3.5 h-3.5" />
@@ -160,14 +160,14 @@ export const FloatingBubbleMenu: React.FC<FloatingBubbleMenuProps> = ({
             e.preventDefault();
             setShowColorPicker(!showColorPicker);
           }}
-          className="p-1.5 hover:bg-slate-700 dark:hover:bg-zinc-800 rounded-lg transition-colors text-amber-400 hover:text-amber-300"
+          className="p-1.5 hover:bg-accent rounded-lg transition-colors text-amber-500 hover:text-amber-400"
           title="Highlight color"
         >
           <Highlighter className="w-3.5 h-3.5" />
         </button>
 
         {showColorPicker && (
-          <div className="absolute left-0 bottom-full mb-2 p-1.5 bg-slate-900 border border-slate-700 rounded-lg shadow-xl flex items-center gap-1">
+          <div className="absolute left-0 bottom-full mb-2 p-1.5 bg-card border border-border rounded-lg shadow-xl flex items-center gap-1">
             {colors.map((c) => (
               <button
                 key={c.name}
@@ -191,13 +191,13 @@ export const FloatingBubbleMenu: React.FC<FloatingBubbleMenuProps> = ({
           e.preventDefault();
           handleLink();
         }}
-        className="p-1.5 hover:bg-slate-700 dark:hover:bg-zinc-800 rounded-lg transition-colors text-slate-200 hover:text-white"
+        className="p-1.5 hover:bg-accent rounded-lg transition-colors text-foreground/80 hover:text-foreground"
         title="Link"
       >
         <Link className="w-3.5 h-3.5" />
       </button>
 
-      <div className="w-px h-4 bg-slate-700 dark:bg-zinc-700 mx-1" />
+      <div className="w-px h-4 bg-border mx-1" />
 
       {onAskAI && (
         <button
@@ -206,7 +206,7 @@ export const FloatingBubbleMenu: React.FC<FloatingBubbleMenuProps> = ({
             e.preventDefault();
             onAskAI(selectedText);
           }}
-          className="px-2 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-medium flex items-center gap-1 transition-colors shadow-sm"
+          className="px-2 py-1 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg text-xs font-medium flex items-center gap-1 transition-colors shadow-sm"
           title="Ask Space Agent AI"
         >
           <Sparkles className="w-3 h-3 text-amber-300" />

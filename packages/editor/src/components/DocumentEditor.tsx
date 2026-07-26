@@ -341,13 +341,13 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       })}
 
       {/* Backlinks Section */}
-      <div className="mt-12 select-none border-t border-slate-200/40 dark:border-zinc-800/40 pt-8 pb-12">
+      <div className="mt-12 select-none border-t border-border/40 pt-8 pb-12">
         <div className="flex flex-col gap-3">
           {/* Header Row */}
           <button
             type="button"
             onClick={() => setIsBacklinksExpanded(!isBacklinksExpanded)}
-            className="flex items-center gap-2 text-[11px] font-semibold text-slate-400 dark:text-zinc-500 hover:text-slate-600 dark:hover:text-zinc-300 transition-colors uppercase tracking-wider w-fit"
+            className="flex items-center gap-2 text-[11px] font-semibold text-foreground/50 hover:text-foreground transition-colors uppercase tracking-wider w-fit"
             aria-expanded={isBacklinksExpanded}
             aria-label={`${backlinks.length} backlinks`}
           >
@@ -360,7 +360,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           {isBacklinksExpanded && (
             <div className="pl-5">
               {backlinks.length === 0 ? (
-                <p className="text-xs text-slate-400 dark:text-zinc-500 italic font-light">
+                <p className="text-xs text-foreground/50 italic font-light">
                   No pages link to this document.
                 </p>
               ) : (
@@ -374,18 +374,18 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                           onPageSelect(backlink.pageId);
                         }
                       }}
-                      className="w-full text-left p-2.5 rounded-xl border border-slate-100 dark:border-zinc-900/40 bg-slate-50/30 hover:bg-slate-50/80 dark:bg-zinc-900/10 dark:hover:bg-zinc-900/30 hover:border-slate-200 dark:hover:border-zinc-800 transition-all duration-200 flex flex-col gap-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 group"
+                      className="w-full text-left p-2.5 rounded-xl border border-border bg-secondary/10 hover:bg-secondary/20 hover:border-border/80 transition-all duration-200 flex flex-col gap-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary group"
                     >
                       {/* Referencing Page Info */}
                       <div className="flex items-center gap-2">
                         <span className="text-sm shrink-0">{backlink.pageIcon}</span>
-                        <span className="text-xs font-semibold text-slate-700 dark:text-zinc-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors truncate">
+                        <span className="text-xs font-semibold text-foreground/80 group-hover:text-primary transition-colors truncate">
                           {backlink.pageTitle}
                         </span>
                       </div>
 
                       {/* Context Content Block Preview */}
-                      <div className="text-[11px] text-slate-500 dark:text-zinc-400 font-normal leading-relaxed truncate pl-6 border-l border-slate-200 dark:border-zinc-800">
+                      <div className="text-[11px] text-foreground/60 font-normal leading-relaxed truncate pl-6 border-l border-border">
                         {backlink.blockContent}
                       </div>
                     </button>
