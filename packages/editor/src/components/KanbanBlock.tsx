@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { KanbanColumn, KanbanCard } from '@catnoted/shared';
+import { KanbanColumn } from '@catnoted/shared';
 import { Plus, Trash2, GripVertical, GripHorizontal, Columns } from 'lucide-react';
 
 interface KanbanBlockProps {
@@ -48,7 +48,6 @@ export const KanbanBlock: React.FC<KanbanBlockProps> = ({
   const boardTitle = title || '';
 
   const [draggedCardId, setDraggedCardId] = useState<string | null>(null);
-  const [sourceColId, setSourceColId] = useState<string | null>(null);
   const [draggedColId, setDraggedColId] = useState<string | null>(null);
 
   // Drag over states to apply visual styling
@@ -175,7 +174,6 @@ export const KanbanBlock: React.FC<KanbanBlockProps> = ({
   const handleCardDragStart = (e: React.DragEvent, cardId: string, colId: string) => {
     e.stopPropagation();
     setDraggedCardId(cardId);
-    setSourceColId(colId);
     e.dataTransfer.setData('type', 'card');
     e.dataTransfer.setData('cardId', cardId);
     e.dataTransfer.setData('sourceColumnId', colId);
@@ -239,14 +237,12 @@ export const KanbanBlock: React.FC<KanbanBlockProps> = ({
 
       onUpdateProps({ columns: updated });
       setDraggedCardId(null);
-      setSourceColId(null);
     }
   };
 
   const handleDragEnd = () => {
     setDraggedColId(null);
     setDraggedCardId(null);
-    setSourceColId(null);
     setDragOverColId(null);
     setDragOverCardId(null);
   };
