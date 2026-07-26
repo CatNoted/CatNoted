@@ -24,7 +24,7 @@ const App: React.FC = () => {
   const [isZenMode, setIsZenMode] = useState<boolean>(false);
   const [activePage, setActivePage] = useState<string>('root-doc-node');
 
-  const { blocks: rootBlocks, pages, deletedPages, addBlock: addRootBlock, updateBlockContent: updateRootBlockContent } = useDocumentStore('root-doc-node');
+  const { blocks: rootBlocks, pages, deletedPages, addBlock: addRootBlock } = useDocumentStore('root-doc-node');
   const { blocks: activeBlocks, updateBlockContent: updateActiveBlockContent, renamePage } = useDocumentStore(activePage);
 
   const graphData = React.useMemo(() => {
