@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback, useId } from 'react';
-import { Search, FileText, Tag, Clock, X, CornerDownLeft } from 'lucide-react';
+import { Search, FileText, Tag, X, CornerDownLeft } from 'lucide-react';
 import { ActiveMode } from '../layouts/AppLayout.js';
 import { yblocks, ypages, renderPageIcon } from '@catnoted/editor';
 import { parseDocumentGraph } from '@catnoted/graph';
@@ -156,7 +156,7 @@ export const SearchPalette: React.FC<SearchPaletteProps> = ({
       })
       .map(node => ({
         id: node.id,
-        type: (node.type === 'tag' ? 'tag' : 'page') as const,
+        type: (node.type === 'tag' ? 'tag' : 'page') as 'tag' | 'page',
         title: node.rawName || node.label,
         subtitle: node.type === 'tag' ? 'Tag' : 'Ghost Page (not created yet)',
         icon: node.type === 'tag' ? Tag : FileText
