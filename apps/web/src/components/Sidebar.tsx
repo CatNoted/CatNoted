@@ -1,3 +1,10 @@
+/**
+ * z-index layering reference:
+ * - Modals & Overlays (e.g. AuthModal, SettingsModal, CommandPalette): z-[100]
+ * - Floating UI & Rails (e.g. Left/Right rails, Floating Space Agent Panel, FAB): z-20 to z-40
+ * - Workspace / Editor Content (e.g. Doc Editor, Canvas elements): z-0 to z-10
+ */
+
 import React, { useMemo, useState } from 'react';
 import {
   ChevronRight,
@@ -15,6 +22,8 @@ import {
   Plus,
   Network,
   MoreHorizontal,
+  Calendar,
+  Settings,
 } from 'lucide-react';
 import { useDocumentStore } from '@catnoted/editor';
 import { ActiveMode } from '../layouts/AppLayout';
@@ -83,7 +92,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           <div className="w-6 h-6 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-xs shadow-sm">
             CN
           </div>
-          <span className="font-semibold text-[14px] text-slate-800 dark:text-zinc-200 tracking-tight">
+          <span className="font-semibold text-[14px] text-slate-800 dark:text-zinc-200 tracking-tight truncate min-w-[120px]" title="CatNoted Workspace">
             CatNoted Workspace
           </span>
         </div>
@@ -93,7 +102,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         <button
           type="button"
           onClick={() => onModeChange('doc')}
-          className={`${itemClassName} ${activeMode === 'doc' ? 'bg-slate-100 dark:bg-zinc-800/80 text-slate-900 dark:text-white font-semibold' : ''}`}
+          className={`${itemClassName} ${activeMode === 'doc' ? 'bg-slate-100 dark:bg-zinc-800/80 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
         >
           <FileText className={`${getItemIconClass(activeMode === 'doc')} w-4 h-4`} />
           <span className="truncate">Doc Mode</span>
@@ -101,7 +110,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         <button
           type="button"
           onClick={() => onModeChange('canvas')}
-          className={`${itemClassName} ${activeMode === 'canvas' ? 'bg-slate-100 dark:bg-zinc-800/80 text-slate-900 dark:text-white font-semibold' : ''}`}
+          className={`${itemClassName} ${activeMode === 'canvas' ? 'bg-slate-100 dark:bg-zinc-800/80 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
         >
           <LayoutGrid className={`${getItemIconClass(activeMode === 'canvas')} w-4 h-4`} />
           <span className="truncate">Canvas</span>
@@ -109,10 +118,26 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         <button
           type="button"
           onClick={() => onModeChange('graph')}
-          className={`${itemClassName} ${activeMode === 'graph' ? 'bg-slate-100 dark:bg-zinc-800/80 text-slate-900 dark:text-white font-semibold' : ''}`}
+          className={`${itemClassName} ${activeMode === 'graph' ? 'bg-slate-100 dark:bg-zinc-800/80 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
         >
           <Network className={`${getItemIconClass(activeMode === 'graph')} w-4 h-4`} />
           <span className="truncate">Graph</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => onModeChange('journals')}
+          className={`${itemClassName} ${activeMode === 'journals' ? 'bg-slate-100 dark:bg-zinc-800/80 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
+        >
+          <Calendar className={`${getItemIconClass(activeMode === 'journals')} w-4 h-4`} />
+          <span className="truncate">Journals</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => onModeChange('settings')}
+          className={`${itemClassName} ${activeMode === 'settings' ? 'bg-slate-100 dark:bg-zinc-800/80 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
+        >
+          <Settings className={`${getItemIconClass(activeMode === 'settings')} w-4 h-4`} />
+          <span className="truncate">Settings</span>
         </button>
       </div>
 
@@ -128,13 +153,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                 <div
                   key={node.id}
                   onClick={() => onModeChange('doc')}
+                  title={node.title || 'Untitled'}
                   className={`${itemClassName} group/sidebar-row flex items-center justify-between pr-2 cursor-pointer`}
                 >
                   <div className="flex items-center min-w-0 flex-1 gap-x-2.5">
                     <span className="w-4 h-4 shrink-0 flex items-center justify-center text-xs">
                       {node.icon || '📄'}
                     </span>
-                    <span className="truncate">{node.title || 'Untitled'}</span>
+                    <span className="truncate min-w-[120px]">{node.title || 'Untitled'}</span>
                   </div>
                   {/* Hover Actions */}
                   <div className="opacity-0 group-hover/sidebar-row:opacity-100 flex items-center gap-1 transition-opacity shrink-0">
@@ -197,13 +223,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                 <div
                   key={node.id}
                   onClick={() => onModeChange('doc')}
+                  title={node.title || 'Untitled'}
                   className={`${itemClassName} group/sidebar-row flex items-center justify-between pr-2 cursor-pointer`}
                 >
                   <div className="flex items-center min-w-0 flex-1 gap-x-2.5">
                     <span className="w-4 h-4 shrink-0 flex items-center justify-center text-xs">
                       {node.icon || '📄'}
                     </span>
-                    <span className="truncate">{node.title || 'Untitled'}</span>
+                    <span className="truncate min-w-[120px]">{node.title || 'Untitled'}</span>
                   </div>
                   {/* Hover Actions */}
                   <div className="opacity-0 group-hover/sidebar-row:opacity-100 flex items-center gap-1 transition-opacity shrink-0">

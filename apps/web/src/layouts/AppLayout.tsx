@@ -1,3 +1,10 @@
+/**
+ * z-index layering reference:
+ * - Modals & Overlays (e.g. AuthModal, SettingsModal, CommandPalette): z-[100]
+ * - Floating UI & Rails (e.g. Left/Right rails, Floating Space Agent Panel, FAB): z-20 to z-40
+ * - Workspace / Editor Content (e.g. Doc Editor, Canvas elements): z-0 to z-10
+ */
+
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import {
   FileText,
@@ -656,7 +663,7 @@ if (isSearchOpen && searchQuery) {
     <div className="flex h-screen w-screen overflow-hidden bg-slate-50 dark:bg-[#141416] text-slate-900 dark:text-zinc-100">
       {/* Pane 1: Left Sidebar (Navigation) - Hidden in Zen Mode */}
       {!zenMode && (
-        <aside className="w-14 flex flex-col items-center justify-between py-3 border-r border-slate-200 dark:border-zinc-800 bg-[#fbfbfb] dark:bg-[#18181c] z-10 shrink-0">
+        <aside className="w-14 flex flex-col items-center justify-between py-3 border-r border-slate-200 dark:border-zinc-800 bg-[#fbfbfb] dark:bg-[#18181c] z-20 shrink-0">
           <div className="flex flex-col items-center gap-4 w-full">
             <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-xs shadow-sm shadow-indigo-200 dark:shadow-none">
               CN
@@ -737,7 +744,7 @@ if (isSearchOpen && searchQuery) {
       {!zenMode && (
         <aside
           style={{ width: isSidebarCollapsed ? 0 : sidebarWidth }}
-          className={`border-r border-slate-200 dark:border-zinc-800 bg-white dark:bg-[#16161a] z-10 shrink-0 flex flex-col h-full text-sm overflow-hidden ${
+          className={`border-r border-slate-200 dark:border-zinc-800 bg-white dark:bg-[#16161a] z-20 shrink-0 flex flex-col h-full text-sm overflow-hidden ${
             isSidebarResizing ? '' : 'transition-[width,opacity] duration-300 ease-in-out'
           } ${
             isSidebarCollapsed ? 'opacity-0 pointer-events-none' : 'opacity-100'
@@ -750,9 +757,10 @@ if (isSearchOpen && searchQuery) {
               <button
                 type="button"
                 onClick={() => setIsWorkspaceDropdownOpen(!isWorkspaceDropdownOpen)}
+                title={activeWorkspace}
                 className="font-semibold text-xs text-slate-700 dark:text-zinc-200 hover:text-slate-900 dark:hover:text-white flex items-center justify-between w-full gap-1.5 py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500"
               >
-                <span className="truncate">{activeWorkspace}</span>
+                <span className="truncate min-w-[80px]" title={activeWorkspace}>{activeWorkspace}</span>
                 <ChevronDown className="w-3.5 h-3.5 shrink-0" />
               </button>
 
@@ -797,6 +805,44 @@ if (isSearchOpen && searchQuery) {
 
           <div className="flex-1 overflow-y-auto overflow-x-hidden min-w-[160px]">
             <div className="p-3 space-y-6">
+            {/* Workspace Views Navigation Indicator Section */}
+            <div>
+              <div className="flex items-center gap-1.5 px-2 mb-2 text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
+                <span>Workspace Views</span>
+              </div>
+              <ul className="space-y-1">
+                {[
+                  { id: 'doc' as const, icon: FileText, label: 'Doc Mode' },
+                  { id: 'canvas' as const, icon: Layout, label: 'Canvas' },
+                  { id: 'graph' as const, icon: Network, label: 'Graph' },
+                  { id: 'journals' as const, icon: Calendar, label: 'Journals' },
+                  { id: 'settings' as const, icon: Settings, label: 'Settings' }
+                ].map((item) => {
+                  const Icon = item.icon;
+                  const isActive = activeMode === item.id;
+                  return (
+                    <li key={item.id}>
+                      <button
+                        type="button"
+                        onClick={() => onModeChange(item.id)}
+                        className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center gap-2 transition-colors ${
+                          isActive
+                            ? 'bg-slate-100 dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 font-semibold'
+                            : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/40 hover:text-slate-900 dark:hover:text-zinc-200'
+                        }`}
+                      >
+                        <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-zinc-500'}`} />
+                        <span className="truncate">{item.label}</span>
+                        {isActive && (
+                          <span className="ml-auto w-1.5 h-1.5 rounded-full bg-indigo-500 dark:bg-indigo-400" />
+                        )}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+
             {/* Recent Documents Section */}
             <div>
               <div className="flex items-center gap-1.5 px-2 mb-2 text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
@@ -819,9 +865,9 @@ if (isSearchOpen && searchQuery) {
                             : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/40 hover:text-slate-900 dark:hover:text-zinc-200'
                         }`}
                       >
-                        <span className="truncate flex items-center gap-2">
+                        <span className="truncate flex items-center gap-2" title={doc.title}>
                           {renderPageIcon(doc.icon, "w-4 h-4 text-slate-400 dark:text-zinc-500 shrink-0 flex items-center justify-center")}
-                          <span className="truncate">{doc.title}</span>
+                          <span className="truncate min-w-[120px]">{doc.title}</span>
                         </span>
                         <span className="text-[10px] text-slate-400 dark:text-zinc-500 opacity-60">Recent</span>
                       </button>
@@ -891,7 +937,7 @@ if (isSearchOpen && searchQuery) {
                                 }`}
                               >
                                 {renderPageIcon(node.icon, "w-3.5 h-3.5 shrink-0 flex items-center justify-center")}
-                                <span className="truncate text-xs">{displayLabel}</span>
+                                <span className="truncate text-xs min-w-[120px]" title={displayLabel}>{displayLabel}</span>
                               </button>
                             </li>
                           );
@@ -935,7 +981,7 @@ if (isSearchOpen && searchQuery) {
                                 }`}
                               >
                                 {renderPageIcon(node.icon, "w-3.5 h-3.5 shrink-0 flex items-center justify-center")}
-                                <span className="truncate text-xs">{displayLabel}</span>
+                                <span className="truncate text-xs min-w-[120px]" title={displayLabel}>{displayLabel}</span>
                               </button>
                               {node.id !== 'root-doc-node' && (
                                 <button
@@ -1089,7 +1135,7 @@ if (isSearchOpen && searchQuery) {
 
       {/* ── Right Tool Rail & Sidebar Panel (AFFiNE-style) ──────────────── */}
       {!zenMode && (
-        <div className="flex h-full shrink-0 z-20 relative">
+        <div className="flex h-full shrink-0 z-30 relative">
           {/* Right Sidebar Panel */}
           <aside
             style={{ width: isRightSidebarOpen ? 320 : 0 }}
@@ -1426,7 +1472,7 @@ if (isSearchOpen && searchQuery) {
           </aside>
 
           {/* Right Tool Rail */}
-          <aside className="w-12 flex flex-col items-center justify-between py-3 border-l border-slate-200 dark:border-zinc-800 bg-[#fbfbfb] dark:bg-[#18181c] shrink-0 z-20 h-full">
+          <aside className="w-12 flex flex-col items-center justify-between py-3 border-l border-slate-200 dark:border-zinc-800 bg-[#fbfbfb] dark:bg-[#18181c] shrink-0 z-30 h-full">
             <div className="flex flex-col items-center gap-4 w-full">
               <nav className="flex flex-col gap-4 w-full px-1.5" aria-label="Right Rail Navigation">
                 {[
@@ -1477,7 +1523,7 @@ if (isSearchOpen && searchQuery) {
       {!isAgentOpen && (
         <button
           onClick={() => setIsAgentOpen(true)}
-          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-2xl bg-indigo-600 hover:bg-indigo-500 dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/25 dark:shadow-indigo-500/30 hover:shadow-xl hover:shadow-indigo-500/40 dark:hover:shadow-indigo-400/35 flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 group"
+          className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-2xl bg-indigo-600 hover:bg-indigo-500 dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/25 dark:shadow-indigo-500/30 hover:shadow-xl hover:shadow-indigo-500/40 dark:hover:shadow-indigo-400/35 flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 group"
           title="Open Space Agent"
           style={{
             animation: "floatFab 3s ease-in-out infinite",
@@ -1496,7 +1542,7 @@ if (isSearchOpen && searchQuery) {
       {isAgentOpen && (
         <div
           ref={panelRef}
-          className={`fixed z-50 flex flex-col transition-shadow duration-300 ${isMinimized ? "" : ""}`}
+          className={`fixed z-40 flex flex-col transition-shadow duration-300 ${isMinimized ? "" : ""}`}
           style={{
             left: panelPos.x,
             top: panelPos.y,
