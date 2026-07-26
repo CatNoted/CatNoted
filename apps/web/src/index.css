@@ -18,6 +18,12 @@
     --border: 240 5.9% 90%;
     --sidebar: 240 5% 96%;
     --accent: 240 5% 90%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --destructive: 343 100% 96%;
+    --destructive-foreground: 343 80% 30%;
+    --destructive-border: 343 80% 90%;
+    --destructive-accent: 343 80% 93%;
   }
 
   .dark {
@@ -33,6 +39,12 @@
     --border: 240 5% 15%;
     --sidebar: 240 6% 8%;
     --accent: 240 5% 18%;
+    --muted: 240 4% 16%;
+    --muted-foreground: 240 5% 64.9%;
+    --destructive: 343 40% 12%;
+    --destructive-foreground: 343 80% 75%;
+    --destructive-border: 343 50% 20%;
+    --destructive-accent: 343 45% 15%;
   }
 }
 
