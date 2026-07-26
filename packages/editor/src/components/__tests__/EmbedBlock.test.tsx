@@ -1,6 +1,6 @@
-import React, { act } from 'react';
-import { createRoot } from 'react-dom/client';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import React from 'react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, screen, fireEvent, act, cleanup } from '@testing-library/react';
 import { EmbedBlock } from '../EmbedBlock.js';
 import { ydoc, ypages } from '../../store.js';
 import * as Y from 'yjs';
@@ -15,13 +15,14 @@ describe('EmbedBlock Component Tests', () => {
       yblocks.delete(0, yblocks.length);
       ypages.clear();
     });
-    await new Promise(resolve => setTimeout(resolve, 0));
+    await new Promise(resolve => setTimeout(resolve, 10));
+  });
+
+  afterEach(() => {
+    cleanup();
   });
 
   it('renders selector when refPageId is not provided', async () => {
-    const container = document.createElement('div');
-    document.body.appendChild(container);
-
     const onUpdateProps = vi.fn();
     const onDelete = vi.fn();
 
@@ -41,9 +42,9 @@ describe('EmbedBlock Component Tests', () => {
       });
     });
 
+    let view: any;
     await act(async () => {
-      const root = createRoot(container);
-      root.render(
+      view = render(
         <EmbedBlock
           id="block-embed"
           activePage="root-doc-node"
@@ -52,51 +53,46 @@ describe('EmbedBlock Component Tests', () => {
         />
       );
       // Let effects settle
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise(resolve => setTimeout(resolve, 50));
     });
 
     // Check if the placeholder headers are displayed
-    expect(container.textContent).toContain('Page Embed Reference');
-    expect(container.textContent).toContain('Choose Page');
+    expect(view.container.textContent).toContain('Page Embed Reference');
+    expect(view.container.textContent).toContain('Choose Page');
 
     // Simulate clicking "Choose Page"
-    const button = container.querySelector('button');
+    const button = view.container.querySelector('button');
     expect(button).not.toBeNull();
 
     await act(async () => {
       button?.click();
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise(resolve => setTimeout(resolve, 50));
     });
 
     // It should render dropdown choices
-    expect(container.textContent).toContain('Project Roadmap');
-    expect(container.textContent).toContain('Meeting Notes');
+    expect(view.container.textContent).toContain('Project Roadmap');
+    expect(view.container.textContent).toContain('Meeting Notes');
 
     // Simulate clicking first item
-    const options = container.querySelectorAll('button');
+    const options = view.container.querySelectorAll('button');
     // Search for option with text "Project Roadmap"
     let roadmapOption: HTMLButtonElement | null = null;
-    options.forEach(opt => {
+    options.forEach((opt: any) => {
       if (opt.textContent?.includes('Project Roadmap')) {
-        roadmapOption = opt as HTMLButtonElement;
+        roadmapOption = opt;
       }
     });
 
     expect(roadmapOption).not.toBeNull();
     await act(async () => {
       roadmapOption?.click();
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise(resolve => setTimeout(resolve, 50));
     });
 
     expect(onUpdateProps).toHaveBeenCalledWith({ refPageId: 'page-1' });
-
-    document.body.removeChild(container);
   });
 
   it('renders target page heading and content blocks when refPageId is provided', async () => {
-    const container = document.createElement('div');
-    document.body.appendChild(container);
-
     // Setup page metadata
     ydoc.transact(() => {
       ypages.set('page-1', {
@@ -130,9 +126,9 @@ describe('EmbedBlock Component Tests', () => {
       ]);
     });
 
+    let view: any;
     await act(async () => {
-      const root = createRoot(container);
-      root.render(
+      view = render(
         <EmbedBlock
           id="block-embed"
           refPageId="page-1"
@@ -146,14 +142,12 @@ describe('EmbedBlock Component Tests', () => {
     });
 
     // Verify Title and Icons are rendered
-    expect(container.textContent).toContain('🚀');
-    expect(container.textContent).toContain('Project Roadmap');
-    expect(container.textContent).toContain('Synced Block');
+    expect(view.container.textContent).toContain('🚀');
+    expect(view.container.textContent).toContain('Project Roadmap');
+    expect(view.container.textContent).toContain('Synced Block');
 
     // Verify content blocks are rendered (excluding the main heading H1 block)
-    expect(container.textContent).toContain('This is the main roadmap paragraph.');
-    expect(container.textContent).toContain('Milestone 1 completed');
-
-    document.body.removeChild(container);
+    expect(view.container.textContent).toContain('This is the main roadmap paragraph.');
+    expect(view.container.textContent).toContain('Milestone 1 completed');
   });
 });
