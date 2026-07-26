@@ -8,7 +8,7 @@ import {
   Heading3,
   AlignLeft,
   Cpu,
-  MoreVertical
+  GripVertical
 } from 'lucide-react';
 import { TextBlock } from './TextBlock.js';
 import { HeadingBlock } from './HeadingBlock.js';
@@ -99,7 +99,9 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
   return (
           <div
             key={block.id}
-            className="group flex items-start gap-0 px-4 py-0.5 rounded-lg transition-all hover:bg-slate-50/80 dark:hover:bg-zinc-900/30 hover:shadow-sm hover:ring-1 hover:ring-slate-100 dark:hover:ring-zinc-800/60"
+            onDragOver={(e) => handleDragOver(e, block.id)}
+            onDrop={(e) => handleDrop(e, block.id)}
+            className={`group flex items-start gap-0 px-4 py-0.5 rounded-lg transition-all hover:bg-slate-50/80 dark:hover:bg-zinc-900/30 hover:shadow-sm hover:ring-1 hover:ring-slate-100 dark:hover:ring-zinc-800/60 ${dragOverBlockId === block.id ? 'border-t-2 border-indigo-500 rounded-none' : ''}`}
           >
             {/* Left Block Controls - fixed width gutter, never overlaps content */}
             <div className={`w-10 flex-shrink-0 flex items-start justify-end gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity ${
@@ -127,7 +129,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                   title="Block settings"
                   className="p-0.5 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
                 >
-                  <MoreVertical className="w-3 h-3" />
+                  <GripVertical className="w-3 h-3" />
                 </button>
 
                 {activeMenuId === block.id && (
@@ -230,10 +232,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                     onSetType={onSetTypeBlock}
                     onAddWidget={onAddWidgetBlock}
                     focusOnMount={isFocused}
-                    showLeftActions={true}
-                    isFocused={isFocused}
-                    onAddClick={() => handleCreateBlock(block.id)}
-                    blockType={block.type}
+                  blockType={block.type}
                   />
                 </div>
               )}
