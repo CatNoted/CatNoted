@@ -24,6 +24,7 @@ jobs:
           node-version: 20
           cache: 'pnpm'
       - run: corepack enable
+      - run: corepack prepare pnpm@9.1.0 --activate
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter ./apps/web build-storybook
         env:
