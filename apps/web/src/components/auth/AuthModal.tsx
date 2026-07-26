@@ -109,7 +109,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             <button
               onClick={handleLogout}
               disabled={loading}
-              className="w-full py-2.5 rounded-lg bg-slate-900 dark:bg-zinc-100 hover:bg-slate-800 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 font-medium text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+              className="w-full py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-50"
             >
               <LogOut className="w-4 h-4" />
               {loading ? 'Logging out...' : 'Log Out'}
@@ -118,8 +118,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         ) : (
           <>
             <form onSubmit={handleSubmit} className="space-y-3">
-              <div className="space-y-1.5">
-                <label className="block text-[11px] font-medium text-slate-600 dark:text-zinc-400">
+              <div className="space-y-1">
+                <label className="block text-[11px] font-medium text-slate-500 dark:text-zinc-400">
                   Email
                 </label>
                 <input
@@ -128,12 +128,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/40 text-sm text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1.5 focus:ring-slate-400 dark:focus:ring-zinc-500 focus:border-transparent transition-all"
+                  className="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 text-sm text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1.5 focus:ring-blue-500 dark:focus:ring-blue-500 focus:border-transparent transition-all"
                 />
               </div>
 
-              <div className="space-y-1.5">
-                <label className="block text-[11px] font-medium text-slate-600 dark:text-zinc-400">
+              <div className="space-y-1">
+                <label className="block text-[11px] font-medium text-slate-500 dark:text-zinc-400">
                   Password
                 </label>
                 <input
@@ -142,14 +142,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/40 text-sm text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1.5 focus:ring-slate-400 dark:focus:ring-zinc-500 focus:border-transparent transition-all"
+                  className="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 text-sm text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1.5 focus:ring-blue-500 dark:focus:ring-blue-500 focus:border-transparent transition-all"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-2.5 rounded-lg bg-slate-900 dark:bg-zinc-100 hover:bg-slate-800 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 font-medium text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-50 mt-1"
+                className="w-full py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-50 mt-1"
               >
                 {isSignUp ? <UserPlus className="w-4 h-4" /> : <LogIn className="w-4 h-4" />}
                 {loading ? 'Processing...' : isSignUp ? 'Create Account' : 'Sign In'}
@@ -157,16 +157,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             </form>
 
             <div className="relative flex py-2 items-center">
-              <div className="flex-grow border-t border-slate-100 dark:border-zinc-800"></div>
+              <div className="flex-grow border-t border-slate-100 dark:border-zinc-800/80"></div>
               <span className="flex-shrink mx-3 text-[10px] font-medium text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
                 or
               </span>
-              <div className="flex-grow border-t border-slate-100 dark:border-zinc-800"></div>
+              <div className="flex-grow border-t border-slate-100 dark:border-zinc-800/80"></div>
             </div>
 
             <button
               onClick={handleGuestMode}
-              className="w-full py-2.5 rounded-lg border border-slate-200 dark:border-zinc-700 hover:border-slate-300 dark:hover:border-zinc-600 hover:bg-slate-50 dark:hover:bg-zinc-800/60 text-slate-600 dark:text-zinc-400 font-medium text-sm flex items-center justify-center gap-2 transition-all"
+              className="w-full py-2 rounded-lg border border-slate-200 dark:border-zinc-800 bg-transparent hover:bg-slate-50 dark:hover:bg-zinc-850 text-slate-600 dark:text-zinc-300 font-medium text-sm flex items-center justify-center gap-2 transition-all"
             >
               <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400" />
               Continue in Offline Guest Mode

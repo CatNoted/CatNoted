@@ -186,7 +186,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     value={openaiKey}
                     onChange={(e) => setOpenaiKey(e.target.value)}
                     placeholder="sk-..."
-                    className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950 text-xs placeholder:text-slate-400 dark:placeholder:text-zinc-500 text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    className="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950 text-xs placeholder:text-slate-400 dark:placeholder:text-zinc-500 text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
 
@@ -197,7 +197,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     value={geminiKey}
                     onChange={(e) => setGeminiKey(e.target.value)}
                     placeholder="AIzaSy..."
-                    className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950 text-xs placeholder:text-slate-400 dark:placeholder:text-zinc-500 text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    className="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950 text-xs placeholder:text-slate-400 dark:placeholder:text-zinc-500 text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
 
@@ -208,7 +208,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     value={anthropicKey}
                     onChange={(e) => setAnthropicKey(e.target.value)}
                     placeholder="sk-ant-..."
-                    className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950 text-xs placeholder:text-slate-400 dark:placeholder:text-zinc-500 text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    className="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950 text-xs placeholder:text-slate-400 dark:placeholder:text-zinc-500 text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
 
@@ -219,7 +219,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     value={ollamaUrl}
                     onChange={(e) => setOllamaUrl(e.target.value)}
                     placeholder="http://localhost:11434"
-                    className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950 text-xs placeholder:text-slate-400 dark:placeholder:text-zinc-500 text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    className="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950 text-xs placeholder:text-slate-400 dark:placeholder:text-zinc-500 text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -229,7 +229,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   type="checkbox"
                   checked={rememberChoice}
                   onChange={(e) => setRememberChoice(e.target.checked)}
-                  className="h-4 w-4 rounded border-slate-300 dark:border-zinc-700 text-indigo-600 focus:ring-indigo-500"
+                  className="h-4 w-4 rounded border-slate-300 dark:border-zinc-700 text-blue-600 focus:ring-blue-500"
                 />
                 <span className="text-xs text-slate-600 dark:text-zinc-300">Use current passphrase for session unlock</span>
               </label>
@@ -244,7 +244,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="inline-flex h-9 items-center justify-center rounded-lg px-4 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors"
+                  className="inline-flex h-9 items-center justify-center rounded-lg px-4 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors"
                 >
                   Save Keys
                 </button>
@@ -272,7 +272,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     value={passphrase}
                     onChange={(e) => onPassphraseChange(e.target.value)}
                     placeholder="Insert secure E2EE passphrase..."
-                    className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950 text-xs placeholder:text-slate-400 dark:placeholder:text-zinc-500 text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    className="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950 text-xs placeholder:text-slate-400 dark:placeholder:text-zinc-500 text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -287,7 +287,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     </div>
                     <div className="flex justify-between text-xs">
                       <span className="text-slate-500 dark:text-zinc-400">Cloud Sync Provider:</span>
-                      <span className="font-medium text-indigo-600 dark:text-indigo-400">Supabase E2EE Broadcast Active</span>
+                      <span className="font-medium text-blue-600 dark:text-blue-400">Supabase E2EE Broadcast Active</span>
                     </div>
                   </div>
                 </div>
@@ -307,7 +307,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="inline-flex h-9 items-center justify-center rounded-lg px-4 text-xs font-semibold text-slate-900 dark:text-zinc-100 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors"
+                  className="inline-flex h-9 items-center justify-center rounded-lg px-4 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors"
                 >
                   Save Sync Settings
                 </button>

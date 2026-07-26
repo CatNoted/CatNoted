@@ -290,7 +290,7 @@ const App: React.FC = () => {
     );
 
     const modeSwitcher = (
-      <div className="flex items-center rounded-xl border border-slate-200/60 dark:border-zinc-800/60 bg-slate-50/90 dark:bg-zinc-800/70 p-0.5">
+      <div className="flex items-center rounded-lg bg-slate-100/80 dark:bg-zinc-850/60 p-0.5">
         {[
           { id: 'doc', label: 'Doc', icon: BookOpen },
           { id: 'canvas', label: 'Canvas', icon: LayoutGrid },
@@ -302,9 +302,9 @@ const App: React.FC = () => {
               key={modeItem.id}
               type="button"
               onClick={() => handleModeChange(modeItem.id as ActiveMode)}
-              className={`px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all duration-150 ${
+              className={`px-3 py-1 rounded-md text-xs font-medium flex items-center gap-1.5 transition-all duration-150 ${
                 isSelected
-                  ? 'bg-white dark:bg-zinc-900 text-indigo-600 dark:text-indigo-400 shadow-sm shadow-indigo-500/5 font-semibold'
+                  ? 'bg-white dark:bg-zinc-900 text-blue-600 dark:text-blue-400 shadow-sm font-semibold'
                   : 'text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200'
               }`}
             >
@@ -317,14 +317,14 @@ const App: React.FC = () => {
     );
 
     const actions = (
-      <div className="flex items-center gap-1.5 sm:gap-2">
+      <div className="flex items-center gap-1 sm:gap-1.5">
         <button
           type="button"
           onClick={() => updatePageMeta({ isFavorite: !pageMeta?.isFavorite })}
-          className={`inline-flex items-center justify-center rounded-lg p-1.5 border transition-colors ${
+          className={`inline-flex items-center justify-center rounded-lg p-1.5 border border-transparent transition-colors hover:bg-slate-100 dark:hover:bg-zinc-850 ${
             pageMeta?.isFavorite
-              ? 'border-amber-400/60 bg-amber-400/10 text-amber-500'
-              : 'border-slate-200/60 dark:border-zinc-800/60 text-slate-400 hover:text-amber-500'
+              ? 'bg-amber-400/10 text-amber-500'
+              : 'text-slate-400 hover:text-amber-500'
           }`}
           title={pageMeta?.isFavorite ? 'Unstar page' : 'Star page'}
         >
@@ -335,7 +335,7 @@ const App: React.FC = () => {
           <button
             type="button"
             onClick={() => setShowPageMenu(!showPageMenu)}
-            className="inline-flex items-center justify-center rounded-lg p-1.5 border border-slate-200/60 dark:border-zinc-800/60 text-slate-500 hover:text-slate-800 dark:hover:text-zinc-200 hover:bg-slate-50 dark:hover:bg-zinc-800"
+            className="inline-flex items-center justify-center rounded-lg p-1.5 border border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-850 transition-colors"
             title="Page options"
           >
             <span className="text-xs font-bold px-1">•••</span>
@@ -354,7 +354,7 @@ const App: React.FC = () => {
                       onClick={() => updatePageMeta({ fontStyle: f as any })}
                       className={`py-1 rounded text-center transition-colors ${
                         pageMeta?.fontStyle === f || (!pageMeta?.fontStyle && f === 'sans')
-                          ? 'bg-indigo-600 text-white font-bold'
+                          ? 'bg-blue-600 text-white font-bold'
                           : 'bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 hover:bg-slate-200'
                       }`}
                     >
@@ -411,7 +411,7 @@ const App: React.FC = () => {
                 alert(`Share Link generated:\n${link}\n\n(Anyone with this link and the workspace passphrase can access the E2EE sync room)`);
               });
           }}
-          className="inline-flex items-center justify-center rounded-lg gap-1.5 p-1.5 border border-slate-200/60 dark:border-zinc-800/60 hover:bg-slate-50 dark:hover:bg-zinc-850 text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400"
+          className="inline-flex items-center justify-center rounded-lg gap-1.5 p-1.5 border border-transparent hover:bg-slate-100 dark:hover:bg-zinc-850 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
           title="Share document link"
         >
           <Share2 className="w-3.5 h-3.5" />
@@ -421,10 +421,10 @@ const App: React.FC = () => {
         <button
           type="button"
           onClick={() => setIsAuthOpen(true)}
-          className="inline-flex items-center justify-center gap-2 rounded-lg px-2 py-1 hover:bg-slate-50 dark:hover:bg-zinc-850 text-xs font-medium text-slate-600 dark:text-zinc-300 border border-transparent hover:border-slate-200/60 dark:hover:border-zinc-800/60"
+          className="inline-flex items-center justify-center gap-1.5 rounded-lg px-1.5 py-1 border border-transparent hover:bg-slate-100 dark:hover:bg-zinc-850 text-xs font-medium text-slate-600 dark:text-zinc-300 transition-colors"
           title="Auth Settings"
         >
-          <span className="w-5 h-5 rounded-full bg-indigo-500 text-white text-[10px] font-bold flex items-center justify-center shadow-sm">
+          <span className="w-5 h-5 rounded-full bg-blue-500 text-white text-[10px] font-bold flex items-center justify-center">
             {userEmail.charAt(0).toUpperCase()}
           </span>
           <span className="max-w-[100px] truncate text-[10px] font-semibold hidden sm:inline">{userEmail}</span>
@@ -435,36 +435,36 @@ const App: React.FC = () => {
     const syncStatus =
       status === 'saving'
         ? (
-            <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-              Saving...
+            <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium bg-amber-500/10 text-amber-600 dark:text-amber-400">
+              <span className="w-1 h-1 rounded-full bg-amber-500 animate-pulse" />
+              Saving
             </span>
           )
         : status === 'saved'
           ? (
-              <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                <span className="w-1 h-1 rounded-full bg-emerald-500" />
                 Saved
               </span>
             )
           : status === 'offline'
             ? (
-                <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-slate-500/10 text-slate-600 dark:text-slate-400 border border-slate-500/20">
-                  <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
+                <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium bg-slate-500/10 text-slate-600 dark:text-slate-400">
+                  <span className="w-1 h-1 rounded-full bg-slate-500" />
                   Offline
                 </span>
               )
             : null;
 
     const right = (
-      <div className="flex items-center gap-1.5 sm:gap-3">
+      <div className="flex items-center gap-1.5 sm:gap-2.5">
         {syncStatus}
         {actions}
       </div>
     );
 
     return (
-      <header className="h-14 px-4 sm:px-6 border-b border-slate-200/60 dark:border-zinc-800/60 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md flex items-center justify-between z-20 shrink-0 w-full select-none">
+      <header className="h-12 px-4 sm:px-6 border-b border-slate-200/60 dark:border-zinc-800/60 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md flex items-center justify-between z-20 shrink-0 w-full select-none">
         {left}
         {modeSwitcher}
         {right}
