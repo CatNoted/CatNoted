@@ -69,24 +69,24 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
     const labelVal = conn.label || '';
 
     return (
-      <div className="absolute top-6 right-6 z-40 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-slate-200/60 dark:border-zinc-800/60 rounded-2xl p-4 flex flex-col gap-5 shadow-xl shadow-slate-200/20 dark:shadow-black/20 w-64 animate-in fade-in slide-in-from-right-4 duration-200">
-        <div className="text-[10px] font-mono font-semibold text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-zinc-800 pb-2 flex items-center justify-between">
+      <div className="absolute top-6 right-6 z-40 bg-background/90 backdrop-blur-md border border-border/60 rounded-2xl p-4 flex flex-col gap-5 shadow-xl shadow-sm dark:shadow-black/20 w-64 animate-in fade-in slide-in-from-right-4 duration-200">
+        <div className="text-[10px] font-mono font-semibold text-muted-foreground uppercase tracking-widest border-b border-border pb-2 flex items-center justify-between">
           <span>Properties</span>
-          <span className="bg-indigo-50 dark:bg-indigo-950 text-indigo-500 px-1.5 py-0.5 rounded text-[9px]">connector</span>
+          <span className="bg-primary/10 dark:bg-primary/10 text-primary px-1.5 py-0.5 rounded text-[9px]">connector</span>
         </div>
 
         {/* Curve Type */}
         <div className="flex flex-col gap-2.5">
-          <span className="text-xs text-slate-500 dark:text-zinc-400 font-medium flex items-center gap-1.5">
+          <span className="text-xs text-muted-foreground font-medium flex items-center gap-1.5">
             <Layers className="w-3.5 h-3.5" /> Curve Style
           </span>
-          <div className="grid grid-cols-3 gap-1 bg-slate-100 dark:bg-zinc-800/50 p-1 rounded-lg">
+          <div className="grid grid-cols-3 gap-1 bg-muted p-1 rounded-lg">
             <button
               onClick={() => handleUpdateConnector({ type: 'bezier' })}
               className={`py-1 text-[10px] font-semibold rounded-md transition-colors ${
                 curveType === 'bezier'
-                  ? 'bg-white dark:bg-zinc-700 shadow-sm text-indigo-600 dark:text-indigo-400'
-                  : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+                  ? 'bg-background shadow-sm text-primary dark:text-primary'
+                  : 'text-muted-foreground hover:text-foreground'
               }`}
               type="button"
             >
@@ -96,8 +96,8 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
               onClick={() => handleUpdateConnector({ type: 'straight' })}
               className={`py-1 text-[10px] font-semibold rounded-md transition-colors ${
                 curveType === 'straight'
-                  ? 'bg-white dark:bg-zinc-700 shadow-sm text-indigo-600 dark:text-indigo-400'
-                  : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+                  ? 'bg-background shadow-sm text-primary dark:text-primary'
+                  : 'text-muted-foreground hover:text-foreground'
               }`}
               type="button"
             >
@@ -107,8 +107,8 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
               onClick={() => handleUpdateConnector({ type: 'stepped' })}
               className={`py-1 text-[10px] font-semibold rounded-md transition-colors ${
                 curveType === 'stepped' || curveType === 'orthogonal'
-                  ? 'bg-white dark:bg-zinc-700 shadow-sm text-indigo-600 dark:text-indigo-400'
-                  : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+                  ? 'bg-background shadow-sm text-primary dark:text-primary'
+                  : 'text-muted-foreground hover:text-foreground'
               }`}
               type="button"
             >
@@ -119,25 +119,25 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
 
         {/* Arrowheads */}
         <div className="flex flex-col gap-2.5">
-          <span className="text-xs text-slate-500 dark:text-zinc-400 font-medium flex items-center gap-1.5">
+          <span className="text-xs text-muted-foreground font-medium flex items-center gap-1.5">
             <ArrowUpToLine className="w-3.5 h-3.5" /> Arrowheads
           </span>
           <div className="flex flex-col gap-2">
-            <label className="flex items-center gap-2 cursor-pointer text-xs text-slate-600 dark:text-zinc-300">
+            <label className="flex items-center gap-2 cursor-pointer text-xs text-foreground/80">
               <input
                 type="checkbox"
                 checked={arrowStart}
                 onChange={(e) => handleUpdateConnector({ arrowStart: e.target.checked })}
-                className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 dark:border-zinc-700 dark:bg-zinc-800"
+                className="rounded border-border text-primary focus:ring-primary dark:border-border dark:bg-muted"
               />
               <span>Start arrow</span>
             </label>
-            <label className="flex items-center gap-2 cursor-pointer text-xs text-slate-600 dark:text-zinc-300">
+            <label className="flex items-center gap-2 cursor-pointer text-xs text-foreground/80">
               <input
                 type="checkbox"
                 checked={arrowEnd}
                 onChange={(e) => handleUpdateConnector({ arrowEnd: e.target.checked })}
-                className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 dark:border-zinc-700 dark:bg-zinc-800"
+                className="rounded border-border text-primary focus:ring-primary dark:border-border dark:bg-muted"
               />
               <span>End arrow</span>
             </label>
@@ -146,13 +146,13 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
 
         {/* Inline Label */}
         <div className="flex flex-col gap-2.5">
-          <span className="text-xs text-slate-500 dark:text-zinc-400 font-medium">Inline Label</span>
+          <span className="text-xs text-muted-foreground font-medium">Inline Label</span>
           <input
             type="text"
             value={labelVal}
             onChange={(e) => handleUpdateConnector({ label: e.target.value })}
             placeholder="No label"
-            className="w-full text-xs bg-slate-50 dark:bg-zinc-800/50 border border-slate-200 dark:border-zinc-700 rounded-lg px-2.5 py-1.5 outline-none focus:border-indigo-500 dark:focus:border-indigo-400 transition-colors text-slate-800 dark:text-zinc-100 placeholder-slate-400"
+            className="w-full text-xs bg-muted/50 border border-border rounded-lg px-2.5 py-1.5 outline-none focus:border-primary dark:focus:border-primary transition-colors text-foreground placeholder-muted-foreground"
           />
         </div>
       </div>
@@ -163,29 +163,29 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
     'bg-white',
     'bg-red-100',
     'bg-orange-100',
-    'bg-amber-100',
+    'bg-accent',
     'bg-green-100',
     'bg-emerald-100',
     'bg-cyan-100',
     'bg-blue-100',
-    'bg-indigo-100',
+    'bg-primary/20',
     'bg-violet-100',
     'bg-purple-100',
     'bg-fuchsia-100',
     'bg-pink-100',
-    'bg-rose-100',
+    'bg-destructive/20',
   ];
 
   return (
-    <div className="absolute top-6 right-6 z-40 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-slate-200/60 dark:border-zinc-800/60 rounded-2xl p-4 flex flex-col gap-5 shadow-xl shadow-slate-200/20 dark:shadow-black/20 w-64 animate-in fade-in slide-in-from-right-4 duration-200">
-      <div className="text-[10px] font-mono font-semibold text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-zinc-800 pb-2 flex items-center justify-between">
+    <div className="absolute top-6 right-6 z-40 bg-background/90 backdrop-blur-md border border-border/60 rounded-2xl p-4 flex flex-col gap-5 shadow-xl shadow-sm dark:shadow-black/20 w-64 animate-in fade-in slide-in-from-right-4 duration-200">
+      <div className="text-[10px] font-mono font-semibold text-muted-foreground uppercase tracking-widest border-b border-border pb-2 flex items-center justify-between">
         <span>Properties</span>
-        <span className="bg-indigo-50 dark:bg-indigo-950 text-indigo-500 px-1.5 py-0.5 rounded text-[9px]">{element.type}</span>
+        <span className="bg-primary/10 dark:bg-primary/10 text-primary px-1.5 py-0.5 rounded text-[9px]">{element.type}</span>
       </div>
 
       {/* Fill Color */}
       <div className="flex flex-col gap-2.5">
-        <span className="text-xs text-slate-500 dark:text-zinc-400 font-medium flex items-center gap-1.5">
+        <span className="text-xs text-muted-foreground font-medium flex items-center gap-1.5">
           <Palette className="w-3.5 h-3.5" /> Fill Color
         </span>
         <div className="flex flex-wrap gap-1.5">
@@ -193,7 +193,7 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
             <button
               key={color}
               onClick={() => handleUpdate({ color })}
-              className={`w-6 h-6 rounded-md border border-slate-200 dark:border-zinc-700 ${color.replace('bg-', 'bg-').replace('-100', '-100 dark:bg-opacity-20')} hover:scale-110 transition-transform ${element.color === color ? 'ring-2 ring-indigo-500 ring-offset-1 ring-offset-white dark:ring-offset-zinc-900' : ''}`}
+              className={`w-6 h-6 rounded-md border border-border ${color.replace('bg-', 'bg-').replace('-100', '-100 dark:bg-opacity-20')} hover:scale-110 transition-transform ${element.color === color ? 'ring-2 ring-primary ring-offset-1 ring-offset-white dark:ring-offset-background' : ''}`}
               title={color}
               aria-label={`Set color to ${color}`}
               type="button"
@@ -204,27 +204,27 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
 
       {/* Border Options */}
       <div className="flex flex-col gap-2.5">
-        <span className="text-xs text-slate-500 dark:text-zinc-400 font-medium flex items-center gap-1.5">
+        <span className="text-xs text-muted-foreground font-medium flex items-center gap-1.5">
           <Square className="w-3.5 h-3.5" /> Border
         </span>
-        <div className="flex items-center gap-1 bg-slate-100 dark:bg-zinc-800/50 p-1 rounded-lg w-fit">
+        <div className="flex items-center gap-1 bg-muted p-1 rounded-lg w-fit">
           <button
             onClick={() => handleUpdate({ borderStyle: 'solid' })}
-            className="py-1 text-[10px] font-semibold rounded-md transition-colors text-slate-600 dark:text-slate-300"
+            className="py-1 text-[10px] font-semibold rounded-md transition-colors text-foreground/80"
             type="button"
           >
             <Square className="w-4 h-4" />
           </button>
           <button
             onClick={() => handleUpdate({ borderStyle: 'dashed' })}
-            className="py-1 text-[10px] font-semibold rounded-md transition-colors text-slate-600 dark:text-slate-300"
+            className="py-1 text-[10px] font-semibold rounded-md transition-colors text-foreground/80"
             type="button"
           >
             <CircleDashed className="w-4 h-4" />
           </button>
           <button
             onClick={() => handleUpdate({ borderStyle: 'none' })}
-            className="py-1 text-[10px] font-semibold rounded-md transition-colors text-slate-600 dark:text-slate-300"
+            className="py-1 text-[10px] font-semibold rounded-md transition-colors text-foreground/80"
             type="button"
           >
             None
@@ -235,8 +235,8 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
       {/* Opacity */}
       <div className="flex flex-col gap-2.5">
         <div className="flex items-center justify-between">
-          <span className="text-xs text-slate-500 dark:text-zinc-400 font-medium">Opacity</span>
-          <span className="text-xs font-mono text-slate-400 bg-slate-100 dark:bg-zinc-800 px-1.5 rounded">
+          <span className="text-xs text-muted-foreground font-medium">Opacity</span>
+          <span className="text-xs font-mono text-muted-foreground bg-muted px-1.5 rounded">
             {Math.round((element.opacity ?? 1) * 100)}%
           </span>
         </div>
@@ -253,27 +253,27 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
 
       {/* Arrange & Lock */}
       <div className="flex flex-col gap-2">
-        <span className="text-xs text-slate-600 dark:text-zinc-400 font-medium flex items-center gap-1">
+        <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
           <Layers className="w-3 h-3" /> Arrange & Lock
         </span>
         <div className="flex items-center gap-2">
           <button
             onClick={handleBringToFront}
-            className="text-slate-600 dark:text-slate-300 text-[10px] font-semibold rounded-md border border-slate-200 dark:border-zinc-700 px-2 py-1"
+            className="text-foreground/80 text-[10px] font-semibold rounded-md border border-border px-2 py-1"
             type="button"
           >
             Front
           </button>
           <button
             onClick={handleSendToBack}
-            className="text-slate-600 dark:text-slate-300 text-[10px] font-semibold rounded-md border border-slate-200 dark:border-zinc-700 px-2 py-1"
+            className="text-foreground/80 text-[10px] font-semibold rounded-md border border-border px-2 py-1"
             type="button"
           >
             Back
           </button>
           <button
             onClick={handleToggleLock}
-            className="text-slate-600 dark:text-slate-300 text-[10px] font-semibold rounded-md border border-slate-200 dark:border-zinc-700 px-2 py-1"
+            className="text-foreground/80 text-[10px] font-semibold rounded-md border border-border px-2 py-1"
             type="button"
           >
             {element.locked ? 'Unlock' : 'Lock'}
@@ -284,25 +284,25 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
       {/* Alignment */}
       {element.type !== 'frame' && (
         <div className="flex flex-col gap-2.5">
-          <span className="text-xs text-slate-500 dark:text-zinc-400 font-medium">Text Align</span>
-          <div className="flex items-center gap-1 bg-slate-100 dark:bg-zinc-800/50 p-1 rounded-lg w-fit">
+          <span className="text-xs text-muted-foreground font-medium">Text Align</span>
+          <div className="flex items-center gap-1 bg-muted p-1 rounded-lg w-fit">
             <button
               onClick={() => handleUpdate({ textAlign: 'left' })}
-              className={`p-1.5 rounded-md transition-colors ${element.textAlign === 'left' ? 'bg-white dark:bg-zinc-700 shadow-sm text-indigo-600 dark:text-indigo-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+              className={`p-1.5 rounded-md transition-colors ${element.textAlign === 'left' ? 'bg-background shadow-sm text-primary dark:text-primary' : 'text-muted-foreground hover:text-foreground'}`}
               type="button"
             >
               <AlignLeft className="w-4 h-4" />
             </button>
             <button
               onClick={() => handleUpdate({ textAlign: 'center' })}
-              className={`p-1.5 rounded-md transition-colors ${!element.textAlign || element.textAlign === 'center' ? 'bg-white dark:bg-zinc-700 shadow-sm text-indigo-600 dark:text-indigo-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+              className={`p-1.5 rounded-md transition-colors ${!element.textAlign || element.textAlign === 'center' ? 'bg-background shadow-sm text-primary dark:text-primary' : 'text-muted-foreground hover:text-foreground'}`}
               type="button"
             >
               <AlignCenter className="w-4 h-4" />
             </button>
             <button
               onClick={() => handleUpdate({ textAlign: 'right' })}
-              className={`p-1.5 rounded-md transition-colors ${element.textAlign === 'right' ? 'bg-white dark:bg-zinc-700 shadow-sm text-indigo-600 dark:text-indigo-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+              className={`p-1.5 rounded-md transition-colors ${element.textAlign === 'right' ? 'bg-background shadow-sm text-primary dark:text-primary' : 'text-muted-foreground hover:text-foreground'}`}
               type="button"
             >
               <AlignRight className="w-4 h-4" />
@@ -312,33 +312,33 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
       )}
 
       {/* Nudge Controls */}
-      <div className="flex flex-col gap-2.5 pt-3 border-t border-slate-100 dark:border-zinc-800/80">
-        <span className="text-xs text-slate-500 dark:text-zinc-400 font-medium">Nudge</span>
+      <div className="flex flex-col gap-2.5 pt-3 border-t border-border/80">
+        <span className="text-xs text-muted-foreground font-medium">Nudge</span>
         <div className="flex items-center gap-1">
           <button
             onClick={() => handleNudge(0, -1)}
-            className="text-[10px] font-semibold rounded-md border border-slate-200 dark:border-zinc-700 px-2 py-1 text-slate-600 dark:text-slate-300"
+            className="text-[10px] font-semibold rounded-md border border-border px-2 py-1 text-foreground/80"
             type="button"
           >
             Up
           </button>
           <button
             onClick={() => handleNudge(0, 1)}
-            className="text-[10px] font-semibold rounded-md border border-slate-200 dark:border-zinc-700 px-2 py-1 text-slate-600 dark:text-slate-300"
+            className="text-[10px] font-semibold rounded-md border border-border px-2 py-1 text-foreground/80"
             type="button"
           >
             Down
           </button>
           <button
             onClick={() => handleNudge(-1, 0)}
-            className="text-[10px] font-semibold rounded-md border border-slate-200 dark:border-zinc-700 px-2 py-1 text-slate-600 dark:text-slate-300"
+            className="text-[10px] font-semibold rounded-md border border-border px-2 py-1 text-foreground/80"
             type="button"
           >
             Left
           </button>
           <button
             onClick={() => handleNudge(1, 0)}
-            className="text-[10px] font-semibold rounded-md border border-slate-200 dark:border-zinc-700 px-2 py-1 text-slate-600 dark:text-slate-300"
+            className="text-[10px] font-semibold rounded-md border border-border px-2 py-1 text-foreground/80"
             type="button"
           >
             Right

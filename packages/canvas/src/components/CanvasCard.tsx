@@ -37,10 +37,10 @@ const CanvasCardBase: React.FC<CanvasCardProps> = ({
           onSelectToggle(e, block.id);
         }
       }}
-      className={`absolute bg-white dark:bg-zinc-900/90 backdrop-blur-sm border rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-none hover:shadow-md transition-all select-none flex flex-col ${
+      className={`absolute bg-card/90 backdrop-blur-sm border rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-none hover:shadow-md transition-all select-none flex flex-col ${
         isSelected
-          ? 'border-indigo-500/50 ring-2 ring-indigo-500/20 shadow-indigo-500/5'
-          : 'border-slate-200/80 dark:border-zinc-800'
+          ? 'border-primary/50 ring-2 ring-primary/20 shadow-primary/5'
+          : 'border-border'
       }`}
     >
       {/* Drag Handle Header */}
@@ -50,14 +50,14 @@ const CanvasCardBase: React.FC<CanvasCardProps> = ({
           if (target.closest('button, input, textarea')) return;
           onDragStart(e, block.id);
         }}
-        className="h-7 cursor-grab active:cursor-grabbing border-b border-slate-100 dark:border-zinc-800/80 bg-slate-50/50 dark:bg-zinc-900/50 rounded-t-xl flex items-center px-3 justify-between"
+        className="h-7 cursor-grab active:cursor-grabbing border-b border-border/80 bg-muted/50 rounded-t-xl flex items-center px-3 justify-between"
       >
-        <span className="text-[9px] font-medium text-slate-400 uppercase tracking-widest">{block.type}</span>
+        <span className="text-[9px] font-medium text-muted-foreground uppercase tracking-widest">{block.type}</span>
         <div className="flex items-center gap-1.5">
           {isSelected && (
-            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
           )}
-          <div className="w-1.5 h-1.5 rounded-full bg-slate-200 dark:bg-zinc-800" />
+          <div className="w-1.5 h-1.5 rounded-full bg-border" />
         </div>
       </div>
 
@@ -68,13 +68,13 @@ const CanvasCardBase: React.FC<CanvasCardProps> = ({
             value={block.content}
             onChange={(e) => updateBlockContent(block.id, e.target.value)}
             rows={1}
-            className="w-full bg-transparent resize-none font-bold text-slate-900 dark:text-zinc-50 border-none outline-none focus:ring-0 p-0 text-base leading-tight placeholder-slate-300"
+            className="w-full bg-transparent resize-none font-bold text-foreground border-none outline-none focus:ring-0 p-0 text-base leading-tight placeholder-muted-foreground/50"
             placeholder="Heading..."
           />
         ) : block.type === 'widget' ? (
           <div className="py-2 flex flex-col items-center justify-center text-center">
             <span className="text-xl mb-1">🤖</span>
-            <span className="text-[10px] font-mono bg-indigo-50 dark:bg-indigo-950/20 text-indigo-500 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-mono bg-primary/10 dark:bg-primary/10 text-primary px-2 py-0.5 rounded-full">
               {block.properties?.widgetId || 'AI Sandbox'}
             </span>
           </div>
@@ -82,7 +82,7 @@ const CanvasCardBase: React.FC<CanvasCardProps> = ({
           <textarea
             value={block.content}
             onChange={(e) => updateBlockContent(block.id, e.target.value)}
-            className="w-full bg-transparent resize-none text-slate-700 dark:text-zinc-200 border-none outline-none focus:ring-0 p-0 text-xs leading-relaxed placeholder-slate-300"
+            className="w-full bg-transparent resize-none text-foreground/90 border-none outline-none focus:ring-0 p-0 text-xs leading-relaxed placeholder-muted-foreground/50"
             placeholder="Write card content..."
             rows={3}
           />
@@ -95,24 +95,24 @@ const CanvasCardBase: React.FC<CanvasCardProps> = ({
           e.stopPropagation();
           onStartConnector(e, block.id);
         }}
-        className={`absolute right-[-8px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-indigo-500 bg-white dark:bg-zinc-950 hover:bg-indigo-500 hover:scale-125 transition-all cursor-crosshair z-20 flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
+        className={`absolute right-[-8px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-primary bg-card hover:bg-primary hover:scale-125 transition-all cursor-crosshair z-20 flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
           isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
         }`}
         title="Drag to connect"
         aria-label={`Drag connector from ${block.content || 'this card'}`}
         type="button"
       >
-        <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 hover:bg-white dark:hover:bg-zinc-950" />
+        <div className="w-1.5 h-1.5 rounded-full bg-primary hover:bg-card" />
       </button>
 
       {/* Connector Handle Port - Left Side (Target node port / helpful visual aid) */}
       <div
-        className={`absolute left-[-8px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-indigo-200 dark:border-indigo-900 bg-white dark:bg-zinc-900 z-20 flex items-center justify-center pointer-events-none transition-opacity ${
+        className={`absolute left-[-8px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-primary/30 dark:border-primary/80 bg-card z-20 flex items-center justify-center pointer-events-none transition-opacity ${
           isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
         }`}
         aria-hidden="true"
       >
-        <div className="w-1.5 h-1.5 rounded-full bg-indigo-200 dark:bg-indigo-900" />
+        <div className="w-1.5 h-1.5 rounded-full bg-primary/30 dark:bg-primary/80" />
       </div>
     </div>
   );
