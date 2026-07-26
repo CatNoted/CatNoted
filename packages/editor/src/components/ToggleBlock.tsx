@@ -59,6 +59,8 @@ export const ToggleBlock: React.FC<ToggleBlockProps> = ({
           onClick={() => onUpdateProps({ expanded: !expanded })}
           className="w-5 h-5 flex items-center justify-center rounded hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-400 dark:text-zinc-500 hover:text-slate-700 dark:hover:text-zinc-200 transition-all duration-150 self-start mt-0.5"
           title={expanded ? 'Collapse' : 'Expand'}
+          aria-label={expanded ? 'Collapse' : 'Expand'}
+          aria-expanded={expanded}
         >
           <ChevronRight
             className={`w-3.5 h-3.5 transition-transform duration-200 ${

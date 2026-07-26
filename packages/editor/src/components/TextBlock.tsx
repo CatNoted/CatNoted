@@ -219,6 +219,7 @@ const TextBlockBase: React.FC<TextBlockProps> = ({
             type="button"
             onClick={addClick}
             title="Add block below"
+            aria-label="Add block below"
             className="p-1 rounded-md hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 transition-colors flex items-center justify-center cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />

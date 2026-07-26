@@ -263,7 +263,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                         type="checkbox"
                         checked={rememberChoice}
                         onChange={(e) => setRememberChoice(e.target.checked)}
-                        className="h-4 w-4 rounded border-slate-200 dark:border-zinc-700 text-zinc-900 focus:ring-zinc-400 dark:focus:ring-zinc-600 focus:ring-offset-0 bg-transparent"
+                        className="h-4 w-4 rounded border-slate-200 dark:border-zinc-700 text-blue-600 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-0 bg-transparent"
                       />
                       <span className="text-xs text-slate-600 dark:text-zinc-300">Use current passphrase for session unlock</span>
                     </label>
@@ -281,7 +281,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   </button>
                   <button
                     type="submit"
-                    className="inline-flex h-8 items-center justify-center rounded-lg px-3.5 text-xs font-semibold text-white dark:text-zinc-900 bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors shadow-sm"
+                    className="inline-flex h-8 items-center justify-center rounded-lg px-3.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-sm"
                   >
                     Save Keys
                   </button>
@@ -362,7 +362,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   </button>
                   <button
                     type="submit"
-                    className="inline-flex h-8 items-center justify-center rounded-lg px-3.5 text-xs font-semibold text-white dark:text-zinc-900 bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors shadow-sm"
+                    className="inline-flex h-8 items-center justify-center rounded-lg px-3.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-sm"
                   >
                     Save Sync Settings
                   </button>

@@ -61,6 +61,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           type="button"
           onClick={() => setCollapsed(!collapsed)}
           className={`${sectionClassName} flex items-center justify-between w-full px-3 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-850 transition-all gap-x-2 group`}
+          aria-label={collapsed ? `Expand ${label}` : `Collapse ${label}`}
+          aria-expanded={!collapsed}
         >
           <span className="flex items-center gap-x-2">
             {SectionIcon && <SectionIcon className="w-3.5 h-3.5 shrink-0 text-slate-400 dark:text-zinc-500" />}
