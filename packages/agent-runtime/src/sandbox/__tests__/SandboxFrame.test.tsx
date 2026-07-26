@@ -66,4 +66,117 @@ describe('SandboxFrame Component Tests', () => {
 
     document.body.removeChild(container);
   });
+
+  it('triggers onStateChange callback when state_change message is received with valid state data', async () => {
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+
+    const onStateChangeMock = vi.fn();
+
+    await act(async () => {
+      const root = createRoot(container);
+      root.render(
+        <SandboxFrame
+          srcDoc="<div>Hello Test</div>"
+          onStateChange={onStateChangeMock}
+        />
+      );
+    });
+
+    const iframe = container.querySelector('iframe');
+    await act(async () => {
+      window.dispatchEvent(
+        new MessageEvent('message', {
+          data: {
+            type: 'state_change',
+            payload: { theme: 'dark', zoom: 1.5 },
+          },
+          source: iframe?.contentWindow,
+        })
+      );
+    });
+
+    expect(onStateChangeMock).toHaveBeenCalledTimes(1);
+    expect(onStateChangeMock).toHaveBeenCalledWith({ theme: 'dark', zoom: 1.5 });
+
+    document.body.removeChild(container);
+  });
+
+  it('does NOT trigger callbacks when malformed or prototype polluted messages are received', async () => {
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+
+    const onStateChangeMock = vi.fn();
+    const onErrorMock = vi.fn();
+
+    await act(async () => {
+      const root = createRoot(container);
+      root.render(
+        <SandboxFrame
+          srcDoc="<div>Hello Test</div>"
+          onStateChange={onStateChangeMock}
+          onError={onErrorMock}
+        />
+      );
+    });
+
+    const iframe = container.querySelector('iframe');
+
+    // 1. Unknown message type
+    await act(async () => {
+      window.dispatchEvent(
+        new MessageEvent('message', {
+          data: {
+            type: 'unknown_type',
+            payload: { data: 'val' },
+          },
+          source: iframe?.contentWindow,
+        })
+      );
+    });
+
+    // 2. State change with function
+    await act(async () => {
+      window.dispatchEvent(
+        new MessageEvent('message', {
+          data: {
+            type: 'state_change',
+            payload: { score: 10, handler: () => {} },
+          },
+          source: iframe?.contentWindow,
+        })
+      );
+    });
+
+    // 3. State change with prototype pollution
+    await act(async () => {
+      window.dispatchEvent(
+        new MessageEvent('message', {
+          data: {
+            type: 'state_change',
+            payload: JSON.parse('{"__proto__": {"polluted": true}}'),
+          },
+          source: iframe?.contentWindow,
+        })
+      );
+    });
+
+    // 4. Malformed error message (non-string message value)
+    await act(async () => {
+      window.dispatchEvent(
+        new MessageEvent('message', {
+          data: {
+            type: 'sandbox_error',
+            payload: { message: 500 },
+          },
+          source: iframe?.contentWindow,
+        })
+      );
+    });
+
+    expect(onStateChangeMock).not.toHaveBeenCalled();
+    expect(onErrorMock).not.toHaveBeenCalled();
+
+    document.body.removeChild(container);
+  });
 });
