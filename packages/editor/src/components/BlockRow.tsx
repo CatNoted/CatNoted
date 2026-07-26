@@ -102,22 +102,22 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
             className="group flex items-start gap-0 px-4 py-0.5 rounded-lg transition-all hover:bg-slate-50/80 dark:hover:bg-zinc-900/30 hover:shadow-sm hover:ring-1 hover:ring-slate-100 dark:hover:ring-zinc-800/60"
           >
             {/* Left Block Controls - fixed width gutter, never overlaps content */}
-            <div className={`w-10 flex-shrink-0 flex items-start justify-end gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity ${
+            <div className={`w-12 flex-shrink-0 flex items-start justify-end gap-1 px-1 opacity-0 group-hover:opacity-100 transition-opacity ${
               block.type === 'heading'
                 ? block.properties?.level === 1
-                  ? 'pt-[10px]'
+                  ? 'pt-2'
                   : block.properties?.level === 2
-                  ? 'pt-[8px]'
-                  : 'pt-[6px]'
-                : 'pt-[6px]'
+                  ? 'pt-1.5'
+                  : 'pt-1'
+                : 'pt-1'
             }`}>
               <button
                 type="button"
                 onClick={() => handleCreateBlock(block.id)}
                 title="Add block below"
-                className="p-0.5 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                className="p-1 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
               >
-                <Plus className="w-3 h-3" />
+                <Plus className="w-3.5 h-3.5" />
               </button>
 
               <div className="relative">
@@ -125,9 +125,9 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                   type="button"
                   onClick={() => setActiveMenuId(activeMenuId === block.id ? null : block.id)}
                   title="Block settings"
-                  className="p-0.5 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                  className="p-1 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
                 >
-                  <MoreVertical className="w-3 h-3" />
+                  <MoreVertical className="w-3.5 h-3.5" />
                 </button>
 
                 {activeMenuId === block.id && (
@@ -345,7 +345,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
 
               {/* --- Code block --- */}
               {block.type === 'code' && (
-                <div className="rounded-lg bg-slate-900 dark:bg-zinc-950 border border-slate-700 dark:border-zinc-800 px-4 py-3">
+                <div className="rounded-lg bg-slate-900 dark:bg-[#16161a] border border-slate-700 dark:border-zinc-800 px-4 py-3">
                   <textarea
                     value={block.content}
                     onChange={(e) => updateBlockContent(block.id, e.target.value)}
@@ -396,7 +396,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                         <textarea
                           value={editorCode[block.id] ?? block.properties?.srcDoc ?? ''}
                           onChange={(e) => setEditorCode(prev => ({ ...prev, [block.id]: e.target.value }))}
-                          className="w-full h-40 p-2 font-mono text-xs bg-slate-900 text-emerald-400 dark:bg-zinc-950 dark:text-emerald-400 rounded-lg border border-slate-200 dark:border-zinc-800 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-y"
+                          className="w-full h-40 p-2 font-mono text-xs bg-slate-900 text-emerald-400 dark:bg-[#16161a] dark:text-emerald-400 rounded-lg border border-slate-200 dark:border-zinc-800 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-y"
                           placeholder="Write widget code here..."
                         />
                         <div className="flex justify-end gap-2">

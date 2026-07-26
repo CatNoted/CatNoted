@@ -22,17 +22,17 @@
 
   .dark {
     /* Dark mode adjustments for softer contrast */
-    --background: 240 10% 9%;
-    --foreground: 240 5% 85%;
-    --card: 240 10% 12%;
-    --card-foreground: 240 5% 85%;
+    --background: 240 6% 10%;
+    --foreground: 240 5% 84%;
+    --card: 240 6% 12%;
+    --card-foreground: 240 5% 84%;
     --primary: 0 0% 98%;
     --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
+    --secondary: 240 4% 16%;
     --secondary-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --sidebar: 240 10% 6%;
-    --accent: 240 3.7% 20%;
+    --border: 240 5% 15%;
+    --sidebar: 240 6% 8%;
+    --accent: 240 5% 18%;
   }
 }
 
