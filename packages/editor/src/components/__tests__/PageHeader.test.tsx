@@ -94,4 +94,71 @@ describe('PageHeader Component Tests', () => {
 
     document.body.removeChild(container);
   });
+
+  it('supports collapsible page info block toggling', async () => {
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+
+    const onInfoExpandedChange = vi.fn();
+
+    let root: any;
+    await act(async () => {
+      root = createRoot(container);
+      root.render(
+        <PageHeader
+          title="Collapsible Testing"
+          onTitleChange={vi.fn()}
+          onIconChange={vi.fn()}
+          onCoverChange={vi.fn()}
+          isInfoExpanded={true}
+          onInfoExpandedChange={onInfoExpandedChange}
+          wordCount={120}
+          blocksCount={4}
+          createdAt={1620000000000}
+        />
+      );
+    });
+
+    // Verify metadata block is visible
+    let textContent = container.textContent || '';
+    expect(textContent).toContain('Words');
+    expect(textContent).toContain('120');
+
+    // Find "Hide info" or "Page info" button
+    const buttons = Array.from(container.querySelectorAll('button'));
+    const toggleInfoBtn = buttons.find(b => b.textContent?.includes('Hide info') || b.textContent?.includes('Page info'));
+    expect(toggleInfoBtn).toBeDefined();
+
+    // Click toggle info button
+    await act(async () => {
+      toggleInfoBtn?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    // Verify the callback onInfoExpandedChange was called with false
+    expect(onInfoExpandedChange).toHaveBeenCalledWith(false);
+
+    // Re-render with isInfoExpanded={false} on same container using same root
+    await act(async () => {
+      root.render(
+        <PageHeader
+          title="Collapsible Testing"
+          onTitleChange={vi.fn()}
+          onIconChange={vi.fn()}
+          onCoverChange={vi.fn()}
+          isInfoExpanded={false}
+          onInfoExpandedChange={onInfoExpandedChange}
+          wordCount={120}
+          blocksCount={4}
+          createdAt={1620000000000}
+        />
+      );
+    });
+
+    // Verify metadata block is hidden
+    textContent = container.textContent || '';
+    expect(textContent).not.toContain('Words');
+    expect(textContent).not.toContain('120');
+
+    document.body.removeChild(container);
+  });
 });

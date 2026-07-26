@@ -278,6 +278,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         createdAt={pageMeta?.createdAt}
         blocksCount={blocks.length}
         wordCount={wordCount}
+        isInfoExpanded={pageMeta?.isInfoExpanded !== false}
+        onInfoExpandedChange={(expanded) => updatePageMeta({ isInfoExpanded: expanded })}
         onTitleChange={(newTitle) => {
           updatePageMeta({ title: newTitle });
           if (headingBlock) {
