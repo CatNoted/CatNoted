@@ -79,12 +79,13 @@ export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
   };
 
   return (
-    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-slate-200/60 dark:border-zinc-800/60 rounded-2xl p-2 flex items-center gap-1.5 shadow-xl shadow-slate-200/20 dark:shadow-black/20 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-slate-200/60 dark:border-zinc-800/60 rounded-2xl p-2 flex items-center gap-1.5 shadow-xl shadow-slate-200/20 dark:shadow-black/20 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300" role="toolbar" aria-label="Canvas elements tool bar">
       <button
         onClick={() => triggerAdd('card')}
         className={getButtonClass('card')}
         title="Add Card (C)"
         aria-label="Add Card"
+        aria-keyshortcuts="c"
         type="button"
       >
         <MessageSquare className="w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -97,6 +98,7 @@ export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
         className={getButtonClass('rectangle')}
         title="Add Rectangle (R)"
         aria-label="Add Rectangle"
+        aria-keyshortcuts="r"
         type="button"
       >
         <Square className="w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -107,6 +109,7 @@ export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
         className={getButtonClass('circle')}
         title="Add Ellipse (E)"
         aria-label="Add Ellipse"
+        aria-keyshortcuts="e"
         type="button"
       >
         <Circle className="w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -119,6 +122,7 @@ export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
         className={getButtonClass('note')}
         title="Add Text Note (T)"
         aria-label="Add Text Note"
+        aria-keyshortcuts="t"
         type="button"
       >
         <Type className="w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -129,6 +133,7 @@ export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
         className={getButtonClass('frame')}
         title="Add Frame (F)"
         aria-label="Add Frame"
+        aria-keyshortcuts="f"
         type="button"
       >
         <Frame className="w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -142,6 +147,7 @@ export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
             className={`${getButtonClass('help')} ${isHelpActive ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40' : ''}`}
             title="Help & Shortcuts (?)"
             aria-label="Toggle Help & Shortcuts Overlay"
+            aria-keyshortcuts="?"
             type="button"
           >
             <HelpCircle className="w-5 h-5 group-hover:scale-110 transition-transform" />

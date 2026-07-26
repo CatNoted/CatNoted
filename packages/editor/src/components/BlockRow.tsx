@@ -117,6 +117,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                 type="button"
                 onClick={() => handleCreateBlock(block.id)}
                 title="Add block below"
+                aria-label="Add block below"
                 className="p-1 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
               >
                 <Plus className="w-3.5 h-3.5" />
@@ -127,6 +128,8 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                   type="button"
                   onClick={() => setActiveMenuId(activeMenuId === block.id ? null : block.id)}
                   title="Block settings"
+                  aria-label="Block settings"
+                  aria-expanded={activeMenuId === block.id}
                   className="p-1 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
                 >
                   <MoreVertical className="w-3.5 h-3.5" />
@@ -139,6 +142,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                         updateBlockType(block.id, 'text');
                         setActiveMenuId(null);
                       }}
+                      aria-label="Convert to text paragraph"
                       className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-200"
                     >
                       <AlignLeft className="w-3.5 h-3.5" /> Text Paragraph
@@ -148,6 +152,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                         updateBlockType(block.id, 'heading', { level: 1 });
                         setActiveMenuId(null);
                       }}
+                      aria-label="Convert to heading 1"
                       className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-200"
                     >
                       <Heading1 className="w-3.5 h-3.5" /> Heading 1
@@ -157,6 +162,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                         updateBlockType(block.id, 'heading', { level: 2 });
                         setActiveMenuId(null);
                       }}
+                      aria-label="Convert to heading 2"
                       className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-200"
                     >
                       <Heading2 className="w-3.5 h-3.5" /> Heading 2
@@ -166,6 +172,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                         updateBlockType(block.id, 'heading', { level: 3 });
                         setActiveMenuId(null);
                       }}
+                      aria-label="Convert to heading 3"
                       className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-200"
                     >
                       <Heading3 className="w-3.5 h-3.5" /> Heading 3
@@ -175,12 +182,14 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                         updateBlockType(block.id, 'kanban', { kanbanTitle: 'Kanban Board', columns: [] });
                         setActiveMenuId(null);
                       }}
+                      aria-label="Convert to kanban board"
                       className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-200"
                     >
                       <Columns className="w-3.5 h-3.5" /> Kanban Board
                     </button>
                     <button
                       onClick={() => handleAddWidget(block.id)}
+                      aria-label="Convert to AI widget"
                       className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-indigo-600 dark:text-indigo-400"
                     >
                       <Cpu className="w-3.5 h-3.5" /> Insert AI Widget
@@ -191,6 +200,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                         deleteBlock(block.id);
                         setActiveMenuId(null);
                       }}
+                      aria-label="Delete block"
                       className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-red-500"
                     >
                       <Trash2 className="w-3.5 h-3.5" /> Delete Block
@@ -394,18 +404,21 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                       <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center gap-3">
                         <button
                           onClick={() => handleEditClick(block.id, block.properties?.srcDoc || '')}
+                          aria-label="Edit widget code"
                           className="text-indigo-500 hover:text-indigo-600 dark:text-indigo-400 dark:hover:text-indigo-300 font-sans flex items-center gap-1 cursor-pointer font-medium"
                         >
                           ✎ Edit
                         </button>
                         <button
                           onClick={() => handleRerun(block.id)}
+                          aria-label="Rerun widget"
                           className="text-indigo-500 hover:text-indigo-600 dark:text-indigo-400 dark:hover:text-indigo-300 font-sans flex items-center gap-1 cursor-pointer font-medium"
                         >
                           ↻ Rerun
                         </button>
                         <button
                           onClick={() => deleteBlock(block.id)}
+                          aria-label="Delete widget"
                           className="text-red-400 hover:text-red-500 font-sans cursor-pointer font-medium"
                         >
                           ✕ Delete
@@ -424,6 +437,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                         <div className="flex justify-end gap-2">
                           <button
                             onClick={() => setEditingWidgetId(null)}
+                            aria-label="Close widget code editor"
                             className="px-2 py-1 text-[10px] font-sans font-medium text-slate-500 hover:text-slate-700 dark:text-zinc-400 dark:hover:text-zinc-200 cursor-pointer"
                           >
                             Close
@@ -434,6 +448,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                               updateBlockType(block.id, 'widget', { ...block.properties, srcDoc: newCode });
                               handleRerun(block.id);
                             }}
+                            aria-label="Run widget code"
                             className="px-2.5 py-1 text-[10px] font-sans font-semibold bg-indigo-600 text-white hover:bg-indigo-500 rounded-md transition-colors cursor-pointer"
                           >
                             Run Code
@@ -452,12 +467,14 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                         <div className="flex gap-2 mt-1">
                           <button
                             onClick={() => handleEditClick(block.id, block.properties?.srcDoc || '')}
+                            aria-label="Edit widget code"
                             className="px-3 py-1 bg-white hover:bg-slate-50 dark:bg-zinc-800 dark:hover:bg-zinc-700 border border-slate-200 dark:border-zinc-700 text-slate-700 dark:text-zinc-200 rounded-lg text-[10px] font-semibold transition-colors cursor-pointer"
                           >
                             Edit Code
                           </button>
                           <button
                             onClick={() => handleRerun(block.id)}
+                            aria-label="Retry widget execution"
                             className="px-3 py-1 bg-red-600 hover:bg-red-500 text-white rounded-lg text-[10px] font-semibold transition-colors cursor-pointer"
                           >
                             Retry

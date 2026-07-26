@@ -68,6 +68,7 @@ const CanvasCardBase: React.FC<CanvasCardProps> = ({
             value={block.content}
             onChange={(e) => updateBlockContent(block.id, e.target.value)}
             rows={1}
+            aria-label="Card heading"
             className="w-full bg-transparent resize-none font-bold text-slate-900 dark:text-zinc-50 border-none outline-none focus:ring-0 p-0 text-base leading-tight placeholder-slate-300"
             placeholder="Heading..."
           />
@@ -82,6 +83,7 @@ const CanvasCardBase: React.FC<CanvasCardProps> = ({
           <textarea
             value={block.content}
             onChange={(e) => updateBlockContent(block.id, e.target.value)}
+            aria-label="Card content"
             className="w-full bg-transparent resize-none text-slate-700 dark:text-zinc-200 border-none outline-none focus:ring-0 p-0 text-xs leading-relaxed placeholder-slate-300"
             placeholder="Write card content..."
             rows={3}

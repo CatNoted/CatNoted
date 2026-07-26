@@ -422,6 +422,7 @@ const App: React.FC = () => {
           onClick={() => setIsAuthOpen(true)}
           className="inline-flex items-center justify-center gap-2 rounded-lg px-2 py-1 hover:bg-secondary text-xs font-medium text-muted-foreground border border-transparent hover:border-border/60"
           title="Auth Settings"
+          aria-label="Auth Settings"
         >
           <span className="w-5 h-5 rounded-full bg-indigo-500 text-white text-[10px] font-bold flex items-center justify-center shadow-sm">
             {userEmail.charAt(0).toUpperCase()}

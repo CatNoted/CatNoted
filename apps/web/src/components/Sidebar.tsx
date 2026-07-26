@@ -102,6 +102,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         <button
           type="button"
           onClick={() => onModeChange('doc')}
+          aria-label="Doc Mode"
+          aria-current={activeMode === 'doc' ? 'page' : undefined}
           className={`${itemClassName} ${activeMode === 'doc' ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
         >
           <FileText className={`${getItemIconClass(activeMode === 'doc')} w-4 h-4`} />
@@ -110,6 +112,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         <button
           type="button"
           onClick={() => onModeChange('canvas')}
+          aria-label="Canvas"
+          aria-current={activeMode === 'canvas' ? 'page' : undefined}
           className={`${itemClassName} ${activeMode === 'canvas' ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
         >
           <LayoutGrid className={`${getItemIconClass(activeMode === 'canvas')} w-4 h-4`} />
@@ -118,6 +122,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         <button
           type="button"
           onClick={() => onModeChange('graph')}
+          aria-label="Graph"
+          aria-current={activeMode === 'graph' ? 'page' : undefined}
           className={`${itemClassName} ${activeMode === 'graph' ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
         >
           <Network className={`${getItemIconClass(activeMode === 'graph')} w-4 h-4`} />
@@ -126,6 +132,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         <button
           type="button"
           onClick={() => onModeChange('journals')}
+          aria-label="Journals"
+          aria-current={activeMode === 'journals' ? 'page' : undefined}
           className={`${itemClassName} ${activeMode === 'journals' ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
         >
           <Calendar className={`${getItemIconClass(activeMode === 'journals')} w-4 h-4`} />
@@ -134,6 +142,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         <button
           type="button"
           onClick={() => onModeChange('settings')}
+          aria-label="Settings"
+          aria-current={activeMode === 'settings' ? 'page' : undefined}
           className={`${itemClassName} ${activeMode === 'settings' ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
         >
           <Settings className={`${getItemIconClass(activeMode === 'settings')} w-4 h-4`} />
@@ -152,6 +162,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
               favoritePages.map(node => (
                 <div
                   key={node.id}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Open page: ${node.title || 'Untitled'}`}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      onModeChange('doc');
+                    }
+                  }}
                   onClick={() => onModeChange('doc')}
                   title={node.title || 'Untitled'}
                   className={`${itemClassName} group/sidebar-row flex items-center justify-between pr-2 cursor-pointer`}
@@ -199,6 +218,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                   type="button"
                   onClick={() => onModeChange('doc')}
                   className={itemClassName}
+                  aria-label="Getting Started"
                 >
                   <FileText className={`${getItemIconClass(false)} w-4 h-4`} />
                   <span className="truncate">Getting Started</span>
@@ -207,6 +227,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                   type="button"
                   onClick={() => onModeChange('doc')}
                   className={itemClassName}
+                  aria-label="Architecture Specs"
                 >
                   <FileText className={`${getItemIconClass(false)} w-4 h-4`} />
                   <span className="truncate">Architecture Specs</span>
@@ -222,6 +243,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
               pages.map(node => (
                 <div
                   key={node.id}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Open page: ${node.title || 'Untitled'}`}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      onModeChange('doc');
+                    }
+                  }}
                   onClick={() => onModeChange('doc')}
                   title={node.title || 'Untitled'}
                   className={`${itemClassName} group/sidebar-row flex items-center justify-between pr-2 cursor-pointer`}
@@ -269,6 +299,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                   type="button"
                   onClick={() => onModeChange('doc')}
                   className={itemClassName}
+                  aria-label="Folders"
                 >
                   <FolderOpen className={`${getItemIconClass(false)} w-4 h-4`} />
                   <span className="truncate">Folders</span>
@@ -277,6 +308,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                   type="button"
                   onClick={() => onModeChange('doc')}
                   className={`${itemClassName} pl-6`}
+                  aria-label="Getting Started"
                 >
                   <FileText className={`${getItemIconClass(false)} w-4 h-4`} />
                   <span className="truncate">Getting Started</span>
@@ -285,6 +317,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                   type="button"
                   onClick={() => onModeChange('doc')}
                   className={`${itemClassName} pl-6`}
+                  aria-label="Architecture Specs"
                 >
                   <FileText className={`${getItemIconClass(false)} w-4 h-4`} />
                   <span className="truncate">Architecture Specs</span>
@@ -296,11 +329,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
 
         {renderSection('Tags', tagsCollapsed, setTagsCollapsed, Tag, (
           <div className="flex flex-wrap gap-1.5 p-2">
-            <button type="button" onClick={() => onModeChange('doc')} className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors">
+            <button type="button" onClick={() => onModeChange('doc')} className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors" aria-label="Tag: product">
               <Tag className="w-3 h-3 text-amber-500" />
               <span>product</span>
             </button>
-            <button type="button" onClick={() => onModeChange('doc')} className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors">
+            <button type="button" onClick={() => onModeChange('doc')} className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors" aria-label="Tag: engineering">
               <Tag className="w-3 h-3 text-amber-500" />
               <span>engineering</span>
             </button>
@@ -309,11 +342,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
 
         {renderSection('Collections', collectionsCollapsed, setCollectionsCollapsed, LayoutGrid, (
           <>
-            <button type="button" onClick={() => onModeChange('doc')} className={itemClassName}>
+            <button type="button" onClick={() => onModeChange('doc')} className={itemClassName} aria-label="Collection: Design Review">
               <LayoutGrid className={`${getItemIconClass(false)} w-4 h-4 text-indigo-500`} />
               <span className="truncate">Design Review</span>
             </button>
-            <button type="button" onClick={() => onModeChange('doc')} className={itemClassName}>
+            <button type="button" onClick={() => onModeChange('doc')} className={itemClassName} aria-label="Collection: Weekly Sync">
               <LayoutGrid className={`${getItemIconClass(false)} w-4 h-4 text-emerald-500`} />
               <span className="truncate">Weekly Sync</span>
             </button>
@@ -322,11 +355,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
 
         {renderSection('Others', othersCollapsed, setOthersCollapsed, CircleHelp, (
           <>
-            <button type="button" onClick={() => onModeChange('doc')} className={itemClassName}>
+            <button type="button" onClick={() => onModeChange('doc')} className={itemClassName} aria-label="Read Only Docs">
               <CircleHelp className={`${getItemIconClass(false)} w-4 h-4`} />
               <span className="truncate">Read Only Docs</span>
             </button>
-            <button type="button" onClick={() => onModeChange('doc')} className={itemClassName}>
+            <button type="button" onClick={() => onModeChange('doc')} className={itemClassName} aria-label="Shared Room">
               <FolderOpen className={`${getItemIconClass(false)} w-4 h-4`} />
               <span className="truncate">Shared Room</span>
             </button>
@@ -340,6 +373,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           onClick={() => onModeChange('doc')}
           className={`${itemClassName} text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/30`}
           title="New page"
+          aria-label="Create new page"
         >
           <Plus className="w-4 h-4" />
           <span className="truncate">New Page</span>
@@ -350,6 +384,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           onClick={() => onModeChange('doc')}
           className={itemClassName}
           title="Import"
+          aria-label="Import document"
         >
           <Download className="w-4 h-4 text-slate-400 dark:text-zinc-500" />
           <span className="truncate">Import</span>
@@ -360,6 +395,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           onClick={() => onModeChange('doc')}
           className={itemClassName}
           title="Template"
+          aria-label="Template Library"
         >
           <FileSpreadsheet className="w-4 h-4 text-slate-400 dark:text-zinc-500" />
           <span className="truncate">Template</span>
@@ -370,6 +406,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           onClick={() => onModeChange('doc')}
           className={itemClassName}
           title="Trash"
+          aria-label="View Trash Bin"
         >
           <Trash2 className="w-4 h-4 text-red-500/80 dark:text-red-400/80" />
           <span className="truncate text-red-600 dark:text-red-400">Trash</span>
@@ -380,6 +417,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           onClick={() => onModeChange('doc')}
           className={itemClassName}
           title="Learn more"
+          aria-label="Help and documentation"
         >
           <CircleHelp className="w-4 h-4 text-slate-400 dark:text-zinc-500" />
           <span className="truncate">Learn more</span>

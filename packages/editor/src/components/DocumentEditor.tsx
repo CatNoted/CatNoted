@@ -300,6 +300,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           <p className="text-xs mt-1">Start typing or type '/' for commands</p>
           <button
             onClick={() => handleCreateBlock('root')}
+            aria-label="Create first block"
             className="mt-4 px-4 py-1.5 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-md text-xs font-semibold hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition-colors"
           >
             Create first block
@@ -374,6 +375,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                           onPageSelect(backlink.pageId);
                         }
                       }}
+                      aria-label={`Open page: ${backlink.pageTitle}`}
                       className="w-full text-left p-2.5 rounded-xl border border-slate-100 dark:border-zinc-900/40 bg-slate-50/30 hover:bg-slate-50/80 dark:bg-zinc-900/10 dark:hover:bg-zinc-900/30 hover:border-slate-200 dark:hover:border-zinc-800 transition-all duration-200 flex flex-col gap-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 group"
                     >
                       {/* Referencing Page Info */}

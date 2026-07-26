@@ -118,6 +118,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             <button
               onClick={handleLogout}
               disabled={loading}
+              aria-label="Log Out"
               className="w-full py-2 rounded-lg bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all disabled:opacity-50"
             >
               <LogOut className="w-3.5 h-3.5" />
@@ -162,6 +163,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               <button
                 type="submit"
                 disabled={loading}
+                aria-label={isSignUp ? "Create Account" : "Sign In"}
                 className="w-full py-2 rounded-lg bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold text-xs flex items-center justify-center gap-1.5 shadow-sm hover:shadow transition-all disabled:opacity-50 mt-1"
               >
                 {isSignUp ? <UserPlus className="w-3.5 h-3.5" /> : <LogIn className="w-3.5 h-3.5" />}
@@ -181,6 +183,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             {/* Offline Guest Mode Button - Subtle and Calm */}
             <button
               onClick={handleGuestMode}
+              aria-label="Continue in Offline Guest Mode"
               className="w-full py-2 rounded-lg border border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-850/60 text-slate-700 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-zinc-100 font-medium text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm"
             >
               <Sparkles className="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400" />
@@ -192,6 +195,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               <button
                 type="button"
                 onClick={() => setIsSignUp(!isSignUp)}
+                aria-label={isSignUp ? "Switch to Log In" : "Switch to Create Account"}
                 className="text-slate-500 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:underline font-medium transition-colors"
               >
                 {isSignUp ? 'Already have an account? Log In' : "Don't have an account? Create one"}
