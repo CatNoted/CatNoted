@@ -1,9 +1,10 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig, configDefaults } from 'vitest/config';
 import path from 'path';
 
 export default defineConfig({
   test: {
     globals: true,
+    exclude: [...configDefaults.exclude, 'tests/e2e/**'],
     environment: 'happy-dom',
     setupFiles: ['./vitest.setup.ts'],
     include: ['**/*.{test,spec}.{ts,tsx}'],
