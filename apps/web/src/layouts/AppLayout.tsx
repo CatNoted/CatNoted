@@ -681,6 +681,7 @@ if (isSearchOpen && searchQuery) {
                     tabIndex={focusedNavIndex === index ? 0 : -1}
                     title={item.label}
                     aria-label={item.label}
+                      aria-expanded={isActive}
                     className={`w-full py-2.5 rounded-lg flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400 ${
                       isActive 
                         ? 'bg-white dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 shadow-[0_1px_3px_rgba(0,0,0,0.05)] dark:shadow-none font-semibold'
@@ -786,6 +787,7 @@ if (isSearchOpen && searchQuery) {
               className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-500"
               title="Collapse Sidebar"
               aria-label="Collapse Workspace Sidebar"
+              aria-expanded={true}
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -1072,6 +1074,7 @@ if (isSearchOpen && searchQuery) {
             className="absolute top-4 left-4 z-30 p-1.5 rounded-lg text-slate-500 hover:text-slate-700 dark:text-zinc-400 dark:hover:text-zinc-200 bg-white/80 dark:bg-zinc-900/80 border border-slate-200/60 dark:border-zinc-800/60 hover:bg-slate-100 dark:hover:bg-zinc-850 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-500 shadow-sm"
             title="Expand Sidebar"
             aria-label="Expand Workspace Sidebar"
+            aria-expanded={false}
           >
             <Menu className="w-4 h-4" />
           </button>
@@ -1439,6 +1442,7 @@ if (isSearchOpen && searchQuery) {
                       onClick={() => toggleRightSidebar(item.id)}
                       title={item.label}
                       aria-label={item.label}
+                      aria-expanded={isActive}
                       className={`w-full py-2.5 rounded-lg flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400 ${
                         isActive
                           ? 'bg-white dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 shadow-[0_1px_3px_rgba(0,0,0,0.05)] dark:shadow-none font-semibold'
