@@ -6,7 +6,7 @@ interface KanbanBlockProps {
   id: string;
   title?: string;
   columns?: KanbanColumn[];
-  onUpdateProps: (props: { title?: string; columns?: KanbanColumn[] }) => void;
+  onUpdateProps: (props: { kanbanTitle?: string; columns?: KanbanColumn[] }) => void;
   onUpdateContent?: (content: string) => void;
   onDelete?: () => void;
 }
@@ -55,7 +55,7 @@ export const KanbanBlock: React.FC<KanbanBlockProps> = ({
   const [dragOverCardId, setDragOverCardId] = useState<string | null>(null);
 
   const handleBoardTitleChange = (newTitle: string) => {
-    onUpdateProps({ title: newTitle });
+    onUpdateProps({ kanbanTitle: newTitle });
     if (onUpdateContent) {
       onUpdateContent(newTitle);
     }
