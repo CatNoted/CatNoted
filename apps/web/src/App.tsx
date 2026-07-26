@@ -317,14 +317,14 @@ const App: React.FC = () => {
     );
 
     const actions = (
-      <div className="flex items-center gap-1.5 sm:gap-2">
+      <div className="flex items-center gap-2 sm:gap-3">
         <button
           type="button"
           onClick={() => updatePageMeta({ isFavorite: !pageMeta?.isFavorite })}
           className={`inline-flex items-center justify-center rounded-lg p-1.5 border transition-colors ${
             pageMeta?.isFavorite
-              ? 'border-amber-400/60 bg-amber-400/10 text-amber-500'
-              : 'border-slate-200/60 dark:border-zinc-800/60 text-slate-400 hover:text-amber-500'
+              ? 'border-transparent bg-amber-400/10 text-amber-500'
+              : 'border-transparent text-slate-400 hover:text-amber-500 hover:bg-slate-50 dark:hover:bg-[#16161a]'
           }`}
           title={pageMeta?.isFavorite ? 'Unstar page' : 'Star page'}
         >
@@ -335,7 +335,7 @@ const App: React.FC = () => {
           <button
             type="button"
             onClick={() => setShowPageMenu(!showPageMenu)}
-            className="inline-flex items-center justify-center rounded-lg p-1.5 border border-slate-200/60 dark:border-zinc-800/60 text-slate-500 hover:text-slate-800 dark:hover:text-zinc-200 hover:bg-slate-50 dark:hover:bg-zinc-800"
+            className="inline-flex items-center justify-center rounded-lg p-1.5 border border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-zinc-200 hover:bg-slate-50 dark:hover:bg-[#16161a] transition-colors"
             title="Page options"
           >
             <span className="text-xs font-bold px-1">•••</span>
@@ -411,7 +411,7 @@ const App: React.FC = () => {
                 alert(`Share Link generated:\n${link}\n\n(Anyone with this link and the workspace passphrase can access the E2EE sync room)`);
               });
           }}
-          className="inline-flex items-center justify-center rounded-lg gap-1.5 p-1.5 border border-slate-200/60 dark:border-zinc-800/60 hover:bg-slate-50 dark:hover:bg-zinc-850 text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400"
+          className="inline-flex items-center justify-center rounded-lg gap-1.5 p-1.5 border border-transparent hover:bg-slate-50 dark:hover:bg-[#16161a] text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
           title="Share document link"
         >
           <Share2 className="w-3.5 h-3.5" />
@@ -457,7 +457,7 @@ const App: React.FC = () => {
             : null;
 
     const right = (
-      <div className="flex items-center gap-1.5 sm:gap-3">
+      <div className="flex items-center gap-4 sm:gap-5">
         {syncStatus}
         {actions}
       </div>
