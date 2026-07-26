@@ -101,5 +101,6 @@ export interface PageMeta {
   createdAt?: number;
   updatedAt?: number;
   isInfoExpanded?: boolean;
+  isDeleted?: boolean;
 }
 

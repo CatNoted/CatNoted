@@ -24,10 +24,13 @@ const App: React.FC = () => {
   const [isZenMode, setIsZenMode] = useState<boolean>(false);
   const [activePage, setActivePage] = useState<string>('root-doc-node');
 
-  const { blocks: rootBlocks, pages, addBlock: addRootBlock, updateBlockContent: updateRootBlockContent } = useDocumentStore('root-doc-node');
-  const { blocks: activeBlocks, updateBlockContent: updateActiveBlockContent } = useDocumentStore(activePage);
+  const { blocks: rootBlocks, pages, deletedPages, addBlock: addRootBlock } = useDocumentStore('root-doc-node');
+  const { blocks: activeBlocks, updateBlockContent: updateActiveBlockContent, renamePage } = useDocumentStore(activePage);
 
-  const graphData = React.useMemo(() => parseDocumentGraph(rootBlocks, pages), [rootBlocks, pages]);
+  const graphData = React.useMemo(() => {
+    const deletedSet = new Set((deletedPages || []).map(p => p.id));
+    return parseDocumentGraph(rootBlocks, pages, deletedSet);
+  }, [rootBlocks, pages, deletedPages]);
 
   const activeHeading = activeBlocks.find(b => b.type === 'heading' && b.properties?.level === 1);
   const docTitle = activeHeading?.content || 'Untitled Document';
@@ -52,26 +55,10 @@ const App: React.FC = () => {
     if (activePage === 'root-doc-node') return;
     if (!oldTitle.trim() || !newTitle.trim() || oldTitle === newTitle) return;
 
-    const targetBlock = rootBlocks.find(b => b.content.includes(`[[${oldTitle}]]`));
-    if (targetBlock) {
-      const updatedContent = targetBlock.content.replace(`[[${oldTitle}]]`, `[[${newTitle}]]`);
-      updateRootBlockContent(targetBlock.id, updatedContent);
+    const newPageId = renamePage(activePage, newTitle);
+    if (newPageId) {
+      setActivePage(newPageId);
     }
-
-    const oldPageId = activePage;
-    const newPageId = `page-${newTitle.toLowerCase().replace(/\s+/g, '-')}`;
-
-    const oldYarr = ydoc.getArray<any>(`blocks:${oldPageId}`);
-    const newYarr = ydoc.getArray<any>(`blocks:${newPageId}`);
-
-    ydoc.transact(() => {
-      if (newYarr.length === 0 && oldYarr.length > 0) {
-        newYarr.insert(0, oldYarr.toArray());
-        oldYarr.delete(0, oldYarr.length);
-      }
-    });
-
-    setActivePage(newPageId);
   };
 
   const handleSaveTitle = () => {
