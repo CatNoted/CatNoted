@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { encryptPayload, decryptPayload } from '../crypto.js';
+import { encryptPayload, decryptPayload, derivePassphraseFromAuth } from '../crypto.js';
 
 describe('Whitebox Test: Web Crypto Payload Encryption & Decryption', () => {
   const passphrase = 'SuperSecretMasterKey123!';
@@ -57,5 +57,28 @@ describe('Whitebox Test: Web Crypto Payload Encryption & Decryption', () => {
     // Using vitest's strictEqual/toEqual on TypedArrays
     expect(salt1).not.toEqual(salt2);
     expect(iv1).not.toEqual(iv2);
+  });
+
+  describe('derivePassphraseFromAuth', () => {
+    it('should derive the same passphrase deterministically for identical inputs', async () => {
+      const userId = 'user-123-uuid';
+      const email = 'collab-user@catnoted.com';
+      const firstDerived = await derivePassphraseFromAuth(userId, email);
+      const secondDerived = await derivePassphraseFromAuth(userId, email);
+
+      expect(firstDerived).toBe(secondDerived);
+      expect(typeof firstDerived).toBe('string');
+      expect(firstDerived.length).toBe(64); // SHA-256 hex string
+    });
+
+    it('should derive different passphrases for different users or emails', async () => {
+      const derived1 = await derivePassphraseFromAuth('user-1', 'test@domain.com');
+      const derived2 = await derivePassphraseFromAuth('user-2', 'test@domain.com');
+      const derived3 = await derivePassphraseFromAuth('user-1', 'test2@domain.com');
+
+      expect(derived1).not.toBe(derived2);
+      expect(derived1).not.toBe(derived3);
+      expect(derived2).not.toBe(derived3);
+    });
   });
 });
