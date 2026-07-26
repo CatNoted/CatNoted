@@ -6,7 +6,7 @@ import { InfiniteCanvas } from '@catnoted/canvas';
 import { GraphView, parseDocumentGraph } from '@catnoted/graph';
 import { ydoc } from '@catnoted/editor';
 import * as Y from 'yjs';
-import { Share2, Edit2, BookOpen, LayoutGrid } from 'lucide-react';
+import { Share2, Edit2, BookOpen, LayoutGrid, Settings, Search, FileText } from 'lucide-react';
 
 // E2EE sync utilities
 import { encryptPayload, decryptPayload } from './utils/crypto.js';
@@ -18,16 +18,85 @@ import { AuthModal } from './components/auth/AuthModal.js';
 import { SettingsModal } from './components/settings/SettingsModal.js';
 import { CommandPalette } from './components/CommandPalette.js';
 
+const getModeFromPath = (path: string): ActiveMode => {
+  const searchParams = new URLSearchParams(window.location.search);
+  if (searchParams.has('date')) return 'journals';
+  if (path.startsWith('/canvas')) return 'canvas';
+  if (path.startsWith('/graph')) return 'graph';
+  if (path.startsWith('/settings')) return 'settings';
+  if (path.startsWith('/journals')) return 'journals';
+  if (path.startsWith('/search')) return 'search';
+  return 'doc';
+};
+
+function encodeBase64(bytes: Uint8Array): string {
+  const binString = Array.from(bytes, (byte) => String.fromCharCode(byte)).join('');
+  return btoa(binString);
+}
+
+function decodeBase64(base64: string): Uint8Array {
+  const binString = atob(base64);
+  return Uint8Array.from(binString, (m) => m.codePointAt(0)!);
+}
+
 const App: React.FC = () => {
-  const [activeMode, setActiveMode] = useState<ActiveMode>('doc');
+  const [activeMode, setActiveMode] = useState<ActiveMode>(() => {
+    return getModeFromPath(window.location.pathname);
+  });
   const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
   const [isZenMode, setIsZenMode] = useState<boolean>(false);
   const [activePage, setActivePage] = useState<string>('root-doc-node');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const [openaiKey, setOpenaiKey] = useState('');
+  const [geminiKey, setGeminiKey] = useState('');
+  const [anthropicKey, setAnthropicKey] = useState('');
+  const [ollamaUrl, setOllamaUrl] = useState('http://localhost:11434');
 
   const { blocks: rootBlocks, pages, addBlock: addRootBlock, updateBlockContent: updateRootBlockContent } = useDocumentStore('root-doc-node');
   const { blocks: activeBlocks, updateBlockContent: updateActiveBlockContent } = useDocumentStore(activePage);
 
   const graphData = React.useMemo(() => parseDocumentGraph(rootBlocks, pages), [rootBlocks, pages]);
+
+  const parsedGraphNodes = React.useMemo(() => {
+    return parseDocumentGraph(rootBlocks, pages).nodes;
+  }, [rootBlocks, pages]);
+
+  const searchResults = React.useMemo(() => {
+    if (!searchQuery.trim()) return [];
+
+    const query = searchQuery.toLowerCase();
+    const results: Array<{ id: string; type: string; content: string; icon: any }> = [];
+
+    // Search in headings / text blocks
+    rootBlocks.forEach(block => {
+      if ((block.type === 'heading' || block.type === 'text') && block.content.toLowerCase().includes(query)) {
+        results.push({
+          id: block.id,
+          type: block.type,
+          content: block.content,
+          icon: FileText
+        });
+      }
+    });
+
+    // Search in graph nodes (pages/tags)
+    parsedGraphNodes.forEach(node => {
+      if (node.label.toLowerCase().includes(query) && node.id !== 'root-doc-node') {
+        const cleanedLabel = node.label.replace(/[📄#]/g, '').trim();
+        if (!results.some(r => r.content.includes(cleanedLabel))) {
+          results.push({
+            id: node.id,
+            type: node.type,
+            content: node.label,
+            icon: FileText
+          });
+        }
+      }
+    });
+
+    return results;
+  }, [rootBlocks, parsedGraphNodes, searchQuery]);
 
   const activeHeading = activeBlocks.find(b => b.type === 'heading' && b.properties?.level === 1);
   const docTitle = activeHeading?.content || 'Untitled Document';
@@ -125,12 +194,12 @@ const App: React.FC = () => {
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
 
   useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    const hasDate = searchParams.has('date');
-    const isJournalsPath = window.location.pathname.startsWith('/journals');
-    if (hasDate || isJournalsPath) {
-      setActiveMode('journals');
-    }
+    const handlePopState = () => {
+      const mode = getModeFromPath(window.location.pathname);
+      setActiveMode(mode);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
   useEffect(() => {
@@ -159,6 +228,34 @@ const App: React.FC = () => {
     window.addEventListener('keydown', handleGlobalKeyDown);
     return () => window.removeEventListener('keydown', handleGlobalKeyDown);
   }, []);
+
+  useEffect(() => {
+    if (activeMode !== 'settings' || !passphrase) return;
+
+    const loadKey = async (keyName: string, setter: (val: string) => void) => {
+      const encryptedBase64 = sessionStorage.getItem(keyName);
+      if (encryptedBase64) {
+        try {
+          const encryptedBytes = decodeBase64(encryptedBase64);
+          const decryptedBytes = await decryptPayload(encryptedBytes, passphrase);
+          const decryptedString = new TextDecoder().decode(decryptedBytes);
+          setter(decryptedString);
+        } catch (e) {
+          console.error(`Failed to decrypt ${keyName}`, e);
+          setter('');
+        }
+      } else {
+        setter('');
+      }
+    };
+
+    const ollamaHost = sessionStorage.getItem('byok_ollama_url') || 'http://localhost:11434';
+    setOllamaUrl(ollamaHost);
+
+    loadKey('byok_openai_key', setOpenaiKey);
+    loadKey('byok_gemini_key', setGeminiKey);
+    loadKey('byok_anthropic_key', setAnthropicKey);
+  }, [activeMode, passphrase]);
 
   const { status, conflictMsg, dismissConflict, persistUpdate } = usePersistence();
 
@@ -198,11 +295,19 @@ const App: React.FC = () => {
   }, [passphrase]);
 
   const handleModeChange = (mode: ActiveMode) => {
-    if (mode === 'settings') {
-      setIsSettingsOpen(true);
-      return;
-    }
     setActiveMode(mode);
+    let path = '/';
+    if (mode !== 'doc') {
+      path = `/${mode}`;
+    }
+    if (mode === 'journals') {
+      const searchParams = new URLSearchParams(window.location.search);
+      const date = searchParams.get('date');
+      path = date ? `/journals?date=${date}` : '/journals';
+    }
+    if (window.location.pathname + window.location.search !== path) {
+      window.history.pushState(null, '', path);
+    }
   };
 
   const { pageMeta, updatePageMeta, deletePage } = useDocumentStore(activePage);
@@ -482,6 +587,33 @@ const App: React.FC = () => {
     );
   };
 
+  const handleSaveSettingsPage = async () => {
+    const saveKey = async (keyName: string, value: string) => {
+      if (value) {
+        try {
+          const valueBytes = new TextEncoder().encode(value);
+          const encryptedBytes = await encryptPayload(valueBytes, passphrase);
+          const encryptedBase64 = encodeBase64(encryptedBytes);
+          sessionStorage.setItem(keyName, encryptedBase64);
+        } catch (e) {
+          console.error(`Failed to encrypt ${keyName}`, e);
+        }
+      } else {
+        sessionStorage.removeItem(keyName);
+      }
+    };
+
+    await saveKey('byok_openai_key', openaiKey);
+    await saveKey('byok_gemini_key', geminiKey);
+    await saveKey('byok_anthropic_key', anthropicKey);
+    sessionStorage.setItem('byok_ollama_url', ollamaUrl);
+
+    if (passphrase) {
+      localStorage.setItem('catnoted_e2ee_passphrase', passphrase);
+    }
+    alert('Settings saved successfully!');
+  };
+
   const renderActiveView = () => {
     switch (activeMode) {
       case 'doc':
@@ -499,13 +631,188 @@ const App: React.FC = () => {
       case 'graph':
         return (
           <div className="h-full overflow-hidden">
-            <GraphView onNavigateToNode={(nodeId) => { setActivePage(nodeId); setActiveMode('doc'); }} />
+            <GraphView onNavigateToNode={(nodeId) => { setActivePage(nodeId); handleModeChange('doc'); }} />
           </div>
         );
       case 'journals':
         return (
           <div className="h-full overflow-hidden">
             <JournalsView />
+          </div>
+        );
+      case 'settings':
+        return (
+          <div className="h-full overflow-auto p-6 max-w-4xl mx-auto flex flex-col gap-6 select-none">
+            <h1 className="text-2xl font-bold text-slate-800 dark:text-zinc-100 flex items-center gap-2">
+              <Settings className="w-6 h-6 text-indigo-500" /> Settings
+            </h1>
+            <div className="bg-white dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800 rounded-2xl p-6 shadow-sm">
+              <p className="text-xs leading-relaxed text-slate-500 dark:text-zinc-400 mb-6">
+                Use your own LLM API keys and configure end-to-end encryption. Settings are stored securely in your browser and never touch CatNoted servers.
+              </p>
+
+              {/* Settings Form */}
+              <div className="space-y-6">
+                <div className="space-y-4">
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-500">Security & Encryption</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
+                    <label className="text-xs font-medium text-slate-600 dark:text-zinc-300">E2EE Passphrase</label>
+                    <div className="sm:col-span-2">
+                      <input
+                        type="password"
+                        value={passphrase}
+                        onChange={(e) => {
+                          setPassphrase(e.target.value);
+                          localStorage.setItem('catnoted_e2ee_passphrase', e.target.value);
+                        }}
+                        placeholder="Insert secure E2EE passphrase..."
+                        className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-zinc-800 bg-slate-50/30 dark:bg-[#16161a]/30 text-xs text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400 transition-all"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="border-t border-slate-100 dark:border-zinc-800 pt-6 space-y-4">
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-500">Provider Credentials</h3>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
+                      <label className="text-xs font-medium text-slate-600 dark:text-zinc-300">OpenAI Key</label>
+                      <div className="sm:col-span-2">
+                        <input
+                          type="password"
+                          value={openaiKey}
+                          onChange={(e) => setOpenaiKey(e.target.value)}
+                          placeholder="sk-..."
+                          className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-zinc-800 bg-slate-50/30 dark:bg-[#16161a]/30 text-xs text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400 transition-all"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
+                      <label className="text-xs font-medium text-slate-600 dark:text-zinc-300">Gemini Key</label>
+                      <div className="sm:col-span-2">
+                        <input
+                          type="password"
+                          value={geminiKey}
+                          onChange={(e) => setGeminiKey(e.target.value)}
+                          placeholder="AIzaSy..."
+                          className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-zinc-800 bg-slate-50/30 dark:bg-[#16161a]/30 text-xs text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400 transition-all"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
+                      <label className="text-xs font-medium text-slate-600 dark:text-zinc-300">Anthropic Key</label>
+                      <div className="sm:col-span-2">
+                        <input
+                          type="password"
+                          value={anthropicKey}
+                          onChange={(e) => setAnthropicKey(e.target.value)}
+                          placeholder="sk-ant-..."
+                          className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-zinc-800 bg-slate-50/30 dark:bg-[#16161a]/30 text-xs text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400 transition-all"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
+                      <label className="text-xs font-medium text-slate-600 dark:text-zinc-300">Ollama Host URL</label>
+                      <div className="sm:col-span-2">
+                        <input
+                          type="text"
+                          value={ollamaUrl}
+                          onChange={(e) => setOllamaUrl(e.target.value)}
+                          placeholder="http://localhost:11434"
+                          className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-zinc-800 bg-slate-50/30 dark:bg-[#16161a]/30 text-xs text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400 transition-all"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={handleSaveSettingsPage}
+                    className="inline-flex h-9 items-center justify-center rounded-xl px-4 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-all shadow-sm"
+                  >
+                    Save Changes
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      case 'search':
+        return (
+          <div className="h-full overflow-auto p-6 max-w-4xl mx-auto flex flex-col gap-6">
+            <h1 className="text-2xl font-bold text-slate-800 dark:text-zinc-100 flex items-center gap-2 select-none">
+              <Search className="w-6 h-6 text-indigo-500" /> Search Workspace
+            </h1>
+            <div className="relative">
+              <Search className="absolute left-3.5 top-3.5 h-5 w-5 text-slate-400 dark:text-zinc-500" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search text, headings, pages or tags..."
+                className="w-full pl-11 pr-4 py-3 border border-slate-200/80 dark:border-zinc-800 rounded-2xl bg-white dark:bg-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500"
+                autoFocus
+              />
+            </div>
+
+            <div className="flex-1 min-h-0">
+              {searchQuery.trim() === '' ? (
+                <div className="text-center py-12 text-slate-400 dark:text-zinc-500">
+                  Type something above to search your workspace.
+                </div>
+              ) : searchResults.length === 0 ? (
+                <div className="text-center py-12 text-slate-400 dark:text-zinc-500">
+                  No results found for "{searchQuery}".
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <p className="text-xs text-slate-400 dark:text-zinc-500 mb-4 font-semibold select-none">
+                    Found {searchResults.length} {searchResults.length === 1 ? 'result' : 'results'}
+                  </p>
+                  {searchResults.map((result) => {
+                    return (
+                      <button
+                        key={result.id}
+                        onClick={() => {
+                          if (result.type === 'page' || result.type === 'tag') {
+                            setActivePage(result.id);
+                            handleModeChange('doc');
+                          } else {
+                            // Text block or heading block search
+                            setActivePage('root-doc-node');
+                            handleModeChange('doc');
+                            setTimeout(() => {
+                              const el = document.getElementById(result.id);
+                              if (el) {
+                                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                              }
+                            }, 100);
+                          }
+                        }}
+                        className="w-full text-left p-4 rounded-xl border border-slate-150 dark:border-zinc-850 bg-white dark:bg-zinc-900/60 hover:bg-slate-50 dark:hover:bg-zinc-800/40 transition-colors flex items-start gap-3 group"
+                      >
+                        <div className="p-2 rounded-lg bg-slate-100 dark:bg-zinc-800 text-slate-500 group-hover:text-indigo-500 transition-colors shrink-0">
+                          <FileText className="w-4 h-4" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] font-semibold text-slate-400 dark:text-zinc-500 select-none uppercase tracking-wider mb-1">
+                            {result.type}
+                          </p>
+                          <p className="text-sm text-slate-800 dark:text-zinc-200 font-medium truncate">
+                            {result.content}
+                          </p>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </div>
         );
       default:
