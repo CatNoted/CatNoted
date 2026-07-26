@@ -18,6 +18,7 @@ import {
   Bookmark,
   Image as ImageIcon,
   Link2,
+  Kanban,
 } from 'lucide-react';
 
 export interface SlashCommand {
@@ -47,7 +48,7 @@ const getGroup = (cmd: SlashCommand): GroupName => {
   if (['todo', 'bullet', 'ordered', 'toggle'].includes(id)) {
     return 'Lists';
   }
-  if (['table', 'callout', 'code', 'math', 'bookmark', 'embed', 'image'].includes(id)) {
+  if (['table', 'callout', 'code', 'math', 'bookmark', 'embed', 'image', 'kanban'].includes(id)) {
     return 'Advanced Blocks';
   }
   if (['widget'].includes(id)) {
@@ -349,6 +350,14 @@ export function buildSlashCommands(opts: {
       icon: <TableIcon className="w-4 h-4" />,
       keywords: ['table', 'grid', 'matrix', 'row', 'column'],
       action: exec(() => onSetType('table')),
+    },
+    {
+      id: 'kanban',
+      label: 'Kanban Board',
+      description: 'Editable columns and cards',
+      icon: <Kanban className="w-4 h-4" />,
+      keywords: ['kanban', 'board', 'trello', 'todo', 'columns', 'cards'],
+      action: exec(() => onSetType('kanban', { title: 'Kanban Board', columns: [] })),
     },
     {
       id: 'bookmark',
