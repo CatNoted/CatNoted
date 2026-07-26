@@ -147,7 +147,7 @@ const App: React.FC = () => {
     return () => window.removeEventListener('keydown', handleGlobalKeyDown);
   }, []);
 
-  const { status, conflictMsg, dismissConflict, persistUpdate } = usePersistence();
+  const { status, conflictMsg, dismissConflict, resolveConflict, persistUpdate } = usePersistence();
 
   useEffect(() => {
     const handleUpdate = async (update: Uint8Array, origin: any) => {
@@ -520,6 +520,10 @@ const App: React.FC = () => {
         userEmail={userEmail}
         onAuthTrigger={() => setIsAuthOpen(true)}
         onCreatePage={handleCreatePage}
+        syncStatus={status}
+        conflictMsg={conflictMsg}
+        onResolveConflict={resolveConflict}
+        onDismissConflict={dismissConflict}
       >
         <div className="flex flex-col h-full w-full overflow-hidden">
           {renderTopBar()}
