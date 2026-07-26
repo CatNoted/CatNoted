@@ -11,6 +11,7 @@ interface ForceGraphProps {
   nodes: GraphNode[];
   edges: GraphEdge[];
   onNodeClick: (node: GraphNode) => void;
+  activeNodeId?: string;
 }
 
 interface PhysNode extends GraphNode {
@@ -24,7 +25,8 @@ interface PhysNode extends GraphNode {
 export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
   nodes: inputNodes,
   edges,
-  onNodeClick
+  onNodeClick,
+  activeNodeId
 }, ref) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const nodesRef = useRef<PhysNode[]>([]);
@@ -328,12 +330,13 @@ export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
             const tid = typeof e.target === 'object' ? (e.target as any).id : e.target;
             return (sid === hoverNode.id && tid === node.id) || (tid === hoverNode.id && sid === node.id);
         });
+        const isActiveNode = activeNodeId && node.id === activeNodeId;
 
-        const active = isHovered || isConnectedToHover;
+        const active = isHovered || isConnectedToHover || isActiveNode;
 
         ctx.beginPath();
         // Dynamic radius
-        const r = node.radius + (isHovered ? 3 : (isConnectedToHover ? 1 : 0));
+        const r = node.radius + (isHovered ? 3 : (isConnectedToHover ? 1 : (isActiveNode ? 2 : 0)));
         ctx.arc(node.x, node.y, r, 0, 2 * Math.PI);
         
         // Node styling colors based on Obsidian style theme
@@ -365,7 +368,7 @@ export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
             ? (isDark ? '#ffffff' : '#17171a')
             : (isDark ? '#a1a1aa' : '#71717a');
 
-          ctx.font = `${active ? 'bold' : 'normal'} ${10 / Math.max(0.5, scaleRef.current)}px sans-serif`;
+          ctx.font = `${active ? 'bold' : 'normal'} ${10 / scaleRef.current}px sans-serif`;
           ctx.textAlign = 'center';
           ctx.fillText(node.label, node.x, node.y - r - (6 / scaleRef.current));
         }

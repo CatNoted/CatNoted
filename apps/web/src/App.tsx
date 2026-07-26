@@ -488,7 +488,7 @@ const App: React.FC = () => {
       case 'graph':
         return (
           <div className="h-full overflow-hidden">
-            <GraphView onNavigateToNode={(nodeId) => { setActivePage(nodeId); setActiveMode('doc'); }} />
+            <GraphView activePageId={activePage} onNavigateToNode={(nodeId) => { setActivePage(nodeId); setActiveMode('doc'); }} />
           </div>
         );
       case 'journals':

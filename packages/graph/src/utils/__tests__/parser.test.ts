@@ -171,4 +171,37 @@ describe('Whitebox Test: parseDocumentGraph (Graph Parsing Logic)', () => {
     expect(result.edges).toHaveLength(0);
   });
 
+  it('should not overfilter empty/unlinked pages and instead parse them as nodes', () => {
+    const blocks: BlockNode[] = [];
+    const pages = [
+      {
+        id: 'root-doc-node',
+        title: 'Root Document',
+      },
+      {
+        id: 'page-empty-1',
+        title: 'Empty Page 1',
+      },
+      {
+        id: 'page-empty-2',
+        title: 'Empty Page 2',
+      }
+    ];
+
+    const result = parseDocumentGraph(blocks, pages);
+
+    // Should have 3 nodes: root + 2 empty pages
+    expect(result.nodes).toHaveLength(3);
+
+    const node1 = result.nodes.find(n => n.id === 'page-empty-1');
+    expect(node1).toBeDefined();
+    expect(node1?.rawName).toBe('Empty Page 1');
+    expect(node1?.label).toBe('📄 Empty Page 1 (0)');
+
+    const node2 = result.nodes.find(n => n.id === 'page-empty-2');
+    expect(node2).toBeDefined();
+    expect(node2?.rawName).toBe('Empty Page 2');
+    expect(node2?.label).toBe('📄 Empty Page 2 (0)');
+  });
+
 });

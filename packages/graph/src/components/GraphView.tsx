@@ -7,11 +7,12 @@ import { Network, Info, Download, Filter } from 'lucide-react';
 
 interface GraphViewProps {
   onNavigateToNode: (nodeId: string) => void;
+  activePageId?: string;
 }
 
 type FilterType = 'all' | 'page' | 'tag';
 
-export const GraphView: React.FC<GraphViewProps> = ({ onNavigateToNode }) => {
+export const GraphView: React.FC<GraphViewProps> = ({ onNavigateToNode, activePageId }) => {
   const { blocks, pages, deletedPages } = useDocumentStore();
   const graphRef = useRef<ForceGraphRef>(null);
   const [filterType, setFilterType] = useState<FilterType>('all');
@@ -130,6 +131,7 @@ export const GraphView: React.FC<GraphViewProps> = ({ onNavigateToNode }) => {
           nodes={nodes} 
           edges={edges} 
           onNodeClick={handleNodeClick} 
+          activeNodeId={activePageId}
         />
         
         {/* Info Overlay */}
