@@ -267,14 +267,21 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
     }
   };
 
-  const moveBlock = (fromIndex: number, toIndex: number) => {
+  const moveBlock = (draggedId: string, targetId: string) => {
     ydoc.transact(() => {
       const currentArray = yblocks.toArray();
-      if (fromIndex >= 0 && fromIndex < currentArray.length && toIndex >= 0 && toIndex < currentArray.length) {
+      const fromIndex = currentArray.findIndex(b => b.id === draggedId);
+      let toIndex = currentArray.findIndex(b => b.id === targetId);
+
+      if (fromIndex !== -1 && toIndex !== -1 && fromIndex !== toIndex) {
         const block = yblocks.get(fromIndex);
         yblocks.delete(fromIndex, 1);
-        const insertIndex = toIndex > fromIndex ? toIndex : toIndex;
-        yblocks.insert(insertIndex, [block]);
+
+        // If we deleted an item before the target, the target index shifted down by 1
+        if (fromIndex < toIndex) {
+          toIndex--;
+        }
+        yblocks.insert(toIndex, [block]);
       }
     });
   };

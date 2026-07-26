@@ -125,13 +125,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     e.preventDefault();
     setDragOverBlockId(null);
     if (draggedBlockId && draggedBlockId !== id) {
-      const fromIndex = blocks.findIndex(b => b.id === draggedBlockId);
-      const toIndex = blocks.findIndex(b => b.id === id);
-
-      if (fromIndex !== -1 && toIndex !== -1) {
-        deleteBlock(draggedBlockId);
-        moveBlock(fromIndex, toIndex);
-      }
+      moveBlock(draggedBlockId, id);
     }
     setDraggedBlockId(null);
   };
