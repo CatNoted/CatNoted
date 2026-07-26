@@ -1,4 +1,3 @@
-import React from 'react';
 import { CommandPalette } from './CommandPalette';
 import type { ActiveMode } from '../layouts/AppLayout';
 
@@ -9,7 +8,7 @@ export default {
 
 const baseProps = {
   onClose() {},
-  onModeSelect: ((mode: ActiveMode) => {}) as (mode: ActiveMode) => void,
+  onModeSelect: ((_mode: ActiveMode) => {}) as (_mode: ActiveMode) => void,
   onToggleTheme() {},
   onToggleZen() {},
   onOpenSettings() {},
