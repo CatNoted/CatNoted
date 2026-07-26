@@ -46,7 +46,7 @@ import {
   Cloud
 } from 'lucide-react';
 
-export type ActiveMode = "doc" | "canvas" | "graph" | "journals" | "settings";
+export type ActiveMode = "doc" | "canvas" | "graph" | "journals" | "settings" | "search";
 
 const WIDGET_TEMPLATES = {
   clock: `
@@ -374,6 +374,19 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   // ── Sidebar Keyboard Navigation & Focus Management ──────────────────
   const navRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const [focusedNavIndex, setFocusedNavIndex] = useState(0);
+
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
+
+  useEffect(() => {
+    const handlePopState = () => setCurrentPath(window.location.pathname);
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const isModeActive = (mode: ActiveMode) => {
+    if (mode === 'doc') return currentPath === '/';
+    return currentPath.startsWith(`/${mode}`);
+  };
 
   useEffect(() => {
     const activeIndex = ['doc', 'canvas', 'graph', 'journals', 'settings'].indexOf(activeMode);
@@ -740,7 +753,7 @@ if (isSearchOpen && searchQuery) {
                 { id: 'settings', icon: Settings, label: 'Settings' }
               ].map((item, index) => {
                 const Icon = item.icon;
-                const isActive = activeMode === item.id;
+                const isActive = isModeActive(item.id as ActiveMode);
                 return (
                   <button
                     key={item.id}
@@ -910,7 +923,7 @@ if (isSearchOpen && searchQuery) {
                   { id: 'settings' as const, icon: Settings, label: 'Settings' }
                 ].map((item) => {
                   const Icon = item.icon;
-                  const isActive = activeMode === item.id;
+                  const isActive = isModeActive(item.id as ActiveMode);
                   return (
                     <li key={item.id}>
                       <button

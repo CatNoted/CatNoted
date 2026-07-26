@@ -33,7 +33,7 @@ interface SidebarProps {
   activeMode?: ActiveMode;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'doc' }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ onModeChange }) => {
   const { pages, deletePage } = useDocumentStore();
 
   const favoritePages = useMemo(
@@ -46,6 +46,20 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
   const [tagsCollapsed, setTagsCollapsed] = useState(false);
   const [collectionsCollapsed, setCollectionsCollapsed] = useState(false);
   const [othersCollapsed, setOthersCollapsed] = useState(true);
+
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
+
+  // Keep path updated with popstate event
+  React.useEffect(() => {
+    const handlePopState = () => setCurrentPath(window.location.pathname);
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const isModeActive = (mode: ActiveMode) => {
+    if (mode === 'doc') return currentPath === '/';
+    return currentPath.startsWith(`/${mode}`);
+  };
 
   const sectionClassName =
     'px-2.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-500';
@@ -102,41 +116,41 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         <button
           type="button"
           onClick={() => onModeChange('doc')}
-          className={`${itemClassName} ${activeMode === 'doc' ? 'bg-slate-100 dark:bg-zinc-800/80 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
+          className={`${itemClassName} ${isModeActive('doc') ? 'bg-slate-100 dark:bg-zinc-800/80 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
         >
-          <FileText className={`${getItemIconClass(activeMode === 'doc')} w-4 h-4`} />
+          <FileText className={`${getItemIconClass(isModeActive('doc'))} w-4 h-4`} />
           <span className="truncate">Doc Mode</span>
         </button>
         <button
           type="button"
           onClick={() => onModeChange('canvas')}
-          className={`${itemClassName} ${activeMode === 'canvas' ? 'bg-slate-100 dark:bg-zinc-800/80 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
+          className={`${itemClassName} ${isModeActive('canvas') ? 'bg-slate-100 dark:bg-zinc-800/80 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
         >
-          <LayoutGrid className={`${getItemIconClass(activeMode === 'canvas')} w-4 h-4`} />
+          <LayoutGrid className={`${getItemIconClass(isModeActive('canvas'))} w-4 h-4`} />
           <span className="truncate">Canvas</span>
         </button>
         <button
           type="button"
           onClick={() => onModeChange('graph')}
-          className={`${itemClassName} ${activeMode === 'graph' ? 'bg-slate-100 dark:bg-zinc-800/80 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
+          className={`${itemClassName} ${isModeActive('graph') ? 'bg-slate-100 dark:bg-zinc-800/80 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
         >
-          <Network className={`${getItemIconClass(activeMode === 'graph')} w-4 h-4`} />
+          <Network className={`${getItemIconClass(isModeActive('graph'))} w-4 h-4`} />
           <span className="truncate">Graph</span>
         </button>
         <button
           type="button"
           onClick={() => onModeChange('journals')}
-          className={`${itemClassName} ${activeMode === 'journals' ? 'bg-slate-100 dark:bg-zinc-800/80 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
+          className={`${itemClassName} ${isModeActive('journals') ? 'bg-slate-100 dark:bg-zinc-800/80 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
         >
-          <Calendar className={`${getItemIconClass(activeMode === 'journals')} w-4 h-4`} />
+          <Calendar className={`${getItemIconClass(isModeActive('journals'))} w-4 h-4`} />
           <span className="truncate">Journals</span>
         </button>
         <button
           type="button"
           onClick={() => onModeChange('settings')}
-          className={`${itemClassName} ${activeMode === 'settings' ? 'bg-slate-100 dark:bg-zinc-800/80 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
+          className={`${itemClassName} ${isModeActive('settings') ? 'bg-slate-100 dark:bg-zinc-800/80 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
         >
-          <Settings className={`${getItemIconClass(activeMode === 'settings')} w-4 h-4`} />
+          <Settings className={`${getItemIconClass(isModeActive('settings'))} w-4 h-4`} />
           <span className="truncate">Settings</span>
         </button>
       </div>
