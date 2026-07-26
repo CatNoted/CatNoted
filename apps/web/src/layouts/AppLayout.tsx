@@ -694,7 +694,7 @@ if (isSearchOpen && searchQuery) {
               <button
                 type="button"
                 onClick={() => onResolveConflict?.('local')}
-                className="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl text-xs font-semibold transition-all hover:shadow-lg hover:shadow-indigo-500/10 active:scale-98"
+                className="w-full py-2.5 px-4 bg-accent hover:bg-accent-hover text-white rounded-2xl text-xs font-semibold transition-all hover:shadow-lg hover:shadow-accent/10 active:scale-98"
                 data-testid="resolve-local-btn"
               >
                 Keep Local Changes (Overwrite Remote)
@@ -702,7 +702,7 @@ if (isSearchOpen && searchQuery) {
               <button
                 type="button"
                 onClick={() => onResolveConflict?.('remote')}
-                className="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-850 text-slate-700 dark:text-zinc-300 rounded-2xl text-xs font-semibold transition-all active:scale-98"
+                className="w-full py-2.5 px-4 bg-surface-soft hover:bg-surface-hover text-ink-secondary rounded-2xl text-xs font-semibold transition-all active:scale-98"
                 data-testid="resolve-remote-btn"
               >
                 Discard Local Changes (Accept Remote)
@@ -755,8 +755,8 @@ if (isSearchOpen && searchQuery) {
                       aria-expanded={isActive}
                     className={`w-full py-2.5 rounded-lg flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accent ${
                       isActive 
-                        ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold'
-                        : 'text-slate-400 dark:text-zinc-500 hover:text-slate-900 dark:hover:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5'
+                        ? 'bg-accent-soft text-accent font-semibold'
+                        : 'text-ink-muted hover:text-ink hover:bg-surface-hover'
                     }`}
                   >
                     <Icon className="w-4 h-4" />
@@ -900,7 +900,7 @@ if (isSearchOpen && searchQuery) {
             )}
           </div>
 
-          <div className="flex-1 overflow-y-auto overflow-x-hidden min-w-[160px]">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden min-w-0">
             <div className="p-3 space-y-6">
             {/* Workspace Views Navigation Indicator Section */}
             <div>
@@ -924,8 +924,8 @@ if (isSearchOpen && searchQuery) {
                         onClick={() => onModeChange(item.id)}
                         className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center gap-2 transition-colors ${
                           isActive
-                            ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold'
-                            : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/40 hover:text-slate-900 dark:hover:text-zinc-200'
+                            ? 'bg-accent-soft text-accent font-semibold'
+                            : 'text-ink-muted hover:bg-surface-hover hover:text-ink'
                         }`}
                       >
                         <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-accent' : 'text-ink-muted'}`} />
@@ -958,8 +958,8 @@ if (isSearchOpen && searchQuery) {
                         }}
                         className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between transition-colors ${
                           isActive
-                            ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold'
-                            : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/40 hover:text-slate-900 dark:hover:text-zinc-200'
+                            ? 'bg-accent-soft text-accent font-semibold'
+                            : 'text-ink-muted hover:bg-surface-hover hover:text-ink'
                         }`}
                       >
                         <div className="flex items-center min-w-0 flex-1 gap-x-2.5" title={doc.title}>
@@ -1073,8 +1073,8 @@ if (isSearchOpen && searchQuery) {
                                 }}
                                 className={`flex-1 text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
                                   isActive
-                                    ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold'
-                                    : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
+                                    ? 'bg-accent-soft text-accent font-semibold'
+                                    : 'text-ink-muted hover:bg-surface-hover hover:text-ink'
                                 }`}
                               >
                                 {renderPageIcon(node.icon, "w-3.5 h-3.5 shrink-0 flex items-center justify-center")}
@@ -1133,8 +1133,8 @@ if (isSearchOpen && searchQuery) {
                                 }}
                                 className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
                                   isActive
-                                    ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold'
-                                    : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
+                                    ? 'bg-accent-soft text-accent font-semibold'
+                                    : 'text-ink-muted hover:bg-surface-hover hover:text-ink'
                                 }`}
                               >
                                 <FileText className="w-3.5 h-3.5 text-ink-muted shrink-0" />
@@ -1590,8 +1590,8 @@ if (isSearchOpen && searchQuery) {
                       aria-expanded={isActive}
                       className={`w-full py-2.5 rounded-lg flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accent ${
                         isActive
-                          ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold'
-                          : 'text-slate-400 dark:text-zinc-500 hover:text-slate-900 dark:hover:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5'
+                          ? 'bg-accent-soft text-accent font-semibold'
+                          : 'text-ink-muted hover:text-ink hover:bg-surface-hover'
                       }`}
                     >
                       <Icon className="w-4 h-4" />
