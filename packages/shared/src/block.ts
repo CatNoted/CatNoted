@@ -101,5 +101,9 @@ export interface PageMeta {
   createdAt?: number;
   updatedAt?: number;
   isInfoExpanded?: boolean;
+  isDeleted?: boolean;
+  collection?: string;
+  tags?: string[];
+  journalDate?: string;
 }
 

@@ -269,11 +269,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
 
         {renderSection('Tags', tagsCollapsed, setTagsCollapsed, Tag, (
           <div className="flex flex-wrap gap-1.5 p-2">
-            <button type="button" onClick={() => onModeChange('doc')} className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors">
+            <button type="button" onClick={() => onModeChange('tags')} className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors">
               <Tag className="w-3 h-3 text-amber-500" />
               <span>product</span>
             </button>
-            <button type="button" onClick={() => onModeChange('doc')} className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors">
+            <button type="button" onClick={() => onModeChange('tags')} className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors">
               <Tag className="w-3 h-3 text-amber-500" />
               <span>engineering</span>
             </button>
@@ -282,12 +282,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
 
         {renderSection('Collections', collectionsCollapsed, setCollectionsCollapsed, LayoutGrid, (
           <>
-            <button type="button" onClick={() => onModeChange('doc')} className={itemClassName}>
-              <LayoutGrid className={`${getItemIconClass(false)} w-4 h-4 text-indigo-500`} />
+            <button type="button" onClick={() => onModeChange('collections')} className={`${itemClassName} ${activeMode === 'collections' ? 'bg-slate-100 dark:bg-zinc-800/80 text-slate-900 dark:text-white font-semibold' : ''}`}>
+              <LayoutGrid className={`${getItemIconClass(activeMode === 'collections')} w-4 h-4 text-indigo-500`} />
               <span className="truncate">Design Review</span>
             </button>
-            <button type="button" onClick={() => onModeChange('doc')} className={itemClassName}>
-              <LayoutGrid className={`${getItemIconClass(false)} w-4 h-4 text-emerald-500`} />
+            <button type="button" onClick={() => onModeChange('collections')} className={`${itemClassName} ${activeMode === 'collections' ? 'bg-slate-100 dark:bg-zinc-800/80 text-slate-900 dark:text-white font-semibold' : ''}`}>
+              <LayoutGrid className={`${getItemIconClass(activeMode === 'collections')} w-4 h-4 text-emerald-500`} />
               <span className="truncate">Weekly Sync</span>
             </button>
           </>
@@ -320,32 +320,32 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
 
         <button
           type="button"
-          onClick={() => onModeChange('doc')}
-          className={itemClassName}
+          onClick={() => onModeChange('import')}
+          className={`${itemClassName} ${activeMode === 'import' ? 'bg-slate-100 dark:bg-zinc-800/80 text-slate-900 dark:text-white font-semibold' : ''}`}
           title="Import"
         >
-          <Download className="w-4 h-4 text-slate-400 dark:text-zinc-500" />
+          <Download className={`${getItemIconClass(activeMode === 'import')} w-4 h-4`} />
           <span className="truncate">Import</span>
         </button>
 
         <button
           type="button"
-          onClick={() => onModeChange('doc')}
-          className={itemClassName}
+          onClick={() => onModeChange('template')}
+          className={`${itemClassName} ${activeMode === 'template' ? 'bg-slate-100 dark:bg-zinc-800/80 text-slate-900 dark:text-white font-semibold' : ''}`}
           title="Template"
         >
-          <FileSpreadsheet className="w-4 h-4 text-slate-400 dark:text-zinc-500" />
+          <FileSpreadsheet className={`${getItemIconClass(activeMode === 'template')} w-4 h-4`} />
           <span className="truncate">Template</span>
         </button>
 
         <button
           type="button"
-          onClick={() => onModeChange('doc')}
-          className={itemClassName}
+          onClick={() => onModeChange('trash')}
+          className={`${itemClassName} ${activeMode === 'trash' ? 'bg-slate-100 dark:bg-zinc-800/80 text-red-600 dark:text-red-400 font-semibold' : ''}`}
           title="Trash"
         >
-          <Trash2 className="w-4 h-4 text-red-500/80 dark:text-red-400/80" />
-          <span className="truncate text-red-600 dark:text-red-400">Trash</span>
+          <Trash2 className={`${activeMode === 'trash' ? 'text-indigo-600 dark:text-indigo-400' : 'text-red-500/80 dark:text-red-400/80'} w-4 h-4`} />
+          <span className="truncate">Trash</span>
         </button>
 
         <button

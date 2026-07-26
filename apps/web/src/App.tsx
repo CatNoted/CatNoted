@@ -2,6 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { AppLayout, ActiveMode } from './layouts/AppLayout.js';
 import { DocumentEditor, useDocumentStore } from '@catnoted/editor';
 import { JournalsView } from './pages/Journals/JournalsView.js';
+import { TrashView } from './pages/TrashView.js';
+import { CollectionsView } from './pages/CollectionsView.js';
+import { TagsView } from './pages/TagsView.js';
+import { ImportView } from './pages/ImportView.js';
+import { TemplateView } from './pages/TemplateView.js';
 import { InfiniteCanvas } from '@catnoted/canvas';
 import { GraphView, parseDocumentGraph } from '@catnoted/graph';
 import { ydoc } from '@catnoted/editor';
@@ -23,6 +28,89 @@ const App: React.FC = () => {
   const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
   const [isZenMode, setIsZenMode] = useState<boolean>(false);
   const [activePage, setActivePage] = useState<string>('root-doc-node');
+
+  const [currentPath, setCurrentPath] = useState<string>(window.location.pathname);
+  const [_searchQueryStr, setSearchQueryStr] = useState<string>(window.location.search);
+
+  const navigate = (path: string) => {
+    window.history.pushState({}, '', path);
+  };
+
+  const handlePageSelect = (pageId: string) => {
+    setActivePage(pageId);
+    if (pageId === 'root-doc-node') {
+      navigate('/');
+    } else {
+      navigate(`/${pageId}`);
+    }
+  };
+
+  useEffect(() => {
+    const originalPushState = window.history.pushState;
+    const originalReplaceState = window.history.replaceState;
+
+    window.history.pushState = function (...args) {
+      const result = originalPushState.apply(this, args);
+      window.dispatchEvent(new Event('pushstate'));
+      return result;
+    };
+
+    window.history.replaceState = function (...args) {
+      const result = originalReplaceState.apply(this, args);
+      window.dispatchEvent(new Event('replacestate'));
+      return result;
+    };
+
+    return () => {
+      window.history.pushState = originalPushState;
+      window.history.replaceState = originalReplaceState;
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleUrlChange = () => {
+      setCurrentPath(window.location.pathname);
+      setSearchQueryStr(window.location.search);
+    };
+
+    window.addEventListener('popstate', handleUrlChange);
+    window.addEventListener('pushstate', handleUrlChange);
+    window.addEventListener('replacestate', handleUrlChange);
+
+    return () => {
+      window.removeEventListener('popstate', handleUrlChange);
+      window.removeEventListener('pushstate', handleUrlChange);
+      window.removeEventListener('replacestate', handleUrlChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (currentPath.startsWith('/canvas')) {
+      setActiveMode('canvas');
+    } else if (currentPath.startsWith('/graph')) {
+      setActiveMode('graph');
+    } else if (currentPath.startsWith('/journals')) {
+      setActiveMode('journals');
+    } else if (currentPath.startsWith('/trash')) {
+      setActiveMode('trash');
+    } else if (currentPath.startsWith('/collections')) {
+      setActiveMode('collections');
+    } else if (currentPath.startsWith('/tags')) {
+      setActiveMode('tags');
+    } else if (currentPath.startsWith('/import')) {
+      setActiveMode('import');
+    } else if (currentPath.startsWith('/template')) {
+      setActiveMode('template');
+    } else {
+      setActiveMode('doc');
+      const matchPage = currentPath.match(/^\/page-([a-zA-Z0-9-]+)/);
+      if (matchPage) {
+        setActivePage(`page-${matchPage[1]}`);
+      } else if (currentPath.startsWith('/journal-')) {
+        setActivePage(currentPath.slice(1));
+      }
+    }
+  }, [currentPath]);
 
   const { blocks: rootBlocks, pages, addBlock: addRootBlock, updateBlockContent: updateRootBlockContent } = useDocumentStore('root-doc-node');
   const { blocks: activeBlocks, updateBlockContent: updateActiveBlockContent } = useDocumentStore(activePage);
@@ -71,7 +159,7 @@ const App: React.FC = () => {
       }
     });
 
-    setActivePage(newPageId);
+    handlePageSelect(newPageId);
   };
 
   const handleSaveTitle = () => {
@@ -113,8 +201,7 @@ const App: React.FC = () => {
 
     addRootBlock(null, 'text', `[[${newTitle}]]`);
     const pageId = `page-${newTitle.toLowerCase().replace(/\s+/g, '-')}`;
-    setActivePage(pageId);
-    setActiveMode('doc');
+    handlePageSelect(pageId);
   };
 
   const [passphrase, setPassphrase] = useState('');
@@ -202,7 +289,22 @@ const App: React.FC = () => {
       setIsSettingsOpen(true);
       return;
     }
-    setActiveMode(mode);
+
+    if (mode === 'canvas') navigate('/canvas');
+    else if (mode === 'graph') navigate('/graph');
+    else if (mode === 'journals') navigate('/journals');
+    else if (mode === 'trash') navigate('/trash');
+    else if (mode === 'collections') navigate('/collections');
+    else if (mode === 'tags') navigate('/tags');
+    else if (mode === 'import') navigate('/import');
+    else if (mode === 'template') navigate('/template');
+    else if (mode === 'doc') {
+      if (activePage === 'root-doc-node') {
+        navigate('/');
+      } else {
+        navigate(`/${activePage}`);
+      }
+    }
   };
 
   const { pageMeta, updatePageMeta, deletePage } = useDocumentStore(activePage);
@@ -487,7 +589,7 @@ const App: React.FC = () => {
       case 'doc':
         return (
           <div className="h-full overflow-auto">
-            <DocumentEditor activePage={activePage} onRenamePage={handleRenamePage} onPageSelect={setActivePage} />
+            <DocumentEditor activePage={activePage} onRenamePage={handleRenamePage} onPageSelect={handlePageSelect} />
           </div>
         );
       case 'canvas':
@@ -499,13 +601,43 @@ const App: React.FC = () => {
       case 'graph':
         return (
           <div className="h-full overflow-hidden">
-            <GraphView onNavigateToNode={(nodeId) => { setActivePage(nodeId); setActiveMode('doc'); }} />
+            <GraphView onNavigateToNode={(nodeId) => { handlePageSelect(nodeId); }} />
           </div>
         );
       case 'journals':
         return (
           <div className="h-full overflow-hidden">
             <JournalsView />
+          </div>
+        );
+      case 'trash':
+        return (
+          <div className="h-full overflow-hidden">
+            <TrashView />
+          </div>
+        );
+      case 'collections':
+        return (
+          <div className="h-full overflow-hidden">
+            <CollectionsView onNavigateToPage={(id) => handlePageSelect(id)} />
+          </div>
+        );
+      case 'tags':
+        return (
+          <div className="h-full overflow-hidden">
+            <TagsView onNavigateToPage={(id) => handlePageSelect(id)} />
+          </div>
+        );
+      case 'import':
+        return (
+          <div className="h-full overflow-hidden">
+            <ImportView onNavigateToPage={(id) => handlePageSelect(id)} />
+          </div>
+        );
+      case 'template':
+        return (
+          <div className="h-full overflow-hidden">
+            <TemplateView onNavigateToPage={(id) => handlePageSelect(id)} />
           </div>
         );
       default:
@@ -528,7 +660,7 @@ const App: React.FC = () => {
         onToggleTheme={() => setIsDarkMode(!isDarkMode)}
         zenMode={isZenMode}
         activePage={activePage}
-        onPageSelect={setActivePage}
+        onPageSelect={handlePageSelect}
         pageTitle={pageTitle}
         userEmail={userEmail}
         onAuthTrigger={() => setIsAuthOpen(true)}
