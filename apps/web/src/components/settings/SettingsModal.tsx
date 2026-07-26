@@ -8,6 +8,8 @@
 import React, { useState, useEffect } from 'react';
 import { Settings, ShieldAlert, KeyRound, Cloud, X } from 'lucide-react';
 import { encryptPayload, decryptPayload } from '../../utils/crypto.js';
+import { Overlay } from '../primitives/Overlay.js';
+import { Panel } from '../primitives/Panel.js';
 
 // Base64 helpers
 function encodeBase64(bytes: Uint8Array): string {
@@ -79,8 +81,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     loadKey('byok_anthropic_key', setAnthropicKey);
   }, [isOpen, passphrase]);
 
-  if (!isOpen) return null;
-
   const handleSaveKeys = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -129,8 +129,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/40 dark:bg-black/60 backdrop-blur-[2px] z-[100] flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800 rounded-2xl w-full max-w-[760px] h-[580px] shadow-2xl relative flex flex-col md:flex-row overflow-hidden">
+    <Overlay isOpen={isOpen} onClose={onClose} className="!bg-slate-900/40 dark:!bg-black/60 backdrop-blur-[2px]">
+      <Panel className="w-full max-w-[760px] h-[580px] flex flex-col md:flex-row overflow-hidden shadow-2xl">
 
         {/* Left Sidebar */}
         <div className="w-full md:w-[220px] border-b md:border-b-0 md:border-r border-slate-100 dark:border-zinc-800 bg-slate-50/50 dark:bg-[#16161a]/10 p-5 flex flex-col justify-between shrink-0">
@@ -379,7 +379,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </div>
         </div>
 
-      </div>
-    </div>
+      </Panel>
+    </Overlay>
   );
 };
