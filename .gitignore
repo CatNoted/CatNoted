@@ -58,3 +58,4 @@ coverage/
 *.tmp
 catnoted_vfs*
 .env*
+/.jules/
