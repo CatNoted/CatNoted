@@ -8,6 +8,8 @@
 import React, { useState } from 'react';
 import { LogIn, UserPlus, KeyRound, Sparkles, LogOut } from 'lucide-react';
 import { supabase } from '../../utils/supabase.js';
+import { Overlay } from '../primitives/Overlay.js';
+import { Panel } from '../primitives/Panel.js';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -77,8 +79,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/30 dark:bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800/80 rounded-2xl w-full max-w-[340px] p-5 shadow-xl relative transition-all">
+    <Overlay isOpen={isOpen} className="bg-slate-900/30 dark:bg-black/40 backdrop-blur-sm">
+      <Panel className="w-full max-w-[340px] p-5 shadow-xl transition-all dark:border-zinc-800/80">
         
         {/* Header - Calm AFFiNE design with soft brand accent */}
         <div className="flex flex-col items-center text-center mb-4">
@@ -197,7 +199,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             </div>
           </>
         )}
-      </div>
-    </div>
+      </Panel>
+    </Overlay>
   );
 };
