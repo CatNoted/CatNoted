@@ -1,0 +1,33 @@
+name: Jules Agent
+
+on:
+  schedule:
+    - cron: '0 */3 * * *'
+  workflow_run:
+    workflows: [CI]
+    types:
+      - completed
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  invoke:
+    if: >
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'failure') ||
+      (github.event_name == 'schedule') ||
+      (github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: google-labs-code/jules-invoke@v1
+        with:
+          jules_api_key: ${{ secrets.JULES_API_KEY }}
+          starting_branch: main
+          include_last_commit: true
+          include_commit_log: true
+          prompt: |
+            ${{ github.event_name == 'workflow_run' && 'You are a bug-fix agent. The CI workflow failed. Diagnose the failure from recent logs, implement a minimal fix in the relevant package(s), and open a PR with the fix. Do not change public API contracts unnecessarily.' || '' }}
+            ${{ github.event_name == 'schedule' && 'You are a UIUX quality agent. Review the current UI state for AFFiNE-style polish issues: look for layout breaks, dark/light contrast problems, truncation, spacing, hover affordances, duplicate renders, and editor control density. Implement fixes for high-severity issues only, keeping changes focused and minimal.' || '' }}
+            ${{ github.event_name == 'workflow_dispatch' && 'You are a general QA and bug-fix agent. Inspect the repo for likely UIUX or build issues and implement a focused fix, then open a PR.' || '' }}
