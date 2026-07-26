@@ -31,10 +31,12 @@ import {
   List,
   Star,
   History,
-  Calendar
+  Calendar,
+  LayoutGrid,
+  FileSpreadsheet
 } from 'lucide-react';
 
-export type ActiveMode = "doc" | "canvas" | "graph" | "journals" | "settings";
+export type ActiveMode = "doc" | "canvas" | "graph" | "journals" | "settings" | "trash" | "collections" | "tags" | "import" | "template";
 
 const WIDGET_TEMPLATES = {
   clock: `
@@ -231,7 +233,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
   const recentDocs = React.useMemo(() => {
     const otherPages = pageNodes
-      .filter(n => n.id !== 'root-doc-node')
+      .filter(n => n.id !== 'root-doc-node' && pages.some(p => p.id === n.id))
       .map(n => {
         return { id: n.id, title: n.rawName || n.label, icon: n.icon };
       });
@@ -1050,6 +1052,74 @@ if (isSearchOpen && searchQuery) {
                       )}
                     </ul>
                   )}
+                </div>
+
+                {/* Workspace Utility Actions */}
+                <div className="pt-4 border-t border-slate-150 dark:border-zinc-800/60 space-y-1">
+                  <button
+                    type="button"
+                    onClick={() => onModeChange('collections')}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center gap-2 transition-colors ${
+                      activeMode === 'collections'
+                        ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
+                        : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50/50 dark:hover:bg-zinc-800/20 hover:text-slate-900 dark:hover:text-zinc-200'
+                    }`}
+                  >
+                    <LayoutGrid className="w-4 h-4 text-indigo-500 shrink-0" />
+                    <span className="truncate font-semibold text-xs">Collections</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => onModeChange('tags')}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center gap-2 transition-colors ${
+                      activeMode === 'tags'
+                        ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
+                        : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50/50 dark:hover:bg-zinc-800/20 hover:text-slate-900 dark:hover:text-zinc-200'
+                    }`}
+                  >
+                    <Tag className="w-4 h-4 text-amber-500 shrink-0" />
+                    <span className="truncate font-semibold text-xs">Tags Explorer</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => onModeChange('import')}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center gap-2 transition-colors ${
+                      activeMode === 'import'
+                        ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
+                        : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50/50 dark:hover:bg-zinc-800/20 hover:text-slate-900 dark:hover:text-zinc-200'
+                    }`}
+                  >
+                    <Download className="w-4 h-4 text-slate-400 dark:text-zinc-500 shrink-0" />
+                    <span className="truncate font-semibold text-xs">Import Files</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => onModeChange('template')}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center gap-2 transition-colors ${
+                      activeMode === 'template'
+                        ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
+                        : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50/50 dark:hover:bg-zinc-800/20 hover:text-slate-900 dark:hover:text-zinc-200'
+                    }`}
+                  >
+                    <FileSpreadsheet className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <span className="truncate font-semibold text-xs">Templates Library</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => onModeChange('trash')}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center gap-2 transition-colors ${
+                      activeMode === 'trash'
+                        ? 'bg-slate-100 dark:bg-zinc-800 text-red-600 dark:text-red-400 font-medium'
+                        : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50/50 dark:hover:bg-zinc-800/20 hover:text-slate-900 dark:hover:text-zinc-200'
+                    }`}
+                  >
+                    <Trash2 className="w-4 h-4 text-red-500 shrink-0" />
+                    <span className="truncate font-semibold text-xs">Trash Bin</span>
+                  </button>
                 </div>
 
               </div>

@@ -15,6 +15,7 @@ const initializedPages = new Set<string>();
 export function useDocumentStore(pageId: string = 'root-doc-node') {
   const [blocks, setBlocks] = useState<BlockNode[]>([]);
   const [pages, setPages] = useState<PageMeta[]>([]);
+  const [deletedPages, setDeletedPages] = useState<PageMeta[]>([]);
   const [pageMeta, setPageMeta] = useState<PageMeta | null>(null);
 
   useEffect(() => {
@@ -214,7 +215,9 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
           createdAt: Date.now()
         });
       }
-      setPages(ypages.toJSON() ? Object.values(ypages.toJSON()) : []);
+      const rawPages = (ypages.toJSON() ? Object.values(ypages.toJSON()) : []) as PageMeta[];
+      setPages(rawPages.filter((p: PageMeta) => !p.isDeleted));
+      setDeletedPages(rawPages.filter((p: PageMeta) => p.isDeleted));
     };
 
     updateBlocks();
@@ -438,14 +441,40 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
 
   const deletePage = (id: string) => {
     if (id === 'root-doc-node') return; // Cannot delete root
+    const page = ypages.get(id);
+    if (page) {
+      ydoc.transact(() => {
+        ypages.set(id, { ...page, isDeleted: true, isFavorite: false, updatedAt: Date.now() });
+      });
+    }
+  };
+
+  const restorePage = (id: string) => {
+    const page = ypages.get(id);
+    if (page) {
+      ydoc.transact(() => {
+        ypages.set(id, { ...page, isDeleted: false, updatedAt: Date.now() });
+      });
+    }
+  };
+
+  const permanentlyDeletePage = (id: string) => {
+    if (id === 'root-doc-node') return;
     ydoc.transact(() => {
       ypages.delete(id);
+      const arr = yblocks.toArray();
+      for (let i = arr.length - 1; i >= 0; i--) {
+        if (arr[i].parentId === id) {
+          yblocks.delete(i, 1);
+        }
+      }
     });
   };
 
   return {
     blocks,
     pages,
+    deletedPages,
     pageMeta,
     addBlock,
     updateBlockContent,
@@ -458,8 +487,32 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
     createJournalPage,
     renamePage,
     deletePage,
+    restorePage,
+    permanentlyDeletePage,
     moveBlock
   };
+};
+
+export const restorePage = (id: string) => {
+  const page = ypages.get(id);
+  if (page) {
+    ydoc.transact(() => {
+      ypages.set(id, { ...page, isDeleted: false, updatedAt: Date.now() });
+    });
+  }
+};
+
+export const permanentlyDeletePage = (id: string) => {
+  if (id === 'root-doc-node') return;
+  ydoc.transact(() => {
+    ypages.delete(id);
+    const arr = yblocks.toArray();
+    for (let i = arr.length - 1; i >= 0; i--) {
+      if (arr[i].parentId === id) {
+        yblocks.delete(i, 1);
+      }
+    }
+  });
 };
 
 export const createJournalPage = (dateStr: string, templateId: string = 'empty') => {
