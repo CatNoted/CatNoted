@@ -46,6 +46,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         if (error) throw error;
         onAuthSuccess(data.user?.email || email);
       }
+      // Auth success triggers reactive state update inside App.tsx via onAuthStateChange
       onClose();
     } catch (err: any) {
       setErrorMsg(err.message || 'An error occurred during authentication.');

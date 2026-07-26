@@ -9,8 +9,8 @@ import * as Y from 'yjs';
 import { Share2, Edit2, BookOpen, LayoutGrid } from 'lucide-react';
 
 // E2EE sync utilities
-import { encryptPayload, decryptPayload } from './utils/crypto.js';
-import { mockSyncChannel } from './utils/supabase.js';
+import { encryptPayload, decryptPayload, derivePassphraseFromAuth } from './utils/crypto.js';
+import { mockSyncChannel, supabase } from './utils/supabase.js';
 import { usePersistence } from './utils/sync/persistence.js';
 
 // Modals & Panels
@@ -133,11 +133,55 @@ const App: React.FC = () => {
     }
   }, []);
 
+  // Listen to auth state changes and manage E2EE key derivation and user session
   useEffect(() => {
-    const savedPassphrase = localStorage.getItem('catnoted_e2ee_passphrase');
-    if (savedPassphrase) {
-      setPassphrase(savedPassphrase);
+    let unsubscribeFn = () => {};
+
+    const handleSession = async (session: any) => {
+      if (session?.user) {
+        setUserEmail(session.user.email || 'guest@catnoted.com');
+
+        // If there's no custom passphrase set in localStorage, derive one deterministically
+        const savedPassphrase = localStorage.getItem('catnoted_e2ee_passphrase');
+        if (!savedPassphrase) {
+          try {
+            const derived = await derivePassphraseFromAuth(session.user.id, session.user.email || '');
+            setPassphrase(derived);
+          } catch (e) {
+            console.error('Failed to derive passphrase from auth:', e);
+          }
+        } else {
+          setPassphrase(savedPassphrase);
+        }
+      } else {
+        // If logged out or guest, fall back to saved local passphrase if any
+        setUserEmail('guest@catnoted.com');
+        const savedPassphrase = localStorage.getItem('catnoted_e2ee_passphrase');
+        setPassphrase(savedPassphrase || '');
+      }
+    };
+
+    if (supabase) {
+      // Initial session check
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        handleSession(session);
+      });
+
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        handleSession(session);
+      });
+
+      unsubscribeFn = () => {
+        subscription.unsubscribe();
+      };
+    } else {
+      const savedPassphrase = localStorage.getItem('catnoted_e2ee_passphrase');
+      if (savedPassphrase) {
+        setPassphrase(savedPassphrase);
+      }
     }
+
+    return unsubscribeFn;
   }, []);
 
   useEffect(() => {
@@ -160,7 +204,7 @@ const App: React.FC = () => {
     return () => window.removeEventListener('keydown', handleGlobalKeyDown);
   }, []);
 
-  const { status, conflictMsg, dismissConflict, persistUpdate } = usePersistence();
+  const { status, conflictMsg, dismissConflict, persistUpdate } = usePersistence(activePage, passphrase);
 
   useEffect(() => {
     const handleUpdate = async (update: Uint8Array, origin: any) => {
