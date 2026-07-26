@@ -44,6 +44,7 @@ const TextBlockBase: React.FC<TextBlockProps> = ({
   const [slashActive, setSlashActive] = useState(false);
   const [slashQuery, setSlashQuery] = useState('');
   const [menuPos, setMenuPos] = useState({ top: 0, left: 0 });
+  const [localFocused, setLocalFocused] = useState(false);
 
   useEffect(() => {
     if (focusOnMount && textareaRef.current) {
@@ -193,10 +194,12 @@ const TextBlockBase: React.FC<TextBlockProps> = ({
   };
 
   const handleFocus = useCallback(() => {
+    setLocalFocused(true);
     onFocus?.();
   }, [onFocus]);
 
   const handleBlur = useCallback(() => {
+    setLocalFocused(false);
     onBlur?.();
   }, [onBlur]);
 
@@ -204,22 +207,24 @@ const TextBlockBase: React.FC<TextBlockProps> = ({
     if (onAddClick) onAddClick();
   }, [onAddClick]);
 
+  const isCurrentlyFocused = isFocused || localFocused;
+
   return (
-    <div className="relative flex items-start">
+    <div className="relative flex items-start group">
       {showLeftActions && (
-        <div className={`flex flex-col items-center gap-px pr-1 pt-[6px] transition-opacity duration-150 ${
-          isFocused ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+        <div className={`flex items-center gap-1 pr-2 h-6 transition-opacity duration-150 ${
+          isCurrentlyFocused ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
         }`}>
           <button
             type="button"
             onClick={addClick}
             title="Add block below"
-            className="p-0.5 rounded text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+            className="p-1 rounded-md hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 transition-colors flex items-center justify-center cursor-pointer"
           >
-            <Plus className="w-3 h-3" />
+            <Plus className="w-3.5 h-3.5" />
           </button>
-          <span className="cursor-grab text-slate-400/70 dark:text-zinc-500/80 select-none">
-            <GripVertical className="w-2.5 h-2.5" />
+          <span className="p-1 rounded-md hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-400/80 dark:text-zinc-500/80 hover:text-slate-600 dark:hover:text-zinc-200 transition-colors cursor-grab flex items-center justify-center select-none">
+            <GripVertical className="w-3.5 h-3.5" />
           </span>
         </div>
       )}
@@ -235,7 +240,7 @@ const TextBlockBase: React.FC<TextBlockProps> = ({
           onBlur={handleBlur}
           placeholder="Type '/' for commands..."
           rows={1}
-          className="w-full bg-transparent resize-none text-slate-900 dark:text-zinc-100 border-none outline-none focus:ring-0 p-0 text-sm leading-6 placeholder-slate-300 dark:placeholder-zinc-600"
+          className="w-full bg-transparent resize-none text-slate-700 dark:text-zinc-300 border-none outline-none focus:ring-0 p-0 text-sm leading-6 placeholder-slate-300 dark:placeholder-zinc-600"
         />
 
         {slashActive &&
