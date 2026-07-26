@@ -137,7 +137,7 @@ export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
       const width = canvasRef.current.width;
       const height = canvasRef.current.height;
       const isDark = document.documentElement.classList.contains('dark');
-      const bgColor = isDark ? '#09090b' : '#f8fafc'; // zinc-950 or slate-50
+      const bgColor = isDark ? '#141416' : '#ffffff';
 
       const nodeMap = new Map(nodesRef.current.map(n => [n.id, n]));
 
@@ -148,18 +148,21 @@ export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
         const end = nodeMap.get(targetId);
         if (!start || !end) return '';
 
-        return `<line x1="${start.x}" y1="${start.y}" x2="${end.x}" y2="${end.y}" stroke="rgba(203, 213, 225, 0.4)" stroke-width="1" />`;
+        const strokeColor = isDark ? 'rgba(39, 39, 42, 0.6)' : 'rgba(228, 228, 231, 0.6)';
+        return `<line x1="${start.x}" y1="${start.y}" x2="${end.x}" y2="${end.y}" stroke="${strokeColor}" stroke-width="1" />`;
       }).join('\n');
 
       const svgNodes = nodesRef.current.map(node => {
-        let fill = '#6366f1';
+        let fill = isDark ? '#818cf8' : '#4f46e5';
         if (node.id === 'root-doc-node') {
-          fill = '#4f46e5';
+          fill = isDark ? '#c084fc' : '#7c3aed';
         } else if (node.type === 'tag') {
-          fill = '#10b981';
+          fill = isDark ? '#34d399' : '#10b981';
+        } else {
+          fill = isDark ? '#a1a1aa' : '#71717a';
         }
 
-        const labelFill = isDark ? '#cbd5e1' : '#475569';
+        const labelFill = isDark ? '#a1a1aa' : '#71717a';
 
         return `
           <g>
@@ -306,7 +309,7 @@ export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
              ctx.strokeStyle = isDark ? 'rgba(129, 140, 248, 0.8)' : 'rgba(99, 102, 241, 0.8)';
              ctx.lineWidth = 2;
           } else {
-             ctx.strokeStyle = isDark ? 'rgba(82, 82, 91, 0.5)' : 'rgba(203, 213, 225, 0.6)';
+             ctx.strokeStyle = isDark ? 'rgba(39, 39, 42, 0.6)' : 'rgba(228, 228, 231, 0.6)';
              ctx.lineWidth = 1;
           }
           ctx.stroke();
@@ -335,11 +338,11 @@ export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
         
         // Node styling colors based on Obsidian style theme
         if (isRoot) {
-          ctx.fillStyle = isDark ? '#a78bfa' : '#7c3aed'; // Violet
+          ctx.fillStyle = isDark ? '#c084fc' : '#7c3aed'; // Violet
         } else if (node.type === 'tag') {
           ctx.fillStyle = isDark ? '#34d399' : '#10b981'; // Emerald
         } else {
-          ctx.fillStyle = isDark ? '#94a3b8' : '#64748b'; // Slate
+          ctx.fillStyle = isDark ? '#a1a1aa' : '#71717a'; // Muted Foreground
         }
 
         if (active) {
@@ -359,8 +362,8 @@ export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
         // Only show labels for hovered, connected, or large nodes, or root
         if (active || isRoot || scaleRef.current > 1.2) {
           ctx.fillStyle = active
-            ? (isDark ? '#e0e7ff' : '#312e81')
-            : (isDark ? '#94a3b8' : '#475569');
+            ? (isDark ? '#ffffff' : '#17171a')
+            : (isDark ? '#a1a1aa' : '#71717a');
 
           ctx.font = `${active ? 'bold' : 'normal'} ${10 / Math.max(0.5, scaleRef.current)}px sans-serif`;
           ctx.textAlign = 'center';
@@ -481,8 +484,8 @@ export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
 
   if (inputNodes.length === 0) {
     return (
-      <div className="w-full h-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl flex flex-col items-center justify-center text-slate-400 dark:text-zinc-500">
-        <Ghost className="w-12 h-12 mb-4 text-slate-300 dark:text-zinc-600" />
+      <div className="w-full h-full bg-muted/30 border border-border rounded-2xl flex flex-col items-center justify-center text-muted-foreground">
+        <Ghost className="w-12 h-12 mb-4 text-muted-foreground/40" />
         <p className="text-sm">Graph is empty.</p>
         <p className="text-xs mt-2 opacity-75">Add wiki-links [[like this]] to your documents to see connections.</p>
       </div>
@@ -499,7 +502,7 @@ export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
       onWheel={handleWheel}
-      className="w-full h-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-inner cursor-grab active:cursor-grabbing"
+      className="w-full h-full bg-muted/30 border border-border rounded-2xl shadow-inner cursor-grab active:cursor-grabbing"
       style={{ width: '100%', height: '100%' }}
     />
   );
