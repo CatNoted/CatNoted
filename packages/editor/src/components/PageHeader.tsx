@@ -23,6 +23,8 @@ interface PageHeaderProps {
   onTitleChange: (title: string) => void;
   onIconChange: (icon: string | undefined) => void;
   onCoverChange: (coverUrl: string | undefined) => void;
+  viewMode?: 'doc' | 'kanban' | 'table' | 'edgeless';
+  onViewModeChange?: (mode: 'doc' | 'kanban' | 'table' | 'edgeless') => void;
 }
 
 const PRESET_EMOJIS = [
@@ -66,6 +68,8 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   onTitleChange,
   onIconChange,
   onCoverChange,
+  viewMode,
+  onViewModeChange,
 }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showCoverPicker, setShowCoverPicker] = useState(false);
@@ -264,6 +268,36 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* View Switcher (AFFiNE Pattern) */}
+      {viewMode && onViewModeChange && (
+        <div className="flex items-center gap-1.5 p-1 bg-slate-100/80 dark:bg-zinc-900/60 rounded-xl max-w-fit mb-5 border border-slate-200/40 dark:border-zinc-800/40 shadow-sm backdrop-blur-sm">
+          {[
+            { id: 'doc', label: 'Document', icon: LucideIcons.FileText },
+            { id: 'kanban', label: 'Kanban Board', icon: LucideIcons.Columns },
+            { id: 'table', label: 'Table View', icon: LucideIcons.Grid },
+            { id: 'edgeless', label: 'Edgeless Canvas', icon: LucideIcons.Layers },
+          ].map((modeItem) => {
+            const IconComponent = modeItem.icon;
+            const isSelected = viewMode === modeItem.id;
+            return (
+              <button
+                key={modeItem.id}
+                type="button"
+                onClick={() => onViewModeChange(modeItem.id as any)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition-all duration-200 ${
+                  isSelected
+                    ? 'bg-white dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 shadow-sm'
+                    : 'text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-200'
+                }`}
+              >
+                <IconComponent className="w-4 h-4" />
+                <span>{modeItem.label}</span>
+              </button>
+            );
+          })}
         </div>
       )}
 

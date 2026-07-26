@@ -5,7 +5,7 @@ import { useCanvasViewport } from '../hooks/useCanvasViewport.js';
 import { CanvasCard } from './CanvasCard.js';
 import { ConnectorLine } from './ConnectorLine.js';
 import { Minimap } from './Minimap.js';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Columns, X } from 'lucide-react';
 import { GenericShape } from './GenericShape.js';
 import { CanvasToolbar } from './CanvasToolbar.js';
 import { CanvasProperties } from './CanvasProperties.js';
@@ -51,6 +51,29 @@ function getIntersectionPoint(
 export const InfiniteCanvas: React.FC = () => {
   const { blocks } = useDocumentStore();
   const [elements, setElements] = useState<Record<string, CanvasElement>>({});
+  const [isKanbanPreviewOpen, setIsKanbanPreviewOpen] = useState(false);
+
+  const centerOnElement = (elem: CanvasElement) => {
+    const container = containerRef.current;
+    if (!container) return;
+    const rect = container.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+
+    // Element width and height, or safe defaults
+    const elemW = elem.width || 200;
+    const elemH = elem.height || 120;
+
+    // Absolute element coordinates
+    const targetX = elem.x + elemW / 2;
+    const targetY = elem.y + elemH / 2;
+
+    // Calculated pan to center targetX, targetY in viewport at current scale
+    const panX = width / 2 - targetX * scale;
+    const panY = height / 2 - targetY * scale;
+
+    setPan({ x: panX, y: panY });
+  };
 
   // Selection state
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -819,7 +842,126 @@ export const InfiniteCanvas: React.FC = () => {
         })}
       </div>
 
-      <CanvasToolbar onAddElement={handleAddElement} />
+      <CanvasToolbar
+        onAddElement={handleAddElement}
+        isKanbanPreviewOpen={isKanbanPreviewOpen}
+        onToggleKanbanPreview={() => setIsKanbanPreviewOpen(prev => !prev)}
+      />
+
+      {isKanbanPreviewOpen && (
+        <div className="absolute top-4 right-4 bottom-24 w-96 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md border border-slate-200/60 dark:border-zinc-800/60 rounded-3xl shadow-2xl p-5 flex flex-col z-30 select-none animate-in slide-in-from-right duration-200">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-200/50 dark:border-zinc-800/50">
+            <div className="flex items-center gap-2">
+              <Columns className="w-4 h-4 text-indigo-500" />
+              <span className="font-bold text-xs uppercase tracking-wider text-slate-800 dark:text-zinc-200">
+                Kanban Board Overview
+              </span>
+            </div>
+            <button
+              onClick={() => setIsKanbanPreviewOpen(false)}
+              className="p-1 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto mt-4 space-y-5 pr-1">
+            {/* COLUMN 1: Cards */}
+            <div>
+              <div className="flex items-center justify-between mb-2 px-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
+                  🗂️ Cards
+                </span>
+                <span className="text-[10px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full font-bold text-slate-500">
+                  {Object.values(elements).filter(el => el.type === 'card').length}
+                </span>
+              </div>
+              <div className="space-y-2">
+                {Object.values(elements)
+                  .filter(el => el.type === 'card')
+                  .map(elem => {
+                    const blk = blocks.find(b => b.id === elem.id);
+                    return (
+                      <div
+                        key={elem.id}
+                        onClick={() => centerOnElement(elem)}
+                        className="p-3 bg-slate-50 dark:bg-zinc-900/50 border border-slate-150 dark:border-zinc-800/60 hover:border-indigo-500 dark:hover:border-indigo-500/40 rounded-xl cursor-pointer transition-all shadow-sm hover:shadow"
+                      >
+                        <div className="text-xs text-slate-700 dark:text-zinc-300 font-medium break-words truncate">
+                          {blk?.content || <span className="italic opacity-40">Empty Card</span>}
+                        </div>
+                      </div>
+                    );
+                  })}
+                {Object.values(elements).filter(el => el.type === 'card').length === 0 && (
+                  <div className="text-center py-4 text-xs text-slate-400 dark:text-zinc-600 italic">No cards on canvas.</div>
+                )}
+              </div>
+            </div>
+
+            {/* COLUMN 2: Notes & Frames */}
+            <div>
+              <div className="flex items-center justify-between mb-2 px-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
+                  📝 Notes & Frames
+                </span>
+                <span className="text-[10px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full font-bold text-slate-500">
+                  {Object.values(elements).filter(el => el.type === 'note' || el.type === 'frame').length}
+                </span>
+              </div>
+              <div className="space-y-2">
+                {Object.values(elements)
+                  .filter(el => el.type === 'note' || el.type === 'frame')
+                  .map(elem => (
+                    <div
+                      key={elem.id}
+                      onClick={() => centerOnElement(elem)}
+                      className="p-3 bg-slate-50 dark:bg-zinc-900/50 border border-slate-150 dark:border-zinc-800/60 hover:border-indigo-500 dark:hover:border-indigo-500/40 rounded-xl cursor-pointer transition-all shadow-sm hover:shadow"
+                    >
+                      <div className="text-xs text-slate-700 dark:text-zinc-300 font-medium break-words truncate">
+                        {elem.text || <span className="italic opacity-40">{elem.type === 'frame' ? 'Frame' : 'Empty Note'}</span>}
+                      </div>
+                    </div>
+                  ))}
+                {Object.values(elements).filter(el => el.type === 'note' || el.type === 'frame').length === 0 && (
+                  <div className="text-center py-4 text-xs text-slate-400 dark:text-zinc-600 italic">No notes or frames.</div>
+                )}
+              </div>
+            </div>
+
+            {/* COLUMN 3: Shapes */}
+            <div>
+              <div className="flex items-center justify-between mb-2 px-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
+                  🎨 Shapes
+                </span>
+                <span className="text-[10px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full font-bold text-slate-500">
+                  {Object.values(elements).filter(el => el.type === 'shape').length}
+                </span>
+              </div>
+              <div className="space-y-2">
+                {Object.values(elements)
+                  .filter(el => el.type === 'shape')
+                  .map(elem => (
+                    <div
+                      key={elem.id}
+                      onClick={() => centerOnElement(elem)}
+                      className="p-3 bg-slate-50 dark:bg-zinc-900/50 border border-slate-150 dark:border-zinc-800/60 hover:border-indigo-500 dark:hover:border-indigo-500/40 rounded-xl cursor-pointer transition-all shadow-sm hover:shadow"
+                    >
+                      <div className="text-xs text-slate-700 dark:text-zinc-300 font-medium truncate flex items-center justify-between">
+                        <span className="capitalize">{elem.shapeType || 'rectangle'}</span>
+                        <span className="text-[10px] text-slate-400 font-mono">({Math.round(elem.x)}, {Math.round(elem.y)})</span>
+                      </div>
+                    </div>
+                  ))}
+                {Object.values(elements).filter(el => el.type === 'shape').length === 0 && (
+                  <div className="text-center py-4 text-xs text-slate-400 dark:text-zinc-600 italic">No shapes.</div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <CanvasProperties
         selectedElements={selectedElements}

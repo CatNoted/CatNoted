@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Type, Square, MessageSquare, Circle, Frame } from 'lucide-react';
+import { Type, Square, MessageSquare, Circle, Frame, Columns } from 'lucide-react';
 import { CanvasElementType } from '@catnoted/shared';
 
 interface CanvasToolbarProps {
   onAddElement: (type: CanvasElementType, shapeType?: 'rectangle' | 'circle') => void;
+  isKanbanPreviewOpen?: boolean;
+  onToggleKanbanPreview?: () => void;
 }
 
-export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({ onAddElement }) => {
+export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
+  onAddElement,
+  isKanbanPreviewOpen,
+  onToggleKanbanPreview,
+}) => {
   const [activeFeedback, setActiveFeedback] = useState<string | null>(null);
 
   const triggerAdd = (type: CanvasElementType, shapeType?: 'rectangle' | 'circle') => {
@@ -122,6 +128,21 @@ export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({ onAddElement }) =>
       >
         <Frame className="w-5 h-5 group-hover:scale-110 transition-transform" />
       </button>
+
+      {onToggleKanbanPreview && (
+        <>
+          <div className="w-px h-6 bg-slate-200 dark:bg-zinc-800 mx-1" />
+          <button
+            onClick={onToggleKanbanPreview}
+            className={isKanbanPreviewOpen ? "p-2.5 rounded-xl transition-all flex items-center justify-center gap-2 group bg-indigo-600 text-white dark:bg-indigo-500 dark:text-zinc-950" : "p-2.5 rounded-xl transition-all flex items-center justify-center gap-2 group hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400"}
+            title="Toggle Kanban Board Overview"
+            aria-label="Toggle Kanban Board"
+            type="button"
+          >
+            <Columns className="w-5 h-5 group-hover:scale-110 transition-transform" />
+          </button>
+        </>
+      )}
     </div>
   );
 };

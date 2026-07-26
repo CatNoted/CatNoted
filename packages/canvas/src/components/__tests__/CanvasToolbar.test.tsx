@@ -134,4 +134,29 @@ describe('CanvasToolbar', () => {
 
     document.body.removeChild(textarea);
   });
+
+  it('renders 6 buttons and triggers onToggleKanbanPreview when toggle prop is provided', async () => {
+    const onToggleKanbanPreview = vi.fn();
+    await act(async () => {
+      const root = createRoot(container);
+      root.render(
+        <CanvasToolbar
+          onAddElement={onAddElement}
+          isKanbanPreviewOpen={false}
+          onToggleKanbanPreview={onToggleKanbanPreview}
+        />
+      );
+    });
+
+    const buttons = container.querySelectorAll('button');
+    expect(buttons).toHaveLength(6);
+
+    const toggleButton = Array.from(buttons).find(btn => btn.getAttribute('title') === 'Toggle Kanban Board Overview');
+    expect(toggleButton).toBeDefined();
+
+    await act(async () => {
+      toggleButton?.click();
+    });
+    expect(onToggleKanbanPreview).toHaveBeenCalledTimes(1);
+  });
 });
