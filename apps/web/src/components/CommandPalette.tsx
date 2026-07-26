@@ -195,7 +195,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-start justify-center bg-black/40 px-4 pt-[10vh] backdrop-blur-sm dark:bg-black/60"
+      className="fixed inset-0 z-[100] flex items-start justify-center bg-neutral-950/20 px-4 pt-[10vh] backdrop-blur-[2px] dark:bg-neutral-950/50"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -204,9 +204,9 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         role="dialog"
         aria-modal="true"
         aria-label="Commands"
-        className="flex w-full max-w-md flex-col overflow-hidden rounded-2xl border border-gray-200/70 bg-white shadow-lg dark:border-gray-800 dark:bg-gray-900"
+        className="flex w-full max-w-[440px] flex-col overflow-hidden rounded-xl border border-gray-100 bg-white shadow-2xl dark:border-gray-800/80 dark:bg-gray-900"
       >
-        <div className="flex items-center gap-3 px-4 py-3">
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-100/50 dark:border-gray-800/40">
           <Search className="h-4 w-4 shrink-0 text-gray-400 dark:text-gray-500" />
           <input
             ref={inputRef}
@@ -217,9 +217,9 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
               setSelectedIndex(0);
             }}
             placeholder="Type a command..."
-            className="w-full bg-transparent text-[15px] text-gray-800 outline-none placeholder:text-gray-400 dark:text-gray-100"
+            className="w-full bg-transparent text-[14px] text-gray-800 outline-none placeholder:text-gray-400 dark:text-gray-200"
           />
-          <kbd className="hidden rounded-lg border border-gray-200 px-2 py-1 text-[11px] text-gray-400 dark:border-gray-700 dark:text-gray-500 sm:block">
+          <kbd className="hidden rounded bg-gray-50 dark:bg-gray-800/40 px-1.5 py-0.5 font-sans text-[10px] border border-gray-200/60 dark:border-gray-800 text-gray-400 dark:text-gray-500 sm:block">
             ESC
           </kbd>
         </div>
@@ -242,8 +242,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
             </div>
           )}
           {visibleGroups.map((group) => (
-            <div key={group.key} className="mb-2 last:mb-0">
-              <div className="px-3 pt-2 pb-1 text-[11px] font-medium text-gray-400 uppercase tracking-wide">
+            <div key={group.key} className="mb-1 last:mb-0">
+              <div className="px-3 py-1.5 text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
                 {group.key}
               </div>
               {group.items.map((cmd) => {
@@ -263,25 +263,33 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                     }}
                     onMouseEnter={() => setSelectedIndex(idx)}
                     className={[
-                      'flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-left',
-                      'transition-colors duration-75',
+                      'group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left',
+                      'transition-all duration-75',
                       isSelected
                         ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100'
-                        : 'text-gray-600 hover:bg-gray-100/60 dark:text-gray-300 dark:hover:bg-gray-800/60'
+                        : 'text-gray-600 hover:bg-gray-50/80 dark:text-gray-300 dark:hover:bg-gray-800/50'
                     ].join(' ')}
                   >
-                    <div
+                    <Icon
                       className={[
-                        'flex h-8 w-8 shrink-0 items-center justify-center rounded-md',
+                        'h-4 w-4 shrink-0 transition-colors',
                         isSelected
-                          ? 'bg-gray-900/5 dark:bg-gray-100/10'
-                          : 'bg-gray-100 dark:bg-gray-800'
+                          ? 'text-gray-800 dark:text-gray-100'
+                          : 'text-gray-400 dark:text-gray-500'
+                      ].join(' ')}
+                    />
+                    <span className="min-w-0 truncate text-[13px] font-medium">
+                      {cmd.title}
+                    </span>
+                    <span
+                      className={[
+                        'ml-auto text-[11px] font-normal transition-colors',
+                        isSelected
+                          ? 'text-gray-500 dark:text-gray-400'
+                          : 'text-gray-400/80 dark:text-gray-500/80'
                       ].join(' ')}
                     >
-                      <Icon className="h-4 w-4" />
-                    </div>
-                    <span className="min-w-0 truncate text-[13px]">
-                      {cmd.title}
+                      {cmd.subtitle}
                     </span>
                   </button>
                 );
@@ -290,16 +298,16 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
           ))}
         </div>
 
-        <div className="flex items-center justify-between border-t border-gray-100 px-4 py-2 text-[11px] text-gray-400 dark:border-gray-800">
-          <span>
-            <kbd className="mr-2 rounded-md border border-gray-200 px-1.5 py-0.5 dark:border-gray-700">↑</kbd>
-            <kbd className="mr-2 rounded-md border border-gray-200 px-1.5 py-0.5 dark:border-gray-700">↓</kbd>
-            Navigate
-          </span>
-          <span>
-            <kbd className="mr-2 rounded-md border border-gray-200 px-1.5 py-0.5 dark:border-gray-700">Enter</kbd>
-            Confirm
-          </span>
+        <div className="flex items-center justify-between border-t border-gray-100/80 dark:border-gray-800/60 px-4 py-2 text-[10px] text-gray-400/80 dark:text-gray-500">
+          <div className="flex items-center gap-1.5">
+            <kbd className="rounded bg-gray-50 dark:bg-gray-800/50 px-1 py-0.5 font-sans text-[10px] font-medium border border-gray-200/60 dark:border-gray-800 text-gray-500 dark:text-gray-400 shadow-sm">↑</kbd>
+            <kbd className="rounded bg-gray-50 dark:bg-gray-800/50 px-1 py-0.5 font-sans text-[10px] font-medium border border-gray-200/60 dark:border-gray-800 text-gray-500 dark:text-gray-400 shadow-sm">↓</kbd>
+            <span>Navigate</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <kbd className="rounded bg-gray-50 dark:bg-gray-800/50 px-1 py-0.5 font-sans text-[10px] font-medium border border-gray-200/60 dark:border-gray-800 text-gray-500 dark:text-gray-400 shadow-sm">Enter</kbd>
+            <span>Confirm</span>
+          </div>
         </div>
       </div>
     </div>
