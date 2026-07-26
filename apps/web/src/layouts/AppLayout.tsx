@@ -676,7 +676,7 @@ if (isSearchOpen && searchQuery) {
     <div className="flex h-screen w-screen overflow-hidden bg-slate-50 dark:bg-[#141416] text-slate-900 dark:text-zinc-100 relative">
       {/* Minimal Conflict Resolution Dialog */}
       {syncStatus === 'conflict' && (
-        <div className="fixed inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4" data-testid="conflict-resolution-modal">
+        <div className="fixed inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4" data-testid="conflict-resolution-modal">
           <div className="bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-3xl p-6 max-w-md w-full shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
             <div className="flex items-start gap-4">
               <div className="w-10 h-10 rounded-2xl bg-rose-500/10 text-rose-500 flex items-center justify-center shrink-0">
@@ -755,7 +755,7 @@ if (isSearchOpen && searchQuery) {
                       aria-expanded={isActive}
                     className={`w-full py-2.5 rounded-lg flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400 ${
                       isActive 
-                        ? 'bg-white dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 shadow-[0_1px_3px_rgba(0,0,0,0.05)] dark:shadow-none font-semibold'
+                        ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold'
                         : 'text-slate-400 dark:text-zinc-500 hover:text-slate-900 dark:hover:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5'
                     }`}
                   >
@@ -857,7 +857,7 @@ if (isSearchOpen && searchQuery) {
 
               {/* Workspace Switcher Dropdown */}
               {isWorkspaceDropdownOpen && (
-                <div className="absolute left-0 mt-1.5 w-48 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl shadow-lg z-50 py-1 text-xs">
+                <div className="absolute left-0 mt-1.5 w-48 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl shadow-lg z-40 py-1 text-xs">
                   {workspaces.map(ws => (
                     <button
                       key={ws}
@@ -918,7 +918,7 @@ if (isSearchOpen && searchQuery) {
                         onClick={() => onModeChange(item.id)}
                         className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center gap-2 transition-colors ${
                           isActive
-                            ? 'bg-slate-100 dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 font-semibold'
+                            ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold'
                             : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/40 hover:text-slate-900 dark:hover:text-zinc-200'
                         }`}
                       >
@@ -1260,7 +1260,7 @@ if (isSearchOpen && searchQuery) {
                   <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-zinc-800/40 border border-slate-150 dark:border-zinc-800/60 rounded-xl">
                     <div className="flex items-center gap-2 min-w-0">
                       <span className="text-xl shrink-0">{pageMeta?.icon || '📄'}</span>
-                      <span className="font-semibold truncate text-slate-800 dark:text-zinc-200">{pageMeta?.title || docTitle}</span>
+                      <span className="font-semibold truncate text-slate-800 dark:text-zinc-200 min-w-[80px]" title={pageMeta?.title || docTitle}>{pageMeta?.title || docTitle}</span>
                     </div>
                     <button
                       type="button"
@@ -1584,7 +1584,7 @@ if (isSearchOpen && searchQuery) {
                       aria-expanded={isActive}
                       className={`w-full py-2.5 rounded-lg flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400 ${
                         isActive
-                          ? 'bg-white dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 shadow-[0_1px_3px_rgba(0,0,0,0.05)] dark:shadow-none font-semibold'
+                          ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold'
                           : 'text-slate-400 dark:text-zinc-500 hover:text-slate-900 dark:hover:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5'
                       }`}
                     >
