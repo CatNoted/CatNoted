@@ -26,7 +26,11 @@ import {
   Cpu,
   Trash2,
   Menu,
-  Copy
+  Copy,
+  Info,
+  List,
+  Star,
+  History
 } from 'lucide-react';
 
 export type ActiveMode = "doc" | "canvas" | "graph" | "settings";
@@ -191,7 +195,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   onAuthTrigger: _onAuthTrigger,
   onCreatePage
 }) => {
-  const { blocks, addBlock, updateBlockType, pages, createPage, deletePage, deleteBlock } = useDocumentStore(activePage);
+  const { blocks, addBlock, updateBlockType, pages, createPage, deletePage, deleteBlock, pageMeta, updatePageMeta } = useDocumentStore(activePage);
   const favoritePages = (pages || []).filter((p: any) => p?.isFavorite);
 
   const [activeAgentTab, setActiveAgentTab] = useState<'chat' | 'widgets'>('chat');
@@ -238,6 +242,33 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       ...otherPages
     ];
   }, [pageNodes, docTitle, pages]);
+
+  // Right Sidebar State
+  const [isRightSidebarOpen, setIsRightSidebarOpen] = useState<boolean>(false);
+  const [activeRightSidebarTab, setActiveRightSidebarTab] = useState<'info' | 'outline' | 'agent' | 'history'>('info');
+
+  useEffect(() => {
+    const savedRightOpen = localStorage.getItem('catnoted:right-sidebar-open');
+    if (savedRightOpen !== null) {
+      setIsRightSidebarOpen(savedRightOpen === 'true');
+    }
+    const savedRightTab = localStorage.getItem('catnoted:right-sidebar-tab');
+    if (savedRightTab !== null) {
+      setActiveRightSidebarTab(savedRightTab as any);
+    }
+  }, []);
+
+  const toggleRightSidebar = (tab: 'info' | 'outline' | 'agent' | 'history') => {
+    if (isRightSidebarOpen && activeRightSidebarTab === tab) {
+      setIsRightSidebarOpen(false);
+      localStorage.setItem('catnoted:right-sidebar-open', 'false');
+    } else {
+      setActiveRightSidebarTab(tab);
+      setIsRightSidebarOpen(true);
+      localStorage.setItem('catnoted:right-sidebar-open', 'true');
+      localStorage.setItem('catnoted:right-sidebar-tab', tab);
+    }
+  };
 
   // Persistent sidebar state - initialized with safe defaults to prevent hydration issues
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
@@ -1050,6 +1081,391 @@ if (isSearchOpen && searchQuery) {
           {children}
         </div>
       </main>
+
+      {/* ── Right Tool Rail & Sidebar Panel (AFFiNE-style) ──────────────── */}
+      {!zenMode && (
+        <div className="flex h-full shrink-0 z-20 relative">
+          {/* Right Sidebar Panel */}
+          <aside
+            style={{ width: isRightSidebarOpen ? 320 : 0 }}
+            className={`border-l border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex flex-col h-full text-sm overflow-hidden transition-[width,opacity] duration-200 ease-in-out ${
+              isRightSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            } md:relative absolute right-12 top-0 bottom-0 shadow-lg md:shadow-none z-30`}
+          >
+            {/* Header */}
+            <div className="h-14 px-4 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between shrink-0 bg-[#fbfbfb] dark:bg-zinc-950">
+              <span className="font-semibold text-xs uppercase tracking-wider text-slate-500 dark:text-zinc-400">
+                {activeRightSidebarTab === 'info' && 'Page Info & Style'}
+                {activeRightSidebarTab === 'outline' && 'Document Outline'}
+                {activeRightSidebarTab === 'agent' && 'Docked Space Agent'}
+                {activeRightSidebarTab === 'history' && 'Version History'}
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsRightSidebarOpen(false)}
+                className="p-1 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-zinc-800"
+                aria-label="Close panel"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {/* Sidebar Body */}
+            <div className="flex-1 overflow-y-auto p-4 select-text">
+              {activeRightSidebarTab === 'info' && (
+                <div className="space-y-6">
+                  {/* Title & Star Toggler */}
+                  <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-zinc-800/40 border border-slate-150 dark:border-zinc-800/60 rounded-xl">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="text-xl shrink-0">{pageMeta?.icon || '📄'}</span>
+                      <span className="font-semibold truncate text-slate-800 dark:text-zinc-200">{pageMeta?.title || docTitle}</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => updatePageMeta({ isFavorite: !pageMeta?.isFavorite })}
+                      className={`p-1.5 rounded-lg transition-all ${
+                        pageMeta?.isFavorite
+                          ? 'text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-950/20'
+                          : 'text-slate-400 hover:text-amber-500 hover:bg-slate-100 dark:hover:bg-zinc-800'
+                      }`}
+                      title={pageMeta?.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+                    >
+                      <Star className={`w-4 h-4 ${pageMeta?.isFavorite ? 'fill-amber-500' : ''}`} />
+                    </button>
+                  </div>
+
+                  {/* Formatting / Style Controls */}
+                  <div className="space-y-3">
+                    <h4 className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">Page Style Settings</h4>
+
+                    {/* Font Style */}
+                    <div className="space-y-1.5">
+                      <label className="text-xs text-slate-500 dark:text-zinc-400">Typography Style</label>
+                      <div className="grid grid-cols-3 gap-1">
+                        {(['sans', 'serif', 'mono'] as const).map((font) => (
+                          <button
+                            key={font}
+                            type="button"
+                            onClick={() => updatePageMeta({ fontStyle: font })}
+                            className={`py-1.5 text-xs rounded-lg border capitalize font-medium transition-all ${
+                              (pageMeta?.fontStyle || 'sans') === font
+                                ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 border-indigo-500 dark:border-indigo-500'
+                                : 'bg-transparent text-slate-600 dark:text-zinc-400 border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800/50'
+                            }`}
+                          >
+                            {font}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Page Width */}
+                    <div className="flex items-center justify-between py-2 border-b border-slate-100 dark:border-zinc-800/40">
+                      <div className="flex flex-col">
+                        <span className="text-xs font-medium text-slate-700 dark:text-zinc-300">Wide Mode</span>
+                        <span className="text-[10px] text-slate-400 dark:text-zinc-500">Let blocks take full horizontal layout</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => updatePageMeta({ fullWidth: !pageMeta?.fullWidth })}
+                        className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                          pageMeta?.fullWidth ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-zinc-700'
+                        }`}
+                      >
+                        <span
+                          className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                            pageMeta?.fullWidth ? 'translate-x-4' : 'translate-x-0'
+                          }`}
+                        />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Document Statistics */}
+                  <div className="space-y-2">
+                    <h4 className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">Document Statistics</h4>
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-zinc-800/30 border border-slate-100 dark:border-zinc-800/40">
+                        <div className="text-[10px] text-slate-400 dark:text-zinc-500">Total Blocks</div>
+                        <div className="text-base font-bold text-slate-800 dark:text-zinc-200 mt-0.5">{blocks.length}</div>
+                      </div>
+                      <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-zinc-800/30 border border-slate-100 dark:border-zinc-800/40">
+                        <div className="text-[10px] text-slate-400 dark:text-zinc-500">Heading Nodes</div>
+                        <div className="text-base font-bold text-slate-800 dark:text-zinc-200 mt-0.5">{blocks.filter(b => b.type === 'heading').length}</div>
+                      </div>
+                      <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-zinc-800/30 border border-slate-100 dark:border-zinc-800/40">
+                        <div className="text-[10px] text-slate-400 dark:text-zinc-500">Text Nodes</div>
+                        <div className="text-base font-bold text-slate-800 dark:text-zinc-200 mt-0.5">{blocks.filter(b => b.type === 'text').length}</div>
+                      </div>
+                      <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-zinc-800/30 border border-slate-100 dark:border-zinc-800/40">
+                        <div className="text-[10px] text-slate-400 dark:text-zinc-500">Custom Widgets</div>
+                        <div className="text-base font-bold text-slate-800 dark:text-zinc-200 mt-0.5">{blocks.filter(b => b.type === 'widget').length}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Timestamps */}
+                  <div className="space-y-1.5 pt-2 text-[11px] text-slate-400 dark:text-zinc-500">
+                    <div className="flex justify-between">
+                      <span>Created Date:</span>
+                      <span className="font-medium text-slate-600 dark:text-zinc-400">
+                        {pageMeta?.createdAt ? new Date(pageMeta.createdAt).toLocaleDateString() : 'N/A'}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Last Modified:</span>
+                      <span className="font-medium text-slate-600 dark:text-zinc-400">
+                        {pageMeta?.updatedAt ? new Date(pageMeta.updatedAt).toLocaleTimeString() : 'N/A'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeRightSidebarTab === 'outline' && (
+                <div className="space-y-4">
+                  <p className="text-[11px] text-slate-400 dark:text-zinc-500">
+                    Click an outline heading below to quickly navigate and scroll to its position in the document.
+                  </p>
+
+                  {blocks.filter(b => b.type === 'heading').length === 0 ? (
+                    <div className="text-center py-8 border border-dashed border-slate-200 dark:border-zinc-800 rounded-xl">
+                      <List className="w-6 h-6 mx-auto text-slate-300 dark:text-zinc-700 mb-1.5" />
+                      <span className="text-xs text-slate-400 dark:text-zinc-500">No headings in document outline.</span>
+                    </div>
+                  ) : (
+                    <nav className="flex flex-col gap-1">
+                      {blocks.filter(b => b.type === 'heading').map(block => {
+                        const level = block.properties?.level || 1;
+                        let indentClass = 'pl-0 font-semibold';
+                        if (level === 2) indentClass = 'pl-4 text-xs font-medium';
+                        if (level >= 3) indentClass = 'pl-8 text-xs';
+                        return (
+                          <button
+                            key={block.id}
+                            type="button"
+                            onClick={() => {
+                              const el = document.getElementById(block.id);
+                              if (el) {
+                                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                              }
+                            }}
+                            className={`w-full text-left py-1.5 px-2 rounded-lg hover:bg-slate-50 dark:hover:bg-zinc-800/40 text-slate-700 dark:text-zinc-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors truncate ${indentClass}`}
+                          >
+                            {block.content || 'Untitled Heading'}
+                          </button>
+                        );
+                      })}
+                    </nav>
+                  )}
+                </div>
+              )}
+
+              {activeRightSidebarTab === 'agent' && (
+                <div className="flex flex-col h-full min-h-[300px]">
+                  {/* Space Agent tab inside sidebar panel */}
+                  <div className="flex border-b border-slate-150 dark:border-zinc-800 text-xs shrink-0 mb-3 bg-slate-50/50 dark:bg-zinc-900/30 rounded-lg overflow-hidden">
+                    <button
+                      type="button"
+                      onClick={() => setActiveAgentTab('chat')}
+                      className={`flex-1 py-1.5 text-center font-medium transition-colors cursor-pointer ${
+                        activeAgentTab === 'chat'
+                          ? 'text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-500 font-semibold bg-indigo-500/5'
+                          : 'text-slate-500 hover:text-slate-700 dark:text-zinc-400 dark:hover:text-zinc-200'
+                      }`}
+                    >
+                      AI Chat
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveAgentTab('widgets')}
+                      className={`flex-1 py-1.5 text-center font-medium transition-colors cursor-pointer ${
+                        activeAgentTab === 'widgets'
+                          ? 'text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-500 font-semibold bg-indigo-500/5'
+                          : 'text-slate-500 hover:text-slate-700 dark:text-zinc-400 dark:hover:text-zinc-200'
+                      }`}
+                    >
+                      Widgets
+                    </button>
+                  </div>
+
+                  {activeAgentTab === 'chat' ? (
+                    <div className="flex flex-col flex-1 h-full min-h-0">
+                      {/* Messages */}
+                      <div className="flex-1 overflow-y-auto space-y-3 mb-3 pr-1 max-h-[350px]">
+                        {messages.map((msg, index) => (
+                          <div
+                            key={index}
+                            className={`flex gap-2 max-w-[90%] ${msg.sender === "user" ? "ml-auto flex-row-reverse" : ""}`}
+                          >
+                            <div
+                              className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] shrink-0 ${
+                                msg.sender === "user"
+                                  ? "bg-slate-200 dark:bg-zinc-800 text-slate-700"
+                                  : "bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400"
+                              }`}
+                            >
+                              {msg.sender === "user" ? <User className="w-3 h-3" /> : <Bot className="w-3 h-3" />}
+                            </div>
+                            <div
+                              className={`p-2.5 rounded-xl text-xs leading-relaxed ${
+                                msg.sender === "user"
+                                  ? "bg-indigo-600 text-white rounded-tr-none shadow-sm"
+                                  : "bg-slate-100 dark:bg-zinc-800 text-slate-800 dark:text-zinc-200 rounded-tl-none border border-transparent dark:border-zinc-700"
+                              }`}
+                            >
+                              {msg.text}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Input form */}
+                      <form onSubmit={handleSendMessage} className="relative flex items-center mt-auto">
+                        <input
+                          type="text"
+                          value={chatInput}
+                          onChange={(e) => setChatInput(e.target.value)}
+                          placeholder="Ask Space Agent docked..."
+                          className="w-full pl-3 pr-8 py-2 rounded-lg border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-xs text-slate-800 dark:text-zinc-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                        />
+                        <button
+                          type="submit"
+                          className="absolute right-1.5 p-1 bg-indigo-600 text-white rounded-md hover:bg-indigo-500"
+                        >
+                          <Send className="w-3 h-3" />
+                        </button>
+                      </form>
+                    </div>
+                  ) : (
+                    <div className="space-y-4 max-h-[400px] overflow-y-auto">
+                      <div className="grid grid-cols-1 gap-2">
+                        {[
+                          { title: 'Analog Clock', desc: 'Live time analog clock widget', template: WIDGET_TEMPLATES.clock, id: 'clock' },
+                          { title: 'Mini Calculator', desc: 'Grid based calculator widget', template: WIDGET_TEMPLATES.calculator, id: 'calc' },
+                          { title: 'Quick Tasks Todo', desc: 'Interactive task tracker', template: WIDGET_TEMPLATES.todo, id: 'todo' }
+                        ].map((item) => (
+                          <div key={item.id} className="p-2 rounded-lg bg-slate-50 dark:bg-zinc-800/30 border border-slate-150 dark:border-zinc-800/60 flex items-center justify-between text-xs">
+                            <div className="min-w-0 pr-1 flex flex-col">
+                              <span className="font-semibold text-slate-700 dark:text-zinc-200 truncate">{item.title}</span>
+                              <span className="text-[10px] text-slate-400 dark:text-zinc-500 truncate">{item.desc}</span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newId = addBlock(null, 'widget', '');
+                                updateBlockType(newId, 'widget', {
+                                  widgetId: `${item.id}-${Math.random().toString(36).substring(2, 6)}`,
+                                  srcDoc: item.template
+                                });
+                              }}
+                              className="px-2 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded text-[10px] font-semibold transition-colors cursor-pointer shrink-0"
+                            >
+                              Insert
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {activeRightSidebarTab === 'history' && (
+                <div className="space-y-4">
+                  <p className="text-[11px] text-slate-400 dark:text-zinc-500">
+                    Locally persisted document snapshots are updated automatically during edit sessions.
+                  </p>
+
+                  <div className="relative pl-4 border-l-2 border-slate-100 dark:border-zinc-800 ml-1.5 space-y-4">
+                    {/* Item 1 */}
+                    <div className="relative">
+                      <span className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-4 ring-white dark:ring-zinc-900" />
+                      <div className="flex flex-col">
+                        <span className="text-xs font-semibold text-slate-800 dark:text-zinc-200">Current active version</span>
+                        <span className="text-[10px] text-slate-400 dark:text-zinc-500">Just now — Auto-saved local session</span>
+                      </div>
+                    </div>
+
+                    {/* Item 2 */}
+                    <div className="relative group">
+                      <span className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-indigo-500 ring-4 ring-white dark:ring-zinc-900" />
+                      <button
+                        type="button"
+                        onClick={() => alert("Restored page backup to: 10 minutes ago")}
+                        className="text-left w-full hover:bg-slate-50 dark:hover:bg-zinc-800/40 p-1.5 rounded-lg transition-colors"
+                      >
+                        <span className="text-xs font-semibold text-slate-700 dark:text-zinc-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">10 minutes ago</span>
+                        <div className="text-[10px] text-slate-400 dark:text-zinc-500">Backup snapshot auto-save</div>
+                      </button>
+                    </div>
+
+                    {/* Item 3 */}
+                    <div className="relative group">
+                      <span className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-zinc-700 ring-4 ring-white dark:ring-zinc-900" />
+                      <button
+                        type="button"
+                        onClick={() => alert("Restored page backup to original created state")}
+                        className="text-left w-full hover:bg-slate-50 dark:hover:bg-zinc-800/40 p-1.5 rounded-lg transition-colors"
+                      >
+                        <span className="text-xs font-semibold text-slate-700 dark:text-zinc-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">Page Created</span>
+                        <div className="text-[10px] text-slate-400 dark:text-zinc-500">
+                          {pageMeta?.createdAt ? new Date(pageMeta.createdAt).toLocaleString() : 'Initial blank slate'}
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </aside>
+
+          {/* Right Tool Rail */}
+          <aside className="w-12 flex flex-col items-center justify-between py-3 border-l border-slate-200 dark:border-zinc-800 bg-[#fbfbfb] dark:bg-zinc-950 shrink-0 z-20 h-full">
+            <div className="flex flex-col items-center gap-4 w-full">
+              <nav className="flex flex-col gap-2 w-full px-1.5" aria-label="Right Rail Navigation">
+                {[
+                  { id: 'info' as const, icon: Info, label: 'Page Info' },
+                  { id: 'outline' as const, icon: List, label: 'Outline' },
+                  { id: 'agent' as const, icon: Bot, label: 'Space Agent' },
+                  { id: 'history' as const, icon: History, label: 'Page History' }
+                ].map((item) => {
+                  const Icon = item.icon;
+                  const isActive = isRightSidebarOpen && activeRightSidebarTab === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => toggleRightSidebar(item.id)}
+                      title={item.label}
+                      aria-label={item.label}
+                      className={`w-full py-2.5 rounded-lg flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400 ${
+                        isActive
+                          ? 'bg-white dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 shadow-[0_1px_3px_rgba(0,0,0,0.05)] dark:shadow-none font-semibold'
+                          : 'text-slate-400 dark:text-zinc-500 hover:text-slate-900 dark:hover:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5'
+                      }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                    </button>
+                  );
+                })}
+              </nav>
+            </div>
+
+            <div className="flex flex-col items-center gap-3 w-full px-1.5">
+              <button
+                type="button"
+                onClick={() => alert("CatNoted Workspace - AFFiNE-style Right Rail")}
+                className="w-full py-2.5 rounded-lg flex items-center justify-center text-slate-400 dark:text-zinc-500 hover:text-slate-900 dark:hover:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                title="Workspace Help"
+                aria-label="Workspace Help"
+              >
+                <span className="text-xs font-semibold">?</span>
+              </button>
+            </div>
+          </aside>
+        </div>
+      )}
 
       {/* ── Floating Agent Toggle FAB ─────────────────────────────────── */}
       {!isAgentOpen && (
