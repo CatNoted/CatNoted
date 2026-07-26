@@ -15,6 +15,8 @@ import { HeadingBlock } from './HeadingBlock.js';
 import { WidgetBlockPlaceholder } from './WidgetBlockPlaceholder.js';
 import { SandboxFrame } from '@catnoted/agent-runtime';
 import { ToggleBlock } from './ToggleBlock.js';
+import { KanbanBlock } from './KanbanBlock.js';
+import { Columns } from 'lucide-react';
 
 interface BlockRowProps {
   block: any;
@@ -169,6 +171,15 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                       <Heading3 className="w-3.5 h-3.5" /> Heading 3
                     </button>
                     <button
+                      onClick={() => {
+                        updateBlockType(block.id, 'kanban', { title: 'Kanban Board', columns: [] });
+                        setActiveMenuId(null);
+                      }}
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-200"
+                    >
+                      <Columns className="w-3.5 h-3.5" /> Kanban Board
+                    </button>
+                    <button
                       onClick={() => handleAddWidget(block.id)}
                       className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-indigo-600 dark:text-indigo-400"
                     >
@@ -216,6 +227,17 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                     }
                   }}
                   focusOnMount={isFocused}
+                />
+              )}
+
+              {block.type === 'kanban' && (
+                <KanbanBlock
+                  id={block.id}
+                  title={block.properties?.title || block.content}
+                  columns={block.properties?.columns}
+                  onUpdateProps={(props) => updateBlockProperties(block.id, props)}
+                  onUpdateContent={onChangeContent}
+                  onDelete={() => deleteBlock(block.id)}
                 />
               )}
 

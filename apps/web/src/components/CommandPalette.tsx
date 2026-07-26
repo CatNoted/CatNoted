@@ -19,7 +19,6 @@ interface CommandPaletteProps {
   onToggleZen: () => void;
   onOpenSettings: () => void;
   isDarkMode: boolean;
-  onOpenSearch?: () => void;
 }
 
 interface CommandItem {
@@ -34,7 +33,7 @@ const commandGroups = [
   {
     key: 'Open',
     filter: (cmd: CommandItem) =>
-      ['doc', 'canvas', 'graph', 'search'].includes(cmd.id)
+      ['doc', 'canvas', 'graph'].includes(cmd.id)
   },
   {
     key: 'Interface',
@@ -53,8 +52,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   onToggleTheme,
   onToggleZen,
   onOpenSettings,
-  isDarkMode,
-  onOpenSearch
+  isDarkMode
 }) => {
   const [search, setSearch] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -64,13 +62,6 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
 
   const baseCommands = useMemo<CommandItem[]>(
     () => [
-      ...(onOpenSearch ? [{
-        id: 'search',
-        title: 'Search Workspace',
-        subtitle: 'Find pages, blocks, and tags',
-        icon: Search,
-        action: onOpenSearch
-      }] : []),
       {
         id: 'doc',
         title: 'Doc Mode',
