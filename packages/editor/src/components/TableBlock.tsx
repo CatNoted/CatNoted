@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, Table as TableIcon } from 'lucide-react';
+import { ChevronDown, GripHorizontal, Plus, Table as TableIcon } from 'lucide-react';
 
 interface TableBlockProps {
   id: string;
@@ -21,6 +21,12 @@ export const TableBlock: React.FC<TableBlockProps> = ({
   onDelete: _onDelete,
 }) => {
   const currentRows = rows && rows.length > 0 ? rows : DEFAULT_ROWS;
+  const [expanded, setExpanded] = React.useState(false);
+  const maxVisibleRows = 6;
+  const hasMoreRows = currentRows.length > maxVisibleRows + 1;
+  const visibleBodyRows = expanded
+    ? currentRows.slice(1)
+    : currentRows.slice(1, maxVisibleRows + 1);
 
   const handleCellChange = (rIndex: number, cIndex: number, value: string) => {
     const updated = currentRows.map((row, r) =>
@@ -39,12 +45,6 @@ export const TableBlock: React.FC<TableBlockProps> = ({
     const updated = currentRows.map((row, i) => [...row, i === 0 ? `Header ${row.length + 1}` : '']);
     onUpdateProps({ rows: updated });
   };
-
-  // const _handleRemoveRow = (rIndex: number) => {
-  //   if (currentRows.length <= 1) return;
-  //   const updated = currentRows.filter((_, r) => r !== rIndex);
-  //   onUpdateProps({ rows: updated });
-  // };
 
   const handleRemoveColumn = (cIndex: number) => {
     if (currentRows[0].length <= 1) return;
@@ -77,54 +77,82 @@ export const TableBlock: React.FC<TableBlockProps> = ({
         </div>
       </div>
 
-      <table className="w-full border-collapse border border-slate-200 dark:border-zinc-800 rounded-xl overflow-hidden text-xs">
-        <thead>
-          <tr className="bg-slate-100/80 dark:bg-zinc-900/80 text-slate-700 dark:text-zinc-300 font-semibold border-b border-slate-200 dark:border-zinc-800">
-            {currentRows[0]?.map((cell, cIndex) => (
-              <th key={cIndex} className="p-2 border-r border-slate-200 dark:border-zinc-800 relative group/th">
-                <input
-                  type="text"
-                  value={cell}
-                  onChange={(e) => handleCellChange(0, cIndex, e.target.value)}
-                  className="w-full bg-transparent font-bold text-slate-900 dark:text-zinc-100 outline-none focus:ring-1 focus:ring-indigo-400 rounded px-1"
-                />
-                {currentRows[0].length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveColumn(cIndex)}
-                    className="absolute right-1 top-1 opacity-0 group-hover/th:opacity-100 p-0.5 text-rose-400 hover:text-rose-600"
-                    title="Remove column"
+      <div className="rounded-xl border border-slate-200 dark:border-zinc-800 overflow-hidden text-xs">
+        <div className="min-w-full overflow-x-auto">
+          <table className="w-full border-collapse bg-white dark:bg-zinc-900">
+            <thead>
+              <tr className="bg-slate-50/90 dark:bg-zinc-800/90 border-b border-slate-200 dark:border-zinc-700">
+                {currentRows[0]?.map((cell, cIndex) => (
+                  <th
+                    key={cIndex}
+                    className="p-2.5 border-r border-slate-200 dark:border-zinc-700 last:border-r-0 text-left text-[11px] font-semibold tracking-tight text-slate-700 dark:text-zinc-200 relative group/th"
                   >
-                    ×
-                  </button>
-                )}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {currentRows.slice(1).map((row, rIdx) => {
-            const actualRowIdx = rIdx + 1;
-            return (
-              <tr
-                key={actualRowIdx}
-                className="border-b border-slate-200/60 dark:border-zinc-800/60 hover:bg-slate-50/50 dark:hover:bg-zinc-850/50 transition-colors group/tr"
-              >
-                {row.map((cell, cIdx) => (
-                  <td key={cIdx} className="p-2 border-r border-slate-200/60 dark:border-zinc-800/60 relative">
-                    <input
-                      type="text"
-                      value={cell}
-                      onChange={(e) => handleCellChange(actualRowIdx, cIdx, e.target.value)}
-                      className="w-full bg-transparent text-slate-700 dark:text-zinc-300 outline-none focus:ring-1 focus:ring-indigo-400 rounded px-1"
-                    />
-                  </td>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={cell}
+                        onChange={(e) => handleCellChange(0, cIndex, e.target.value)}
+                        className="w-full bg-transparent font-bold text-slate-900 dark:text-zinc-100 outline-none focus:ring-1 focus:ring-indigo-400 rounded px-0.5 placeholder:text-slate-400 dark:placeholder:text-zinc-500"
+                      />
+                    </div>
+                    {currentRows[0].length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveColumn(cIndex)}
+                        className="absolute right-1 top-1 opacity-0 group-hover/th:opacity-100 p-0.5 text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors"
+                        title="Remove column"
+                      >
+                        ×
+                      </button>
+                    )}
+                  </th>
                 ))}
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
+            </thead>
+            <tbody>
+              {visibleBodyRows.map((row, rIdx) => {
+                const actualRowIdx = rIdx + 1;
+                return (
+                  <tr
+                    key={actualRowIdx}
+                    className="border-b border-slate-200/70 dark:border-zinc-800/70 hover:bg-slate-50/80 dark:hover:bg-zinc-800/60 transition-colors"
+                  >
+                    <td className="w-1 p-0 border-r border-slate-200/60 dark:border-zinc-800/60 text-center">
+                      <div className="flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity text-slate-400 dark:text-zinc-500 cursor-grab active:cursor-grabbing">
+                        <GripHorizontal className="w-3 h-3" />
+                      </div>
+                    </td>
+                    {row.map((cell, cIdx) => (
+                      <td
+                        key={cIdx}
+                        className="p-2.5 border-r border-slate-200/60 dark:border-zinc-800/60 last:border-r-0 align-top"
+                      >
+                        <input
+                          type="text"
+                          value={cell}
+                          onChange={(e) => handleCellChange(actualRowIdx, cIdx, e.target.value)}
+                          className="w-full bg-transparent text-slate-800 dark:text-zinc-200 outline-none focus:ring-1 focus:ring-indigo-400 rounded px-0.5 placeholder:text-slate-400 dark:placeholder:text-zinc-500"
+                        />
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        {hasMoreRows && (
+          <button
+            type="button"
+            onClick={() => setExpanded((v) => !v)}
+            className="w-full flex items-center justify-center gap-1 py-1.5 text-[11px] text-slate-500 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors border-t border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800"
+          >
+            <ChevronDown className={`w-3 h-3 transition-transform ${expanded ? 'rotate-180' : ''}`} />
+            {expanded ? 'Show fewer rows' : `Show ${currentRows.length - 1 - maxVisibleRows} more rows`}
+          </button>
+        )}
+      </div>
     </div>
   );
 };
