@@ -112,10 +112,10 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   const renderEmojiPickerDropdown = () => (
     <div
       ref={emojiMenuRef}
-      className="absolute left-0 top-full mt-2 z-50 p-4 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-2xl w-72 text-left select-none animate-in fade-in-50 duration-200"
+      className="absolute left-0 top-full mt-2 z-50 p-4 bg-card border border-border rounded-2xl shadow-2xl w-72 text-left select-none animate-in fade-in-50 duration-200"
     >
-      <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-150 dark:border-zinc-800">
-        <span className="text-xs font-bold text-slate-700 dark:text-zinc-300">
+      <div className="flex items-center justify-between pb-2 mb-2 border-b border-border">
+        <span className="text-xs font-bold text-card-foreground">
           Choose Icon or Emoji
         </span>
         {icon && (
@@ -134,7 +134,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
       </div>
 
       <div className="mb-3.5">
-        <span className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase block mb-1.5">
+        <span className="text-[10px] font-bold text-card-foreground/55 uppercase block mb-1.5">
           Common Icons
         </span>
         <div className="grid grid-cols-5 gap-1.5">
@@ -148,7 +148,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
                   onIconChange(`lucide:${iconName}`);
                   setShowEmojiPicker(false);
                 }}
-                className="p-1.5 text-slate-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg transition-transform hover:scale-110 flex items-center justify-center border border-slate-100 dark:border-zinc-800/40"
+                className="p-1.5 text-card-foreground/80 hover:text-primary hover:bg-accent rounded-lg transition-transform hover:scale-110 flex items-center justify-center border border-border/40"
                 title={iconName}
                 aria-label={`Select icon ${iconName}`}
               >
@@ -160,7 +160,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
       </div>
 
       <div>
-        <span className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase block mb-1.5">
+        <span className="text-[10px] font-bold text-card-foreground/55 uppercase block mb-1.5">
           Emojis
         </span>
         <div className="grid grid-cols-6 gap-1 max-h-40 overflow-y-auto pr-1">
@@ -172,7 +172,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
                 onIconChange(emoji);
                 setShowEmojiPicker(false);
               }}
-              className="text-xl p-1.5 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg transition-transform hover:scale-110 flex items-center justify-center"
+              className="text-xl p-1.5 hover:bg-accent rounded-lg transition-transform hover:scale-110 flex items-center justify-center"
               aria-label={`Select emoji ${emoji}`}
             >
               {emoji}
@@ -186,10 +186,10 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   const renderCoverPickerDropdown = () => (
     <div
       ref={coverMenuRef}
-      className="absolute left-0 top-full mt-2 z-50 p-4 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-2xl w-80 text-left select-none animate-in fade-in-50 duration-200"
+      className="absolute left-0 top-full mt-2 z-50 p-4 bg-card border border-border rounded-2xl shadow-2xl w-80 text-left select-none animate-in fade-in-50 duration-200"
     >
-      <div className="flex items-center justify-between pb-2 mb-3 border-b border-slate-100 dark:border-zinc-800">
-        <span className="text-xs font-bold text-slate-700 dark:text-zinc-300">
+      <div className="flex items-center justify-between pb-2 mb-3 border-b border-border">
+        <span className="text-xs font-bold text-card-foreground">
           Page Cover Settings
         </span>
         {coverUrl && (
@@ -208,9 +208,9 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
       </div>
 
       <div className="space-y-4">
-        <div className="space-y-3 bg-slate-50 dark:bg-[#16161a] p-2.5 rounded-xl border border-slate-150 dark:border-zinc-800/60">
+        <div className="space-y-3 bg-secondary/50 p-2.5 rounded-xl border border-border">
           <div>
-            <label className="block text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase mb-1">
+            <label className="block text-[10px] font-bold text-card-foreground/55 uppercase mb-1">
               Upload Cover File
             </label>
             <input
@@ -230,21 +230,21 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
                   reader.readAsDataURL(file);
                 }
               }}
-              className="block w-full text-[10px] text-slate-500 dark:text-zinc-400
+              className="block w-full text-[10px] text-card-foreground/60
                 file:mr-2 file:py-1 file:px-2.5
                 file:rounded-md file:border-0
                 file:text-[10px] file:font-semibold
-                file:bg-indigo-50 file:text-indigo-600
-                dark:file:bg-zinc-800 dark:file:text-zinc-300
-                hover:file:bg-indigo-100 dark:hover:file:bg-zinc-700
+                file:bg-primary/10 file:text-primary
+                dark:file:bg-accent dark:file:text-foreground
+                hover:file:bg-accent dark:hover:file:bg-accent/80
                 cursor-pointer"
             />
           </div>
 
-          <div className="border-t border-slate-200/60 dark:border-zinc-800/40 my-1"></div>
+          <div className="border-t border-border/40 my-1"></div>
 
           <div>
-            <label className="block text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase mb-1">
+            <label className="block text-[10px] font-bold text-card-foreground/55 uppercase mb-1">
               Or Paste Cover URL
             </label>
             <div className="flex gap-1.5">
@@ -254,7 +254,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
                 value={coverInputUrl}
                 aria-label="Custom cover image URL"
                 onChange={(e) => setCoverInputUrl(e.target.value)}
-                className="flex-1 text-[11px] px-2 py-1 border border-slate-200 dark:border-zinc-800 rounded-lg bg-white dark:bg-zinc-900 text-slate-800 dark:text-zinc-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="flex-1 text-[11px] px-2 py-1 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
               />
               <button
                 type="button"
@@ -266,7 +266,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
                   }
                 }}
                 aria-label="Save custom cover URL"
-                className="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-[10px] font-semibold transition-colors"
+                className="px-2.5 py-1 bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg text-[10px] font-semibold transition-colors"
               >
                 Save
               </button>
@@ -275,7 +275,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
         </div>
 
         <div>
-          <span className="block text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase mb-1.5">
+          <span className="block text-[10px] font-bold text-card-foreground/55 uppercase mb-1.5">
             Gradient Presets
           </span>
           <div className="grid grid-cols-3 gap-1.5">
@@ -287,7 +287,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
                   onCoverChange(gradient);
                   setShowCoverPicker(false);
                 }}
-                className="h-9 rounded-lg border border-slate-200/50 dark:border-zinc-800 hover:scale-105 transition-transform"
+                className="h-9 rounded-lg border border-border/50 hover:scale-105 transition-transform"
                 style={{ background: gradient }}
                 aria-label={`Select gradient cover ${i + 1}`}
                 title={`Gradient ${i + 1}`}
@@ -297,7 +297,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
         </div>
 
         <div>
-          <span className="block text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase mb-1.5">
+          <span className="block text-[10px] font-bold text-card-foreground/55 uppercase mb-1.5">
             Photo Presets
           </span>
           <div className="grid grid-cols-3 gap-1.5">
@@ -309,7 +309,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
                   onCoverChange(url);
                   setShowCoverPicker(false);
                 }}
-                className="h-10 rounded-lg overflow-hidden border border-slate-200/50 dark:border-zinc-800 hover:scale-105 transition-transform"
+                className="h-10 rounded-lg overflow-hidden border border-border/50 hover:scale-105 transition-transform"
                 aria-label={`Select photo cover ${i + 1}`}
               >
                 <img src={url} alt={`Preset ${i + 1}`} className="w-full h-full object-cover" />

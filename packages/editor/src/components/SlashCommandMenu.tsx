@@ -136,12 +136,12 @@ export const SlashCommandMenu: React.FC<SlashCommandMenuProps> = ({
       <div
         ref={menuRef}
         style={{ top: `${position.top}px`, left: `${position.left}px` }}
-        className="fixed z-[9999] w-72 bg-white dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800 rounded-xl shadow-xl py-3 px-4 text-center select-none"
+        className="fixed z-[9999] w-72 bg-card border border-border rounded-xl shadow-xl py-3 px-4 text-center select-none"
       >
-        <p className="text-[12.5px] font-medium text-slate-700 dark:text-zinc-300">
+        <p className="text-[12.5px] font-medium text-foreground">
           No matching commands
         </p>
-        <p className="text-[10.5px] text-slate-400 dark:text-zinc-500 mt-1 truncate">
+        <p className="text-[10.5px] text-foreground/55 mt-1 truncate">
           No matches for "{query}"
         </p>
       </div>
@@ -163,7 +163,7 @@ export const SlashCommandMenu: React.FC<SlashCommandMenuProps> = ({
     <div
       ref={menuRef}
       style={{ top: `${position.top}px`, left: `${position.left}px` }}
-      className="fixed z-[9999] w-72 bg-white dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800 rounded-xl shadow-xl py-1.5 overflow-hidden flex flex-col max-h-[340px]"
+      className="fixed z-[9999] w-72 bg-card border border-border rounded-xl shadow-xl py-1.5 overflow-hidden flex flex-col max-h-[340px]"
     >
       {/* Scrollable list area */}
       <div className="flex-1 overflow-y-auto px-1.5 space-y-2">
@@ -175,7 +175,7 @@ export const SlashCommandMenu: React.FC<SlashCommandMenuProps> = ({
             <div key={groupName} className="space-y-0.5">
               {/* Group Title */}
               <div className="px-2 py-1 select-none">
-                <span className="text-[10px] font-semibold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
+                <span className="text-[10px] font-semibold text-foreground/55 uppercase tracking-wider">
                   {groupName}
                 </span>
               </div>
@@ -196,24 +196,24 @@ export const SlashCommandMenu: React.FC<SlashCommandMenuProps> = ({
                       onMouseEnter={() => setSelectedIndex(originalIndex)}
                       className={`w-full flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-left transition-colors group ${
                         isSelected
-                          ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300'
-                          : 'text-slate-700 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-800/60'
+                          ? 'bg-accent text-foreground'
+                          : 'text-foreground hover:bg-accent/40'
                       }`}
                     >
                       <span
                         className={`flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-md text-sm border transition-colors ${
                           isSelected
-                            ? 'bg-indigo-100/80 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-500/30'
-                            : 'bg-slate-50 dark:bg-zinc-800/80 text-slate-500 dark:text-zinc-400 border-slate-100 dark:border-zinc-700/50'
+                            ? 'bg-primary/10 text-primary border-primary/20'
+                            : 'bg-secondary text-foreground/60 border-border/50'
                         }`}
                       >
                         {cmd.icon}
                       </span>
                       <span className="min-w-0 flex-1 leading-tight">
-                        <p className={`text-[12.5px] font-medium leading-tight ${isSelected ? 'text-indigo-900 dark:text-indigo-200' : 'text-slate-700 dark:text-zinc-200'}`}>
+                        <p className={`text-[12.5px] font-medium leading-tight ${isSelected ? 'text-primary font-semibold' : 'text-foreground'}`}>
                           {cmd.label}
                         </p>
-                        <p className="text-[10.5px] leading-snug text-slate-400 dark:text-zinc-500 truncate mt-0.5 font-normal">
+                        <p className="text-[10.5px] leading-snug text-foreground/55 truncate mt-0.5 font-normal">
                           {cmd.description}
                         </p>
                       </span>
@@ -227,7 +227,7 @@ export const SlashCommandMenu: React.FC<SlashCommandMenuProps> = ({
       </div>
 
       {/* Footer hint */}
-      <div className="px-3.5 py-1.5 border-t border-slate-100 dark:border-zinc-800/60 mt-1.5 flex items-center justify-between text-[9px] text-slate-400 dark:text-zinc-500 font-medium select-none">
+      <div className="px-3.5 py-1.5 border-t border-border/60 mt-1.5 flex items-center justify-between text-[9px] text-foreground/55 font-medium select-none">
         <span>↑↓ navigate</span>
         <span>Enter select</span>
         <span>Esc close</span>

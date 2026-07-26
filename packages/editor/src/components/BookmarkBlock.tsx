@@ -57,8 +57,8 @@ export const BookmarkBlock: React.FC<BookmarkBlockProps> = ({
   return (
     <div className="w-full my-2 select-none">
       {isEditing ? (
-        <div className="p-3 bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl flex items-center gap-2">
-          <Globe className="w-4 h-4 text-indigo-500 shrink-0" />
+        <div className="p-3 bg-secondary/50 border border-border rounded-xl flex items-center gap-2">
+          <Globe className="w-4 h-4 text-primary shrink-0" />
           <input
             type="text"
             value={urlInput}
@@ -67,36 +67,36 @@ export const BookmarkBlock: React.FC<BookmarkBlockProps> = ({
               if (e.key === 'Enter') handleSave();
             }}
             placeholder="Paste Web Link URL (e.g. https://github.com)..."
-            className="flex-1 bg-transparent text-xs font-mono text-slate-800 dark:text-zinc-200 outline-none"
+            className="flex-1 bg-transparent text-xs font-mono text-foreground outline-none"
             autoFocus
           />
           <button
             type="button"
             onClick={handleSave}
-            className="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium rounded-lg transition-colors"
+            className="px-3 py-1 bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-medium rounded-lg transition-colors"
           >
             Create Bookmark
           </button>
         </div>
       ) : (
-        <div className="group/bookmark relative flex items-center justify-between p-3.5 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-sm hover:shadow-md transition-all">
+        <div className="group/bookmark relative flex items-center justify-between p-3.5 bg-card border border-border rounded-2xl shadow-sm hover:shadow-md transition-all">
           <div className="flex items-center gap-3.5 min-w-0 flex-1">
-            <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-zinc-800 flex items-center justify-center shrink-0 overflow-hidden p-2 border border-slate-200/60 dark:border-zinc-700/60">
+            <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center shrink-0 overflow-hidden p-2 border border-border/60">
               {bookmarkFavicon ? (
                 <img src={bookmarkFavicon} alt="favicon" className="w-full h-full object-contain" />
               ) : (
-                <BookmarkIcon className="w-5 h-5 text-indigo-500" />
+                <BookmarkIcon className="w-5 h-5 text-primary" />
               )}
             </div>
 
             <div className="min-w-0 flex-1">
-              <h4 className="text-xs font-semibold text-slate-900 dark:text-zinc-100 truncate">
+              <h4 className="text-xs font-semibold text-foreground truncate">
                 {bookmarkTitle || bookmarkUrl}
               </h4>
-              <p className="text-[11px] text-slate-400 dark:text-zinc-500 truncate mt-0.5">
+              <p className="text-[11px] text-foreground/60 truncate mt-0.5">
                 {bookmarkDescription || bookmarkUrl}
               </p>
-              <span className="text-[10px] font-mono text-indigo-500 dark:text-indigo-400 truncate block mt-1">
+              <span className="text-[10px] font-mono text-primary truncate block mt-1">
                 {bookmarkUrl}
               </span>
             </div>
@@ -106,7 +106,7 @@ export const BookmarkBlock: React.FC<BookmarkBlockProps> = ({
             href={bookmarkUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="p-2 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-xl transition-colors shrink-0 ml-3"
+            className="p-2 text-foreground/50 hover:text-primary hover:bg-accent rounded-xl transition-colors shrink-0 ml-3"
             title="Open external link"
           >
             <ExternalLink className="w-4 h-4" />
