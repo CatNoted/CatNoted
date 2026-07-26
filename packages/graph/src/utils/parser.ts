@@ -27,11 +27,26 @@ function getDisplayIcon(iconStr: string | undefined): string {
   return iconStr;
 }
 
-export function parseDocumentGraph(blocks: BlockNode[], pages?: PageMeta[]): { nodes: GraphNode[]; edges: GraphEdge[] } {
+export function parseDocumentGraph(
+  blocks: BlockNode[],
+  pages?: PageMeta[],
+  deletedPageIds?: Set<string>
+): { nodes: GraphNode[]; edges: GraphEdge[] } {
   const nodesMap = new Map<string, Omit<GraphNode, 'label'> & { _rawName: string; count: number }>();
   const edges: GraphEdge[] = [];
 
   const rootId = 'root-doc-node';
+
+  // Build a set of deleted page IDs from the pages metadata if any have isDeleted === true,
+  // or merge with the provided deletedPageIds Set.
+  const resolvedDeletedPageIds = new Set<string>(deletedPageIds);
+  if (pages) {
+    pages.forEach(p => {
+      if (p.isDeleted) {
+        resolvedDeletedPageIds.add(p.id);
+      }
+    });
+  }
 
   // Determine root document title
   const rootPageMeta = pages?.find(p => p.id === rootId);
@@ -44,13 +59,15 @@ export function parseDocumentGraph(blocks: BlockNode[], pages?: PageMeta[]): { n
   }
 
   // Make sure we have a node for the root note
-  nodesMap.set(rootId, {
-    id: rootId,
-    type: 'page',
-    val: 20,
-    _rawName: rootTitle,
-    count: 0
-  });
+  if (!resolvedDeletedPageIds.has(rootId)) {
+    nodesMap.set(rootId, {
+      id: rootId,
+      type: 'page',
+      val: 20,
+      _rawName: rootTitle,
+      count: 0
+    });
+  }
 
   const linkRegex = /\[\[(.*?)\]\]/g;
   const tagRegex = /#([a-zA-Z0-9_\-]+)/g;
@@ -58,6 +75,7 @@ export function parseDocumentGraph(blocks: BlockNode[], pages?: PageMeta[]): { n
   // First pass: register all pages that have blocks
   blocks.forEach(block => {
     const sourceId = block.parentId || rootId;
+    if (resolvedDeletedPageIds.has(sourceId)) return; // Skip deleted page as source
     if (!nodesMap.has(sourceId)) {
       const pageName = sourceId.replace(/^page-/, '').split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
       nodesMap.set(sourceId, {
@@ -73,6 +91,7 @@ export function parseDocumentGraph(blocks: BlockNode[], pages?: PageMeta[]): { n
   // Second pass: extract links and tags
   blocks.forEach(block => {
     const sourceId = block.parentId || rootId;
+    if (resolvedDeletedPageIds.has(sourceId)) return; // Skip deleted page as source
 
     let linkMatch;
     linkRegex.lastIndex = 0;
@@ -81,6 +100,7 @@ export function parseDocumentGraph(blocks: BlockNode[], pages?: PageMeta[]): { n
       const pageName = linkMatch[1].replace(/[\[\]]/g, '').trim();
       if (!pageName) continue;
       const nodeId = `page-${pageName.toLowerCase().replace(/\s+/g, '-')}`;
+      if (resolvedDeletedPageIds.has(nodeId)) continue; // Skip deleted page as link target
       
       const existing = nodesMap.get(nodeId);
       if (existing) {

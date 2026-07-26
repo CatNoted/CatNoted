@@ -12,13 +12,42 @@ const provider = typeof window !== 'undefined' && typeof indexedDB !== 'undefine
 
 const initializedPages = new Set<string>();
 
+export const deduplicateYBlocks = () => {
+  const arr = yblocks.toArray();
+  const seenIds = new Set<string>();
+  const indicesToDelete: number[] = [];
+  for (let i = 0; i < arr.length; i++) {
+    const block = arr[i];
+    if (!block || !block.id) {
+      indicesToDelete.push(i);
+      continue;
+    }
+    if (seenIds.has(block.id)) {
+      indicesToDelete.push(i);
+    } else {
+      seenIds.add(block.id);
+    }
+  }
+
+  if (indicesToDelete.length > 0) {
+    ydoc.transact(() => {
+      // Delete backwards to avoid index shifts
+      for (let j = indicesToDelete.length - 1; j >= 0; j--) {
+        yblocks.delete(indicesToDelete[j], 1);
+      }
+    });
+  }
+};
+
 export function useDocumentStore(pageId: string = 'root-doc-node') {
   const [blocks, setBlocks] = useState<BlockNode[]>([]);
   const [pages, setPages] = useState<PageMeta[]>([]);
+  const [deletedPages, setDeletedPages] = useState<PageMeta[]>([]);
   const [pageMeta, setPageMeta] = useState<PageMeta | null>(null);
 
   useEffect(() => {
     const updateBlocks = () => {
+      deduplicateYBlocks();
       const allBlocks = yblocks.toArray();
       const pageBlocks = allBlocks.filter(b => (b.parentId || 'root-doc-node') === pageId);
 
@@ -75,7 +104,8 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
                   isFavorite: false,
                   createdAt: Date.now(),
                   updatedAt: Date.now(),
-                  journalDate: dateStr
+                  journalDate: dateStr,
+                  isDeleted: false
                 });
               }
 
@@ -211,10 +241,13 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
           fontStyle: 'sans',
           fullWidth: false,
           isFavorite: false,
-          createdAt: Date.now()
+          createdAt: Date.now(),
+          isDeleted: false
         });
       }
-      setPages(ypages.toJSON() ? Object.values(ypages.toJSON()) : []);
+      const allPages = ypages.toJSON() ? Object.values(ypages.toJSON()) : [];
+      setPages(allPages.filter((p: any) => !p?.isDeleted));
+      setDeletedPages(allPages.filter((p: any) => !!p?.isDeleted));
     };
 
     updateBlocks();
@@ -232,6 +265,7 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
     ypages.observe(pagesObserver);
 
     const handleSync = () => {
+      deduplicateYBlocks();
       // Filter by current pageId to avoid cross-page duplicates
       const allBlocks = yblocks.toArray();
       const pageBlocks = allBlocks.filter(b => (b.parentId || 'root-doc-node') === pageId);
@@ -403,13 +437,60 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
     return newPageId;
   };
 
-  const renamePage = (id: string, title: string) => {
-    const page = ypages.get(id);
-    if (page) {
-      ydoc.transact(() => {
-        ypages.set(id, { ...page, title, updatedAt: Date.now() });
-      });
-    }
+  const renamePage = (oldPageId: string, newTitle: string) => {
+    if (oldPageId === 'root-doc-node') return oldPageId;
+    const page = ypages.get(oldPageId);
+    if (!page) return oldPageId;
+
+    const oldTitle = page.title || '';
+    if (oldTitle === newTitle) return oldPageId;
+
+    const newPageId = `page-${newTitle.toLowerCase().replace(/\s+/g, '-')}`;
+
+    ydoc.transact(() => {
+      // 1. Rename page ID consistently in ypages map: delete old and set new
+      const updatedPage: PageMeta = {
+        ...page,
+        id: newPageId,
+        title: newTitle,
+        updatedAt: Date.now()
+      };
+      ypages.delete(oldPageId);
+      ypages.set(newPageId, updatedPage);
+
+      // 2. Update block parentId from oldPageId to newPageId for all blocks belonging to the renamed page
+      // And replace references in block contents from [[Old Title]] to [[New Title]] case-insensitively.
+      const arr = yblocks.toArray();
+      for (let i = arr.length - 1; i >= 0; i--) {
+        const b = arr[i];
+        if (!b) continue;
+
+        let changed = false;
+        let updatedBlock = { ...b };
+
+        if (b.parentId === oldPageId) {
+          updatedBlock.parentId = newPageId;
+          changed = true;
+        }
+
+        if (b.content && oldTitle) {
+          // Construct case-insensitive regex for [[Old Title]]
+          const escapedTitle = oldTitle.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+          const regex = new RegExp(`\\[\\[${escapedTitle}\\]\\]`, 'gi');
+          if (regex.test(b.content)) {
+            updatedBlock.content = b.content.replace(regex, `[[${newTitle}]]`);
+            changed = true;
+          }
+        }
+
+        if (changed) {
+          yblocks.delete(i, 1);
+          yblocks.insert(i, [updatedBlock]);
+        }
+      }
+    });
+
+    return newPageId;
   };
 
   const moveBlock = (draggedId: string, targetId: string) => {
@@ -439,13 +520,48 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
   const deletePage = (id: string) => {
     if (id === 'root-doc-node') return; // Cannot delete root
     ydoc.transact(() => {
+      const page = ypages.get(id);
+      if (page) {
+        ypages.set(id, {
+          ...page,
+          isDeleted: true,
+          isFavorite: false,
+          updatedAt: Date.now()
+        });
+      }
+    });
+  };
+
+  const restorePage = (id: string) => {
+    ydoc.transact(() => {
+      const page = ypages.get(id);
+      if (page) {
+        ypages.set(id, {
+          ...page,
+          isDeleted: false,
+          updatedAt: Date.now()
+        });
+      }
+    });
+  };
+
+  const permanentlyDeletePage = (id: string) => {
+    if (id === 'root-doc-node') return; // Cannot delete root
+    ydoc.transact(() => {
       ypages.delete(id);
+      const arr = yblocks.toArray();
+      for (let i = arr.length - 1; i >= 0; i--) {
+        if (arr[i].parentId === id) {
+          yblocks.delete(i, 1);
+        }
+      }
     });
   };
 
   return {
     blocks,
     pages,
+    deletedPages,
     pageMeta,
     addBlock,
     updateBlockContent,
@@ -458,6 +574,8 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
     createJournalPage,
     renamePage,
     deletePage,
+    restorePage,
+    permanentlyDeletePage,
     moveBlock
   };
 };
