@@ -59,3 +59,4 @@ coverage/
 catnoted_vfs*
 .env*
 /.jules/
+apps/web/storybook-static
