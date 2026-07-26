@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useDocumentStore, ydoc } from '@catnoted/editor';
+import { useDocumentStore, ydoc, yblocks } from '@catnoted/editor';
 import { CanvasElement } from '@catnoted/shared';
 import { useCanvasViewport } from '../hooks/useCanvasViewport.js';
 import { CanvasCard } from './CanvasCard.js';
@@ -49,7 +49,7 @@ function getIntersectionPoint(
 }
 
 export const InfiniteCanvas: React.FC = () => {
-  const { blocks } = useDocumentStore();
+  const { blocks, deleteBlock } = useDocumentStore();
   const [elements, setElements] = useState<Record<string, CanvasElement>>({});
 
   // Selection state
@@ -58,6 +58,15 @@ export const InfiniteCanvas: React.FC = () => {
   // Custom connector drawing states
   const [activeConnectorStart, setActiveConnectorStart] = useState<string | null>(null);
   const [connectorMousePos, setConnectorMousePos] = useState<{ x: number; y: number } | null>(null);
+
+  // Help overlay state
+  const [isHelpActive, setIsHelpActive] = useState(false);
+
+  // Undo / Restore states for deleted elements and blocks
+  const [undoToast, setUndoToast] = useState<{
+    elements: CanvasElement[];
+    blocks: any[];
+  } | null>(null);
 
   // Marquee selection states
   const [marqueeStart, setMarqueeStart] = useState<{ x: number; y: number } | null>(null);
@@ -146,17 +155,55 @@ export const InfiniteCanvas: React.FC = () => {
 
       if (e.key === 'Delete' || e.key === 'Backspace') {
         if (selectedIds.length > 0) {
+          // Check if any card is selected
+          const containsCard = selectedIds.some(id => {
+            const elem = ycanvas.get(id);
+            return elem && elem.type === 'card';
+          });
+
+          if (containsCard) {
+            const confirmDelete = window.confirm('Are you sure you want to delete the selected card(s)? This will also remove their backing document blocks.');
+            if (!confirmDelete) return;
+          }
+
+          const elementsToSave: CanvasElement[] = [];
+          const blocksToSave: any[] = [];
+
           ydoc.transact(() => {
             selectedIds.forEach(id => {
               if (ycanvas.has(id)) {
                 const elem = ycanvas.get(id);
-                // Allow deleting non-card elements (shapes, notes, frames, connectors)
-                if (elem && elem.type !== 'card') {
+                if (elem) {
+                  elementsToSave.push(elem);
+                  if (elem.type === 'card') {
+                    const blockData = blocks.find(b => b.id === elem.blockId);
+                    if (blockData) {
+                      blocksToSave.push(blockData);
+                    }
+                    deleteBlock(elem.id);
+                  }
                   ycanvas.delete(id);
                 }
               }
             });
           });
+
+          if (elementsToSave.length > 0) {
+            setUndoToast({
+              elements: elementsToSave,
+              blocks: blocksToSave
+            });
+            // Automatically hide undo toast after 8 seconds
+            setTimeout(() => {
+              setUndoToast(prev => {
+                if (prev && prev.elements === elementsToSave) {
+                  return null;
+                }
+                return prev;
+              });
+            }, 8000);
+          }
+
           setSelectedIds([]);
         }
       } else if (e.key === 'Escape') {
@@ -680,36 +727,70 @@ export const InfiniteCanvas: React.FC = () => {
           const sourceElem = elements[conn.from];
           const targetElem = elements[conn.to];
 
-          if (!sourceElem || !targetElem) return null;
+          let startX = 0, startY = 0, endX = 0, endY = 0;
+          let isBroken = false;
+          let labelText = conn.label || '';
 
-          const sourceW = sourceElem.width || (sourceElem.type === 'card' ? 240 : (sourceElem.type === 'frame' ? 400 : 200));
-          const sourceH = sourceElem.height || (sourceElem.type === 'card' ? 120 : (sourceElem.type === 'frame' ? 300 : 100));
-          const targetW = targetElem.width || (targetElem.type === 'card' ? 240 : (targetElem.type === 'frame' ? 400 : 200));
-          const targetH = targetElem.height || (targetElem.type === 'card' ? 120 : (targetElem.type === 'frame' ? 300 : 100));
+          if (sourceElem && targetElem) {
+            const sourceW = sourceElem.width || (sourceElem.type === 'card' ? 240 : (sourceElem.type === 'frame' ? 400 : 200));
+            const sourceH = sourceElem.height || (sourceElem.type === 'card' ? 120 : (sourceElem.type === 'frame' ? 300 : 100));
+            const targetW = targetElem.width || (targetElem.type === 'card' ? 240 : (targetElem.type === 'frame' ? 400 : 200));
+            const targetH = targetElem.height || (targetElem.type === 'card' ? 120 : (targetElem.type === 'frame' ? 300 : 100));
 
-          const sourceCx = sourceElem.x + sourceW / 2;
-          const sourceCy = sourceElem.y + sourceH / 2;
-          const targetCx = targetElem.x + targetW / 2;
-          const targetCy = targetElem.y + targetH / 2;
+            const sourceCx = sourceElem.x + sourceW / 2;
+            const sourceCy = sourceElem.y + sourceH / 2;
+            const targetCx = targetElem.x + targetW / 2;
+            const targetCy = targetElem.y + targetH / 2;
 
-          const start = getIntersectionPoint(sourceCx, sourceCy, targetCx, targetCy, sourceElem.x, sourceElem.y, sourceW, sourceH);
-          const end = getIntersectionPoint(targetCx, targetCy, sourceCx, sourceCy, targetElem.x, targetElem.y, targetW, targetH);
+            const startPt = getIntersectionPoint(sourceCx, sourceCy, targetCx, targetCy, sourceElem.x, sourceElem.y, sourceW, sourceH);
+            const endPt = getIntersectionPoint(targetCx, targetCy, sourceCx, sourceCy, targetElem.x, targetElem.y, targetW, targetH);
 
-          const midX = (start.x + end.x) / 2;
-          const midY = (start.y + end.y) / 2;
+            startX = startPt.x;
+            startY = startPt.y;
+            endX = endPt.x;
+            endY = endPt.y;
+          } else {
+            isBroken = true;
+            labelText = labelText ? `${labelText} (Broken)` : 'Broken Connection';
+
+            if (sourceElem) {
+              const sourceW = sourceElem.width || (sourceElem.type === 'card' ? 240 : (sourceElem.type === 'frame' ? 400 : 200));
+              const sourceH = sourceElem.height || (sourceElem.type === 'card' ? 120 : (sourceElem.type === 'frame' ? 300 : 100));
+              startX = sourceElem.x + sourceW / 2;
+              startY = sourceElem.y + sourceH / 2;
+              endX = startX + 150;
+              endY = startY + 100;
+            } else if (targetElem) {
+              const targetW = targetElem.width || (targetElem.type === 'card' ? 240 : (targetElem.type === 'frame' ? 400 : 200));
+              const targetH = targetElem.height || (targetElem.type === 'card' ? 120 : (targetElem.type === 'frame' ? 300 : 100));
+              endX = targetElem.x + targetW / 2;
+              endY = targetElem.y + targetH / 2;
+              startX = endX - 150;
+              startY = endY - 100;
+            } else {
+              startX = 200;
+              startY = 200;
+              endX = 350;
+              endY = 300;
+            }
+          }
+
+          const midX = (startX + endX) / 2;
+          const midY = (startY + endY) / 2;
 
           return (
             <React.Fragment key={elem.id}>
               <ConnectorLine
-                startX={start.x}
-                startY={start.y}
-                endX={end.x}
-                endY={end.y}
-                label={conn.label}
+                startX={startX}
+                startY={startY}
+                endX={endX}
+                endY={endY}
+                label={labelText}
                 type={conn.type}
                 arrowStart={conn.arrowStart}
                 arrowEnd={conn.arrowEnd}
                 color={conn.color}
+                isBroken={isBroken}
                 isSelected={selectedIds.includes(elem.id)}
                 onClick={(e) => {
                   handleSelectToggle(e, elem.id);
@@ -819,7 +900,11 @@ export const InfiniteCanvas: React.FC = () => {
         })}
       </div>
 
-      <CanvasToolbar onAddElement={handleAddElement} />
+      <CanvasToolbar
+        onAddElement={handleAddElement}
+        onToggleHelp={() => setIsHelpActive(prev => !prev)}
+        isHelpActive={isHelpActive}
+      />
 
       <CanvasProperties
         selectedElements={selectedElements}
@@ -884,6 +969,121 @@ export const InfiniteCanvas: React.FC = () => {
           Reset
         </button>
       </div>
+
+      {/* Help & Shortcuts Overlay */}
+      {isHelpActive && (
+        <div className="absolute top-6 left-6 z-50 max-w-sm bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border border-slate-200/80 dark:border-zinc-800/80 rounded-2xl p-5 shadow-2xl animate-in fade-in slide-in-from-left-4 duration-200 select-text">
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-zinc-800 pb-2.5 mb-3.5">
+            <h3 className="text-sm font-bold text-slate-800 dark:text-zinc-100 flex items-center gap-1.5">
+              <span>💡</span> Help & Shortcuts
+            </h3>
+            <button
+              onClick={() => setIsHelpActive(false)}
+              className="text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 text-xs transition-colors"
+              aria-label="Close Help Panel"
+              type="button"
+            >
+              ✕
+            </button>
+          </div>
+          <div className="flex flex-col gap-3.5 overflow-y-auto max-h-[50vh] text-xs">
+            {/* Controls */}
+            <div>
+              <h4 className="font-semibold text-slate-700 dark:text-zinc-300 mb-1.5 uppercase tracking-wider text-[10px]">Controls & Actions</h4>
+              <ul className="space-y-1 text-slate-600 dark:text-zinc-400">
+                <li className="flex justify-between items-center gap-2">
+                  <span>Pan Canvas</span>
+                  <span className="font-medium text-slate-500 dark:text-zinc-400">Drag Background</span>
+                </li>
+                <li className="flex justify-between items-center gap-2">
+                  <span>Zoom Canvas</span>
+                  <span className="font-medium text-slate-500 dark:text-zinc-400">Scroll Wheel</span>
+                </li>
+                <li className="flex justify-between items-center gap-2">
+                  <span>Marquee Select</span>
+                  <span className="font-medium text-slate-500 dark:text-zinc-400">Shift + Drag Background</span>
+                </li>
+                <li className="flex justify-between items-center gap-2">
+                  <span>Draw Connector</span>
+                  <span className="font-medium text-slate-500 dark:text-zinc-400">Drag right card dot</span>
+                </li>
+                <li className="flex justify-between items-center gap-2">
+                  <span>Lock Element</span>
+                  <span className="font-medium text-slate-500 dark:text-zinc-400">Ctrl + L</span>
+                </li>
+                <li className="flex justify-between items-center gap-2">
+                  <span>Move Depth</span>
+                  <span className="font-medium text-slate-500 dark:text-zinc-400">[ or ]</span>
+                </li>
+              </ul>
+            </div>
+            {/* Creation Shortcuts */}
+            <div>
+              <h4 className="font-semibold text-slate-700 dark:text-zinc-300 mb-1.5 uppercase tracking-wider text-[10px]">Toolbar Shortcuts</h4>
+              <div className="grid grid-cols-2 gap-2 text-slate-600 dark:text-zinc-400">
+                <div className="flex items-center gap-1.5">
+                  <kbd className="px-1.5 py-0.5 bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded text-[10px] font-mono font-bold">C</kbd>
+                  <span>Add Card</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <kbd className="px-1.5 py-0.5 bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded text-[10px] font-mono font-bold">R</kbd>
+                  <span>Add Rectangle</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <kbd className="px-1.5 py-0.5 bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded text-[10px] font-mono font-bold">E / O</kbd>
+                  <span>Add Ellipse</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <kbd className="px-1.5 py-0.5 bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded text-[10px] font-mono font-bold">T</kbd>
+                  <span>Add Text Note</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <kbd className="px-1.5 py-0.5 bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded text-[10px] font-mono font-bold">F</kbd>
+                  <span>Add Frame</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <kbd className="px-1.5 py-0.5 bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded text-[10px] font-mono font-bold">Shift + G</kbd>
+                  <span>Grid Snap</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Undo Toast Banner */}
+      {undoToast && (
+        <div className="absolute top-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 dark:bg-zinc-900/95 text-white border border-slate-800 dark:border-zinc-800 rounded-2xl px-4 py-3 flex items-center gap-4 shadow-2xl animate-in slide-in-from-top-4 duration-300 max-w-sm">
+          <div className="flex-1 text-xs font-medium">
+            Deleted {undoToast.elements.length} element(s).
+          </div>
+          <button
+            onClick={() => {
+              ydoc.transact(() => {
+                if (undoToast.blocks.length > 0) {
+                  yblocks.insert(yblocks.length, undoToast.blocks);
+                }
+                undoToast.elements.forEach(el => {
+                  ycanvas.set(el.id, el);
+                });
+              });
+              setUndoToast(null);
+            }}
+            className="text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors"
+            type="button"
+          >
+            Undo
+          </button>
+          <button
+            onClick={() => setUndoToast(null)}
+            className="text-slate-400 hover:text-slate-200 transition-colors text-xs"
+            aria-label="Dismiss Toast"
+            type="button"
+          >
+            ✕
+          </button>
+        </div>
+      )}
     </div>
   );
 };

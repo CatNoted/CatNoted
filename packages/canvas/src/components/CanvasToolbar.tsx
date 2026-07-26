@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Type, Square, MessageSquare, Circle, Frame } from 'lucide-react';
+import { Type, Square, MessageSquare, Circle, Frame, HelpCircle } from 'lucide-react';
 import { CanvasElementType } from '@catnoted/shared';
 
 interface CanvasToolbarProps {
   onAddElement: (type: CanvasElementType, shapeType?: 'rectangle' | 'circle') => void;
+  onToggleHelp?: () => void;
+  isHelpActive?: boolean;
 }
 
-export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({ onAddElement }) => {
+export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
+  onAddElement,
+  onToggleHelp,
+  isHelpActive = false
+}) => {
   const [activeFeedback, setActiveFeedback] = useState<string | null>(null);
 
   const triggerAdd = (type: CanvasElementType, shapeType?: 'rectangle' | 'circle') => {
@@ -52,12 +58,17 @@ export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({ onAddElement }) =>
       } else if (key === 'f') {
         e.preventDefault();
         triggerAdd('frame');
+      } else if (e.key === '?') {
+        e.preventDefault();
+        if (onToggleHelp) {
+          onToggleHelp();
+        }
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onAddElement]);
+  }, [onAddElement, onToggleHelp]);
 
   const getButtonClass = (id: string) => {
     const base = "p-2.5 rounded-xl transition-all flex items-center justify-center gap-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500";
@@ -122,6 +133,21 @@ export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({ onAddElement }) =>
       >
         <Frame className="w-5 h-5 group-hover:scale-110 transition-transform" />
       </button>
+
+      {onToggleHelp && (
+        <>
+          <div className="w-px h-6 bg-slate-200 dark:bg-zinc-800 mx-1" />
+          <button
+            onClick={onToggleHelp}
+            className={`${getButtonClass('help')} ${isHelpActive ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40' : ''}`}
+            title="Help & Shortcuts (?)"
+            aria-label="Toggle Help & Shortcuts Overlay"
+            type="button"
+          >
+            <HelpCircle className="w-5 h-5 group-hover:scale-110 transition-transform" />
+          </button>
+        </>
+      )}
     </div>
   );
 };
