@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { TextBlock } from './TextBlock.js';
 import { HeadingBlock } from './HeadingBlock.js';
+import { TableBlock } from './TableBlock.js';
 import { WidgetBlockPlaceholder } from './WidgetBlockPlaceholder.js';
 import { SandboxFrame } from '@catnoted/agent-runtime';
 
@@ -346,6 +347,16 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                 <div className="py-2">
                   <hr className="border-slate-200 dark:border-zinc-700" />
                 </div>
+              )}
+
+              {/* --- Table block --- */}
+              {block.type === 'table' && (
+                <TableBlock
+                  id={block.id}
+                  rows={block.properties?.rows}
+                  onUpdateProps={(props) => updateBlockProperties(block.id, props)}
+                  onDelete={() => deleteBlock(block.id)}
+                />
               )}
 
               {block.type === 'widget' && (
