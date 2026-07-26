@@ -23,9 +23,8 @@ jobs:
         with:
           node-version: 20
           cache: 'pnpm'
-      - run: npm install -g pnpm@9.1.0
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter ./apps/web build-storybook
+      - run: npx pnpm@9.1.0 install --frozen-lockfile
+      - run: npx pnpm@9.1.0 --filter ./apps/web build-storybook
         env:
           NODE_OPTIONS: --max-old-space-size=4096
       - uses: actions/upload-pages-artifact@v4
