@@ -74,7 +74,7 @@ describe('usePersistence Hook - Offline/Sync/Conflict Tests', () => {
     localStorage.setItem('catnoted:offline-sync-queue', JSON.stringify([queuedItem]));
 
     const mockInsert = vi.fn().mockResolvedValue({ error: null });
-    vi.mocked(supabase.from).mockReturnValue({ insert: mockInsert } as any);
+    vi.mocked(supabase!.from).mockReturnValue({ insert: mockInsert } as any);
 
     const { result } = renderHook(() => usePersistence());
 
@@ -94,7 +94,7 @@ describe('usePersistence Hook - Offline/Sync/Conflict Tests', () => {
     const mockInsert = vi.fn().mockResolvedValue({
       error: { code: '23505', message: 'duplicate key value violates unique constraint' }
     });
-    vi.mocked(supabase.from).mockReturnValue({ insert: mockInsert } as any);
+    vi.mocked(supabase!.from).mockReturnValue({ insert: mockInsert } as any);
 
     const { result } = renderHook(() => usePersistence());
 
@@ -139,7 +139,7 @@ describe('usePersistence Hook - Offline/Sync/Conflict Tests', () => {
     const mockInsert = vi.fn().mockResolvedValue({
       error: { code: '23505', message: 'duplicate key value violates unique constraint' }
     });
-    vi.mocked(supabase.from).mockReturnValue({ insert: mockInsert } as any);
+    vi.mocked(supabase!.from).mockReturnValue({ insert: mockInsert } as any);
 
     const { result } = renderHook(() => usePersistence());
 
