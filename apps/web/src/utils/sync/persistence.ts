@@ -120,6 +120,7 @@ export function usePersistence(
     let isMounted = true;
 
     const loadRemoteUpdates = async () => {
+      if (!supabase) return;
       try {
         const validUuidMatch = documentId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
         const dbDocId = validUuidMatch ? documentId : '00000000-0000-0000-0000-000000000000';

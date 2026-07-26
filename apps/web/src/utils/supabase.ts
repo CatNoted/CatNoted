@@ -58,6 +58,10 @@ class SupabaseSyncChannel {
         .select('id')
         .limit(1);
 
+      if (error) {
+        console.warn('Workspace fetch returned error:', error);
+      }
+
       if (workspaces && workspaces.length > 0) {
         this.workspaceId = workspaces[0].id;
       } else {

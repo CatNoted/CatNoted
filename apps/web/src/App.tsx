@@ -135,6 +135,8 @@ const App: React.FC = () => {
 
   // Listen to auth state changes and manage E2EE key derivation and user session
   useEffect(() => {
+    let unsubscribeFn = () => {};
+
     const handleSession = async (session: any) => {
       if (session?.user) {
         setUserEmail(session.user.email || 'guest@catnoted.com');
@@ -169,7 +171,7 @@ const App: React.FC = () => {
         handleSession(session);
       });
 
-      return () => {
+      unsubscribeFn = () => {
         subscription.unsubscribe();
       };
     } else {
@@ -178,6 +180,8 @@ const App: React.FC = () => {
         setPassphrase(savedPassphrase);
       }
     }
+
+    return unsubscribeFn;
   }, []);
 
   useEffect(() => {

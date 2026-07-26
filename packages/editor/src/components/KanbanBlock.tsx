@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { KanbanColumn, KanbanCard } from '@catnoted/shared';
+import { KanbanColumn } from '@catnoted/shared';
 import { Plus, Trash2, GripVertical, GripHorizontal, Columns } from 'lucide-react';
 
 interface KanbanBlockProps {
@@ -48,7 +48,7 @@ export const KanbanBlock: React.FC<KanbanBlockProps> = ({
   const boardTitle = title || '';
 
   const [draggedCardId, setDraggedCardId] = useState<string | null>(null);
-  const [sourceColId, setSourceColId] = useState<string | null>(null);
+  const [_sourceColId, setSourceColId] = useState<string | null>(null);
   const [draggedColId, setDraggedColId] = useState<string | null>(null);
 
   // Drag over states to apply visual styling
