@@ -851,7 +851,7 @@ if (isSearchOpen && searchQuery) {
                 title={activeWorkspace}
                 className="font-semibold text-xs text-slate-700 dark:text-zinc-200 hover:text-slate-900 dark:hover:text-white flex items-center justify-between w-full gap-1.5 py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500"
               >
-                <span className="truncate min-w-[80px]" title={activeWorkspace}>{activeWorkspace}</span>
+                <span className="truncate min-w-0" title={activeWorkspace}>{activeWorkspace}</span>
                 <ChevronDown className="w-3.5 h-3.5 shrink-0" />
               </button>
 
@@ -958,7 +958,7 @@ if (isSearchOpen && searchQuery) {
                       >
                         <div className="flex items-center min-w-0 flex-1 gap-x-2.5" title={doc.title}>
                           {renderPageIcon(doc.icon, "w-4 h-4 text-slate-400 dark:text-zinc-500 shrink-0 flex items-center justify-center")}
-                          <span className="truncate min-w-[120px]">{doc.title}</span>
+                          <span className="truncate min-w-0">{doc.title}</span>
                         </div>
                         <span className="text-[10px] text-slate-400 dark:text-zinc-500 opacity-60 shrink-0 ml-1">Recent</span>
                       </button>
@@ -1028,7 +1028,7 @@ if (isSearchOpen && searchQuery) {
                                 }`}
                               >
                                 {renderPageIcon(node.icon, "w-3.5 h-3.5 shrink-0 flex items-center justify-center")}
-                                <span className="truncate text-xs min-w-[120px]" title={displayLabel}>{displayLabel}</span>
+                                <span className="truncate text-xs min-w-0" title={displayLabel}>{displayLabel}</span>
                               </button>
                             </li>
                           );
@@ -1072,7 +1072,7 @@ if (isSearchOpen && searchQuery) {
                                 }`}
                               >
                                 {renderPageIcon(node.icon, "w-3.5 h-3.5 shrink-0 flex items-center justify-center")}
-                                <span className="truncate text-xs min-w-[120px]" title={displayLabel}>{displayLabel}</span>
+                                <span className="truncate text-xs min-w-0" title={displayLabel}>{displayLabel}</span>
                               </button>
                               {node.id !== 'root-doc-node' && (
                                 <button
@@ -1260,7 +1260,7 @@ if (isSearchOpen && searchQuery) {
                   <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-zinc-800/40 border border-slate-150 dark:border-zinc-800/60 rounded-xl">
                     <div className="flex items-center gap-2 min-w-0">
                       <span className="text-xl shrink-0">{pageMeta?.icon || '📄'}</span>
-                      <span className="font-semibold truncate text-slate-800 dark:text-zinc-200 min-w-[80px]" title={pageMeta?.title || docTitle}>{pageMeta?.title || docTitle}</span>
+                      <span className="font-semibold truncate text-slate-800 dark:text-zinc-200 min-w-0" title={pageMeta?.title || docTitle}>{pageMeta?.title || docTitle}</span>
                     </div>
                     <button
                       type="button"
