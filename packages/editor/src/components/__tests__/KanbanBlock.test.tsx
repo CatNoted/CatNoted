@@ -80,7 +80,7 @@ describe('KanbanBlock Component Tests', () => {
           title={title}
           columns={initialColumns}
           onUpdateProps={(p) => {
-            if (p.title !== undefined) setTitle(p.title);
+            if (p.kanbanTitle !== undefined) setTitle(p.kanbanTitle);
           }}
           onUpdateContent={onUpdateContent}
         />

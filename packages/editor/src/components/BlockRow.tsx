@@ -172,7 +172,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                     </button>
                     <button
                       onClick={() => {
-                        updateBlockType(block.id, 'kanban', { title: 'Kanban Board', columns: [] });
+                        updateBlockType(block.id, 'kanban', { kanbanTitle: 'Kanban Board', columns: [] });
                         setActiveMenuId(null);
                       }}
                       className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-200"
@@ -233,7 +233,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
               {block.type === 'kanban' && (
                 <KanbanBlock
                   id={block.id}
-                  title={block.properties?.title || block.content}
+                  title={block.properties?.kanbanTitle || block.content}
                   columns={block.properties?.columns}
                   onUpdateProps={(props) => updateBlockProperties(block.id, props)}
                   onUpdateContent={onChangeContent}

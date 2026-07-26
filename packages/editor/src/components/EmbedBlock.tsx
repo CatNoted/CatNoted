@@ -284,6 +284,13 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
                     <span>AI Widget: {block.properties?.widgetId}</span>
                   </div>
                 );
+              case 'kanban':
+                return (
+                  <div key={block.id} className="flex items-center gap-1.5 text-slate-400 text-[11px] py-1">
+                    <span>📋</span>
+                    <span>Kanban Board: {block.properties?.kanbanTitle || block.content}</span>
+                  </div>
+                );
               default:
                 return (
                   <div key={block.id} className="pl-1">

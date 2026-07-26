@@ -357,7 +357,7 @@ export function buildSlashCommands(opts: {
       description: 'Editable columns and cards',
       icon: <Kanban className="w-4 h-4" />,
       keywords: ['kanban', 'board', 'trello', 'todo', 'columns', 'cards'],
-      action: exec(() => onSetType('kanban', { title: 'Kanban Board', columns: [] })),
+      action: exec(() => onSetType('kanban', { kanbanTitle: 'Kanban Board', columns: [] })),
     },
     {
       id: 'bookmark',
