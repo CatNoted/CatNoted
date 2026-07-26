@@ -1,4 +1,4 @@
-import React, { type ReactNode, type ReactHTML, type ComponentType } from 'react';
+import { type ReactNode } from 'react';
 
 type OverlayProps = {
   open: boolean;
