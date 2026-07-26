@@ -143,18 +143,31 @@ const HeadingBlockBase: React.FC<HeadingBlockProps> = ({
   const getHeadingClassName = () => {
     switch (level) {
       case 1:
-        return 'text-2xl font-bold tracking-tight text-slate-900 dark:text-zinc-50';
+        return 'text-3xl font-semibold tracking-tight text-slate-900 dark:text-zinc-50';
       case 2:
-        return 'text-xl font-bold tracking-tight text-slate-900 dark:text-zinc-100';
+        return 'text-2xl font-semibold tracking-tight text-slate-900 dark:text-zinc-100';
       case 3:
-        return 'text-lg font-semibold tracking-tight text-slate-900 dark:text-zinc-100';
+        return 'text-xl font-semibold tracking-tight text-slate-900 dark:text-zinc-100';
       default:
-        return 'text-base font-semibold tracking-tight text-slate-900 dark:text-zinc-100';
+        return 'text-lg font-semibold tracking-tight text-slate-900 dark:text-zinc-100';
+    }
+  };
+
+  const getContainerClassName = () => {
+    switch (level) {
+      case 1:
+        return 'relative w-full pb-3';
+      case 2:
+        return 'relative w-full pb-2';
+      case 3:
+        return 'relative w-full pb-1.5';
+      default:
+        return 'relative w-full pb-1';
     }
   };
 
   return (
-    <div className="relative w-full">
+    <div className={getContainerClassName()}>
       <textarea
         aria-label={`Heading level ${level}`}
         role="textbox"
