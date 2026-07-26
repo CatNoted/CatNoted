@@ -16,6 +16,7 @@ import { usePersistence } from './utils/sync/persistence.js';
 import { AuthModal } from './components/auth/AuthModal.js';
 import { SettingsModal } from './components/settings/SettingsModal.js';
 import { CommandPalette } from './components/CommandPalette.js';
+import { SearchPalette } from './components/SearchPalette.js';
 
 const App: React.FC = () => {
   const [activeMode, setActiveMode] = useState<ActiveMode>('doc');
@@ -122,6 +123,7 @@ const App: React.FC = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   useEffect(() => {
     const savedPassphrase = localStorage.getItem('catnoted_e2ee_passphrase');
@@ -517,6 +519,7 @@ const App: React.FC = () => {
         userEmail={userEmail}
         onAuthTrigger={() => setIsAuthOpen(true)}
         onCreatePage={handleCreatePage}
+        onSearchTrigger={() => setIsSearchOpen(true)}
       >
         <div className="flex flex-col h-full w-full overflow-hidden">
           {renderTopBar()}
@@ -553,6 +556,28 @@ const App: React.FC = () => {
           onToggleZen={() => setIsZenMode((prev) => !prev)}
           onOpenSettings={() => setIsSettingsOpen(true)}
           isDarkMode={isDarkMode}
+          onOpenSearch={() => {
+            setIsPaletteOpen(false);
+            setIsSearchOpen(true);
+          }}
+        />
+        <SearchPalette
+          isOpen={isSearchOpen}
+          onClose={() => setIsSearchOpen(false)}
+          isDarkMode={isDarkMode}
+          onSelectResult={(result) => {
+            // Save to localStorage as the last search result
+            localStorage.setItem('catnoted:last-search-result', JSON.stringify(result));
+
+            if (result.type === 'page' || result.type === 'ghost-page' || result.type === 'tag') {
+              setActivePage(result.id);
+              setActiveMode('doc');
+            } else if (result.type === 'block') {
+              localStorage.setItem('catnoted:pending-scroll-block', result.id);
+              setActivePage(result.parentId || 'root-doc-node');
+              setActiveMode('doc');
+            }
+          }}
         />
       </div>
     </>

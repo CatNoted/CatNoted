@@ -4,6 +4,7 @@ import {
   Layout,
   Network,
   Settings,
+  Search,
   Moon,
   Sun,
   Send,
@@ -169,6 +170,7 @@ interface AppLayoutProps {
   userEmail?: string;
   onAuthTrigger?: () => void;
   onCreatePage?: () => void;
+  onSearchTrigger?: () => void;
 }
 
 import { requestLlmWidget, SandboxFrame } from '@catnoted/agent-runtime';
@@ -193,12 +195,29 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   pageTitle: _pageTitle,
   userEmail: _userEmail,
   onAuthTrigger: _onAuthTrigger,
-  onCreatePage
+  onCreatePage,
+  onSearchTrigger
 }) => {
   const { blocks, addBlock, updateBlockType, pages, createPage, deletePage, deleteBlock, pageMeta, updatePageMeta } = useDocumentStore(activePage);
   const favoritePages = (pages || []).filter((p: any) => p?.isFavorite);
 
   const [activeAgentTab, setActiveAgentTab] = useState<'chat' | 'widgets'>('chat');
+
+  // Global search shortcut listener
+  useEffect(() => {
+    const handleSearchShortcut = (e: KeyboardEvent) => {
+      if (!onSearchTrigger) return;
+      const isCtrlOrMeta = e.ctrlKey || e.metaKey;
+      const isP = e.key.toLowerCase() === 'p';
+      const isF = e.key.toLowerCase() === 'f';
+      if ((isCtrlOrMeta && isP) || (isCtrlOrMeta && e.shiftKey && isF)) {
+        e.preventDefault();
+        onSearchTrigger();
+      }
+    };
+    window.addEventListener('keydown', handleSearchShortcut);
+    return () => window.removeEventListener('keydown', handleSearchShortcut);
+  }, [onSearchTrigger]);
 
   const handleDeletePage = (pageId: string, pageTitle: string) => {
     if (pageId === 'root-doc-node') return;
@@ -795,6 +814,24 @@ if (isSearchOpen && searchQuery) {
 
           <div className="flex-1 overflow-y-auto overflow-x-hidden min-w-[160px]">
             <div className="p-3 space-y-6">
+              {/* Search Affordance */}
+              {onSearchTrigger && (
+                <button
+                  type="button"
+                  onClick={onSearchTrigger}
+                  className="w-full flex items-center justify-between py-1.5 px-2.5 mb-2 bg-slate-50 dark:bg-zinc-800/40 text-slate-500 hover:text-slate-700 dark:text-zinc-400 dark:hover:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-850 rounded-lg transition-all duration-150 border border-slate-150 dark:border-zinc-800/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 animate-in fade-in duration-150"
+                  aria-label="Search Workspace"
+                >
+                  <span className="flex items-center gap-2">
+                    <Search className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500" />
+                    <span className="text-xs font-semibold">Search...</span>
+                  </span>
+                  <kbd className="hidden sm:inline-block rounded bg-white dark:bg-zinc-900 px-1 py-0.5 text-[9px] font-sans border border-slate-200 dark:border-zinc-800 text-slate-400 dark:text-zinc-500 leading-none shadow-sm">
+                    ⌘P
+                  </kbd>
+                </button>
+              )}
+
             {/* Recent Documents Section */}
             <div>
               <div className="flex items-center gap-1.5 px-2 mb-2 text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
