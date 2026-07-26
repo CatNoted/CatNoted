@@ -31,9 +31,16 @@ import { ActiveMode } from '../layouts/AppLayout';
 interface SidebarProps {
   onModeChange: (mode: ActiveMode) => void;
   activeMode?: ActiveMode;
+  activePage?: string;
+  onPageSelect?: (pageId: string) => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'doc' }) => {
+export const Sidebar: React.FC<SidebarProps> = ({
+  onModeChange,
+  activeMode = 'doc',
+  activePage,
+  onPageSelect
+}) => {
   const { pages, deletePage } = useDocumentStore();
 
   const favoritePages = useMemo(
@@ -51,7 +58,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
     'px-2.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-500';
 
   const itemClassName =
-    'flex items-center w-full px-3 py-2 text-[13px] leading-5 text-slate-700 dark:text-zinc-300 rounded-lg transition-all select-none gap-x-2.5 hover:bg-slate-100 dark:hover:bg-zinc-850 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 font-medium';
+    'flex items-center w-full px-3 py-2 text-[13px] leading-5 text-slate-700 dark:text-zinc-300 rounded-lg transition-all select-none gap-x-2.5 hover:bg-slate-100 dark:hover:bg-zinc-850 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 font-medium min-w-0';
 
   const getItemIconClass = (active: boolean) =>
     `shrink-0 ${active ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-zinc-500'}`;
@@ -88,8 +95,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
   return (
     <div className="w-64 border-r border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 h-full flex flex-col shrink-0 text-token select-none">
       <div className="px-4 pt-4 pb-2">
-        <div className="flex items-center gap-2.5 px-1.5 py-1">
-          <div className="w-6 h-6 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-xs shadow-sm">
+        <div className="flex items-center gap-2.5 px-1.5 py-1 min-w-0">
+          <div className="w-6 h-6 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-xs shadow-sm shrink-0">
             CN
           </div>
           <span className="font-semibold text-[14px] text-slate-800 dark:text-zinc-200 tracking-tight truncate min-w-[120px]" title="CatNoted Workspace">
@@ -149,50 +156,60 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         {renderSection('Favorites', favoritesCollapsed, setFavoritesCollapsed, Star, (
           <>
             {favoritePages.length > 0 ? (
-              favoritePages.map(node => (
-                <div
-                  key={node.id}
-                  onClick={() => onModeChange('doc')}
-                  title={node.title || 'Untitled'}
-                  className={`${itemClassName} group/sidebar-row flex items-center justify-between pr-2 cursor-pointer`}
-                >
-                  <div className="flex items-center min-w-0 flex-1 gap-x-2.5">
-                    <span className="w-4 h-4 shrink-0 flex items-center justify-center text-xs">
-                      {node.icon || '📄'}
-                    </span>
-                    <span className="truncate min-w-[120px]">{node.title || 'Untitled'}</span>
-                  </div>
-                  {/* Hover Actions */}
-                  <div className="opacity-0 group-hover/sidebar-row:opacity-100 flex items-center gap-1 transition-opacity shrink-0">
-                    {node.id !== 'root-doc-node' && (
+              favoritePages.map(node => {
+                const isActive = activePage === node.id && activeMode === 'doc';
+                return (
+                  <div
+                    key={node.id}
+                    onClick={() => {
+                      if (onPageSelect) onPageSelect(node.id);
+                      onModeChange('doc');
+                    }}
+                    title={node.title || 'Untitled'}
+                    className={`${itemClassName} group/sidebar-row flex items-center justify-between pr-2 cursor-pointer ${
+                      isActive
+                        ? 'bg-amber-50 dark:bg-amber-950/30 text-amber-900 dark:text-amber-200 font-semibold'
+                        : ''
+                    }`}
+                  >
+                    <div className="flex items-center min-w-0 flex-1 gap-x-2.5">
+                      <span className="w-4 h-4 shrink-0 flex items-center justify-center text-xs">
+                        {node.icon || '📄'}
+                      </span>
+                      <span className="truncate min-w-[120px]">{node.title || 'Untitled'}</span>
+                    </div>
+                    {/* Hover Actions */}
+                    <div className="opacity-0 group-hover/sidebar-row:opacity-100 flex items-center gap-1 transition-opacity shrink-0">
+                      {node.id !== 'root-doc-node' && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (confirm(`Delete page "${node.title || 'Untitled'}"?`)) {
+                              deletePage(node.id);
+                            }
+                          }}
+                          className="p-1 rounded text-slate-400 hover:text-red-500 hover:bg-slate-200 dark:hover:bg-zinc-800 transition-colors"
+                          aria-label="Delete page"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
                       <button
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
-                          if (confirm(`Delete page "${node.title || 'Untitled'}"?`)) {
-                            deletePage(node.id);
-                          }
+                          alert('More options');
                         }}
-                        className="p-1 rounded text-slate-400 hover:text-red-500 hover:bg-slate-200 dark:hover:bg-zinc-800 transition-colors"
-                        aria-label="Delete page"
+                        className="p-1 rounded text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 hover:bg-slate-200 dark:hover:bg-zinc-800 transition-colors"
+                        aria-label="More options"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <MoreHorizontal className="w-3.5 h-3.5" />
                       </button>
-                    )}
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        alert('More options');
-                      }}
-                      className="p-1 rounded text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 hover:bg-slate-200 dark:hover:bg-zinc-800 transition-colors"
-                      aria-label="More options"
-                    >
-                      <MoreHorizontal className="w-3.5 h-3.5" />
-                    </button>
+                    </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             ) : (
               <>
                 <button
@@ -219,50 +236,60 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         {renderSection('Organize', organizeCollapsed, setOrganizeCollapsed, FolderTree, (
           <>
             {pages && pages.length > 0 ? (
-              pages.map(node => (
-                <div
-                  key={node.id}
-                  onClick={() => onModeChange('doc')}
-                  title={node.title || 'Untitled'}
-                  className={`${itemClassName} group/sidebar-row flex items-center justify-between pr-2 cursor-pointer`}
-                >
-                  <div className="flex items-center min-w-0 flex-1 gap-x-2.5">
-                    <span className="w-4 h-4 shrink-0 flex items-center justify-center text-xs">
-                      {node.icon || '📄'}
-                    </span>
-                    <span className="truncate min-w-[120px]">{node.title || 'Untitled'}</span>
-                  </div>
-                  {/* Hover Actions */}
-                  <div className="opacity-0 group-hover/sidebar-row:opacity-100 flex items-center gap-1 transition-opacity shrink-0">
-                    {node.id !== 'root-doc-node' && (
+              pages.map(node => {
+                const isActive = activePage === node.id && activeMode === 'doc';
+                return (
+                  <div
+                    key={node.id}
+                    onClick={() => {
+                      if (onPageSelect) onPageSelect(node.id);
+                      onModeChange('doc');
+                    }}
+                    title={node.title || 'Untitled'}
+                    className={`${itemClassName} group/sidebar-row flex items-center justify-between pr-2 cursor-pointer ${
+                      isActive
+                        ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-semibold'
+                        : ''
+                    }`}
+                  >
+                    <div className="flex items-center min-w-0 flex-1 gap-x-2.5">
+                      <span className="w-4 h-4 shrink-0 flex items-center justify-center text-xs">
+                        {node.icon || '📄'}
+                      </span>
+                      <span className="truncate min-w-[120px]">{node.title || 'Untitled'}</span>
+                    </div>
+                    {/* Hover Actions */}
+                    <div className="opacity-0 group-hover/sidebar-row:opacity-100 flex items-center gap-1 transition-opacity shrink-0">
+                      {node.id !== 'root-doc-node' && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (confirm(`Delete page "${node.title || 'Untitled'}"?`)) {
+                              deletePage(node.id);
+                            }
+                          }}
+                          className="p-1 rounded text-slate-400 hover:text-red-500 hover:bg-slate-200 dark:hover:bg-zinc-800 transition-colors"
+                          aria-label="Delete page"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
                       <button
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
-                          if (confirm(`Delete page "${node.title || 'Untitled'}"?`)) {
-                            deletePage(node.id);
-                          }
+                          alert('More options');
                         }}
-                        className="p-1 rounded text-slate-400 hover:text-red-500 hover:bg-slate-200 dark:hover:bg-zinc-800 transition-colors"
-                        aria-label="Delete page"
+                        className="p-1 rounded text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 hover:bg-slate-200 dark:hover:bg-zinc-800 transition-colors"
+                        aria-label="More options"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <MoreHorizontal className="w-3.5 h-3.5" />
                       </button>
-                    )}
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        alert('More options');
-                      }}
-                      className="p-1 rounded text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 hover:bg-slate-200 dark:hover:bg-zinc-800 transition-colors"
-                      aria-label="More options"
-                    >
-                      <MoreHorizontal className="w-3.5 h-3.5" />
-                    </button>
+                    </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             ) : (
               <>
                 <button

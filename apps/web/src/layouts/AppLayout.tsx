@@ -1021,7 +1021,7 @@ if (isSearchOpen && searchQuery) {
                                   if (onPageSelect) onPageSelect(node.id);
                                   onModeChange('doc');
                                 }}
-                                className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
+                                className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 min-w-0 transition-colors ${
                                   isActive
                                     ? 'bg-amber-50 dark:bg-amber-950/30 text-amber-900 dark:text-amber-200 font-medium'
                                     : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
@@ -1059,13 +1059,13 @@ if (isSearchOpen && searchQuery) {
                         const displayLabel = node.title || 'Untitled';
                         return (
                           <li key={node.id} className="group/pageitem">
-                            <div className="flex items-center">
+                            <div className="flex items-center min-w-0">
                               <button
                                 onClick={() => {
                                   if (onPageSelect) onPageSelect(node.id);
                                   onModeChange('doc');
                                 }}
-                                className={`flex-1 text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
+                                className={`flex-1 text-left px-2 py-1 rounded-md truncate flex items-center gap-2 min-w-0 transition-colors ${
                                   isActive
                                     ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-medium'
                                     : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
