@@ -98,10 +98,10 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   const renderEmojiPickerDropdown = () => (
     <div
       ref={emojiMenuRef}
-      className="absolute left-0 top-full mt-2 z-50 p-4 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-2xl w-72 text-left select-none animate-in fade-in-50 duration-200"
+      className="absolute left-0 top-full mt-2 z-50 p-4 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800/40 rounded-2xl shadow-2xl w-72 text-left select-none animate-in fade-in-50 duration-200"
     >
-      <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-150 dark:border-zinc-800">
-        <span className="text-xs font-bold text-slate-700 dark:text-zinc-300">
+      <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-150 dark:border-zinc-800/40">
+        <span className="text-xs font-bold text-slate-800 dark:text-zinc-100">
           Choose Icon or Emoji
         </span>
         {icon && (
@@ -133,7 +133,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
                   onIconChange(`lucide:${iconName}`);
                   setShowEmojiPicker(false);
                 }}
-                className="p-1.5 text-slate-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg transition-transform hover:scale-110 flex items-center justify-center border border-slate-100 dark:border-zinc-800/40"
+                className="p-1.5 text-slate-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg transition-transform hover:scale-110 flex items-center justify-center border border-slate-100 dark:border-zinc-800/30"
                 title={iconName}
               >
                 {IconComponent && <IconComponent className="w-4 h-4" />}
@@ -169,10 +169,10 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   const renderCoverPickerDropdown = () => (
     <div
       ref={coverMenuRef}
-      className="absolute left-0 top-full mt-2 z-50 p-4 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-2xl w-80 text-left select-none animate-in fade-in-50 duration-200"
+      className="absolute left-0 top-full mt-2 z-50 p-4 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800/40 rounded-2xl shadow-2xl w-80 text-left select-none animate-in fade-in-50 duration-200"
     >
-      <div className="flex items-center justify-between pb-2 mb-3 border-b border-slate-100 dark:border-zinc-800">
-        <span className="text-xs font-bold text-slate-700 dark:text-zinc-300">
+      <div className="flex items-center justify-between pb-2 mb-3 border-b border-slate-100 dark:border-zinc-800/40">
+        <span className="text-xs font-bold text-slate-800 dark:text-zinc-100">
           Page Cover Settings
         </span>
         {coverUrl && (
@@ -190,7 +190,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
       </div>
 
       <div className="space-y-4">
-        <div className="space-y-3 bg-slate-50 dark:bg-zinc-950 p-2.5 rounded-xl border border-slate-150 dark:border-zinc-800/60">
+        <div className="space-y-3 bg-slate-50 dark:bg-zinc-950 p-2.5 rounded-xl border border-slate-150 dark:border-zinc-800/40">
           <div>
             <label className="block text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase mb-1">
               Upload Cover File
@@ -222,7 +222,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
             />
           </div>
 
-          <div className="border-t border-slate-200/60 dark:border-zinc-800/40 my-1"></div>
+          <div className="border-t border-slate-200/60 dark:border-zinc-800/30 my-1"></div>
 
           <div>
             <label className="block text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase mb-1">
@@ -234,7 +234,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
                 placeholder="https://images.unsplash.com/..."
                 value={coverInputUrl}
                 onChange={(e) => setCoverInputUrl(e.target.value)}
-                className="flex-1 text-[11px] px-2 py-1 border border-slate-200 dark:border-zinc-800 rounded-lg bg-white dark:bg-zinc-900 text-slate-800 dark:text-zinc-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="flex-1 text-[11px] px-2 py-1 border border-slate-200 dark:border-zinc-800/40 rounded-lg bg-white dark:bg-zinc-900 text-slate-800 dark:text-zinc-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"
               />
               <button
                 type="button"
@@ -266,7 +266,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
                   onCoverChange(gradient);
                   setShowCoverPicker(false);
                 }}
-                className="h-9 rounded-lg border border-slate-200/50 dark:border-zinc-800 hover:scale-105 transition-transform"
+                className="h-9 rounded-lg border border-slate-200/50 dark:border-zinc-800/40 hover:scale-105 transition-transform"
                 style={{ background: gradient }}
                 title={`Gradient ${i + 1}`}
               />
@@ -287,7 +287,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
                   onCoverChange(url);
                   setShowCoverPicker(false);
                 }}
-                className="h-10 rounded-lg overflow-hidden border border-slate-200/50 dark:border-zinc-800 hover:scale-105 transition-transform"
+                className="h-10 rounded-lg overflow-hidden border border-slate-200/50 dark:border-zinc-800/40 hover:scale-105 transition-transform"
               >
                 <img src={url} alt={`Preset ${i + 1}`} className="w-full h-full object-cover" />
               </button>
@@ -343,7 +343,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
       ) : null}
 
       {/* Spacing & Hover Actions Bar (Add Icon / Add Cover) */}
-      <div className="flex items-center gap-4 mb-4 h-8 text-slate-400 dark:text-zinc-500">
+      <div className="flex items-center gap-4 mb-6 h-8 text-slate-400 dark:text-zinc-500">
         {!icon && (
           <div className="relative inline-block">
             <button
@@ -377,7 +377,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
 
       {/* Page Icon (if icon is set) - stacked vertically above title */}
       {icon && (
-        <div className="relative inline-block mb-4">
+        <div className="relative inline-block mb-6">
           <button
             type="button"
             onClick={() => setShowEmojiPicker(!showEmojiPicker)}
@@ -405,7 +405,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
           onChange={(e) => onTitleChange(e.target.value)}
           placeholder="Untitled"
           className="w-full
-            text-4xl sm:text-5xl
+            text-3xl sm:text-4xl
             font-extrabold
             text-slate-900 dark:text-zinc-100
             bg-transparent border-none outline-none focus:ring-0 p-0
@@ -415,28 +415,28 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
       </div>
 
       {/* Metadata Row */}
-      <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs font-medium text-slate-500 dark:text-zinc-400 border-t border-slate-100/50 dark:border-zinc-800/30 pt-4">
+      <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs font-medium text-slate-600 dark:text-zinc-300 border-t border-slate-100/50 dark:border-zinc-800/40/30 pt-4">
         {formattedDate && (
           <span className="inline-flex items-center gap-1.5">
-            <LucideIcons.Calendar className="w-3.5 h-3.5 opacity-80" />
-            <span className="opacity-70">Created</span>
-            <span className="text-slate-700 dark:text-zinc-300">{formattedDate}</span>
+            <LucideIcons.Calendar className="w-3.5 h-3.5 opacity-100" />
+            <span className="opacity-100">Created</span>
+            <span className="text-slate-800 dark:text-zinc-100">{formattedDate}</span>
           </span>
         )}
         <span className="inline-flex items-center gap-1.5">
-          <LucideIcons.FileText className="w-3.5 h-3.5 opacity-80" />
-          <span className="opacity-70">Words</span>
-          <span className="text-slate-700 dark:text-zinc-300">{wordCount}</span>
+          <LucideIcons.FileText className="w-3.5 h-3.5 opacity-100" />
+          <span className="opacity-100">Words</span>
+          <span className="text-slate-800 dark:text-zinc-100">{wordCount}</span>
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <LucideIcons.Clock className="w-3.5 h-3.5 opacity-80" />
-          <span className="opacity-70">Read</span>
-          <span className="text-slate-700 dark:text-zinc-300">{readingTime} min</span>
+          <LucideIcons.Clock className="w-3.5 h-3.5 opacity-100" />
+          <span className="opacity-100">Read</span>
+          <span className="text-slate-800 dark:text-zinc-100">{readingTime} min</span>
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <LucideIcons.LayoutGrid className="w-3.5 h-3.5 opacity-80" />
-          <span className="opacity-70">Blocks</span>
-          <span className="text-slate-700 dark:text-zinc-300">{blocksCount}</span>
+          <LucideIcons.LayoutGrid className="w-3.5 h-3.5 opacity-100" />
+          <span className="opacity-100">Blocks</span>
+          <span className="text-slate-800 dark:text-zinc-100">{blocksCount}</span>
         </span>
       </div>
     </div>

@@ -17,7 +17,7 @@ const WidgetBlockPlaceholderBase: React.FC<WidgetBlockPlaceholderProps> = ({
   const widgetId = properties?.widgetId || 'unassigned';
 
   return (
-    <div className="w-full my-4 border border-slate-200 dark:border-zinc-800 rounded-xl bg-slate-50 dark:bg-zinc-950 p-4 shadow-sm transition-all hover:shadow-md">
+    <div className="w-full my-4 border border-slate-200 dark:border-zinc-800/60 rounded-xl bg-slate-50 dark:bg-zinc-950 p-4 shadow-sm transition-all hover:shadow-md">
       <div className="flex items-center justify-between border-b border-slate-100 dark:border-zinc-900 pb-2 mb-3">
         <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
           <Cpu className="w-4 h-4" />

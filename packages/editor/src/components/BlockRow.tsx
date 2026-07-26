@@ -131,7 +131,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                 </button>
 
                 {activeMenuId === block.id && (
-                  <div className="absolute left-0 mt-1 w-40 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl shadow-lg z-50 py-1 text-xs">
+                  <div className="absolute left-0 mt-1 w-40 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800/40 rounded-xl shadow-lg z-50 py-1 text-xs">
                     <button
                       onClick={() => {
                         updateBlockType(block.id, 'text');
@@ -174,7 +174,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                     >
                       <Cpu className="w-3.5 h-3.5" /> Insert AI Widget
                     </button>
-                    <div className="border-t border-slate-100 dark:border-zinc-800 my-1"></div>
+                    <div className="border-t border-slate-100 dark:border-zinc-800/40 my-1"></div>
                     <button
                       onClick={() => {
                         deleteBlock(block.id);
@@ -345,7 +345,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
 
               {/* --- Code block --- */}
               {block.type === 'code' && (
-                <div className="rounded-lg bg-slate-900 dark:bg-zinc-950 border border-slate-700 dark:border-zinc-800 px-4 py-3">
+                <div className="rounded-lg bg-slate-900 dark:bg-zinc-950 border border-slate-700 dark:border-zinc-800/40 px-4 py-3">
                   <textarea
                     value={block.content}
                     onChange={(e) => updateBlockContent(block.id, e.target.value)}
@@ -366,8 +366,8 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
 
               {block.type === 'widget' && (
                 block.properties?.srcDoc ? (
-                  <div className="w-full my-4 border border-slate-200 dark:border-zinc-800 rounded-2xl bg-white dark:bg-zinc-900 overflow-hidden shadow-sm">
-                    <div className="h-8 border-b border-slate-100 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-900/50 px-3 flex items-center justify-between text-[10px] font-mono text-slate-400">
+                  <div className="w-full my-4 border border-slate-200 dark:border-zinc-800/40 rounded-2xl bg-white dark:bg-zinc-900 overflow-hidden shadow-sm">
+                    <div className="h-8 border-b border-slate-100 dark:border-zinc-800/40 bg-slate-50 dark:bg-zinc-900/50 px-3 flex items-center justify-between text-[10px] font-mono text-slate-400">
                       <span>Widget Render Sandbox</span>
                       <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center gap-3">
                         <button
@@ -392,11 +392,11 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                     </div>
 
                     {editingWidgetId === block.id && (
-                      <div className="p-3 border-b border-slate-100 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-900/40 space-y-2">
+                      <div className="p-3 border-b border-slate-100 dark:border-zinc-800/40 bg-slate-50 dark:bg-zinc-900/40 space-y-2">
                         <textarea
                           value={editorCode[block.id] ?? block.properties?.srcDoc ?? ''}
                           onChange={(e) => setEditorCode(prev => ({ ...prev, [block.id]: e.target.value }))}
-                          className="w-full h-40 p-2 font-mono text-xs bg-slate-900 text-emerald-400 dark:bg-zinc-950 dark:text-emerald-400 rounded-lg border border-slate-200 dark:border-zinc-800 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-y"
+                          className="w-full h-40 p-2 font-mono text-xs bg-slate-900 text-emerald-400 dark:bg-zinc-950 dark:text-emerald-400 rounded-lg border border-slate-200 dark:border-zinc-800/40 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-y"
                           placeholder="Write widget code here..."
                         />
                         <div className="flex justify-end gap-2">

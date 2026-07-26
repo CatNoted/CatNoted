@@ -123,10 +123,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-slate-900/40 dark:bg-black/60 backdrop-blur-[2px] z-50 flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800 rounded-2xl w-full max-w-[760px] h-[580px] shadow-2xl relative flex flex-col md:flex-row overflow-hidden">
+      <div className="bg-white dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800/40 rounded-2xl w-full max-w-[760px] h-[580px] shadow-2xl relative flex flex-col md:flex-row overflow-hidden">
 
         {/* Left Sidebar */}
-        <div className="w-full md:w-[220px] border-b md:border-b-0 md:border-r border-slate-100 dark:border-zinc-800 bg-slate-50/50 dark:bg-zinc-950/10 p-5 flex flex-col justify-between shrink-0">
+        <div className="w-full md:w-[220px] border-b md:border-b-0 md:border-r border-slate-100 dark:border-zinc-800/40 bg-slate-50/50 dark:bg-zinc-950/10 p-5 flex flex-col justify-between shrink-0">
           <div>
             {/* Sidebar Header */}
             <div className="flex items-center gap-2 mb-6 px-1">
@@ -190,7 +190,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             {activeTab === 'byok' && (
               <form onSubmit={handleSaveKeys} className="flex flex-col h-full justify-between gap-6">
                 <div className="space-y-5">
-                  <div className="p-3.5 rounded-xl border border-slate-100 dark:border-zinc-800/60 bg-slate-50/40 dark:bg-zinc-950/20">
+                  <div className="p-3.5 rounded-xl border border-slate-100 dark:border-zinc-800/40 bg-slate-50/40 dark:bg-zinc-950/20">
                     <p className="text-xs leading-relaxed text-slate-500 dark:text-zinc-400">
                       Use your own LLM API keys. Keys are stored encrypted in session storage and never touch CatNoted servers.
                     </p>
@@ -211,7 +211,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                             value={openaiKey}
                             onChange={(e) => setOpenaiKey(e.target.value)}
                             placeholder="sk-..."
-                            className="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 bg-slate-50/30 dark:bg-zinc-950/30 text-xs placeholder:text-slate-400 dark:placeholder:text-zinc-500 text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-600 transition-all"
+                            className="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800/40 bg-slate-50/30 dark:bg-zinc-950/30 text-xs placeholder:text-slate-400 dark:placeholder:text-zinc-500 text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-600 transition-all"
                           />
                         </div>
                       </div>
@@ -224,7 +224,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                             value={geminiKey}
                             onChange={(e) => setGeminiKey(e.target.value)}
                             placeholder="AIzaSy..."
-                            className="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 bg-slate-50/30 dark:bg-zinc-950/30 text-xs placeholder:text-slate-400 dark:placeholder:text-zinc-500 text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-600 transition-all"
+                            className="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800/40 bg-slate-50/30 dark:bg-zinc-950/30 text-xs placeholder:text-slate-400 dark:placeholder:text-zinc-500 text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-600 transition-all"
                           />
                         </div>
                       </div>
@@ -237,7 +237,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                             value={anthropicKey}
                             onChange={(e) => setAnthropicKey(e.target.value)}
                             placeholder="sk-ant-..."
-                            className="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 bg-slate-50/30 dark:bg-zinc-950/30 text-xs placeholder:text-slate-400 dark:placeholder:text-zinc-500 text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-600 transition-all"
+                            className="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800/40 bg-slate-50/30 dark:bg-zinc-950/30 text-xs placeholder:text-slate-400 dark:placeholder:text-zinc-500 text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-600 transition-all"
                           />
                         </div>
                       </div>
@@ -250,7 +250,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                             value={ollamaUrl}
                             onChange={(e) => setOllamaUrl(e.target.value)}
                             placeholder="http://localhost:11434"
-                            className="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 bg-slate-50/30 dark:bg-zinc-950/30 text-xs placeholder:text-slate-400 dark:placeholder:text-zinc-500 text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-600 transition-all"
+                            className="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800/40 bg-slate-50/30 dark:bg-zinc-950/30 text-xs placeholder:text-slate-400 dark:placeholder:text-zinc-500 text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-600 transition-all"
                           />
                         </div>
                       </div>
@@ -258,7 +258,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   </div>
 
                   <div className="pt-2">
-                    <label className="flex items-center gap-2.5 rounded-xl border border-slate-100 dark:border-zinc-800/60 bg-slate-50/30 dark:bg-zinc-950/20 px-3.5 py-2.5 cursor-pointer select-none transition-colors hover:bg-slate-50/70 dark:hover:bg-zinc-950/30">
+                    <label className="flex items-center gap-2.5 rounded-xl border border-slate-100 dark:border-zinc-800/40 bg-slate-50/30 dark:bg-zinc-950/20 px-3.5 py-2.5 cursor-pointer select-none transition-colors hover:bg-slate-50/70 dark:hover:bg-zinc-950/30">
                       <input
                         type="checkbox"
                         checked={rememberChoice}
@@ -271,7 +271,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 </div>
 
                 {/* Explicit Actions */}
-                <div className="flex items-center justify-end gap-2 pt-4 border-t border-slate-100 dark:border-zinc-800/60 mt-6 shrink-0">
+                <div className="flex items-center justify-end gap-2 pt-4 border-t border-slate-100 dark:border-zinc-800/40 mt-6 shrink-0">
                   <button
                     type="button"
                     onClick={onClose}
@@ -315,7 +315,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                           value={passphrase}
                           onChange={(e) => onPassphraseChange(e.target.value)}
                           placeholder="Insert secure E2EE passphrase..."
-                          className="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 bg-slate-50/30 dark:bg-zinc-950/30 text-xs placeholder:text-slate-400 dark:placeholder:text-zinc-500 text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-600 transition-all"
+                          className="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800/40 bg-slate-50/30 dark:bg-zinc-950/30 text-xs placeholder:text-slate-400 dark:placeholder:text-zinc-500 text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-600 transition-all"
                         />
                       </div>
                     </div>
@@ -326,7 +326,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       Connection Status
                     </h3>
 
-                    <div className="rounded-xl border border-slate-100 dark:border-zinc-800/60 bg-slate-50/30 dark:bg-zinc-950/10 p-4 space-y-2.5">
+                    <div className="rounded-xl border border-slate-100 dark:border-zinc-800/40 bg-slate-50/30 dark:bg-zinc-950/10 p-4 space-y-2.5">
                       <div className="flex justify-between items-center text-xs">
                         <span className="text-slate-500 dark:text-zinc-400">Local-First Storage (VFS)</span>
                         <span className="font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
@@ -334,7 +334,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                           Active (IndexedDB)
                         </span>
                       </div>
-                      <div className="flex justify-between items-center text-xs border-t border-slate-100 dark:border-zinc-800/40 pt-2.5">
+                      <div className="flex justify-between items-center text-xs border-t border-slate-100 dark:border-zinc-800/30 pt-2.5">
                         <span className="text-slate-500 dark:text-zinc-400">Cloud Sync Provider</span>
                         <span className="font-semibold text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">
                           <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
@@ -343,7 +343,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       </div>
                     </div>
 
-                    <div className="rounded-xl border border-dashed border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3.5 py-2.5">
+                    <div className="rounded-xl border border-dashed border-slate-200 dark:border-zinc-800/40 bg-white dark:bg-zinc-900 px-3.5 py-2.5">
                       <p className="text-[11px] leading-relaxed text-slate-400 dark:text-zinc-500">
                         Sync channel details are derived from the active session.
                       </p>
@@ -352,7 +352,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 </div>
 
                 {/* Explicit Actions */}
-                <div className="flex items-center justify-end gap-2 pt-4 border-t border-slate-100 dark:border-zinc-800/60 mt-6 shrink-0">
+                <div className="flex items-center justify-end gap-2 pt-4 border-t border-slate-100 dark:border-zinc-800/40 mt-6 shrink-0">
                   <button
                     type="button"
                     onClick={onClose}

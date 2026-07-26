@@ -118,7 +118,7 @@ export const CalloutBlock: React.FC<CalloutBlockProps> = ({
         {showIconPicker && (
           <div
             ref={menuRef}
-            className="absolute left-0 top-full mt-2 z-50 p-2 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl shadow-xl grid grid-cols-5 gap-1 w-44"
+            className="absolute left-0 top-full mt-2 z-50 p-2 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800/60 rounded-xl shadow-xl grid grid-cols-5 gap-1 w-44"
           >
             {CALLOUT_ICONS.map((ic) => (
               <button
@@ -168,7 +168,7 @@ export const CalloutBlock: React.FC<CalloutBlockProps> = ({
         {showBgPicker && (
           <div
             ref={menuRef}
-            className="absolute right-0 top-full mt-2 z-50 p-2 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl shadow-xl flex items-center gap-1.5"
+            className="absolute right-0 top-full mt-2 z-50 p-2 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800/60 rounded-xl shadow-xl flex items-center gap-1.5"
           >
             {Object.keys(CALLOUT_BG_THEMES).map((themeKey) => (
               <button

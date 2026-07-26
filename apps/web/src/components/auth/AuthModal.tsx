@@ -71,7 +71,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-slate-900/30 dark:bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800/80 rounded-2xl w-full max-w-[340px] p-5 shadow-xl relative transition-all">
+      <div className="bg-white dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800/60/80 rounded-2xl w-full max-w-[340px] p-5 shadow-xl relative transition-all">
         
         {/* Header - Calm AFFiNE design with soft brand accent */}
         <div className="flex flex-col items-center text-center mb-4">
@@ -100,7 +100,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
         {!isGuest ? (
           <div className="flex flex-col items-center gap-3.5">
-            <div className="w-12 h-12 rounded-full bg-slate-50 dark:bg-zinc-850 flex items-center justify-center text-slate-700 dark:text-zinc-200 text-base font-semibold border border-slate-100 dark:border-zinc-800">
+            <div className="w-12 h-12 rounded-full bg-slate-50 dark:bg-zinc-850 flex items-center justify-center text-slate-700 dark:text-zinc-200 text-base font-semibold border border-slate-100 dark:border-zinc-800/60">
               {userEmail.charAt(0).toUpperCase()}
             </div>
             <div className="text-xs font-medium text-slate-700 dark:text-zinc-300 text-center break-all px-2">
@@ -119,7 +119,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           <>
             <form onSubmit={handleSubmit} className="space-y-3">
               {/* Form Grouping with Clear Visual Boundaries */}
-              <div className="rounded-xl border border-slate-200/80 dark:border-zinc-800/80 bg-slate-50/30 dark:bg-zinc-950/10 p-3 space-y-2.5 shadow-sm">
+              <div className="rounded-xl border border-slate-200/80 dark:border-zinc-800/60/80 bg-slate-50/30 dark:bg-zinc-950/10 p-3 space-y-2.5 shadow-sm">
                 <div className="space-y-1">
                   <label className="block text-[10px] font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">
                     Email address
@@ -130,7 +130,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="name@domain.com"
-                    className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-xs text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent transition-all"
+                    className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800/60 bg-white dark:bg-zinc-950 text-xs text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent transition-all"
                   />
                 </div>
 
@@ -144,7 +144,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-xs text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent transition-all"
+                    className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800/60 bg-white dark:bg-zinc-950 text-xs text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent transition-all"
                   />
                 </div>
               </div>
@@ -172,7 +172,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             {/* Offline Guest Mode Button - Subtle and Calm */}
             <button
               onClick={handleGuestMode}
-              className="w-full py-2 rounded-lg border border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-850/60 text-slate-700 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-zinc-100 font-medium text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm"
+              className="w-full py-2 rounded-lg border border-slate-200 dark:border-zinc-800/60 hover:bg-slate-50 dark:hover:bg-zinc-850/60 text-slate-700 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-zinc-100 font-medium text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm"
             >
               <Sparkles className="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400" />
               Continue in Offline Guest Mode

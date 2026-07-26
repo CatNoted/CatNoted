@@ -381,7 +381,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                       </div>
 
                       {/* Context Content Block Preview */}
-                      <div className="text-[11px] text-slate-500 dark:text-zinc-400 font-normal leading-relaxed truncate pl-6 border-l border-slate-200 dark:border-zinc-800">
+                      <div className="text-[11px] text-slate-500 dark:text-zinc-400 font-normal leading-relaxed truncate pl-6 border-l border-slate-200 dark:border-zinc-800/60">
                         {backlink.blockContent}
                       </div>
                     </button>

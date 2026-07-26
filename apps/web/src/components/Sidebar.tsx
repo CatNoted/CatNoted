@@ -74,7 +74,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
   };
 
   return (
-    <div className="w-64 border-r border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 h-full flex flex-col shrink-0 text-token select-none">
+    <div className="w-64 border-r border-slate-200 dark:border-zinc-800/40 bg-white dark:bg-zinc-900 h-full flex flex-col shrink-0 text-token select-none">
       <div className="px-4 pt-4 pb-2">
         <div className="flex items-center gap-2.5 px-1.5 py-1">
           <div className="w-6 h-6 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-xs shadow-sm">
@@ -114,7 +114,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
       </div>
 
       <div className="px-4 my-2">
-        <hr className="border-slate-200 dark:border-zinc-800" />
+        <hr className="border-slate-200 dark:border-zinc-800/40" />
       </div>
 
       <div className="flex-1 overflow-y-auto py-2 space-y-2 px-1">
@@ -244,7 +244,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         ))}
       </div>
 
-      <div className="border-t border-slate-200 dark:border-zinc-800 p-3 space-y-1">
+      <div className="border-t border-slate-200 dark:border-zinc-800/40 p-3 space-y-1">
         <button
           type="button"
           onClick={() => onModeChange('doc')}

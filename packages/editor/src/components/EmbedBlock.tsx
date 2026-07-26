@@ -79,7 +79,7 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
   // Render Page Selector
   if (!refPageId) {
     return (
-      <div className="w-full my-3 p-4 bg-slate-50/60 dark:bg-zinc-900/40 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-sm transition-all text-slate-800 dark:text-zinc-200">
+      <div className="w-full my-3 p-4 bg-slate-50/60 dark:bg-zinc-900/40 border border-slate-200 dark:border-zinc-800/40 rounded-2xl shadow-sm transition-all text-slate-800 dark:text-zinc-200">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center shrink-0">
             <Link2 className="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
@@ -102,7 +102,7 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
             </button>
 
             {isDropdownOpen && (
-              <div className="absolute right-0 mt-1.5 w-60 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl shadow-xl z-50 py-1 text-xs max-h-52 overflow-y-auto">
+              <div className="absolute right-0 mt-1.5 w-60 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800/40 rounded-xl shadow-xl z-50 py-1 text-xs max-h-52 overflow-y-auto">
                 {embeddablePages.length > 0 ? (
                   embeddablePages.map((page) => (
                     <button
@@ -147,9 +147,9 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
   ).slice(0, 5);
 
   return (
-    <div className="group/embed relative w-full my-4 border border-slate-200 dark:border-zinc-800/80 bg-slate-50/30 hover:bg-slate-50/60 dark:bg-zinc-900/20 dark:hover:bg-zinc-900/40 rounded-2xl p-4 transition-all">
+    <div className="group/embed relative w-full my-4 border border-slate-200 dark:border-zinc-800/40/80 bg-slate-50/30 hover:bg-slate-50/60 dark:bg-zinc-900/20 dark:hover:bg-zinc-900/40 rounded-2xl p-4 transition-all">
       {/* Header with page title & link badge */}
-      <div className="flex items-center justify-between border-b border-slate-200/50 dark:border-zinc-800/50 pb-2.5 mb-3">
+      <div className="flex items-center justify-between border-b border-slate-200/50 dark:border-zinc-800/40/50 pb-2.5 mb-3">
         <div className="flex items-center gap-2.5 min-w-0 flex-1">
           <span className="text-base flex-shrink-0">{targetIcon}</span>
           <h3 className="text-xs font-bold text-slate-800 dark:text-zinc-100 truncate">
@@ -239,14 +239,14 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
                 );
               case 'code':
                 return (
-                  <div key={block.id} className="p-2 bg-slate-100/60 dark:bg-zinc-900/40 border border-slate-200/50 dark:border-zinc-800/50 rounded-lg font-mono text-[10px] text-emerald-600 dark:text-emerald-400 truncate">
+                  <div key={block.id} className="p-2 bg-slate-100/60 dark:bg-zinc-900/40 border border-slate-200/50 dark:border-zinc-800/40/50 rounded-lg font-mono text-[10px] text-emerald-600 dark:text-emerald-400 truncate">
                     {block.content || <span className="opacity-30 italic">Code snippet</span>}
                   </div>
                 );
               case 'divider':
                 return (
                   <div key={block.id} className="py-1">
-                    <hr className="border-slate-250 dark:border-zinc-800" />
+                    <hr className="border-slate-250 dark:border-zinc-800/40" />
                   </div>
                 );
               case 'table':

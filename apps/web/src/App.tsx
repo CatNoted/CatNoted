@@ -290,7 +290,7 @@ const App: React.FC = () => {
     );
 
     const modeSwitcher = (
-      <div className="flex items-center rounded-xl border border-slate-200/60 dark:border-zinc-800/60 bg-slate-50/90 dark:bg-zinc-800/70 p-0.5">
+      <div className="flex items-center rounded-xl border border-slate-200/60 dark:border-zinc-800/40 bg-slate-50/90 dark:bg-zinc-800/70 p-0.5">
         {[
           { id: 'doc', label: 'Doc', icon: BookOpen },
           { id: 'canvas', label: 'Canvas', icon: LayoutGrid },
@@ -324,7 +324,7 @@ const App: React.FC = () => {
           className={`inline-flex items-center justify-center rounded-lg p-1.5 border transition-colors ${
             pageMeta?.isFavorite
               ? 'border-amber-400/60 bg-amber-400/10 text-amber-500'
-              : 'border-slate-200/60 dark:border-zinc-800/60 text-slate-400 hover:text-amber-500'
+              : 'border-slate-200/60 dark:border-zinc-800/40 text-slate-400 hover:text-amber-500'
           }`}
           title={pageMeta?.isFavorite ? 'Unstar page' : 'Star page'}
         >
@@ -335,14 +335,14 @@ const App: React.FC = () => {
           <button
             type="button"
             onClick={() => setShowPageMenu(!showPageMenu)}
-            className="inline-flex items-center justify-center rounded-lg p-1.5 border border-slate-200/60 dark:border-zinc-800/60 text-slate-500 hover:text-slate-800 dark:hover:text-zinc-200 hover:bg-slate-50 dark:hover:bg-zinc-800"
+            className="inline-flex items-center justify-center rounded-lg p-1.5 border border-slate-200/60 dark:border-zinc-800/40 text-slate-500 hover:text-slate-800 dark:hover:text-zinc-200 hover:bg-slate-50 dark:hover:bg-zinc-800"
             title="Page options"
           >
             <span className="text-xs font-bold px-1">•••</span>
           </button>
           {showPageMenu && (
-            <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-2xl z-50 py-2 text-xs select-none">
-              <div className="px-3 pb-2 mb-1 border-b border-slate-100 dark:border-zinc-800">
+            <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800/60 rounded-2xl shadow-2xl z-50 py-2 text-xs select-none">
+              <div className="px-3 pb-2 mb-1 border-b border-slate-100 dark:border-zinc-800/60">
                 <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
                   Font Style
                 </p>
@@ -379,7 +379,7 @@ const App: React.FC = () => {
                 >
                   <span>Export Markdown (.md)</span>
                 </button>
-                <div className="my-1 border-t border-slate-100 dark:border-zinc-800" />
+                <div className="my-1 border-t border-slate-100 dark:border-zinc-800/60" />
                 {activePage !== 'root-doc-node' && (
                   <button
                     type="button"
@@ -411,7 +411,7 @@ const App: React.FC = () => {
                 alert(`Share Link generated:\n${link}\n\n(Anyone with this link and the workspace passphrase can access the E2EE sync room)`);
               });
           }}
-          className="inline-flex items-center justify-center rounded-lg gap-1.5 p-1.5 border border-slate-200/60 dark:border-zinc-800/60 hover:bg-slate-50 dark:hover:bg-zinc-850 text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400"
+          className="inline-flex items-center justify-center rounded-lg gap-1.5 p-1.5 border border-slate-200/60 dark:border-zinc-800/40 hover:bg-slate-50 dark:hover:bg-zinc-850 text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400"
           title="Share document link"
         >
           <Share2 className="w-3.5 h-3.5" />
@@ -457,14 +457,14 @@ const App: React.FC = () => {
             : null;
 
     const right = (
-      <div className="flex items-center gap-1.5 sm:gap-3">
+      <div className="flex items-center gap-3 sm:gap-4">
         {syncStatus}
         {actions}
       </div>
     );
 
     return (
-      <header className="h-14 px-4 sm:px-6 border-b border-slate-200/60 dark:border-zinc-800/60 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md flex items-center justify-between z-20 shrink-0 w-full select-none">
+      <header className="h-14 px-4 sm:px-6 border-b border-slate-200/60 dark:border-zinc-800/40 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md flex items-center justify-between z-20 shrink-0 w-full select-none">
         {left}
         {modeSwitcher}
         {right}

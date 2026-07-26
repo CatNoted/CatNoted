@@ -57,7 +57,7 @@ export const BookmarkBlock: React.FC<BookmarkBlockProps> = ({
   return (
     <div className="w-full my-2 select-none">
       {isEditing ? (
-        <div className="p-3 bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl flex items-center gap-2">
+        <div className="p-3 bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800/60 rounded-xl flex items-center gap-2">
           <Globe className="w-4 h-4 text-indigo-500 shrink-0" />
           <input
             type="text"
@@ -79,7 +79,7 @@ export const BookmarkBlock: React.FC<BookmarkBlockProps> = ({
           </button>
         </div>
       ) : (
-        <div className="group/bookmark relative flex items-center justify-between p-3.5 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-sm hover:shadow-md transition-all">
+        <div className="group/bookmark relative flex items-center justify-between p-3.5 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800/60 rounded-2xl shadow-sm hover:shadow-md transition-all">
           <div className="flex items-center gap-3.5 min-w-0 flex-1">
             <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-zinc-800 flex items-center justify-center shrink-0 overflow-hidden p-2 border border-slate-200/60 dark:border-zinc-700/60">
               {bookmarkFavicon ? (

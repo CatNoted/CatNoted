@@ -135,7 +135,7 @@ export const SlashCommandMenu: React.FC<SlashCommandMenuProps> = ({
       <div
         ref={menuRef}
         style={{ top: `${position.top}px`, left: `${position.left}px` }}
-        className="fixed z-[9999] w-72 bg-white dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800 rounded-xl shadow-xl py-3 px-4 text-center select-none"
+        className="fixed z-[9999] w-72 bg-white dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800/40 rounded-xl shadow-xl py-3 px-4 text-center select-none"
       >
         <p className="text-[12.5px] font-medium text-slate-700 dark:text-zinc-300">
           No matching commands
@@ -162,7 +162,7 @@ export const SlashCommandMenu: React.FC<SlashCommandMenuProps> = ({
     <div
       ref={menuRef}
       style={{ top: `${position.top}px`, left: `${position.left}px` }}
-      className="fixed z-[9999] w-72 bg-white dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800 rounded-xl shadow-xl py-1.5 overflow-hidden flex flex-col max-h-[340px]"
+      className="fixed z-[9999] w-72 bg-white dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800/40 rounded-xl shadow-xl py-1.5 overflow-hidden flex flex-col max-h-[340px]"
     >
       {/* Scrollable list area */}
       <div className="flex-1 overflow-y-auto px-1.5 space-y-2">
@@ -226,7 +226,7 @@ export const SlashCommandMenu: React.FC<SlashCommandMenuProps> = ({
       </div>
 
       {/* Footer hint */}
-      <div className="px-3.5 py-1.5 border-t border-slate-100 dark:border-zinc-800/60 mt-1.5 flex items-center justify-between text-[9px] text-slate-400 dark:text-zinc-500 font-medium select-none">
+      <div className="px-3.5 py-1.5 border-t border-slate-100 dark:border-zinc-800/40 mt-1.5 flex items-center justify-between text-[9px] text-slate-400 dark:text-zinc-500 font-medium select-none">
         <span>↑↓ navigate</span>
         <span>Enter select</span>
         <span>Esc close</span>

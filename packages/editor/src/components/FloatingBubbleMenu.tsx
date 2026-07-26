@@ -88,7 +88,7 @@ export const FloatingBubbleMenu: React.FC<FloatingBubbleMenuProps> = ({
     <div
       ref={menuRef}
       style={{ top: `${position.top}px`, left: `${position.left}px` }}
-      className="fixed z-[9999] flex items-center gap-0.5 p-1 bg-slate-900/90 dark:bg-zinc-900/95 backdrop-blur-md text-white rounded-xl shadow-2xl border border-slate-700/50 dark:border-zinc-800/80 animate-in fade-in zoom-in-95 duration-150 select-none"
+      className="fixed z-[9999] flex items-center gap-0.5 p-1 bg-slate-900/90 dark:bg-zinc-900/95 backdrop-blur-md text-white rounded-xl shadow-2xl border border-slate-700/50 dark:border-zinc-800/60/80 animate-in fade-in zoom-in-95 duration-150 select-none"
     >
       <button
         type="button"

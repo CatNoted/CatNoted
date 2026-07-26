@@ -655,7 +655,7 @@ if (isSearchOpen && searchQuery) {
     <div className="flex h-screen w-screen overflow-hidden bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-zinc-100">
       {/* Pane 1: Left Sidebar (Navigation) - Hidden in Zen Mode */}
       {!zenMode && (
-        <aside className="w-14 flex flex-col items-center justify-between py-3 border-r border-slate-200 dark:border-zinc-800 bg-[#fbfbfb] dark:bg-zinc-950 z-10 shrink-0">
+        <aside className="w-14 flex flex-col items-center justify-between py-3 border-r border-slate-200 dark:border-zinc-800/40 bg-[#fbfbfb] dark:bg-zinc-950 z-10 shrink-0">
           <div className="flex flex-col items-center gap-4 w-full">
             <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-xs shadow-sm shadow-indigo-200 dark:shadow-none">
               CN
@@ -734,14 +734,14 @@ if (isSearchOpen && searchQuery) {
       {!zenMode && (
         <aside
           style={{ width: isSidebarCollapsed ? 0 : sidebarWidth }}
-          className={`border-r border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 z-10 shrink-0 flex flex-col h-full text-sm overflow-hidden ${
+          className={`border-r border-slate-200 dark:border-zinc-800/40 bg-white dark:bg-zinc-900 z-10 shrink-0 flex flex-col h-full text-sm overflow-hidden ${
             isSidebarResizing ? '' : 'transition-[width,opacity] duration-300 ease-in-out'
           } ${
             isSidebarCollapsed ? 'opacity-0 pointer-events-none' : 'opacity-100'
           }`}
         >
           {/* Sidebar Header */}
-          <div className="h-14 px-4 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between gap-2 shrink-0">
+          <div className="h-14 px-4 border-b border-slate-200 dark:border-zinc-800/40 flex items-center justify-between gap-2 shrink-0">
             {/* Workspace Switcher Button */}
             <div className="relative">
               <button
@@ -755,7 +755,7 @@ if (isSearchOpen && searchQuery) {
 
               {/* Workspace Switcher Dropdown */}
               {isWorkspaceDropdownOpen && (
-                <div className="absolute left-0 mt-1.5 w-48 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl shadow-lg z-50 py-1 text-xs">
+                <div className="absolute left-0 mt-1.5 w-48 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800/40 rounded-xl shadow-lg z-50 py-1 text-xs">
                   {workspaces.map(ws => (
                     <button
                       key={ws}
@@ -815,11 +815,11 @@ if (isSearchOpen && searchQuery) {
                             : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/40 hover:text-slate-900 dark:hover:text-zinc-200'
                         }`}
                       >
-                        <span className="truncate flex items-center gap-2">
+                        <span className="truncate flex items-center gap-2" title={doc.title}>
                           {renderPageIcon(doc.icon, "w-4 h-4 text-slate-400 dark:text-zinc-500 shrink-0 flex items-center justify-center")}
                           <span className="truncate">{doc.title}</span>
                         </span>
-                        <span className="text-[10px] text-slate-400 dark:text-zinc-500 opacity-60">Recent</span>
+                        <span className="text-[10px] text-slate-400 dark:text-zinc-500 opacity-100">Recent</span>
                       </button>
                     </li>
                   );
@@ -912,7 +912,7 @@ if (isSearchOpen && searchQuery) {
                     <span className="text-[9px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full">{Object.keys(pages || {}).length}</span>
                   </button>
                   {sectionsExpanded.pages && (
-                    <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-150 dark:border-zinc-800 ml-3.5">
+                    <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-150 dark:border-zinc-800/40 ml-3.5">
                       {Object.values(pages || {}).map((node: any) => {
                         const isActive = activePage === node.id;
                         const displayLabel = node.title || 'Untitled';
@@ -965,11 +965,11 @@ if (isSearchOpen && searchQuery) {
                     <span className="text-[9px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full">{tagNodes.length}</span>
                   </button>
                   {sectionsExpanded.tags && (
-                    <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-150 dark:border-zinc-800 ml-3.5">
+                    <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-150 dark:border-zinc-800/40 ml-3.5">
                       {tagNodes.length === 0 ? (
-                        <div className="px-2 py-3 flex flex-col items-center justify-center text-center gap-1.5 opacity-60">
+                        <div className="px-2 py-3 flex flex-col items-center justify-center text-center gap-1.5 opacity-100">
                           <Tag className="w-4 h-4 text-slate-400 dark:text-zinc-500" />
-                          <span className="text-[10px] text-slate-500 dark:text-zinc-400">Type #tag in editor</span>
+                          <span className="text-[10px] text-slate-600 dark:text-zinc-300">Type #tag in editor</span>
                         </div>
                       ) : (
                         tagNodes.map(node => {
@@ -1015,9 +1015,9 @@ if (isSearchOpen && searchQuery) {
                     <span className="text-[9px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full">{widgetNodes.length}</span>
                   </button>
                   {sectionsExpanded.widgets && (
-                    <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-150 dark:border-zinc-800 ml-3.5">
+                    <ul className="pl-4 mt-1 space-y-0.5 border-l border-slate-150 dark:border-zinc-800/40 ml-3.5">
                       {widgetNodes.length === 0 ? (
-                        <div className="px-2 py-3 flex flex-col items-center justify-center text-center gap-1.5 opacity-60">
+                        <div className="px-2 py-3 flex flex-col items-center justify-center text-center gap-1.5 opacity-100">
                           <Cpu className="w-4 h-4 text-slate-400 dark:text-zinc-500" />
                           <span className="text-[10px] text-slate-500 dark:text-zinc-400">Add AI widget</span>
                         </div>
@@ -1069,7 +1069,7 @@ if (isSearchOpen && searchQuery) {
           <button
             type="button"
             onClick={() => setIsSidebarCollapsed(false)}
-            className="absolute top-4 left-4 z-30 p-1.5 rounded-lg text-slate-500 hover:text-slate-700 dark:text-zinc-400 dark:hover:text-zinc-200 bg-white/80 dark:bg-zinc-900/80 border border-slate-200/60 dark:border-zinc-800/60 hover:bg-slate-100 dark:hover:bg-zinc-850 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-500 shadow-sm"
+            className="absolute top-4 left-4 z-30 p-1.5 rounded-lg text-slate-500 hover:text-slate-700 dark:text-zinc-400 dark:hover:text-zinc-200 bg-white/80 dark:bg-zinc-900/80 border border-slate-200/60 dark:border-zinc-800/40 hover:bg-slate-100 dark:hover:bg-zinc-850 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-500 shadow-sm"
             title="Expand Sidebar"
             aria-label="Expand Workspace Sidebar"
           >
@@ -1088,12 +1088,12 @@ if (isSearchOpen && searchQuery) {
           {/* Right Sidebar Panel */}
           <aside
             style={{ width: isRightSidebarOpen ? 320 : 0 }}
-            className={`border-l border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex flex-col h-full text-sm overflow-hidden transition-[width,opacity] duration-200 ease-in-out ${
+            className={`border-l border-slate-200 dark:border-zinc-800/40 bg-white dark:bg-zinc-900 flex flex-col h-full text-sm overflow-hidden transition-[width,opacity] duration-200 ease-in-out ${
               isRightSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
             } md:relative absolute right-12 top-0 bottom-0 shadow-lg md:shadow-none z-30`}
           >
             {/* Header */}
-            <div className="h-14 px-4 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between shrink-0 bg-[#fbfbfb] dark:bg-zinc-950">
+            <div className="h-14 px-4 border-b border-slate-200 dark:border-zinc-800/40 flex items-center justify-between shrink-0 bg-[#fbfbfb] dark:bg-zinc-950">
               <span className="font-semibold text-xs uppercase tracking-wider text-slate-500 dark:text-zinc-400">
                 {activeRightSidebarTab === 'info' && 'Page Info & Style'}
                 {activeRightSidebarTab === 'outline' && 'Document Outline'}
@@ -1115,7 +1115,7 @@ if (isSearchOpen && searchQuery) {
               {activeRightSidebarTab === 'info' && (
                 <div className="space-y-6">
                   {/* Title & Star Toggler */}
-                  <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-zinc-800/40 border border-slate-150 dark:border-zinc-800/60 rounded-xl">
+                  <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-zinc-800/40 border border-slate-150 dark:border-zinc-800/40 rounded-xl">
                     <div className="flex items-center gap-2 min-w-0">
                       <span className="text-xl shrink-0">{pageMeta?.icon || '📄'}</span>
                       <span className="font-semibold truncate text-slate-800 dark:text-zinc-200">{pageMeta?.title || docTitle}</span>
@@ -1150,7 +1150,7 @@ if (isSearchOpen && searchQuery) {
                             className={`py-1.5 text-xs rounded-lg border capitalize font-medium transition-all ${
                               (pageMeta?.fontStyle || 'sans') === font
                                 ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 border-indigo-500 dark:border-indigo-500'
-                                : 'bg-transparent text-slate-600 dark:text-zinc-400 border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800/50'
+                                : 'bg-transparent text-slate-600 dark:text-zinc-400 border-slate-200 dark:border-zinc-800/40 hover:bg-slate-50 dark:hover:bg-zinc-800/50'
                             }`}
                           >
                             {font}
@@ -1160,7 +1160,7 @@ if (isSearchOpen && searchQuery) {
                     </div>
 
                     {/* Page Width */}
-                    <div className="flex items-center justify-between py-2 border-b border-slate-100 dark:border-zinc-800/40">
+                    <div className="flex items-center justify-between py-2 border-b border-slate-100 dark:border-zinc-800/30">
                       <div className="flex flex-col">
                         <span className="text-xs font-medium text-slate-700 dark:text-zinc-300">Wide Mode</span>
                         <span className="text-[10px] text-slate-400 dark:text-zinc-500">Let blocks take full horizontal layout</span>
@@ -1185,19 +1185,19 @@ if (isSearchOpen && searchQuery) {
                   <div className="space-y-2">
                     <h4 className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">Document Statistics</h4>
                     <div className="grid grid-cols-2 gap-2 text-xs">
-                      <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-zinc-800/30 border border-slate-100 dark:border-zinc-800/40">
+                      <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-zinc-800/30 border border-slate-100 dark:border-zinc-800/30">
                         <div className="text-[10px] text-slate-400 dark:text-zinc-500">Total Blocks</div>
                         <div className="text-base font-bold text-slate-800 dark:text-zinc-200 mt-0.5">{blocks.length}</div>
                       </div>
-                      <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-zinc-800/30 border border-slate-100 dark:border-zinc-800/40">
+                      <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-zinc-800/30 border border-slate-100 dark:border-zinc-800/30">
                         <div className="text-[10px] text-slate-400 dark:text-zinc-500">Heading Nodes</div>
                         <div className="text-base font-bold text-slate-800 dark:text-zinc-200 mt-0.5">{blocks.filter(b => b.type === 'heading').length}</div>
                       </div>
-                      <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-zinc-800/30 border border-slate-100 dark:border-zinc-800/40">
+                      <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-zinc-800/30 border border-slate-100 dark:border-zinc-800/30">
                         <div className="text-[10px] text-slate-400 dark:text-zinc-500">Text Nodes</div>
                         <div className="text-base font-bold text-slate-800 dark:text-zinc-200 mt-0.5">{blocks.filter(b => b.type === 'text').length}</div>
                       </div>
-                      <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-zinc-800/30 border border-slate-100 dark:border-zinc-800/40">
+                      <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-zinc-800/30 border border-slate-100 dark:border-zinc-800/30">
                         <div className="text-[10px] text-slate-400 dark:text-zinc-500">Custom Widgets</div>
                         <div className="text-base font-bold text-slate-800 dark:text-zinc-200 mt-0.5">{blocks.filter(b => b.type === 'widget').length}</div>
                       </div>
@@ -1229,7 +1229,7 @@ if (isSearchOpen && searchQuery) {
                   </p>
 
                   {blocks.filter(b => b.type === 'heading').length === 0 ? (
-                    <div className="text-center py-8 border border-dashed border-slate-200 dark:border-zinc-800 rounded-xl">
+                    <div className="text-center py-8 border border-dashed border-slate-200 dark:border-zinc-800/40 rounded-xl">
                       <List className="w-6 h-6 mx-auto text-slate-300 dark:text-zinc-700 mb-1.5" />
                       <span className="text-xs text-slate-400 dark:text-zinc-500">No headings in document outline.</span>
                     </div>
@@ -1264,7 +1264,7 @@ if (isSearchOpen && searchQuery) {
               {activeRightSidebarTab === 'agent' && (
                 <div className="flex flex-col h-full min-h-[300px]">
                   {/* Space Agent tab inside sidebar panel */}
-                  <div className="flex border-b border-slate-150 dark:border-zinc-800 text-xs shrink-0 mb-3 bg-slate-50/50 dark:bg-zinc-900/30 rounded-lg overflow-hidden">
+                  <div className="flex border-b border-slate-150 dark:border-zinc-800/40 text-xs shrink-0 mb-3 bg-slate-50/50 dark:bg-zinc-900/30 rounded-lg overflow-hidden">
                     <button
                       type="button"
                       onClick={() => setActiveAgentTab('chat')}
@@ -1345,7 +1345,7 @@ if (isSearchOpen && searchQuery) {
                           { title: 'Mini Calculator', desc: 'Grid based calculator widget', template: WIDGET_TEMPLATES.calculator, id: 'calc' },
                           { title: 'Quick Tasks Todo', desc: 'Interactive task tracker', template: WIDGET_TEMPLATES.todo, id: 'todo' }
                         ].map((item) => (
-                          <div key={item.id} className="p-2 rounded-lg bg-slate-50 dark:bg-zinc-800/30 border border-slate-150 dark:border-zinc-800/60 flex items-center justify-between text-xs">
+                          <div key={item.id} className="p-2 rounded-lg bg-slate-50 dark:bg-zinc-800/30 border border-slate-150 dark:border-zinc-800/40 flex items-center justify-between text-xs">
                             <div className="min-w-0 pr-1 flex flex-col">
                               <span className="font-semibold text-slate-700 dark:text-zinc-200 truncate">{item.title}</span>
                               <span className="text-[10px] text-slate-400 dark:text-zinc-500 truncate">{item.desc}</span>
@@ -1377,7 +1377,7 @@ if (isSearchOpen && searchQuery) {
                     Locally persisted document snapshots are updated automatically during edit sessions.
                   </p>
 
-                  <div className="relative pl-4 border-l-2 border-slate-100 dark:border-zinc-800 ml-1.5 space-y-4">
+                  <div className="relative pl-4 border-l-2 border-slate-100 dark:border-zinc-800/40 ml-1.5 space-y-4">
                     {/* Item 1 */}
                     <div className="relative">
                       <span className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-4 ring-white dark:ring-zinc-900" />
@@ -1421,9 +1421,9 @@ if (isSearchOpen && searchQuery) {
           </aside>
 
           {/* Right Tool Rail */}
-          <aside className="w-12 flex flex-col items-center justify-between py-3 border-l border-slate-200 dark:border-zinc-800 bg-[#fbfbfb] dark:bg-zinc-950 shrink-0 z-20 h-full">
+          <aside className="w-12 flex flex-col items-center justify-between py-3 border-l border-slate-200 dark:border-zinc-800/40 bg-[#fbfbfb] dark:bg-zinc-950 shrink-0 z-20 h-full">
             <div className="flex flex-col items-center gap-4 w-full">
-              <nav className="flex flex-col gap-2 w-full px-1.5" aria-label="Right Rail Navigation">
+              <nav className="flex flex-col gap-3 w-full px-1.5" aria-label="Right Rail Navigation">
                 {[
                   { id: 'info' as const, icon: Info, label: 'Page Info' },
                   { id: 'outline' as const, icon: List, label: 'Outline' },
@@ -1452,7 +1452,7 @@ if (isSearchOpen && searchQuery) {
               </nav>
             </div>
 
-            <div className="flex flex-col items-center gap-3 w-full px-1.5">
+            <div className="flex flex-col items-center gap-3 w-full px-1.5 mt-auto pb-2">
               <button
                 type="button"
                 onClick={() => alert("CatNoted Workspace - AFFiNE-style Right Rail")}
@@ -1564,7 +1564,7 @@ if (isSearchOpen && searchQuery) {
           {!isMinimized && (
             <>
               {/* Tab Switcher */}
-              <div className="flex border-b border-slate-150 dark:border-zinc-800 text-xs shrink-0 bg-slate-50/50 dark:bg-zinc-900/30">
+              <div className="flex border-b border-slate-150 dark:border-zinc-800/40 text-xs shrink-0 bg-slate-50/50 dark:bg-zinc-900/30">
                 <button
                   type="button"
                   onClick={() => setActiveAgentTab('chat')}
@@ -1753,7 +1753,7 @@ if (isSearchOpen && searchQuery) {
                         <Sparkles className="w-3 h-3 text-indigo-500" /> Preset Library
                       </h4>
                       <div className="grid grid-cols-1 gap-2">
-                        <div className="p-3 rounded-xl bg-slate-50 dark:bg-zinc-900/50 border border-slate-150 dark:border-zinc-800/60 flex items-center justify-between text-xs transition-all hover:border-indigo-500/30">
+                        <div className="p-3 rounded-xl bg-slate-50 dark:bg-zinc-900/50 border border-slate-150 dark:border-zinc-800/40 flex items-center justify-between text-xs transition-all hover:border-indigo-500/30">
                           <div className="flex flex-col">
                             <span className="font-semibold text-slate-700 dark:text-zinc-200">Analog Clock</span>
                             <span className="text-[10px] text-slate-400 dark:text-zinc-500">Live time widget with smooth animation</span>
@@ -1772,7 +1772,7 @@ if (isSearchOpen && searchQuery) {
                           </button>
                         </div>
 
-                        <div className="p-3 rounded-xl bg-slate-50 dark:bg-zinc-900/50 border border-slate-150 dark:border-zinc-800/60 flex items-center justify-between text-xs transition-all hover:border-indigo-500/30">
+                        <div className="p-3 rounded-xl bg-slate-50 dark:bg-zinc-900/50 border border-slate-150 dark:border-zinc-800/40 flex items-center justify-between text-xs transition-all hover:border-indigo-500/30">
                           <div className="flex flex-col">
                             <span className="font-semibold text-slate-700 dark:text-zinc-200">Mini Calculator</span>
                             <span className="text-[10px] text-slate-400 dark:text-zinc-500">Grid based mathematical calculator</span>
@@ -1791,7 +1791,7 @@ if (isSearchOpen && searchQuery) {
                           </button>
                         </div>
 
-                        <div className="p-3 rounded-xl bg-slate-50 dark:bg-zinc-900/50 border border-slate-150 dark:border-zinc-800/60 flex items-center justify-between text-xs transition-all hover:border-indigo-500/30">
+                        <div className="p-3 rounded-xl bg-slate-50 dark:bg-zinc-900/50 border border-slate-150 dark:border-zinc-800/40 flex items-center justify-between text-xs transition-all hover:border-indigo-500/30">
                           <div className="flex flex-col">
                             <span className="font-semibold text-slate-700 dark:text-zinc-200">Quick Tasks Todo</span>
                             <span className="text-[10px] text-slate-400 dark:text-zinc-500">Interactive todo list with state</span>
@@ -1818,7 +1818,7 @@ if (isSearchOpen && searchQuery) {
                         <Cpu className="w-3 h-3 text-emerald-500" /> Page Widgets List
                       </h4>
                       {blocks.filter(b => b.type === 'widget').length === 0 ? (
-                        <div className="p-6 text-center border border-dashed border-slate-200 dark:border-zinc-800 rounded-xl text-xs text-slate-400 dark:text-zinc-500">
+                        <div className="p-6 text-center border border-dashed border-slate-200 dark:border-zinc-800/40 rounded-xl text-xs text-slate-400 dark:text-zinc-500">
                           No widgets on this page yet.
                         </div>
                       ) : (
@@ -1826,7 +1826,7 @@ if (isSearchOpen && searchQuery) {
                           {blocks.filter(b => b.type === 'widget').map(block => {
                             const widgetId = block.properties?.widgetId || 'unassigned';
                             return (
-                              <div key={block.id} className="p-3 rounded-xl bg-slate-50 dark:bg-zinc-900/40 border border-slate-150 dark:border-zinc-800/60 flex items-center justify-between text-xs">
+                              <div key={block.id} className="p-3 rounded-xl bg-slate-50 dark:bg-zinc-900/40 border border-slate-150 dark:border-zinc-800/40 flex items-center justify-between text-xs">
                                 <div className="flex flex-col min-w-0 pr-2">
                                   <span className="font-semibold truncate text-slate-700 dark:text-zinc-200">ID: {widgetId}</span>
                                   <span className="text-[9px] text-slate-400 truncate">Block ID: {block.id}</span>

@@ -116,9 +116,9 @@ export const TableBlock: React.FC<TableBlockProps> = ({
                   return (
                     <tr
                       key={actualRowIdx}
-                      className="group/row border-b border-slate-200 dark:border-zinc-800 last:border-b-0 hover:bg-slate-50/80 dark:hover:bg-zinc-800/70 transition-colors"
+                      className="group/row border-b border-slate-200 dark:border-zinc-800/60 last:border-b-0 hover:bg-slate-50/80 dark:hover:bg-zinc-800/70 transition-colors"
                     >
-                      <td className="w-8 p-0 border-r border-slate-200 dark:border-zinc-800 text-center align-middle">
+                      <td className="w-8 p-0 border-r border-slate-200 dark:border-zinc-800/60 text-center align-middle">
                         <div className="flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-opacity text-slate-400 dark:text-zinc-500 cursor-grab active:cursor-grabbing">
                           <GripHorizontal className="w-3.5 h-3.5" />
                         </div>
@@ -126,7 +126,7 @@ export const TableBlock: React.FC<TableBlockProps> = ({
                       {row.map((cell, cIdx) => (
                         <td
                           key={cIdx}
-                          className="p-3 border-r border-slate-200 dark:border-zinc-800 last:border-r-0 align-top"
+                          className="p-3 border-r border-slate-200 dark:border-zinc-800/60 last:border-r-0 align-top"
                         >
                           <input
                             type="text"
@@ -147,7 +147,7 @@ export const TableBlock: React.FC<TableBlockProps> = ({
             <button
               type="button"
               onClick={() => setExpanded((v) => !v)}
-              className="w-full flex items-center justify-center gap-1 py-1.5 text-[11px] text-slate-500 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors border-t border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800"
+              className="w-full flex items-center justify-center gap-1 py-1.5 text-[11px] text-slate-500 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors border-t border-slate-200 dark:border-zinc-800/60 hover:bg-slate-50 dark:hover:bg-zinc-800"
             >
               <ChevronDown
                 className={`w-3.5 h-3.5 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}

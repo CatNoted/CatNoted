@@ -19,8 +19,8 @@ export const MathBlock: React.FC<MathBlockProps> = ({
   const defaultFormula = content || 'E = mc^2';
 
   return (
-    <div className="w-full my-2 p-3 bg-slate-50 dark:bg-zinc-900/60 border border-slate-200 dark:border-zinc-800 rounded-xl transition-all group/math">
-      <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-200/60 dark:border-zinc-800 text-xs text-slate-400 font-mono">
+    <div className="w-full my-2 p-3 bg-slate-50 dark:bg-zinc-900/60 border border-slate-200 dark:border-zinc-800/60 rounded-xl transition-all group/math">
+      <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-200/60 dark:border-zinc-800/60 text-xs text-slate-400 font-mono">
         <span className="flex items-center gap-1.5 font-semibold text-indigo-600 dark:text-indigo-400">
           <Sigma className="w-3.5 h-3.5" />
           Math Formula (LaTeX)

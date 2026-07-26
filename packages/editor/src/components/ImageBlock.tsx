@@ -35,7 +35,7 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
   return (
     <div className="w-full my-3 select-none group/img">
       {isEditing ? (
-        <div className="p-3 bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl flex items-center gap-2">
+        <div className="p-3 bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800/60 rounded-xl flex items-center gap-2">
           <ImageIcon className="w-4 h-4 text-indigo-500 shrink-0" />
           <input
             type="text"
@@ -60,7 +60,7 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
         <div className={`flex flex-col ${alignClass} items-center`}>
           <div
             style={{ width: `${width}%` }}
-            className="relative rounded-2xl overflow-hidden border border-slate-200/60 dark:border-zinc-800/60 shadow-sm transition-all"
+            className="relative rounded-2xl overflow-hidden border border-slate-200/60 dark:border-zinc-800/40 shadow-sm transition-all"
           >
             <img src={url} alt={caption || 'Embedded Image'} className="w-full h-auto object-cover" />
 
