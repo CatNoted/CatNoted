@@ -434,23 +434,23 @@ const App: React.FC = () => {
     const syncStatus =
       status === 'saving'
         ? (
-            <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-              Saving...
+              <span className="hidden sm:inline">Saving...</span>
             </span>
           )
         : status === 'saved'
           ? (
-              <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                Saved
+                <span className="hidden sm:inline">Saved</span>
               </span>
             )
           : status === 'offline'
             ? (
-                <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-muted/10 text-muted-foreground border border-muted-foreground/20">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-muted/10 text-muted-foreground border border-muted-foreground/20">
                   <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground" />
-                  Offline
+                  <span className="hidden sm:inline">Offline</span>
                 </span>
               )
             : null;
