@@ -5,7 +5,7 @@ import { InfiniteCanvas } from '@catnoted/canvas';
 import { GraphView, parseDocumentGraph } from '@catnoted/graph';
 import { ydoc } from '@catnoted/editor';
 import * as Y from 'yjs';
-import { Share2, Edit2, BookOpen, LayoutGrid } from 'lucide-react';
+import { Share2, Edit2, BookOpen, LayoutGrid, Menu } from 'lucide-react';
 
 // E2EE sync utilities
 import { encryptPayload, decryptPayload } from './utils/crypto.js';
@@ -22,6 +22,18 @@ const App: React.FC = () => {
   const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
   const [isZenMode, setIsZenMode] = useState<boolean>(false);
   const [activePage, setActivePage] = useState<string>('root-doc-node');
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
+
+  useEffect(() => {
+    const savedCollapsed = localStorage.getItem('catnoted:sidebar-collapsed');
+    if (savedCollapsed !== null) {
+      setIsSidebarCollapsed(savedCollapsed === 'true');
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('catnoted:sidebar-collapsed', String(isSidebarCollapsed));
+  }, [isSidebarCollapsed]);
 
   const { blocks: rootBlocks, pages, addBlock: addRootBlock, updateBlockContent: updateRootBlockContent } = useDocumentStore('root-doc-node');
   const { blocks: activeBlocks, updateBlockContent: updateActiveBlockContent } = useDocumentStore(activePage);
@@ -224,8 +236,21 @@ const App: React.FC = () => {
   };
 
   const renderTopBar = () => {
+    const expandButton = !isZenMode && isSidebarCollapsed ? (
+      <button
+        type="button"
+        onClick={() => setIsSidebarCollapsed(false)}
+        className="p-1 rounded-lg text-slate-500 hover:text-slate-700 dark:text-zinc-400 dark:hover:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-500 shrink-0"
+        title="Expand Sidebar"
+        aria-label="Expand Workspace Sidebar"
+        aria-expanded={false}
+      >
+        <Menu className="w-4 h-4" />
+      </button>
+    ) : null;
+
     const breadcrumbs = (
-      <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+      <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 shrink-0">
         <span className="text-xs font-medium text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200 transition-colors cursor-pointer">
           Workspace
         </span>
@@ -284,6 +309,7 @@ const App: React.FC = () => {
 
     const left = (
       <div className="flex items-center gap-2 min-w-0">
+        {expandButton}
         {breadcrumbs}
         <div className="min-w-0 truncate">{titleField}</div>
       </div>
@@ -517,6 +543,8 @@ const App: React.FC = () => {
         userEmail={userEmail}
         onAuthTrigger={() => setIsAuthOpen(true)}
         onCreatePage={handleCreatePage}
+        isSidebarCollapsed={isSidebarCollapsed}
+        setIsSidebarCollapsed={setIsSidebarCollapsed}
       >
         <div className="flex flex-col h-full w-full overflow-hidden">
           {renderTopBar()}

@@ -25,7 +25,6 @@ import {
   Tag,
   Cpu,
   Trash2,
-  Menu,
   Copy,
   Info,
   List,
@@ -169,6 +168,8 @@ interface AppLayoutProps {
   userEmail?: string;
   onAuthTrigger?: () => void;
   onCreatePage?: () => void;
+  isSidebarCollapsed?: boolean;
+  setIsSidebarCollapsed?: (collapsed: boolean) => void;
 }
 
 import { requestLlmWidget, SandboxFrame } from '@catnoted/agent-runtime';
@@ -193,7 +194,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   pageTitle: _pageTitle,
   userEmail: _userEmail,
   onAuthTrigger: _onAuthTrigger,
-  onCreatePage
+  onCreatePage,
+  isSidebarCollapsed: propIsSidebarCollapsed,
+  setIsSidebarCollapsed: propSetIsSidebarCollapsed
 }) => {
   const { blocks, addBlock, updateBlockType, pages, createPage, deletePage, deleteBlock, pageMeta, updatePageMeta } = useDocumentStore(activePage);
   const favoritePages = (pages || []).filter((p: any) => p?.isFavorite);
@@ -271,24 +274,31 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   };
 
   // Persistent sidebar state - initialized with safe defaults to prevent hydration issues
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
+  const [localIsSidebarCollapsed, setLocalIsSidebarCollapsed] = useState<boolean>(false);
   const [sidebarWidth, setSidebarWidth] = useState<number>(256);
   const [isSidebarResizing, setIsSidebarResizing] = useState(false);
 
+  const isSidebarCollapsed = propIsSidebarCollapsed !== undefined ? propIsSidebarCollapsed : localIsSidebarCollapsed;
+  const setIsSidebarCollapsed = propSetIsSidebarCollapsed !== undefined ? propSetIsSidebarCollapsed : setLocalIsSidebarCollapsed;
+
   useEffect(() => {
-    const savedCollapsed = localStorage.getItem('catnoted:sidebar-collapsed');
-    if (savedCollapsed !== null) {
-      setIsSidebarCollapsed(savedCollapsed === 'true');
+    if (propIsSidebarCollapsed === undefined) {
+      const savedCollapsed = localStorage.getItem('catnoted:sidebar-collapsed');
+      if (savedCollapsed !== null) {
+        setLocalIsSidebarCollapsed(savedCollapsed === 'true');
+      }
     }
     const savedWidth = localStorage.getItem('catnoted:sidebar-width');
     if (savedWidth !== null) {
       setSidebarWidth(parseInt(savedWidth, 10));
     }
-  }, []);
+  }, [propIsSidebarCollapsed]);
 
   useEffect(() => {
-    localStorage.setItem('catnoted:sidebar-collapsed', String(isSidebarCollapsed));
-  }, [isSidebarCollapsed]);
+    if (propIsSidebarCollapsed === undefined) {
+      localStorage.setItem('catnoted:sidebar-collapsed', String(localIsSidebarCollapsed));
+    }
+  }, [localIsSidebarCollapsed, propIsSidebarCollapsed]);
 
   useEffect(() => {
     localStorage.setItem('catnoted:sidebar-width', String(sidebarWidth));
@@ -1067,19 +1077,6 @@ if (isSearchOpen && searchQuery) {
 
       {/* Pane 2: Middle Panel (Main Workspace) — now takes full remaining width */}
       <main className="flex-1 flex flex-col h-full overflow-hidden bg-slate-50 dark:bg-zinc-950 relative">
-        {!zenMode && isSidebarCollapsed && (
-          <button
-            type="button"
-            onClick={() => setIsSidebarCollapsed(false)}
-            className="absolute top-4 left-4 z-30 p-1.5 rounded-lg text-slate-500 hover:text-slate-700 dark:text-zinc-400 dark:hover:text-zinc-200 bg-white/80 dark:bg-zinc-900/80 border border-slate-200/60 dark:border-zinc-800/60 hover:bg-slate-100 dark:hover:bg-zinc-850 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-500 shadow-sm"
-            title="Expand Sidebar"
-            aria-label="Expand Workspace Sidebar"
-            aria-expanded={false}
-          >
-            <Menu className="w-4 h-4" />
-          </button>
-        )}
-
         <div className="flex-1 overflow-hidden h-full w-full">
           {children}
         </div>
