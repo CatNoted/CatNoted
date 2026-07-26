@@ -51,7 +51,7 @@ export const MathBlock: React.FC<MathBlockProps> = ({
             onChange={(e) => onChange(e.target.value)}
             placeholder="e.g. \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}"
             rows={2}
-            className="w-full bg-white dark:bg-zinc-950 p-2.5 rounded-lg border border-slate-300 dark:border-zinc-700 text-xs font-mono text-slate-800 dark:text-zinc-200 outline-none focus:ring-1 focus:ring-indigo-500"
+            className="w-full bg-white dark:bg-[#16161a] p-2.5 rounded-lg border border-slate-300 dark:border-zinc-700 text-xs font-mono text-slate-800 dark:text-zinc-200 outline-none focus:ring-1 focus:ring-indigo-500"
             autoFocus
           />
           <p className="text-[10px] text-slate-400">
