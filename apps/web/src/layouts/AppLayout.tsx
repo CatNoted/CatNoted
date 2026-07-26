@@ -38,7 +38,12 @@ import {
   List,
   Star,
   History,
-  Calendar
+  Calendar,
+  RefreshCw,
+  CloudOff,
+  AlertTriangle,
+  AlertCircle,
+  Cloud
 } from 'lucide-react';
 
 export type ActiveMode = "doc" | "canvas" | "graph" | "journals" | "settings";
@@ -177,6 +182,10 @@ interface AppLayoutProps {
   userEmail?: string;
   onAuthTrigger?: () => void;
   onCreatePage?: () => void;
+  syncStatus?: 'saved' | 'saving' | 'offline' | 'error' | 'conflict';
+  conflictMsg?: string | null;
+  onResolveConflict?: (resolution: 'local' | 'remote') => void;
+  onDismissConflict?: () => void;
 }
 
 import { requestLlmWidget, SandboxFrame } from '@catnoted/agent-runtime';
@@ -201,7 +210,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   pageTitle: _pageTitle,
   userEmail: _userEmail,
   onAuthTrigger: _onAuthTrigger,
-  onCreatePage
+  onCreatePage,
+  syncStatus = 'saved',
+  conflictMsg = null,
+  onResolveConflict,
+  onDismissConflict
 }) => {
   const { blocks, addBlock, updateBlockType, pages, createPage, deletePage, deleteBlock, pageMeta, updatePageMeta } = useDocumentStore(activePage);
   const favoritePages = (pages || []).filter((p: any) => p?.isFavorite);
@@ -660,7 +673,56 @@ if (isSearchOpen && searchQuery) {
   };
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-slate-50 dark:bg-[#141416] text-slate-900 dark:text-zinc-100">
+    <div className="flex h-screen w-screen overflow-hidden bg-slate-50 dark:bg-[#141416] text-slate-900 dark:text-zinc-100 relative">
+      {/* Minimal Conflict Resolution Dialog */}
+      {syncStatus === 'conflict' && (
+        <div className="fixed inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4" data-testid="conflict-resolution-modal">
+          <div className="bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-3xl p-6 max-w-md w-full shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-2xl bg-rose-500/10 text-rose-500 flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-5 h-5 animate-pulse" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">Version Divergence Detected</h3>
+                <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1.5 leading-relaxed">
+                  {conflictMsg || 'Your local edits conflict with newer revisions already saved on the server. Please resolve the conflict below.'}
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-6 flex flex-col gap-2">
+              <button
+                type="button"
+                onClick={() => onResolveConflict?.('local')}
+                className="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl text-xs font-semibold transition-all hover:shadow-lg hover:shadow-indigo-500/10 active:scale-98"
+                data-testid="resolve-local-btn"
+              >
+                Keep Local Changes (Overwrite Remote)
+              </button>
+              <button
+                type="button"
+                onClick={() => onResolveConflict?.('remote')}
+                className="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-850 text-slate-700 dark:text-zinc-300 rounded-2xl text-xs font-semibold transition-all active:scale-98"
+                data-testid="resolve-remote-btn"
+              >
+                Discard Local Changes (Accept Remote)
+              </button>
+            </div>
+
+            <div className="mt-4 flex justify-end border-t border-slate-100 dark:border-zinc-900 pt-3">
+              <button
+                type="button"
+                onClick={onDismissConflict}
+                className="text-[11px] font-semibold text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors"
+                data-testid="dismiss-conflict-btn"
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Pane 1: Left Sidebar (Navigation) - Hidden in Zen Mode */}
       {!zenMode && (
         <aside className="w-14 flex flex-col items-center justify-between py-3 border-r border-slate-200 dark:border-zinc-800 bg-[#fbfbfb] dark:bg-[#18181c] z-20 shrink-0">
@@ -709,6 +771,35 @@ if (isSearchOpen && searchQuery) {
             role="toolbar"
             aria-label="Sidebar Actions"
           >
+            {/* Sync Status Indicator Icon Rail */}
+            <div className="w-full flex flex-col items-center justify-center py-2 border-t border-slate-200/50 dark:border-zinc-800/50 gap-1.5">
+              {syncStatus === 'saving' && (
+                <div className="text-amber-500 hover:text-amber-600 transition-colors p-1" title="Syncing / Saving updates" data-testid="sync-status-saving">
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                </div>
+              )}
+              {syncStatus === 'saved' && (
+                <div className="text-emerald-500 hover:text-emerald-600 transition-colors p-1" title="All changes synced" data-testid="sync-status-saved">
+                  <Cloud className="w-4 h-4" />
+                </div>
+              )}
+              {syncStatus === 'offline' && (
+                <div className="text-slate-400 dark:text-zinc-500 hover:text-slate-500 transition-colors p-1" title="Offline mode" data-testid="sync-status-offline">
+                  <CloudOff className="w-4 h-4" />
+                </div>
+              )}
+              {syncStatus === 'conflict' && (
+                <div className="text-rose-500 hover:text-rose-600 transition-colors p-1" title="Sync Version Conflict" data-testid="sync-status-conflict">
+                  <AlertTriangle className="w-4 h-4 animate-pulse" />
+                </div>
+              )}
+              {syncStatus === 'error' && (
+                <div className="text-rose-500 hover:text-rose-600 transition-colors p-1" title="Sync Error" data-testid="sync-status-error">
+                  <AlertCircle className="w-4 h-4" />
+                </div>
+              )}
+            </div>
+
             <button
               ref={el => { utilRefs.current[0] = el; }}
               type="button"

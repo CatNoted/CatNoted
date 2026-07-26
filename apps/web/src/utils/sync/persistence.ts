@@ -15,21 +15,56 @@ const toHexString = (bytes: number[]) => {
   return '\\x' + bytes.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
+const saveQueue = (queue: QueuedUpdate[]) => {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('catnoted:offline-sync-queue', JSON.stringify(queue));
+  }
+};
+
+const loadQueue = (): QueuedUpdate[] => {
+  if (typeof window !== 'undefined') {
+    const data = localStorage.getItem('catnoted:offline-sync-queue');
+    if (data) {
+      try {
+        return JSON.parse(data);
+      } catch (e) {
+        console.error('Failed to parse offline sync queue:', e);
+      }
+    }
+  }
+  return [];
+};
+
 export function usePersistence(documentId: string = '00000000-0000-0000-0000-000000000000') {
-  const [status, setStatus] = useState<SyncStatus>('saved');
+  const [status, setStatus] = useState<SyncStatus>(() => {
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      return 'offline';
+    }
+    const saved = loadQueue();
+    return saved.length > 0 ? 'saving' : 'saved';
+  });
   const [conflictMsg, setConflictMsg] = useState<string | null>(null);
 
   const queueRef = useRef<QueuedUpdate[]>([]);
   const isOnlineRef = useRef<boolean>(typeof navigator !== 'undefined' ? navigator.onLine : true);
   const syncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const processQueue = useCallback(async () => {
-    if (!isOnlineRef.current || queueRef.current.length === 0) return;
+    if (!isOnlineRef.current || queueRef.current.length === 0) {
+      if (!isOnlineRef.current) {
+        setStatus('offline');
+      } else {
+        setStatus('saved');
+      }
+      return;
+    }
 
     setStatus('saving');
 
     const itemsToProcess = [...queueRef.current];
     queueRef.current = [];
+    saveQueue([]);
 
     if (!isSupabaseConfigured || !supabase) {
       setTimeout(() => setStatus('saved'), 500);
@@ -49,21 +84,72 @@ export function usePersistence(documentId: string = '00000000-0000-0000-0000-000
           if (error.code === '23505' || error.message.includes('conflict') || error.message.includes('duplicate')) {
              setConflictMsg('Version conflict detected with remote changes.');
              setStatus('conflict');
-             // Re-queue remaining un-synced items
-             queueRef.current = [...itemsToProcess.slice(i + 1), ...queueRef.current];
+             // Re-queue the conflicting item and any remaining un-synced items
+             queueRef.current = [...itemsToProcess.slice(i), ...queueRef.current];
+             saveQueue(queueRef.current);
              return;
           }
           // On other errors, put this item and remaining back into queue
           queueRef.current = [...itemsToProcess.slice(i), ...queueRef.current];
+          saveQueue(queueRef.current);
           throw error;
         }
       }
       setStatus('saved');
+      if (retryTimerRef.current) {
+        clearTimeout(retryTimerRef.current);
+        retryTimerRef.current = null;
+      }
     } catch (e: any) {
       console.error('Failed to sync crdt_update:', e);
       setStatus('error');
+      // Re-queue items that failed to process
+      queueRef.current = [...itemsToProcess, ...queueRef.current];
+      saveQueue(queueRef.current);
+
+      // Set up retry timer if not already set
+      if (!retryTimerRef.current) {
+        retryTimerRef.current = setTimeout(() => {
+          retryTimerRef.current = null;
+          processQueue();
+        }, 5000);
+      }
     }
   }, []);
+
+  const resolveConflict = useCallback((resolution: 'local' | 'remote') => {
+    if (resolution === 'local') {
+      // Re-assign new clientIds/timestamps to bypass unique constraints and retry
+      queueRef.current = queueRef.current.map(item => ({
+        ...item,
+        clientId: Date.now() + Math.floor(Math.random() * 1000),
+        timestamp: Date.now()
+      }));
+      saveQueue(queueRef.current);
+      setConflictMsg(null);
+      setStatus('saving');
+      processQueue();
+    } else {
+      // Discard conflicting updates from queue
+      queueRef.current = [];
+      saveQueue([]);
+      setConflictMsg(null);
+      setStatus('saved');
+    }
+  }, [processQueue]);
+
+  useEffect(() => {
+    // Initial queue loading on mount
+    queueRef.current = loadQueue();
+    if (queueRef.current.length > 0) {
+      if (isOnlineRef.current) {
+        setStatus('saving');
+        processQueue();
+      } else {
+        setStatus('offline');
+      }
+    }
+  }, [processQueue]);
 
   useEffect(() => {
     const handleOnline = () => {
@@ -74,6 +160,10 @@ export function usePersistence(documentId: string = '00000000-0000-0000-0000-000
     const handleOffline = () => {
       isOnlineRef.current = false;
       setStatus('offline');
+      if (retryTimerRef.current) {
+        clearTimeout(retryTimerRef.current);
+        retryTimerRef.current = null;
+      }
     };
 
     window.addEventListener('online', handleOnline);
@@ -84,6 +174,9 @@ export function usePersistence(documentId: string = '00000000-0000-0000-0000-000
       window.removeEventListener('offline', handleOffline);
       if (syncTimerRef.current) {
         clearTimeout(syncTimerRef.current);
+      }
+      if (retryTimerRef.current) {
+        clearTimeout(retryTimerRef.current);
       }
     };
   }, [processQueue]);
@@ -102,6 +195,7 @@ export function usePersistence(documentId: string = '00000000-0000-0000-0000-000
     };
 
     queueRef.current.push(newUpdate);
+    saveQueue(queueRef.current);
 
     if (isOnlineRef.current) {
       setStatus('saving');
@@ -121,6 +215,7 @@ export function usePersistence(documentId: string = '00000000-0000-0000-0000-000
       setConflictMsg(null);
       setStatus('saved');
     },
+    resolveConflict,
     persistUpdate
   };
 }
