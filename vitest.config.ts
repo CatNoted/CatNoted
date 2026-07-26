@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig, configDefaults } from 'vitest/config';
 import path from 'path';
 
 export default defineConfig({
@@ -7,6 +7,7 @@ export default defineConfig({
     environment: 'happy-dom',
     setupFiles: ['./vitest.setup.ts'],
     include: ['**/*.{test,spec}.{ts,tsx}'],
+    exclude: [...configDefaults.exclude, '**/tests/e2e/**', '**/e2e/**'],
     alias: {
       '@catnoted/shared': path.resolve(__dirname, './packages/shared/src/index.ts'),
       '@catnoted/graph': path.resolve(__dirname, './packages/graph/src/index.ts'),
