@@ -7,6 +7,7 @@ export { CodeBlock } from './components/CodeBlock.js';
 export { MathBlock } from './components/MathBlock.js';
 export { TableBlock } from './components/TableBlock.js';
 export { BookmarkBlock } from './components/BookmarkBlock.js';
+export { KanbanBlock } from './components/KanbanBlock.js';
 export { ImageBlock } from './components/ImageBlock.js';
 export { PageHeader, renderPageIcon } from './components/PageHeader.js';
 export { FloatingBubbleMenu } from './components/FloatingBubbleMenu.js';

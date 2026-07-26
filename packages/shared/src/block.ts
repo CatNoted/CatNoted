@@ -1,3 +1,15 @@
+export interface KanbanCard {
+  id: string;
+  title: string;
+  description?: string;
+}
+
+export interface KanbanColumn {
+  id: string;
+  title: string;
+  cards: KanbanCard[];
+}
+
 export type BlockType =
   | 'text'
   | 'heading'
@@ -15,9 +27,14 @@ export type BlockType =
   | 'math'
   | 'table'
   | 'bookmark'
-  | 'embed';
+  | 'embed'
+  | 'kanban';
 
 export interface BlockProperties {
+  // Kanban properties
+  columns?: KanbanColumn[];
+  kanbanTitle?: string;
+
   // Embed properties
   refPageId?: string;
   // Heading properties
