@@ -46,7 +46,7 @@ import {
   Cloud
 } from 'lucide-react';
 
-export type ActiveMode = "doc" | "canvas" | "graph" | "journals" | "settings";
+export type ActiveMode = "doc" | "canvas" | "graph" | "journals" | "settings" | "search" | "trash" | "collections" | "tags" | "import" | "template";
 
 const WIDGET_TEMPLATES = {
   clock: `
@@ -216,6 +216,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   onResolveConflict,
   onDismissConflict
 }) => {
+  const isModeActive = (mode: string) => window.location.pathname === (mode === 'doc' ? '/' : `/${mode}`) || activeMode === mode;
   const { blocks, addBlock, updateBlockType, pages, createPage, deletePage, deleteBlock, pageMeta, updatePageMeta } = useDocumentStore(activePage);
   const favoritePages = (pages || []).filter((p: any) => p?.isFavorite);
 
@@ -740,7 +741,7 @@ if (isSearchOpen && searchQuery) {
                 { id: 'settings', icon: Settings, label: 'Settings' }
               ].map((item, index) => {
                 const Icon = item.icon;
-                const isActive = activeMode === item.id;
+                const isActive = isModeActive(item.id);
                 return (
                   <button
                     key={item.id}
@@ -916,7 +917,7 @@ if (isSearchOpen && searchQuery) {
                   { id: 'settings' as const, icon: Settings, label: 'Settings' }
                 ].map((item) => {
                   const Icon = item.icon;
-                  const isActive = activeMode === item.id;
+                  const isActive = isModeActive(item.id);
                   return (
                     <li key={item.id}>
                       <button
