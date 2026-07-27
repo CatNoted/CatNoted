@@ -288,6 +288,9 @@ export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
       ctx.translate(panRef.current.x, panRef.current.y);
       ctx.scale(scaleRef.current, scaleRef.current);
 
+      // Evaluate dark mode once per frame instead of per-edge
+      const isDark = document.documentElement.classList.contains('dark');
+
       // Draw Edges
       edges.forEach(edge => {
         const sourceId = typeof edge.source === 'object' ? (edge.source as any).id : edge.source;
@@ -303,8 +306,6 @@ export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
           
           const hoverNode = hoverNodeRef.current;
           const isRelatedToHover = hoverNode && (start.id === hoverNode.id || end.id === hoverNode.id);
-          // Dark mode checks dynamically per frame
-          const isDark = document.documentElement.classList.contains('dark');
 
           // Style backlinks/edges
           if (isRelatedToHover) {
@@ -317,8 +318,6 @@ export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
           ctx.stroke();
         }
       });
-
-      const isDark = document.documentElement.classList.contains('dark');
 
       // Draw Nodes
       pNodes.forEach(node => {
