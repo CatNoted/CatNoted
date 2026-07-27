@@ -103,28 +103,28 @@ export const Toast: React.FC<ToastProps> = ({ item, onClose }) => {
       case 'success':
         return {
           container:
-            'bg-emerald-50 border-emerald-150 text-emerald-900 dark:bg-emerald-950/40 dark:border-emerald-900/50 dark:text-emerald-300',
+            'bg-emerald-50 border-emerald-200 text-emerald-900 dark:bg-emerald-950/40 dark:border-emerald-900/50 dark:text-emerald-300',
           iconColor: 'text-emerald-500 dark:text-emerald-400',
           Icon: CheckCircle2,
         };
       case 'warning':
         return {
           container:
-            'bg-amber-50 border-amber-150 text-amber-900 dark:bg-amber-950/40 dark:border-amber-900/50 dark:text-amber-300',
+            'bg-amber-50 border-amber-200 text-amber-900 dark:bg-amber-950/40 dark:border-amber-900/50 dark:text-amber-300',
           iconColor: 'text-amber-500 dark:text-amber-400',
           Icon: AlertTriangle,
         };
       case 'danger':
         return {
           container:
-            'bg-rose-50 border-rose-150 text-rose-900 dark:bg-rose-950/40 dark:border-rose-900/50 dark:text-rose-300',
+            'bg-rose-50 border-rose-200 text-rose-900 dark:bg-rose-950/40 dark:border-rose-900/50 dark:text-rose-300',
           iconColor: 'text-rose-500 dark:text-rose-400',
           Icon: AlertCircle,
         };
       default:
         return {
           container:
-            'bg-slate-50 border-slate-150 text-slate-900 dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-200',
+            'bg-slate-50 border-slate-150 text-slate-900 dark:bg-background dark:border-border dark:text-zinc-200',
           iconColor: 'text-slate-500',
           Icon: CheckCircle2,
         };
@@ -147,7 +147,7 @@ export const Toast: React.FC<ToastProps> = ({ item, onClose }) => {
       </div>
       <button
         onClick={onClose}
-        className="shrink-0 p-0.5 rounded-lg opacity-50 hover:opacity-100 transition-opacity hover:bg-black/5 dark:hover:bg-white/10"
+        className="shrink-0 p-0.5 rounded-lg opacity-50 hover:opacity-100 transition-opacity hover:bg-black/5 dark:hover:bg-background/10"
         aria-label="Close notification"
       >
         <X className="w-3.5 h-3.5" />

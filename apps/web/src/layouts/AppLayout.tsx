@@ -674,7 +674,7 @@ if (isSearchOpen && searchQuery) {
   };
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-slate-50 dark:bg-[#141416] text-slate-900 dark:text-zinc-100 relative">
+    <div className="flex h-screen w-screen overflow-hidden bg-slate-50 bg-background text-slate-900 dark:text-zinc-100 relative">
       {/* Minimal Conflict Resolution Dialog */}
       {syncStatus === 'conflict' && (
         <div className="fixed inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4" data-testid="conflict-resolution-modal">
@@ -685,7 +685,7 @@ if (isSearchOpen && searchQuery) {
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="text-base font-bold text-slate-900 dark:text-white">Version Divergence Detected</h3>
-                <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1.5 leading-relaxed">
+                <p className="text-xs text-muted-foreground dark:text-zinc-400 mt-1.5 leading-relaxed">
                   {conflictMsg || 'Your local edits conflict with newer revisions already saved on the server. Please resolve the conflict below.'}
                 </p>
               </div>
@@ -695,7 +695,7 @@ if (isSearchOpen && searchQuery) {
               <button
                 type="button"
                 onClick={() => onResolveConflict?.('local')}
-                className="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl text-xs font-semibold transition-all hover:shadow-lg hover:shadow-indigo-500/10 active:scale-98"
+                className="w-full py-2.5 px-4 bg-primary hover:bg-primary text-white rounded-2xl text-xs font-semibold transition-all hover:shadow-lg hover:shadow-indigo-500/10 active:scale-98"
                 data-testid="resolve-local-btn"
               >
                 Keep Local Changes (Overwrite Remote)
@@ -703,7 +703,7 @@ if (isSearchOpen && searchQuery) {
               <button
                 type="button"
                 onClick={() => onResolveConflict?.('remote')}
-                className="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-850 text-slate-700 dark:text-zinc-300 rounded-2xl text-xs font-semibold transition-all active:scale-98"
+                className="w-full py-2.5 px-4 bg-accent-soft hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-accent-soft text-slate-700 dark:text-zinc-300 rounded-2xl text-xs font-semibold transition-all active:scale-98"
                 data-testid="resolve-remote-btn"
               >
                 Discard Local Changes (Accept Remote)
@@ -756,8 +756,8 @@ if (isSearchOpen && searchQuery) {
                       aria-expanded={isActive}
                     className={`w-full py-2.5 rounded-lg flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accent ${
                       isActive 
-                        ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold'
-                        : 'text-slate-400 dark:text-zinc-500 hover:text-slate-900 dark:hover:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5'
+                        ? 'bg-accent-soft dark:bg-indigo-950/40 text-accent dark:text-indigo-400 font-semibold'
+                        : 'text-slate-400 dark:text-zinc-500 hover:text-accent dark:hover:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5'
                     }`}
                   >
                     <Icon className="w-4 h-4" />
@@ -785,7 +785,7 @@ if (isSearchOpen && searchQuery) {
                 </div>
               )}
               {syncStatus === 'offline' && (
-                <div className="text-slate-400 dark:text-zinc-500 hover:text-slate-500 transition-colors p-1" title="Offline mode" data-testid="sync-status-offline">
+                <div className="text-slate-400 dark:text-zinc-500 hover:text-muted-foreground transition-colors p-1" title="Offline mode" data-testid="sync-status-offline">
                   <CloudOff className="w-4 h-4" />
                 </div>
               )}
@@ -925,8 +925,8 @@ if (isSearchOpen && searchQuery) {
                         onClick={() => onModeChange(item.id)}
                         className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center gap-2 transition-colors ${
                           isActive
-                            ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold'
-                            : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/40 hover:text-slate-900 dark:hover:text-zinc-200'
+                            ? 'bg-accent-soft dark:bg-indigo-950/40 text-accent dark:text-indigo-400 font-semibold'
+                            : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-accent-soft/40 hover:text-accent dark:hover:text-zinc-200'
                         }`}
                       >
                         <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-accent' : 'text-ink-muted'}`} />
@@ -959,8 +959,8 @@ if (isSearchOpen && searchQuery) {
                         }}
                         className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between transition-colors ${
                           isActive
-                            ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold'
-                            : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/40 hover:text-slate-900 dark:hover:text-zinc-200'
+                            ? 'bg-accent-soft dark:bg-indigo-950/40 text-accent dark:text-indigo-400 font-semibold'
+                            : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-accent-soft/40 hover:text-accent dark:hover:text-zinc-200'
                         }`}
                       >
                         <div className="flex items-center min-w-0 flex-1 gap-x-2.5" title={doc.title}>
@@ -1074,8 +1074,8 @@ if (isSearchOpen && searchQuery) {
                                 }}
                                 className={`flex-1 text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
                                   isActive
-                                    ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold'
-                                    : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
+                                    ? 'bg-accent-soft dark:bg-indigo-950/40 text-accent dark:text-indigo-400 font-semibold'
+                                    : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-accent-soft/30 hover:text-accent dark:hover:text-zinc-200'
                                 }`}
                               >
                                 {renderPageIcon(node.icon, "w-3.5 h-3.5 shrink-0 flex items-center justify-center")}
@@ -1134,8 +1134,8 @@ if (isSearchOpen && searchQuery) {
                                 }}
                                 className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
                                   isActive
-                                    ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold'
-                                    : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/30 hover:text-slate-900 dark:hover:text-zinc-200'
+                                    ? 'bg-accent-soft dark:bg-indigo-950/40 text-accent dark:text-indigo-400 font-semibold'
+                                    : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-accent-soft/30 hover:text-accent dark:hover:text-zinc-200'
                                 }`}
                               >
                                 <FileText className="w-3.5 h-3.5 text-ink-muted shrink-0" />
@@ -1212,7 +1212,7 @@ if (isSearchOpen && searchQuery) {
       )}
 
       {/* Pane 2: Middle Panel (Main Workspace) — now takes full remaining width */}
-      <main className="flex-1 flex flex-col h-full overflow-hidden bg-surface-soft dark:bg-[#141416] relative">
+      <main className="flex-1 flex flex-col h-full overflow-hidden bg-surface-soft bg-background relative">
         {!zenMode && isSidebarCollapsed && (
           <button
             type="button"
@@ -1237,7 +1237,7 @@ if (isSearchOpen && searchQuery) {
           {/* Right Sidebar Panel */}
           <aside
             style={{ width: isRightSidebarOpen ? 320 : 0 }}
-            className={`border-l border-soft dark:border-soft bg-white dark:bg-[#16161a] flex flex-col h-full text-sm overflow-hidden transition-[width,opacity] duration-200 ease-in-out ${
+            className={`border-l border-soft dark:border-soft bg-white bg-card flex flex-col h-full text-sm overflow-hidden transition-[width,opacity] duration-200 ease-in-out ${
               isRightSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
             } md:relative absolute right-12 top-0 bottom-0 shadow-lg md:shadow-none z-30`}
           >
@@ -1591,8 +1591,8 @@ if (isSearchOpen && searchQuery) {
                       aria-expanded={isActive}
                       className={`w-full py-2.5 rounded-lg flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accent ${
                         isActive
-                          ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold'
-                          : 'text-slate-400 dark:text-zinc-500 hover:text-slate-900 dark:hover:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5'
+                          ? 'bg-accent-soft dark:bg-indigo-950/40 text-accent dark:text-indigo-400 font-semibold'
+                          : 'text-slate-400 dark:text-zinc-500 hover:text-accent dark:hover:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5'
                       }`}
                     >
                       <Icon className="w-4 h-4" />
