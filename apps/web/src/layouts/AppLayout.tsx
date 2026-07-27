@@ -26,13 +26,12 @@ import {
   ChevronDown,
   ChevronRight,
   ChevronLeft,
+  Menu,
   Folder,
   FolderOpen,
-  Clock,
   Tag,
   Cpu,
   Trash2,
-  Menu,
   Copy,
   Info,
   List,
@@ -43,9 +42,9 @@ import {
   CloudOff,
   AlertTriangle,
   AlertCircle,
-  Cloud
+  Cloud,
+  ChevronLeft as WorkspaceCollapseIcon
 } from 'lucide-react';
-
 export type ActiveMode = "doc" | "canvas" | "graph" | "journals" | "settings" | "search" | "trash" | "collections" | "tags" | "import" | "template";
 
 const WIDGET_TEMPLATES = {
@@ -296,6 +295,18 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
   const [sidebarWidth, setSidebarWidth] = useState<number>(256);
   const [isSidebarResizing, setIsSidebarResizing] = useState(false);
+
+  // Left icon rail state (AFFiNE-style)
+  const [isLeftRailCollapsed, setIsLeftRailCollapsed] = useState<boolean>(false);
+  useEffect(() => {
+    const savedLeftCollapse = localStorage.getItem('catnoted:left-rail-collapsed');
+    if (savedLeftCollapse !== null) {
+      setIsLeftRailCollapsed(savedLeftCollapse === 'true');
+    }
+  }, []);
+  useEffect(() => {
+    localStorage.setItem('catnoted:left-rail-collapsed', String(isLeftRailCollapsed));
+  }, [isLeftRailCollapsed]);
 
   useEffect(() => {
     const savedCollapsed = localStorage.getItem('catnoted:sidebar-collapsed');
@@ -724,7 +735,7 @@ if (isSearchOpen && searchQuery) {
         </div>
       )}
 
-      {/* Pane 1: Left Sidebar (Navigation) - Hidden in Zen Mode */}
+      {/* Pane 1: Left Sidebar Rail (Navigation) - Hidden in Zen Mode */}
       {!zenMode && (
         <aside className="w-14 flex flex-col items-center justify-between py-3 border-r border-soft dark:border-soft bg-surface z-20 shrink-0">
           <div className="flex flex-col items-center gap-4 w-full">
@@ -828,12 +839,22 @@ if (isSearchOpen && searchQuery) {
             >
               US
             </button>
+
+            <button
+              type="button"
+              onClick={() => setIsLeftRailCollapsed(!isLeftRailCollapsed)}
+              className="w-full py-2.5 text-ink-muted hover:text-ink dark:hover:text-ink transition-colors"
+              aria-expanded={!isLeftRailCollapsed}
+              title={isLeftRailCollapsed ? 'Show left rail' : 'Hide left rail'}
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
           </div>
         </aside>
       )}
 
       {/* Pane 1.5: Workspace Sidebar (Recent & Collapsible Page Tree) - Hidden in Zen Mode */}
-      {!zenMode && (
+      {!zenMode && !isLeftRailCollapsed && (
         <aside
           style={{ width: isSidebarCollapsed ? 56 : sidebarWidth }}
           className={`border-r border-soft dark:border-soft bg-surface dark:bg-surface z-20 shrink-0 flex flex-col h-full text-sm overflow-hidden ${
@@ -895,7 +916,7 @@ if (isSearchOpen && searchQuery) {
                   aria-label="Collapse Workspace Sidebar"
                   aria-expanded={true}
                 >
-                  <ChevronLeft className="w-4 h-4" />
+                  <WorkspaceCollapseIcon className="w-4 h-4" />
                 </button>
               </>
             )}
@@ -905,8 +926,8 @@ if (isSearchOpen && searchQuery) {
             <div className="p-3 space-y-6">
             {/* Workspace Views Navigation Indicator Section */}
             <div>
-              <div className="flex items-center gap-1.5 px-2 mb-2 text-[10px] font-bold text-ink-muted uppercase tracking-wider">
-                <span>Workspace Views</span>
+              <div className="flex items-center justify-between gap-2 px-2 mb-2 text-[10px] font-bold text-ink-muted uppercase tracking-wider">
+                <span>Workspace</span>
               </div>
               <ul className="space-y-1">
                 {[
@@ -943,9 +964,8 @@ if (isSearchOpen && searchQuery) {
 
             {/* Recent Documents Section */}
             <div>
-              <div className="flex items-center gap-1.5 px-2 mb-2 text-[10px] font-bold text-ink-muted uppercase tracking-wider">
-                <Clock className="w-3.5 h-3.5" />
-                <span>Recent Documents</span>
+              <div className="flex items-center justify-between gap-2 px-2 mb-2 text-[10px] font-bold text-ink-muted uppercase tracking-wider">
+                <span>Recent</span>
               </div>
               <ul className="space-y-1">
                 {recentDocs.map(doc => {

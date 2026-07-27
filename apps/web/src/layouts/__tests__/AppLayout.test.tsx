@@ -39,7 +39,7 @@ describe('AppLayout Sidebar Integration Tests', () => {
 
     // Verify Sidebar Headers and Layout Sections are rendered
     expect(container.innerHTML).toContain('Workspace');
-    expect(container.innerHTML).toContain('Recent Documents');
+    expect(container.innerHTML).toContain('Recent');
     expect(container.innerHTML).toContain('Page Tree');
     expect(container.innerHTML).toContain('Pages');
     expect(container.innerHTML).toContain('Tags');
