@@ -217,6 +217,10 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
               setSelectedIndex(0);
             }}
             placeholder="Type a command..."
+            aria-label="Search commands"
+            aria-autocomplete="list"
+            aria-controls={`${paletteId}-list`}
+            aria-expanded={isOpen}
             className="w-full bg-transparent text-[14px] text-ink outline-none placeholder:text-ink-muted dark:text-ink"
           />
           <kbd className="hidden rounded bg-surface-soft dark:bg-surface-hover px-1.5 py-0.5 font-sans text-[10px] border border-soft/60 dark:border-soft text-ink-muted sm:block">
