@@ -21,7 +21,16 @@ import { useToast } from './components/primitives/Toast.js';
 
 const App: React.FC = () => {
   const { toast } = useToast();
-  const [activeMode, setActiveMode] = useState<ActiveMode>('doc');
+  const resolveRouteToMode = (): ActiveMode => {
+    const path = window.location.pathname;
+    if (path === '/') return 'doc';
+    const mode = path.slice(1) as ActiveMode;
+    // Handle valid modes or fallback
+    const validModes: ActiveMode[] = ['doc', 'canvas', 'graph', 'journals', 'settings', 'search', 'trash', 'collections', 'tags', 'import', 'template'];
+    return validModes.includes(mode) ? mode : 'doc';
+  };
+
+  const [activeMode, setActiveMode] = useState<ActiveMode>(resolveRouteToMode);
   const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
   const [isZenMode, setIsZenMode] = useState<boolean>(false);
   const [activePage, setActivePage] = useState<string>('root-doc-node');
@@ -52,6 +61,32 @@ const App: React.FC = () => {
       setEditTitleValue(pageTitle);
     }
   }, [pageTitle, isEditingTitle]);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const mode = resolveRouteToMode();
+
+      if (mode === 'settings') {
+        setIsSettingsOpen(true);
+        setIsPaletteOpen(false);
+        setActiveMode('doc'); // temporary set to doc
+      } else if (mode === 'search') {
+        setIsPaletteOpen(true);
+        setIsSettingsOpen(false);
+        setActiveMode('doc');
+      } else {
+        setIsSettingsOpen(false);
+        setIsPaletteOpen(false);
+        setActiveMode(mode);
+      }
+    };
+
+    // Check initial route
+    handlePopState();
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   const handleRenamePage = (oldTitle: string, newTitle: string) => {
     if (activePage === 'root-doc-node') return;
@@ -187,11 +222,11 @@ const App: React.FC = () => {
   }, [passphrase]);
 
   const handleModeChange = (mode: ActiveMode) => {
-    if (mode === 'settings') {
-      setIsSettingsOpen(true);
-      return;
+    const newPath = mode === 'doc' ? '/' : `/${mode}`;
+    if (window.location.pathname !== newPath) {
+      window.history.pushState(null, '', newPath);
+      window.dispatchEvent(new PopStateEvent('popstate'));
     }
-    setActiveMode(mode);
   };
 
   const { pageMeta, updatePageMeta, deletePage } = useDocumentStore(activePage);
@@ -295,7 +330,7 @@ const App: React.FC = () => {
           { id: 'canvas', label: 'Canvas', icon: LayoutGrid },
         ].map((modeItem) => {
           const IconComponent = modeItem.icon;
-          const isSelected = activeMode === modeItem.id;
+          const isSelected = window.location.pathname === (modeItem.id === 'doc' ? '/' : `/${modeItem.id}`) || activeMode === modeItem.id;
           return (
             <button
               key={modeItem.id}
@@ -553,14 +588,14 @@ const App: React.FC = () => {
 
       <div data-root-modals="root">
         <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} onAuthSuccess={setUserEmail} userEmail={userEmail} />
-        <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} passphrase={passphrase} onPassphraseChange={setPassphrase} />
+        <SettingsModal isOpen={isSettingsOpen} onClose={() => { setIsSettingsOpen(false); if (window.location.pathname === '/settings') { window.history.pushState(null, '', '/'); window.dispatchEvent(new PopStateEvent('popstate')); } }} passphrase={passphrase} onPassphraseChange={setPassphrase} />
         <CommandPalette
           isOpen={isPaletteOpen}
-          onClose={() => setIsPaletteOpen(false)}
+          onClose={() => { setIsPaletteOpen(false); if (window.location.pathname === '/search') { window.history.pushState(null, '', '/'); window.dispatchEvent(new PopStateEvent('popstate')); } }}
           onModeSelect={handleModeChange}
           onToggleTheme={() => setIsDarkMode(!isDarkMode)}
           onToggleZen={() => setIsZenMode((prev) => !prev)}
-          onOpenSettings={() => setIsSettingsOpen(true)}
+          onOpenSettings={() => { window.history.pushState(null, '', '/settings'); window.dispatchEvent(new PopStateEvent('popstate')); }}
           isDarkMode={isDarkMode}
         />
       </div>

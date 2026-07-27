@@ -35,6 +35,9 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'doc' }) => {
   const { pages, deletePage } = useDocumentStore();
+  const isModeActive = (mode: string) => window.location.pathname === (mode === 'doc' ? '/' : `/${mode}`) || activeMode === mode;
+
+
 
   const favoritePages = useMemo(
     () => (pages || []).filter((p: any) => p?.isFavorite),
@@ -102,41 +105,41 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         <button
           type="button"
           onClick={() => onModeChange('doc')}
-          className={`${itemClassName} ${activeMode === 'doc' ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
+          className={`${itemClassName} ${isModeActive('doc') ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
         >
-          <FileText className={`${getItemIconClass(activeMode === 'doc')} w-4 h-4`} />
+          <FileText className={`${getItemIconClass(isModeActive('doc'))} w-4 h-4`} />
           <span className="truncate">Doc Mode</span>
         </button>
         <button
           type="button"
           onClick={() => onModeChange('canvas')}
-          className={`${itemClassName} ${activeMode === 'canvas' ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
+          className={`${itemClassName} ${isModeActive('canvas') ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
         >
-          <LayoutGrid className={`${getItemIconClass(activeMode === 'canvas')} w-4 h-4`} />
+          <LayoutGrid className={`${getItemIconClass(isModeActive('canvas'))} w-4 h-4`} />
           <span className="truncate">Canvas</span>
         </button>
         <button
           type="button"
           onClick={() => onModeChange('graph')}
-          className={`${itemClassName} ${activeMode === 'graph' ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
+          className={`${itemClassName} ${isModeActive('graph') ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
         >
-          <Network className={`${getItemIconClass(activeMode === 'graph')} w-4 h-4`} />
+          <Network className={`${getItemIconClass(isModeActive('graph'))} w-4 h-4`} />
           <span className="truncate">Graph</span>
         </button>
         <button
           type="button"
           onClick={() => onModeChange('journals')}
-          className={`${itemClassName} ${activeMode === 'journals' ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
+          className={`${itemClassName} ${isModeActive('journals') ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
         >
-          <Calendar className={`${getItemIconClass(activeMode === 'journals')} w-4 h-4`} />
+          <Calendar className={`${getItemIconClass(isModeActive('journals'))} w-4 h-4`} />
           <span className="truncate">Journals</span>
         </button>
         <button
           type="button"
           onClick={() => onModeChange('settings')}
-          className={`${itemClassName} ${activeMode === 'settings' ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
+          className={`${itemClassName} ${isModeActive('settings') ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
         >
-          <Settings className={`${getItemIconClass(activeMode === 'settings')} w-4 h-4`} />
+          <Settings className={`${getItemIconClass(isModeActive('settings'))} w-4 h-4`} />
           <span className="truncate">Settings</span>
         </button>
       </div>
