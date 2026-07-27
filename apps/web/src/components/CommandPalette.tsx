@@ -204,10 +204,10 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         role="dialog"
         aria-modal="true"
         aria-label="Commands"
-        className="flex w-full max-w-[440px] flex-col overflow-hidden rounded-xl border border-soft bg-surface shadow-2xl dark:border-soft/80 dark:bg-surface"
+        className="flex w-full max-w-[440px] flex-col overflow-hidden rounded-xl border border-border bg-card shadow-2xl dark:border-border/80 dark:bg-card"
       >
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-muted/50 dark:border-soft/40">
-          <Search className="h-4 w-4 shrink-0 text-ink-muted" />
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-muted/50 dark:border-border/40">
+          <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
           <input
             ref={inputRef}
             type="text"
@@ -217,9 +217,9 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
               setSelectedIndex(0);
             }}
             placeholder="Type a command..."
-            className="w-full bg-transparent text-[14px] text-ink outline-none placeholder:text-ink-muted dark:text-ink"
+            className="w-full bg-transparent text-[14px] text-foreground outline-none placeholder:text-muted-foreground dark:text-foreground"
           />
-          <kbd className="hidden rounded bg-surface-soft dark:bg-surface-hover px-1.5 py-0.5 font-sans text-[10px] border border-soft/60 dark:border-soft text-ink-muted sm:block">
+          <kbd className="hidden rounded bg-muted dark:bg-muted px-1.5 py-0.5 font-sans text-[10px] border border-border/60 dark:border-border text-muted-foreground sm:block">
             ESC
           </kbd>
         </div>
@@ -237,13 +237,13 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
           className="flex max-h-[min(320px,60vh)] flex-1 flex-col overflow-y-auto px-2 py-2"
         >
           {visibleGroups.length === 0 && (
-            <div className="px-3 py-10 text-center text-[13px] text-ink-muted">
+            <div className="px-3 py-10 text-center text-[13px] text-muted-foreground">
               No matching command
             </div>
           )}
           {visibleGroups.map((group) => (
             <div key={group.key} className="mb-1 last:mb-0">
-              <div className="px-3 py-1.5 text-[10px] font-semibold text-ink-muted uppercase tracking-wider">
+              <div className="px-3 py-1.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
                 {group.key}
               </div>
               {group.items.map((cmd) => {
@@ -266,16 +266,16 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                       'group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left',
                       'transition-all duration-75',
                       isSelected
-                        ? 'bg-surface-hover text-ink'
-                        : 'text-ink-secondary hover:bg-surface-soft/80 dark:text-ink-secondary dark:hover:bg-surface-hover/50'
+                        ? 'bg-muted text-foreground'
+                        : 'text-muted-foreground hover:bg-muted/80 dark:text-muted-foreground dark:hover:bg-muted/50'
                     ].join(' ')}
                   >
                     <Icon
                       className={[
                         'h-4 w-4 shrink-0 transition-colors',
                         isSelected
-                          ? 'text-ink dark:text-ink'
-                          : 'text-ink-muted'
+                          ? 'text-foreground dark:text-foreground'
+                          : 'text-muted-foreground'
                       ].join(' ')}
                     />
                     <span className="min-w-0 truncate text-[13px] font-medium">
@@ -285,8 +285,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                       className={[
                         'ml-auto text-[11px] font-normal transition-colors',
                         isSelected
-                          ? 'text-ink-secondary dark:text-ink-secondary'
-                          : 'text-ink-muted/80/80'
+                          ? 'text-muted-foreground dark:text-muted-foreground'
+                          : 'text-muted-foreground/80/80'
                       ].join(' ')}
                     >
                       {cmd.subtitle}
@@ -298,14 +298,14 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
           ))}
         </div>
 
-        <div className="flex items-center justify-between border-t border-muted/80 dark:border-soft/60 px-4 py-2 text-[10px] text-ink-muted/80">
+        <div className="flex items-center justify-between border-t border-muted/80 dark:border-border/60 px-4 py-2 text-[10px] text-muted-foreground/80">
           <div className="flex items-center gap-1.5">
-            <kbd className="rounded bg-surface-soft dark:bg-surface-hover/50 px-1 py-0.5 font-sans text-[10px] font-medium border border-soft/60 dark:border-soft text-ink-secondary dark:text-ink-secondary shadow-sm">↑</kbd>
-            <kbd className="rounded bg-surface-soft dark:bg-surface-hover/50 px-1 py-0.5 font-sans text-[10px] font-medium border border-soft/60 dark:border-soft text-ink-secondary dark:text-ink-secondary shadow-sm">↓</kbd>
+            <kbd className="rounded bg-muted dark:bg-muted/50 px-1 py-0.5 font-sans text-[10px] font-medium border border-border/60 dark:border-border text-muted-foreground dark:text-muted-foreground shadow-sm">↑</kbd>
+            <kbd className="rounded bg-muted dark:bg-muted/50 px-1 py-0.5 font-sans text-[10px] font-medium border border-border/60 dark:border-border text-muted-foreground dark:text-muted-foreground shadow-sm">↓</kbd>
             <span>Navigate</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <kbd className="rounded bg-surface-soft dark:bg-surface-hover/50 px-1 py-0.5 font-sans text-[10px] font-medium border border-soft/60 dark:border-soft text-ink-secondary dark:text-ink-secondary shadow-sm">Enter</kbd>
+            <kbd className="rounded bg-muted dark:bg-muted/50 px-1 py-0.5 font-sans text-[10px] font-medium border border-border/60 dark:border-border text-muted-foreground dark:text-muted-foreground shadow-sm">Enter</kbd>
             <span>Confirm</span>
           </div>
         </div>

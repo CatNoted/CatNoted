@@ -695,7 +695,7 @@ if (isSearchOpen && searchQuery) {
               <button
                 type="button"
                 onClick={() => onResolveConflict?.('local')}
-                className="w-full py-2.5 px-4 bg-primary hover:bg-primary text-white rounded-2xl text-xs font-semibold transition-all hover:shadow-lg hover:shadow-indigo-500/10 active:scale-98"
+                className="w-full py-2.5 px-4 bg-primary hover:bg-primary text-white rounded-2xl text-xs font-semibold transition-all hover:shadow-lg hover:shadow-accent/10 active:scale-98"
                 data-testid="resolve-local-btn"
               >
                 Keep Local Changes (Overwrite Remote)
@@ -726,7 +726,7 @@ if (isSearchOpen && searchQuery) {
 
       {/* Pane 1: Left Sidebar (Navigation) - Hidden in Zen Mode */}
       {!zenMode && (
-        <aside className="w-14 flex flex-col items-center justify-between py-3 border-r border-soft dark:border-soft bg-surface z-20 shrink-0">
+        <aside className="w-14 flex flex-col items-center justify-between py-3 border-r border-border dark:border-border bg-sidebar z-20 shrink-0">
           <div className="flex flex-col items-center gap-4 w-full">
             <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center text-white font-bold text-xs shadow-sm dark:shadow-none">
               CN
@@ -756,7 +756,7 @@ if (isSearchOpen && searchQuery) {
                       aria-expanded={isActive}
                     className={`w-full py-2.5 rounded-lg flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accent ${
                       isActive 
-                        ? 'bg-accent-soft dark:bg-indigo-950/40 text-accent dark:text-indigo-400 font-semibold'
+                        ? 'bg-accent-soft dark:bg-accent-soft/40 text-accent dark:text-accent font-semibold'
                         : 'text-slate-400 dark:text-zinc-500 hover:text-accent dark:hover:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5'
                     }`}
                   >
@@ -810,7 +810,7 @@ if (isSearchOpen && searchQuery) {
               onKeyDown={(e) => handleUtilKeyDown(e, 0)}
               onFocus={() => setFocusedUtilIndex(0)}
               tabIndex={focusedUtilIndex === 0 ? 0 : -1}
-              className="w-full py-2.5 rounded-lg flex items-center justify-center text-ink-muted hover:text-warning hover:bg-warning-soft transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 dark:focus-visible:ring-amber-400"
+              className="w-full py-2.5 rounded-lg flex items-center justify-center text-muted-foreground hover:text-warning hover:bg-warning-soft transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 dark:focus-visible:ring-amber-400"
               title={isDarkMode ? 'Light Mode' : 'Dark Mode'}
               aria-label={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             >
@@ -823,7 +823,7 @@ if (isSearchOpen && searchQuery) {
               onKeyDown={(e) => handleUtilKeyDown(e, 1)}
               onFocus={() => setFocusedUtilIndex(1)}
               tabIndex={focusedUtilIndex === 1 ? 0 : -1}
-              className="w-7 h-7 rounded-full bg-surface-hover flex items-center justify-center text-ink text-[10px] font-semibold hover:bg-surface transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accent"
+              className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-foreground text-[10px] font-semibold hover:bg-sidebar transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accent"
               aria-label="User Profile"
             >
               US
@@ -836,16 +836,16 @@ if (isSearchOpen && searchQuery) {
       {!zenMode && (
         <aside
           style={{ width: isSidebarCollapsed ? 56 : sidebarWidth }}
-          className={`border-r border-soft dark:border-soft bg-surface dark:bg-surface z-20 shrink-0 flex flex-col h-full text-sm overflow-hidden ${
+          className={`border-r border-border dark:border-border bg-sidebar dark:bg-sidebar z-20 shrink-0 flex flex-col h-full text-sm overflow-hidden ${
             isSidebarResizing ? '' : 'transition-[width,opacity] duration-300 ease-in-out'
           }`}
         >
-          <div className="h-14 px-3 border-b border-soft dark:border-soft flex items-center justify-between gap-2 shrink-0">
+          <div className="h-14 px-3 border-b border-border dark:border-border flex items-center justify-between gap-2 shrink-0">
             {isSidebarCollapsed ? (
               <button
                 type="button"
                 onClick={() => setIsSidebarCollapsed(false)}
-                className="mx-auto flex items-center justify-center w-8 h-8 rounded-lg text-ink hover:bg-surface-hover transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                className="mx-auto flex items-center justify-center w-8 h-8 rounded-lg text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                 title="Expand Sidebar"
                 aria-label="Expand Workspace Sidebar"
                 aria-expanded={false}
@@ -859,14 +859,14 @@ if (isSearchOpen && searchQuery) {
                     type="button"
                     onClick={() => setIsWorkspaceDropdownOpen(!isWorkspaceDropdownOpen)}
                     title={activeWorkspace}
-                    className="font-semibold text-xs text-ink hover:text-ink flex items-center justify-between w-full gap-1.5 py-1 px-2 rounded-lg hover:bg-surface-hover transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                    className="font-semibold text-xs text-foreground hover:text-foreground flex items-center justify-between w-full gap-1.5 py-1 px-2 rounded-lg hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                   >
                     <span className="truncate min-w-0" title={activeWorkspace}>{activeWorkspace}</span>
                     <ChevronDown className="w-3.5 h-3.5 shrink-0" />
                   </button>
 
                   {isWorkspaceDropdownOpen && (
-                    <div className="absolute left-0 mt-1.5 w-48 bg-surface dark:bg-surface border border-soft rounded-xl shadow-lg z-50 py-1 text-xs">
+                    <div className="absolute left-0 mt-1.5 w-48 bg-sidebar dark:bg-sidebar border border-border rounded-xl shadow-lg z-50 py-1 text-xs">
                       {workspaces.map(ws => (
                         <button
                           key={ws}
@@ -875,8 +875,8 @@ if (isSearchOpen && searchQuery) {
                             setActiveWorkspace(ws);
                             setIsWorkspaceDropdownOpen(false);
                           }}
-                          className={`w-full px-3 py-2 text-left hover:bg-surface-soft text-ink flex items-center justify-between ${
-                            activeWorkspace === ws ? 'font-semibold text-ink' : ''
+                          className={`w-full px-3 py-2 text-left hover:bg-muted text-foreground flex items-center justify-between ${
+                            activeWorkspace === ws ? 'font-semibold text-foreground' : ''
                           }`}
                         >
                           <span>{ws}</span>
@@ -890,7 +890,7 @@ if (isSearchOpen && searchQuery) {
                 <button
                   type="button"
                   onClick={() => setIsSidebarCollapsed(true)}
-                  className="p-1 rounded-lg text-ink-muted hover:text-ink dark:hover:text-ink-muted hover:bg-surface-hover transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+                  className="p-1 rounded-lg text-muted-foreground hover:text-foreground dark:hover:text-muted-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent"
                   title="Collapse Sidebar"
                   aria-label="Collapse Workspace Sidebar"
                   aria-expanded={true}
@@ -905,7 +905,7 @@ if (isSearchOpen && searchQuery) {
             <div className="p-3 space-y-6">
             {/* Workspace Views Navigation Indicator Section */}
             <div>
-              <div className="flex items-center gap-1.5 px-2 mb-2 text-[10px] font-bold text-ink-muted uppercase tracking-wider">
+              <div className="flex items-center gap-1.5 px-2 mb-2 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                 <span>Workspace Views</span>
               </div>
               <ul className="space-y-1">
@@ -925,11 +925,11 @@ if (isSearchOpen && searchQuery) {
                         onClick={() => onModeChange(item.id)}
                         className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center gap-2 transition-colors ${
                           isActive
-                            ? 'bg-accent-soft dark:bg-indigo-950/40 text-accent dark:text-indigo-400 font-semibold'
+                            ? 'bg-accent-soft dark:bg-accent-soft/40 text-accent dark:text-accent font-semibold'
                             : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-accent-soft/40 hover:text-accent dark:hover:text-zinc-200'
                         }`}
                       >
-                        <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-accent' : 'text-ink-muted'}`} />
+                        <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-accent' : 'text-muted-foreground'}`} />
                         <span className="truncate">{item.label}</span>
                         {isActive && (
                           <span className="ml-auto w-1.5 h-1.5 rounded-full bg-accent dark:bg-accent" />
@@ -943,7 +943,7 @@ if (isSearchOpen && searchQuery) {
 
             {/* Recent Documents Section */}
             <div>
-              <div className="flex items-center gap-1.5 px-2 mb-2 text-[10px] font-bold text-ink-muted uppercase tracking-wider">
+              <div className="flex items-center gap-1.5 px-2 mb-2 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                 <Clock className="w-3.5 h-3.5" />
                 <span>Recent Documents</span>
               </div>
@@ -959,7 +959,7 @@ if (isSearchOpen && searchQuery) {
                         }}
                         className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between transition-colors ${
                           isActive
-                            ? 'bg-accent-soft dark:bg-indigo-950/40 text-accent dark:text-indigo-400 font-semibold'
+                            ? 'bg-accent-soft dark:bg-accent-soft/40 text-accent dark:text-accent font-semibold'
                             : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-accent-soft/40 hover:text-accent dark:hover:text-zinc-200'
                         }`}
                       >
@@ -978,7 +978,7 @@ if (isSearchOpen && searchQuery) {
             {/* Collapsible Page Tree Section */}
             <div>
               <div className="px-2 mb-2 flex items-center justify-between">
-                <div className="text-[10px] font-bold text-ink-muted uppercase tracking-wider">
+                <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                   <span>Page Tree</span>
                 </div>
                 <button onClick={() => {
@@ -995,7 +995,7 @@ if (isSearchOpen && searchQuery) {
                   type="button"
                   id="tour-new-page"
                   onClick={onCreatePage}
-                  className="w-full flex items-center justify-center gap-1.5 py-2 px-3 mb-3 bg-surface-soft dark:bg-surface-hover text-ink font-medium hover:bg-surface-hover rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                  className="w-full flex items-center justify-center gap-1.5 py-2 px-3 mb-3 bg-muted dark:bg-muted text-foreground font-medium hover:bg-muted rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                 >
                   <span>+ New Page</span>
                 </button>
@@ -1007,10 +1007,10 @@ if (isSearchOpen && searchQuery) {
                   <div>
                     <button
                       onClick={() => toggleSection('favorites')}
-                      className="w-full flex items-center justify-between px-2 py-1.5 hover:bg-surface-hover/60 dark:hover:bg-surface-hover/30 rounded-lg text-xs font-semibold text-ink-secondary"
+                      className="w-full flex items-center justify-between px-2 py-1.5 hover:bg-muted/60 dark:hover:bg-muted/30 rounded-lg text-xs font-semibold text-muted-foreground"
                     >
                       <span className="flex items-center gap-1.5">
-                        {sectionsExpanded.favorites ? <ChevronDown className="w-3.5 h-3.5 text-ink-muted" /> : <ChevronRight className="w-3.5 h-3.5 text-ink-muted" />}
+                        {sectionsExpanded.favorites ? <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" /> : <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />}
                         <span className="text-xs">⭐</span>
                         <span>Favorites</span>
                       </span>
@@ -1031,7 +1031,7 @@ if (isSearchOpen && searchQuery) {
                                 className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
                                   isActive
                                     ? 'bg-warning-soft dark:bg-warning-soft/30 text-warning-foreground font-medium'
-                                    : 'text-ink hover:bg-surface-soft dark:hover:bg-surface-hover/30 hover:text-ink dark:hover:text-ink'
+                                    : 'text-foreground hover:bg-muted dark:hover:bg-muted/30 hover:text-foreground dark:hover:text-foreground'
                                 }`}
                               >
                                 {renderPageIcon(node.icon, "w-3.5 h-3.5 shrink-0 flex items-center justify-center")}
@@ -1050,17 +1050,17 @@ if (isSearchOpen && searchQuery) {
                   <button
                     onClick={() => toggleSection('pages')}
                     id="tour-command-palette"
-            className="w-full flex items-center justify-between px-2 py-1.5 hover:bg-surface-hover/60 dark:hover:bg-surface-hover/30 rounded-lg text-xs font-semibold text-ink-secondary"
+            className="w-full flex items-center justify-between px-2 py-1.5 hover:bg-muted/60 dark:hover:bg-muted/30 rounded-lg text-xs font-semibold text-muted-foreground"
                   >
                     <span className="flex items-center gap-1.5">
-                      {sectionsExpanded.pages ? <ChevronDown className="w-3.5 h-3.5 text-ink-muted" /> : <ChevronRight className="w-3.5 h-3.5 text-ink-muted" />}
+                      {sectionsExpanded.pages ? <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" /> : <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />}
                       {sectionsExpanded.pages ? <FolderOpen className="w-3.5 h-3.5 text-accent" /> : <Folder className="w-3.5 h-3.5 text-accent" />}
                       <span>Pages</span>
                     </span>
-                    <span className="text-[9px] bg-surface-hover px-1.5 py-0.5 rounded-full">{Object.keys(pages || {}).length}</span>
+                    <span className="text-[9px] bg-muted px-1.5 py-0.5 rounded-full">{Object.keys(pages || {}).length}</span>
                   </button>
                   {sectionsExpanded.pages && (
-                    <ul className="pl-4 mt-1 space-y-0.5 border-l border-soft dark:border-soft ml-3.5">
+                    <ul className="pl-4 mt-1 space-y-0.5 border-l border-border dark:border-border ml-3.5">
                       {Object.values(pages || {}).map((node: any) => {
                         const isActive = activePage === node.id;
                         const displayLabel = node.title || 'Untitled';
@@ -1074,7 +1074,7 @@ if (isSearchOpen && searchQuery) {
                                 }}
                                 className={`flex-1 text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
                                   isActive
-                                    ? 'bg-accent-soft dark:bg-indigo-950/40 text-accent dark:text-indigo-400 font-semibold'
+                                    ? 'bg-accent-soft dark:bg-accent-soft/40 text-accent dark:text-accent font-semibold'
                                     : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-accent-soft/30 hover:text-accent dark:hover:text-zinc-200'
                                 }`}
                               >
@@ -1085,7 +1085,7 @@ if (isSearchOpen && searchQuery) {
                                 <button
                                   type="button"
                                   onClick={(e) => { e.stopPropagation(); handleDeletePage(node.id, displayLabel); }}
-                                  className="opacity-0 group-hover/pageitem:opacity-100 p-1 mr-1 rounded text-ink-muted hover:text-danger hover:bg-danger-soft transition-all shrink-0"
+                                  className="opacity-0 group-hover/pageitem:opacity-100 p-1 mr-1 rounded text-muted-foreground hover:text-danger hover:bg-danger-soft transition-all shrink-0"
                                   title={`Hapus "${displayLabel}"`}
                                 >
                                   <Trash2 className="w-3 h-3" />
@@ -1103,21 +1103,21 @@ if (isSearchOpen && searchQuery) {
                 <div>
                   <button
                     onClick={() => toggleSection('tags')}
-                    className="w-full flex items-center justify-between px-2 py-1.5 hover:bg-surface-hover/60 dark:hover:bg-surface-hover/30 rounded-lg text-xs font-semibold text-ink-secondary"
+                    className="w-full flex items-center justify-between px-2 py-1.5 hover:bg-muted/60 dark:hover:bg-muted/30 rounded-lg text-xs font-semibold text-muted-foreground"
                   >
                     <span className="flex items-center gap-1.5">
-                      {sectionsExpanded.tags ? <ChevronDown className="w-3.5 h-3.5 text-ink-muted" /> : <ChevronRight className="w-3.5 h-3.5 text-ink-muted" />}
+                      {sectionsExpanded.tags ? <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" /> : <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />}
                       <Tag className="w-3.5 h-3.5 text-warning" />
                       <span>Tags</span>
                     </span>
-                    <span className="text-[9px] bg-surface-hover px-1.5 py-0.5 rounded-full">{tagNodes.length}</span>
+                    <span className="text-[9px] bg-muted px-1.5 py-0.5 rounded-full">{tagNodes.length}</span>
                   </button>
                   {sectionsExpanded.tags && (
-                    <ul className="pl-4 mt-1 space-y-0.5 border-l border-soft dark:border-soft ml-3.5">
+                    <ul className="pl-4 mt-1 space-y-0.5 border-l border-border dark:border-border ml-3.5">
                       {tagNodes.length === 0 ? (
                         <div className="px-2 py-3 flex flex-col items-center justify-center text-center gap-1.5 opacity-85">
-                          <Tag className="w-4 h-4 text-ink-secondary" />
-                          <span className="text-[10px] text-ink">Type #tag in editor</span>
+                          <Tag className="w-4 h-4 text-muted-foreground" />
+                          <span className="text-[10px] text-foreground">Type #tag in editor</span>
                         </div>
                       ) : (
                         tagNodes.map(node => {
@@ -1134,11 +1134,11 @@ if (isSearchOpen && searchQuery) {
                                 }}
                                 className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
                                   isActive
-                                    ? 'bg-accent-soft dark:bg-indigo-950/40 text-accent dark:text-indigo-400 font-semibold'
+                                    ? 'bg-accent-soft dark:bg-accent-soft/40 text-accent dark:text-accent font-semibold'
                                     : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-accent-soft/30 hover:text-accent dark:hover:text-zinc-200'
                                 }`}
                               >
-                                <FileText className="w-3.5 h-3.5 text-ink-muted shrink-0" />
+                                <FileText className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                                 <span className="truncate text-xs">{displayLabel}</span>
                               </button>
                             </li>
@@ -1153,21 +1153,21 @@ if (isSearchOpen && searchQuery) {
                 <div>
                   <button
                     onClick={() => toggleSection('widgets')}
-                    className="w-full flex items-center justify-between px-2 py-1.5 hover:bg-surface-hover/60 dark:hover:bg-surface-hover/30 rounded-lg text-xs font-semibold text-ink-secondary"
+                    className="w-full flex items-center justify-between px-2 py-1.5 hover:bg-muted/60 dark:hover:bg-muted/30 rounded-lg text-xs font-semibold text-muted-foreground"
                   >
                     <span className="flex items-center gap-1.5">
-                      {sectionsExpanded.widgets ? <ChevronDown className="w-3.5 h-3.5 text-ink-muted" /> : <ChevronRight className="w-3.5 h-3.5 text-ink-muted" />}
+                      {sectionsExpanded.widgets ? <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" /> : <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />}
                       <Cpu className="w-3.5 h-3.5 text-success" />
                       <span>Widgets</span>
                     </span>
-                    <span className="text-[9px] bg-surface-hover px-1.5 py-0.5 rounded-full">{widgetNodes.length}</span>
+                    <span className="text-[9px] bg-muted px-1.5 py-0.5 rounded-full">{widgetNodes.length}</span>
                   </button>
                   {sectionsExpanded.widgets && (
-                    <ul className="pl-4 mt-1 space-y-0.5 border-l border-soft dark:border-soft ml-3.5">
+                    <ul className="pl-4 mt-1 space-y-0.5 border-l border-border dark:border-border ml-3.5">
                       {widgetNodes.length === 0 ? (
                         <div className="px-2 py-3 flex flex-col items-center justify-center text-center gap-1.5 opacity-60">
-                          <Cpu className="w-4 h-4 text-ink-muted" />
-                          <span className="text-[10px] text-ink-secondary">Add AI widget</span>
+                          <Cpu className="w-4 h-4 text-muted-foreground" />
+                          <span className="text-[10px] text-muted-foreground">Add AI widget</span>
                         </div>
                       ) : (
                         widgetNodes.map(node => {
@@ -1181,11 +1181,11 @@ if (isSearchOpen && searchQuery) {
                                 }}
                                 className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
                                   isActive
-                                    ? 'bg-surface-hover dark:bg-surface-hover text-ink font-medium'
-                                    : 'text-ink hover:bg-surface-soft dark:hover:bg-surface-hover/30 hover:text-ink dark:hover:text-ink'
+                                    ? 'bg-muted dark:bg-muted text-foreground font-medium'
+                                    : 'text-foreground hover:bg-muted dark:hover:bg-muted/30 hover:text-foreground dark:hover:text-foreground'
                                 }`}
                               >
-                                <Cpu className="w-3.5 h-3.5 text-ink-muted shrink-0" />
+                                <Cpu className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                                 <span className="truncate text-xs">{node.label}</span>
                               </button>
                             </li>
@@ -1207,17 +1207,17 @@ if (isSearchOpen && searchQuery) {
       {!zenMode && !isSidebarCollapsed && (
         <div
           onMouseDown={handleSidebarResizeStart}
-          className="w-[4px] hover:w-[6px] bg-surface-hover/50 dark:bg-surface-hover/50 hover:bg-surface dark:hover:bg-surface-hover cursor-col-resize transition-all h-full z-20 shrink-0"
+          className="w-[4px] hover:w-[6px] bg-muted/50 dark:bg-muted/50 hover:bg-sidebar dark:hover:bg-muted cursor-col-resize transition-all h-full z-20 shrink-0"
         />
       )}
 
       {/* Pane 2: Middle Panel (Main Workspace) — now takes full remaining width */}
-      <main className="flex-1 flex flex-col h-full overflow-hidden bg-surface-soft bg-background relative">
+      <main className="flex-1 flex flex-col h-full overflow-hidden bg-muted bg-background relative">
         {!zenMode && isSidebarCollapsed && (
           <button
             type="button"
             onClick={() => setIsSidebarCollapsed(false)}
-            className="absolute top-4 left-4 z-30 p-1.5 rounded-lg text-ink-secondary hover:text-ink bg-surface/80 dark:bg-surface/80 border border-soft/60 dark:border-soft/60 hover:bg-surface-hover dark:hover:bg-surface-hover transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent shadow-sm"
+            className="absolute top-4 left-4 z-30 p-1.5 rounded-lg text-muted-foreground hover:text-foreground bg-sidebar/80 dark:bg-sidebar/80 border border-border/60 dark:border-border/60 hover:bg-muted dark:hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent shadow-sm"
             title="Expand Sidebar"
             aria-label="Expand Workspace Sidebar"
             aria-expanded={false}
@@ -1237,13 +1237,13 @@ if (isSearchOpen && searchQuery) {
           {/* Right Sidebar Panel */}
           <aside
             style={{ width: isRightSidebarOpen ? 320 : 0 }}
-            className={`border-l border-soft dark:border-soft bg-white bg-card flex flex-col h-full text-sm overflow-hidden transition-[width,opacity] duration-200 ease-in-out ${
+            className={`border-l border-border dark:border-border bg-white bg-sidebar flex flex-col h-full text-sm overflow-hidden transition-[width,opacity] duration-200 ease-in-out ${
               isRightSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
             } md:relative absolute right-12 top-0 bottom-0 shadow-lg md:shadow-none z-30`}
           >
             {/* Header */}
-            <div className="h-14 px-4 border-b border-soft dark:border-soft flex items-center justify-between shrink-0 bg-[#fbfbfb] dark:bg-[#18181c]">
-              <span className="font-semibold text-xs uppercase tracking-wider text-ink-secondary">
+            <div className="h-14 px-4 border-b border-border dark:border-border flex items-center justify-between shrink-0 bg-[#fbfbfb] dark:bg-[#18181c]">
+              <span className="font-semibold text-xs uppercase tracking-wider text-muted-foreground">
                 {activeRightSidebarTab === 'info' && 'Page Info & Style'}
                 {activeRightSidebarTab === 'outline' && 'Document Outline'}
                 {activeRightSidebarTab === 'agent' && 'Docked Space Agent'}
@@ -1252,7 +1252,7 @@ if (isSearchOpen && searchQuery) {
               <button
                 type="button"
                 onClick={() => setIsRightSidebarOpen(false)}
-                className="p-1 rounded-md text-ink-muted hover:text-ink dark:hover:text-ink-muted hover:bg-surface-hover"
+                className="p-1 rounded-md text-muted-foreground hover:text-foreground dark:hover:text-muted-foreground hover:bg-muted"
                 aria-label="Close panel"
               >
                 <X className="w-3.5 h-3.5" />
@@ -1264,7 +1264,7 @@ if (isSearchOpen && searchQuery) {
               {activeRightSidebarTab === 'info' && (
                 <div className="space-y-6">
                   {/* Title & Star Toggler */}
-                  <div className="flex items-center justify-between p-3 bg-surface-soft dark:bg-surface-hover/40 border border-soft dark:border-soft/60 rounded-xl">
+                  <div className="flex items-center justify-between p-3 bg-muted dark:bg-muted/40 border border-border dark:border-border/60 rounded-xl">
                     <div className="flex items-center gap-2 min-w-0">
                       <span className="text-xl shrink-0">{pageMeta?.icon || '📄'}</span>
                       <span className="font-semibold truncate text-slate-800 dark:text-zinc-200 min-w-0" title={pageMeta?.title || docTitle}>{pageMeta?.title || docTitle}</span>
@@ -1275,7 +1275,7 @@ if (isSearchOpen && searchQuery) {
                       className={`p-1.5 rounded-lg transition-all ${
                         pageMeta?.isFavorite
                           ? 'text-warning hover:bg-warning-soft'
-                          : 'text-ink-muted hover:text-warning hover:bg-surface-hover'
+                          : 'text-muted-foreground hover:text-warning hover:bg-muted'
                       }`}
                       title={pageMeta?.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
                     >
@@ -1285,11 +1285,11 @@ if (isSearchOpen && searchQuery) {
 
                   {/* Formatting / Style Controls */}
                   <div className="space-y-3">
-                    <h4 className="text-[10px] font-bold text-ink-muted uppercase tracking-wider">Page Style Settings</h4>
+                    <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Page Style Settings</h4>
 
                     {/* Font Style */}
                     <div className="space-y-1.5">
-                      <label className="text-xs text-ink-secondary">Typography Style</label>
+                      <label className="text-xs text-muted-foreground">Typography Style</label>
                       <div className="grid grid-cols-3 gap-1">
                         {(['sans', 'serif', 'mono'] as const).map((font) => (
                           <button
@@ -1299,7 +1299,7 @@ if (isSearchOpen && searchQuery) {
                             className={`py-1.5 text-xs rounded-lg border capitalize font-medium transition-all ${
                               (pageMeta?.fontStyle || 'sans') === font
                                 ? 'bg-accent-soft text-accent border-accent dark:border-accent'
-                                : 'bg-transparent text-ink border-soft dark:border-soft hover:bg-surface-soft'
+                                : 'bg-transparent text-foreground border-border dark:border-border hover:bg-muted'
                             }`}
                           >
                             {font}
@@ -1309,16 +1309,16 @@ if (isSearchOpen && searchQuery) {
                     </div>
 
                     {/* Page Width */}
-                    <div className="flex items-center justify-between py-2 border-b border-muted dark:border-soft/40">
+                    <div className="flex items-center justify-between py-2 border-b border-muted dark:border-border/40">
                       <div className="flex flex-col">
-                        <span className="text-xs font-medium text-ink">Wide Mode</span>
-                        <span className="text-[10px] text-ink-muted">Let blocks take full horizontal layout</span>
+                        <span className="text-xs font-medium text-foreground">Wide Mode</span>
+                        <span className="text-[10px] text-muted-foreground">Let blocks take full horizontal layout</span>
                       </div>
                       <button
                         type="button"
                         onClick={() => updatePageMeta({ fullWidth: !pageMeta?.fullWidth })}
                         className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                          pageMeta?.fullWidth ? 'bg-accent' : 'bg-surface-hover dark:bg-surface-hover'
+                          pageMeta?.fullWidth ? 'bg-accent' : 'bg-muted dark:bg-muted'
                         }`}
                       >
                         <span
@@ -1332,38 +1332,38 @@ if (isSearchOpen && searchQuery) {
 
                   {/* Document Statistics */}
                   <div className="space-y-2">
-                    <h4 className="text-[10px] font-bold text-ink-muted uppercase tracking-wider">Document Statistics</h4>
+                    <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Document Statistics</h4>
                     <div className="grid grid-cols-2 gap-2 text-xs">
-                      <div className="p-2.5 rounded-lg bg-surface-soft dark:bg-surface-hover border border-muted dark:border-soft/40">
-                        <div className="text-[10px] text-ink-muted">Total Blocks</div>
-                        <div className="text-base font-bold text-ink mt-0.5">{blocks.length}</div>
+                      <div className="p-2.5 rounded-lg bg-muted dark:bg-muted border border-muted dark:border-border/40">
+                        <div className="text-[10px] text-muted-foreground">Total Blocks</div>
+                        <div className="text-base font-bold text-foreground mt-0.5">{blocks.length}</div>
                       </div>
-                      <div className="p-2.5 rounded-lg bg-surface-soft dark:bg-surface-hover border border-muted dark:border-soft/40">
-                        <div className="text-[10px] text-ink-muted">Heading Nodes</div>
-                        <div className="text-base font-bold text-ink mt-0.5">{blocks.filter(b => b.type === 'heading').length}</div>
+                      <div className="p-2.5 rounded-lg bg-muted dark:bg-muted border border-muted dark:border-border/40">
+                        <div className="text-[10px] text-muted-foreground">Heading Nodes</div>
+                        <div className="text-base font-bold text-foreground mt-0.5">{blocks.filter(b => b.type === 'heading').length}</div>
                       </div>
-                      <div className="p-2.5 rounded-lg bg-surface-soft dark:bg-surface-hover border border-muted dark:border-soft/40">
-                        <div className="text-[10px] text-ink-muted">Text Nodes</div>
-                        <div className="text-base font-bold text-ink mt-0.5">{blocks.filter(b => b.type === 'text').length}</div>
+                      <div className="p-2.5 rounded-lg bg-muted dark:bg-muted border border-muted dark:border-border/40">
+                        <div className="text-[10px] text-muted-foreground">Text Nodes</div>
+                        <div className="text-base font-bold text-foreground mt-0.5">{blocks.filter(b => b.type === 'text').length}</div>
                       </div>
-                      <div className="p-2.5 rounded-lg bg-surface-soft dark:bg-surface-hover border border-muted dark:border-soft/40">
-                        <div className="text-[10px] text-ink-muted">Custom Widgets</div>
-                        <div className="text-base font-bold text-ink mt-0.5">{blocks.filter(b => b.type === 'widget').length}</div>
+                      <div className="p-2.5 rounded-lg bg-muted dark:bg-muted border border-muted dark:border-border/40">
+                        <div className="text-[10px] text-muted-foreground">Custom Widgets</div>
+                        <div className="text-base font-bold text-foreground mt-0.5">{blocks.filter(b => b.type === 'widget').length}</div>
                       </div>
                     </div>
                   </div>
 
                   {/* Timestamps */}
-                  <div className="space-y-1.5 pt-2 text-[11px] text-ink-muted">
+                  <div className="space-y-1.5 pt-2 text-[11px] text-muted-foreground">
                     <div className="flex justify-between">
                       <span>Created Date:</span>
-                      <span className="font-medium text-ink">
+                      <span className="font-medium text-foreground">
                         {pageMeta?.createdAt ? new Date(pageMeta.createdAt).toLocaleDateString() : 'N/A'}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Last Modified:</span>
-                      <span className="font-medium text-ink">
+                      <span className="font-medium text-foreground">
                         {pageMeta?.updatedAt ? new Date(pageMeta.updatedAt).toLocaleTimeString() : 'N/A'}
                       </span>
                     </div>
@@ -1373,14 +1373,14 @@ if (isSearchOpen && searchQuery) {
 
               {activeRightSidebarTab === 'outline' && (
                 <div className="space-y-4">
-                  <p className="text-[11px] text-ink-muted">
+                  <p className="text-[11px] text-muted-foreground">
                     Click an outline heading below to quickly navigate and scroll to its position in the document.
                   </p>
 
                   {blocks.filter(b => b.type === 'heading').length === 0 ? (
-                    <div className="text-center py-8 border border-dashed border-soft rounded-xl">
-                      <List className="w-6 h-6 mx-auto text-ink-muted mb-1.5" />
-                      <span className="text-xs text-ink-muted">No headings in document outline.</span>
+                    <div className="text-center py-8 border border-dashed border-border rounded-xl">
+                      <List className="w-6 h-6 mx-auto text-muted-foreground mb-1.5" />
+                      <span className="text-xs text-muted-foreground">No headings in document outline.</span>
                     </div>
                   ) : (
                     <nav className="flex flex-col gap-1">
@@ -1399,7 +1399,7 @@ if (isSearchOpen && searchQuery) {
                                 el.scrollIntoView({ behavior: 'smooth', block: 'center' });
                               }
                             }}
-                            className={`w-full text-left py-1.5 px-2 rounded-lg hover:bg-surface-soft dark:hover:bg-surface-hover/40 text-ink hover:text-accent dark:hover:text-accent transition-colors truncate ${indentClass}`}
+                            className={`w-full text-left py-1.5 px-2 rounded-lg hover:bg-muted dark:hover:bg-muted/40 text-foreground hover:text-accent dark:hover:text-accent transition-colors truncate ${indentClass}`}
                           >
                             {block.content || 'Untitled Heading'}
                           </button>
@@ -1413,14 +1413,14 @@ if (isSearchOpen && searchQuery) {
               {activeRightSidebarTab === 'agent' && (
                 <div className="flex flex-col h-full min-h-[300px]">
                   {/* Space Agent tab inside sidebar panel */}
-                  <div className="flex border-b border-soft dark:border-soft text-xs shrink-0 mb-3 bg-surface-soft/50 dark:bg-surface-soft/30 rounded-lg overflow-hidden">
+                  <div className="flex border-b border-border dark:border-border text-xs shrink-0 mb-3 bg-muted/50 dark:bg-muted/30 rounded-lg overflow-hidden">
                     <button
                       type="button"
                       onClick={() => setActiveAgentTab('chat')}
                       className={`flex-1 py-1.5 text-center font-medium transition-colors cursor-pointer ${
                         activeAgentTab === 'chat'
                           ? 'text-accent border-b-2 border-accent font-semibold bg-accent/5'
-                          : 'text-ink-secondary hover:text-ink'
+                          : 'text-muted-foreground hover:text-foreground'
                       }`}
                     >
                       AI Chat
@@ -1431,7 +1431,7 @@ if (isSearchOpen && searchQuery) {
                       className={`flex-1 py-1.5 text-center font-medium transition-colors cursor-pointer ${
                         activeAgentTab === 'widgets'
                           ? 'text-accent border-b-2 border-accent font-semibold bg-accent/5'
-                          : 'text-ink-secondary hover:text-ink'
+                          : 'text-muted-foreground hover:text-foreground'
                       }`}
                     >
                       Widgets
@@ -1450,7 +1450,7 @@ if (isSearchOpen && searchQuery) {
                             <div
                               className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] shrink-0 ${
                                 msg.sender === "user"
-                                  ? "bg-surface-hover text-ink"
+                                  ? "bg-muted text-foreground"
                                   : "bg-accent-soft dark:bg-accent-soft text-accent"
                               }`}
                             >
@@ -1460,7 +1460,7 @@ if (isSearchOpen && searchQuery) {
                               className={`p-2.5 rounded-xl text-xs leading-relaxed ${
                                 msg.sender === "user"
                                   ? "bg-accent text-white rounded-tr-none shadow-sm"
-                                  : "bg-surface-hover dark:bg-surface-hover text-ink rounded-tl-none border border-transparent dark:border-ink-secondary"
+                                  : "bg-muted dark:bg-muted text-foreground rounded-tl-none border border-transparent dark:border-ink-secondary"
                               }`}
                             >
                               {msg.text}
@@ -1476,7 +1476,7 @@ if (isSearchOpen && searchQuery) {
                           value={chatInput}
                           onChange={(e) => setChatInput(e.target.value)}
                           placeholder="Ask Space Agent docked..."
-                          className="w-full pl-3 pr-8 py-2 rounded-lg border border-soft bg-white dark:bg-surface text-xs text-ink focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                          className="w-full pl-3 pr-8 py-2 rounded-lg border border-border bg-white dark:bg-sidebar text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-accent"
                         />
                         <button
                           type="submit"
@@ -1494,10 +1494,10 @@ if (isSearchOpen && searchQuery) {
                           { title: 'Mini Calculator', desc: 'Grid based calculator widget', template: WIDGET_TEMPLATES.calculator, id: 'calc' },
                           { title: 'Quick Tasks Todo', desc: 'Interactive task tracker', template: WIDGET_TEMPLATES.todo, id: 'todo' }
                         ].map((item) => (
-                          <div key={item.id} className="p-2 rounded-lg bg-surface-soft dark:bg-surface-hover/30 border border-soft dark:border-soft/60 flex items-center justify-between text-xs">
+                          <div key={item.id} className="p-2 rounded-lg bg-muted dark:bg-muted/30 border border-border dark:border-border/60 flex items-center justify-between text-xs">
                             <div className="min-w-0 pr-1 flex flex-col">
-                              <span className="font-semibold text-ink dark:text-ink truncate">{item.title}</span>
-                              <span className="text-[10px] text-ink-muted truncate">{item.desc}</span>
+                              <span className="font-semibold text-foreground dark:text-foreground truncate">{item.title}</span>
+                              <span className="text-[10px] text-muted-foreground truncate">{item.desc}</span>
                             </div>
                             <button
                               type="button"
@@ -1522,17 +1522,17 @@ if (isSearchOpen && searchQuery) {
 
               {activeRightSidebarTab === 'history' && (
                 <div className="space-y-4">
-                  <p className="text-[11px] text-ink-muted">
+                  <p className="text-[11px] text-muted-foreground">
                     Locally persisted document snapshots are updated automatically during edit sessions.
                   </p>
 
-                  <div className="relative pl-4 border-l-2 border-muted dark:border-soft ml-1.5 space-y-4">
+                  <div className="relative pl-4 border-l-2 border-muted dark:border-border ml-1.5 space-y-4">
                     {/* Item 1 */}
                     <div className="relative">
                       <span className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-success ring-4 ring-surface dark:ring-surface" />
                       <div className="flex flex-col">
-                        <span className="text-xs font-semibold text-ink">Current active version</span>
-                        <span className="text-[10px] text-ink-muted">Just now — Auto-saved local session</span>
+                        <span className="text-xs font-semibold text-foreground">Current active version</span>
+                        <span className="text-[10px] text-muted-foreground">Just now — Auto-saved local session</span>
                       </div>
                     </div>
 
@@ -1542,23 +1542,23 @@ if (isSearchOpen && searchQuery) {
                       <button
                         type="button"
                         onClick={() => alert("Restored page backup to: 10 minutes ago")}
-                        className="text-left w-full hover:bg-surface-soft dark:hover:bg-surface-hover/40 p-1.5 rounded-lg transition-colors"
+                        className="text-left w-full hover:bg-muted dark:hover:bg-muted/40 p-1.5 rounded-lg transition-colors"
                       >
-                        <span className="text-xs font-semibold text-ink group-hover:text-accent dark:group-hover:text-accent">10 minutes ago</span>
-                        <div className="text-[10px] text-ink-muted">Backup snapshot auto-save</div>
+                        <span className="text-xs font-semibold text-foreground group-hover:text-accent dark:group-hover:text-accent">10 minutes ago</span>
+                        <div className="text-[10px] text-muted-foreground">Backup snapshot auto-save</div>
                       </button>
                     </div>
 
                     {/* Item 3 */}
                     <div className="relative group">
-                      <span className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-surface dark:bg-surface-hover ring-4 ring-white dark:ring-zinc-900" />
+                      <span className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-sidebar dark:bg-muted ring-4 ring-white dark:ring-zinc-900" />
                       <button
                         type="button"
                         onClick={() => alert("Restored page backup to original created state")}
-                        className="text-left w-full hover:bg-surface-soft dark:hover:bg-surface-hover/40 p-1.5 rounded-lg transition-colors"
+                        className="text-left w-full hover:bg-muted dark:hover:bg-muted/40 p-1.5 rounded-lg transition-colors"
                       >
-                        <span className="text-xs font-semibold text-ink group-hover:text-accent dark:group-hover:text-accent">Page Created</span>
-                        <div className="text-[10px] text-ink-muted">
+                        <span className="text-xs font-semibold text-foreground group-hover:text-accent dark:group-hover:text-accent">Page Created</span>
+                        <div className="text-[10px] text-muted-foreground">
                           {pageMeta?.createdAt ? new Date(pageMeta.createdAt).toLocaleString() : 'Initial blank slate'}
                         </div>
                       </button>
@@ -1570,7 +1570,7 @@ if (isSearchOpen && searchQuery) {
           </aside>
 
           {/* Right Tool Rail */}
-          <aside className="w-12 flex flex-col items-center justify-between py-3 border-l border-soft dark:border-soft bg-[#fbfbfb] dark:bg-[#18181c] shrink-0 z-30 h-full">
+          <aside className="w-12 flex flex-col items-center justify-between py-3 border-l border-border dark:border-border bg-[#fbfbfb] dark:bg-[#18181c] shrink-0 z-30 h-full">
             <div className="flex flex-col items-center gap-4 w-full">
               <nav className="flex flex-col gap-4 w-full px-1.5" aria-label="Right Rail Navigation">
                 {[
@@ -1591,7 +1591,7 @@ if (isSearchOpen && searchQuery) {
                       aria-expanded={isActive}
                       className={`w-full py-2.5 rounded-lg flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accent ${
                         isActive
-                          ? 'bg-accent-soft dark:bg-indigo-950/40 text-accent dark:text-indigo-400 font-semibold'
+                          ? 'bg-accent-soft dark:bg-accent-soft/40 text-accent dark:text-accent font-semibold'
                           : 'text-slate-400 dark:text-zinc-500 hover:text-accent dark:hover:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5'
                       }`}
                     >
@@ -1606,7 +1606,7 @@ if (isSearchOpen && searchQuery) {
               <button
                 type="button"
                 onClick={() => alert("CatNoted Workspace - AFFiNE-style Right Rail")}
-                className="w-full py-2.5 rounded-lg flex items-center justify-center text-ink-muted hover:text-ink hover:bg-surface-hover/10 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                className="w-full py-2.5 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/10 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                 title="Workspace Help"
                 aria-label="Workspace Help"
               >
@@ -1621,7 +1621,7 @@ if (isSearchOpen && searchQuery) {
       {!isAgentOpen && (
         <button
           onClick={() => setIsAgentOpen(true)}
-          className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-2xl bg-accent hover:bg-accent dark:bg-accent dark:hover:bg-accent text-white shadow-lg shadow-indigo-600/25 dark:shadow-indigo-500/30 hover:shadow-xl hover:shadow-indigo-500/40 dark:hover:shadow-indigo-400/35 flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 group"
+          className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-2xl bg-accent hover:bg-accent dark:bg-accent dark:hover:bg-accent text-white shadow-lg shadow-accent/25 dark:shadow-accent/30 hover:shadow-xl hover:shadow-accent/40 dark:hover:shadow-accent/35 flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 group"
           title="Open Space Agent"
           style={{
             animation: "floatFab 3s ease-in-out infinite",
@@ -1630,9 +1630,9 @@ if (isSearchOpen && searchQuery) {
           <Bot className="w-6 h-6 transition-all duration-300 group-hover:opacity-0 group-hover:scale-75 absolute" />
           <MessageSquare className="w-6 h-6 transition-all duration-300 opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100" />
           {/* Pulsing notification dot */}
-          <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-success border-2 border-white dark:border-soft animate-pulse" />
+          <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-success border-2 border-white dark:border-border animate-pulse" />
           {/* Hover ring glow */}
-          <span className="absolute inset-0 rounded-2xl transition-all duration-300 opacity-0 group-hover:opacity-100 ring-2 ring-indigo-400/50 dark:ring-indigo-400/40" />
+          <span className="absolute inset-0 rounded-2xl transition-all duration-300 opacity-0 group-hover:opacity-100 ring-2 ring-accent/50 dark:ring-accent/40" />
         </button>
       )}
 
@@ -1680,11 +1680,11 @@ if (isSearchOpen && searchQuery) {
             onMouseDown={handleDragStart}
           >
             <div className="flex items-center gap-2.5">
-              <GripVertical className="w-4 h-4 text-ink-muted dark:text-ink-secondary opacity-50" />
+              <GripVertical className="w-4 h-4 text-muted-foreground dark:text-muted-foreground opacity-50" />
               <div className="w-7 h-7 rounded-lg bg-accent/10 dark:bg-accent/10 flex items-center justify-center">
                 <Bot className="w-4 h-4 text-accent" />
               </div>
-              <span className="font-semibold text-sm text-ink dark:text-ink tracking-tight">
+              <span className="font-semibold text-sm text-foreground dark:text-foreground tracking-tight">
                 Space Agent
               </span>
               <Sparkles className="w-3.5 h-3.5 text-accent animate-pulse" />
@@ -1692,7 +1692,7 @@ if (isSearchOpen && searchQuery) {
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setIsMinimized(!isMinimized)}
-                className="w-7 h-7 rounded-lg flex items-center justify-center text-ink-muted hover:text-accent dark:hover:text-accent hover:bg-accent-soft dark:hover:bg-accent/15 transition-all duration-200 hover:scale-110"
+                className="w-7 h-7 rounded-lg flex items-center justify-center text-muted-foreground hover:text-accent dark:hover:text-accent hover:bg-accent-soft dark:hover:bg-accent/15 transition-all duration-200 hover:scale-110"
                 title={isMinimized ? "Expand" : "Minimize"}
               >
                 <Minus className="w-4 h-4" />
@@ -1702,7 +1702,7 @@ if (isSearchOpen && searchQuery) {
                   setIsAgentOpen(false);
                   setIsMinimized(false);
                 }}
-                className="w-7 h-7 rounded-lg flex items-center justify-center text-ink-muted hover:text-danger dark:hover:text-rose-400 hover:bg-danger-soft dark:hover:bg-danger-soft0/15 transition-all duration-200 hover:scale-110"
+                className="w-7 h-7 rounded-lg flex items-center justify-center text-muted-foreground hover:text-danger dark:hover:text-rose-400 hover:bg-danger-soft dark:hover:bg-danger-soft0/15 transition-all duration-200 hover:scale-110"
                 title="Close"
               >
                 <X className="w-4 h-4" />
@@ -1714,14 +1714,14 @@ if (isSearchOpen && searchQuery) {
           {!isMinimized && (
             <>
               {/* Tab Switcher */}
-              <div className="flex border-b border-soft dark:border-soft text-xs shrink-0 bg-surface-soft/50 dark:bg-surface-soft/30">
+              <div className="flex border-b border-border dark:border-border text-xs shrink-0 bg-muted/50 dark:bg-muted/30">
                 <button
                   type="button"
                   onClick={() => setActiveAgentTab('chat')}
                   className={`flex-1 py-2 text-center font-medium transition-colors cursor-pointer ${
                     activeAgentTab === 'chat'
                       ? 'text-accent border-b-2 border-accent font-semibold bg-accent/5'
-                      : 'text-ink-secondary hover:text-ink'
+                      : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   AI Chat
@@ -1732,7 +1732,7 @@ if (isSearchOpen && searchQuery) {
                   className={`flex-1 py-2 text-center font-medium transition-colors cursor-pointer ${
                     activeAgentTab === 'widgets'
                       ? 'text-accent border-b-2 border-accent font-semibold bg-accent/5'
-                      : 'text-ink-secondary hover:text-ink'
+                      : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   Widgets List & Tools
@@ -1753,11 +1753,11 @@ if (isSearchOpen && searchQuery) {
                     <button
                       onClick={handleExportWidgets}
                       title="Export widget codes"
-                      className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 border border-soft/60 hover:bg-accent-soft dark:hover:bg-accent/10 hover:border-accent-soft dark:hover:border-accent/30 hover:text-accent dark:hover:text-accent rounded-lg text-[10px] font-semibold text-ink-secondary transition-all duration-200"
+                      className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 border border-border/60 hover:bg-accent-soft dark:hover:bg-accent/10 hover:border-accent-soft dark:hover:border-accent/30 hover:text-accent dark:hover:text-accent rounded-lg text-[10px] font-semibold text-muted-foreground transition-all duration-200"
                     >
                       <Download className="w-3.5 h-3.5" /> Export Catalog
                     </button>
-                    <label className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 border border-soft/60 hover:bg-accent-soft dark:hover:bg-accent/10 hover:border-accent-soft dark:hover:border-accent/30 hover:text-accent dark:hover:text-accent rounded-lg text-[10px] font-semibold text-ink-secondary cursor-pointer text-center transition-all duration-200">
+                    <label className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 border border-border/60 hover:bg-accent-soft dark:hover:bg-accent/10 hover:border-accent-soft dark:hover:border-accent/30 hover:text-accent dark:hover:text-accent rounded-lg text-[10px] font-semibold text-muted-foreground cursor-pointer text-center transition-all duration-200">
                       <Upload className="w-3.5 h-3.5" /> Import Catalog
                       <input
                         type="file"
@@ -1778,7 +1778,7 @@ if (isSearchOpen && searchQuery) {
                         <div
                           className={`w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0 ${
                             msg.sender === "user"
-                              ? "bg-surface-hover dark:bg-surface-hover text-ink"
+                              ? "bg-muted dark:bg-muted text-foreground"
                               : "bg-accent-soft dark:bg-accent-soft/40 text-accent"
                           }`}
                         >
@@ -1791,18 +1791,18 @@ if (isSearchOpen && searchQuery) {
                         <div
                           className={`p-3 rounded-2xl text-xs leading-relaxed ${
                             msg.sender === "user"
-                              ? "bg-accent text-white rounded-tr-none shadow-sm shadow-indigo-600/20"
-                              : "bg-surface-hover dark:bg-surface-hover/80 text-ink rounded-tl-none border border-transparent dark:border-ink-secondary/40"
+                              ? "bg-accent text-white rounded-tr-none shadow-sm shadow-accent/20"
+                              : "bg-muted dark:bg-muted/80 text-foreground rounded-tl-none border border-transparent dark:border-ink-secondary/40"
                           }`}
                         >
                           {msg.text}
                         </div>
                         {msg.code && (
-                          <div className="w-full mt-1 border border-accent-soft dark:border-accent/30 rounded-xl overflow-hidden shadow-sm bg-white dark:bg-surface">
+                          <div className="w-full mt-1 border border-accent-soft dark:border-accent/30 rounded-xl overflow-hidden shadow-sm bg-white dark:bg-sidebar">
                             <div className="h-[150px] w-full">
                               <SandboxFrame srcDoc={msg.code} theme={isDarkMode ? 'dark' : 'light'} height="150px" />
                             </div>
-                            <div className="p-2 border-t border-accent-soft dark:border-accent/20 bg-surface-soft dark:bg-surface-hover flex justify-end">
+                            <div className="p-2 border-t border-accent-soft dark:border-accent/20 bg-muted dark:bg-muted flex justify-end">
                               <button
                                 onClick={() => {
                                   const newBlockId = addBlock(null, 'widget', '');
@@ -1820,7 +1820,7 @@ if (isSearchOpen && searchQuery) {
                         )}
                         {msg.editProposal && (
                           <div className="w-full mt-1 border border-success-soft dark:border-success/30 rounded-xl overflow-hidden shadow-sm bg-success-soft/50 dark:bg-success-soft/10">
-                            <div className="p-3 text-xs text-ink whitespace-pre-wrap font-mono">
+                            <div className="p-3 text-xs text-foreground whitespace-pre-wrap font-mono">
                               {msg.editProposal}
                             </div>
                             <div className="p-2 border-t border-success-soft dark:border-success/20 flex justify-end">
@@ -1856,11 +1856,11 @@ if (isSearchOpen && searchQuery) {
                         value={chatInput}
                         onChange={(e) => setChatInput(e.target.value)}
                         placeholder="Ask agent to generate a widget..."
-                        className="w-full pl-3 pr-10 py-2.5 rounded-xl border border-soft/60 bg-white/80 dark:bg-surface/60 text-xs text-ink placeholder:text-ink-muted dark:placeholder:text-ink-secondary focus:outline-none focus:ring-2 focus:ring-indigo-500/40 dark:focus:ring-indigo-400/30 focus:border-accent dark:focus:border-accent/50 hover:border-soft dark:hover:border-ink-secondary transition-all duration-200"
+                        className="w-full pl-3 pr-10 py-2.5 rounded-xl border border-border/60 bg-white/80 dark:bg-sidebar/60 text-xs text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 dark:focus:ring-accent/30 focus:border-accent dark:focus:border-accent/50 hover:border-border dark:hover:border-ink-secondary transition-all duration-200"
                       />
                       <button
                         type="submit"
-                        className="absolute right-1.5 p-1.5 bg-accent hover:bg-accent dark:hover:bg-accent text-white rounded-lg transition-all duration-200 hover:scale-110 hover:shadow-md hover:shadow-indigo-500/30 active:scale-95"
+                        className="absolute right-1.5 p-1.5 bg-accent hover:bg-accent dark:hover:bg-accent text-white rounded-lg transition-all duration-200 hover:scale-110 hover:shadow-md hover:shadow-accent/30 active:scale-95"
                       >
                         <Send className="w-3 h-3" />
                       </button>
@@ -1868,7 +1868,7 @@ if (isSearchOpen && searchQuery) {
                   </form>
                 </>
               ) : (
-                <div className="flex-1 overflow-y-auto flex flex-col h-full select-text text-ink">
+                <div className="flex-1 overflow-y-auto flex flex-col h-full select-text text-foreground">
                   {/* Widget sharing toolbar catalog */}
                   <div
                     className="px-3 py-2 flex gap-2 justify-between shrink-0"
@@ -1881,11 +1881,11 @@ if (isSearchOpen && searchQuery) {
                     <button
                       onClick={handleExportWidgets}
                       title="Export widget codes"
-                      className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 border border-soft/60 hover:bg-accent-soft dark:hover:bg-accent/10 hover:border-accent-soft dark:hover:border-accent/30 hover:text-accent dark:hover:text-accent rounded-lg text-[10px] font-semibold text-ink-secondary transition-all duration-200"
+                      className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 border border-border/60 hover:bg-accent-soft dark:hover:bg-accent/10 hover:border-accent-soft dark:hover:border-accent/30 hover:text-accent dark:hover:text-accent rounded-lg text-[10px] font-semibold text-muted-foreground transition-all duration-200"
                     >
                       <Download className="w-3.5 h-3.5" /> Export Catalog
                     </button>
-                    <label className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 border border-soft/60 hover:bg-accent-soft dark:hover:bg-accent/10 hover:border-accent-soft dark:hover:border-accent/30 hover:text-accent dark:hover:text-accent rounded-lg text-[10px] font-semibold text-ink-secondary cursor-pointer text-center transition-all duration-200">
+                    <label className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 border border-border/60 hover:bg-accent-soft dark:hover:bg-accent/10 hover:border-accent-soft dark:hover:border-accent/30 hover:text-accent dark:hover:text-accent rounded-lg text-[10px] font-semibold text-muted-foreground cursor-pointer text-center transition-all duration-200">
                       <Upload className="w-3.5 h-3.5" /> Import Catalog
                       <input
                         type="file"
@@ -1899,14 +1899,14 @@ if (isSearchOpen && searchQuery) {
                   <div className="p-4 space-y-5 flex-1">
                     {/* Preset Library */}
                     <div>
-                      <h4 className="text-[10px] font-bold text-ink-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                      <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5">
                         <Sparkles className="w-3 h-3 text-accent" /> Preset Library
                       </h4>
                       <div className="grid grid-cols-1 gap-2">
-                        <div className="p-3 rounded-xl bg-surface-soft dark:bg-surface/50 border border-soft dark:border-soft/60 flex items-center justify-between text-xs transition-all hover:border-accent/30">
+                        <div className="p-3 rounded-xl bg-muted dark:bg-sidebar/50 border border-border dark:border-border/60 flex items-center justify-between text-xs transition-all hover:border-accent/30">
                           <div className="flex flex-col">
-                            <span className="font-semibold text-ink dark:text-ink">Analog Clock</span>
-                            <span className="text-[10px] text-ink-muted">Live time widget with smooth animation</span>
+                            <span className="font-semibold text-foreground dark:text-foreground">Analog Clock</span>
+                            <span className="text-[10px] text-muted-foreground">Live time widget with smooth animation</span>
                           </div>
                           <button
                             onClick={() => {
@@ -1922,10 +1922,10 @@ if (isSearchOpen && searchQuery) {
                           </button>
                         </div>
 
-                        <div className="p-3 rounded-xl bg-surface-soft dark:bg-surface/50 border border-soft dark:border-soft/60 flex items-center justify-between text-xs transition-all hover:border-accent/30">
+                        <div className="p-3 rounded-xl bg-muted dark:bg-sidebar/50 border border-border dark:border-border/60 flex items-center justify-between text-xs transition-all hover:border-accent/30">
                           <div className="flex flex-col">
-                            <span className="font-semibold text-ink dark:text-ink">Mini Calculator</span>
-                            <span className="text-[10px] text-ink-muted">Grid based mathematical calculator</span>
+                            <span className="font-semibold text-foreground dark:text-foreground">Mini Calculator</span>
+                            <span className="text-[10px] text-muted-foreground">Grid based mathematical calculator</span>
                           </div>
                           <button
                             onClick={() => {
@@ -1941,10 +1941,10 @@ if (isSearchOpen && searchQuery) {
                           </button>
                         </div>
 
-                        <div className="p-3 rounded-xl bg-surface-soft dark:bg-surface/50 border border-soft dark:border-soft/60 flex items-center justify-between text-xs transition-all hover:border-accent/30">
+                        <div className="p-3 rounded-xl bg-muted dark:bg-sidebar/50 border border-border dark:border-border/60 flex items-center justify-between text-xs transition-all hover:border-accent/30">
                           <div className="flex flex-col">
-                            <span className="font-semibold text-ink dark:text-ink">Quick Tasks Todo</span>
-                            <span className="text-[10px] text-ink-muted">Interactive todo list with state</span>
+                            <span className="font-semibold text-foreground dark:text-foreground">Quick Tasks Todo</span>
+                            <span className="text-[10px] text-muted-foreground">Interactive todo list with state</span>
                           </div>
                           <button
                             onClick={() => {
@@ -1964,11 +1964,11 @@ if (isSearchOpen && searchQuery) {
 
                     {/* Current Page Widgets List */}
                     <div>
-                      <h4 className="text-[10px] font-bold text-ink-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                      <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5">
                         <Cpu className="w-3 h-3 text-success" /> Page Widgets List
                       </h4>
                       {blocks.filter(b => b.type === 'widget').length === 0 ? (
-                        <div className="p-6 text-center border border-dashed border-soft rounded-xl text-xs text-ink-muted">
+                        <div className="p-6 text-center border border-dashed border-border rounded-xl text-xs text-muted-foreground">
                           No widgets on this page yet.
                         </div>
                       ) : (
@@ -1976,10 +1976,10 @@ if (isSearchOpen && searchQuery) {
                           {blocks.filter(b => b.type === 'widget').map(block => {
                             const widgetId = block.properties?.widgetId || 'unassigned';
                             return (
-                              <div key={block.id} className="p-3 rounded-xl bg-surface-soft dark:bg-surface/40 border border-soft dark:border-soft/60 flex items-center justify-between text-xs">
+                              <div key={block.id} className="p-3 rounded-xl bg-muted dark:bg-sidebar/40 border border-border dark:border-border/60 flex items-center justify-between text-xs">
                                 <div className="flex flex-col min-w-0 pr-2">
-                                  <span className="font-semibold truncate text-ink dark:text-ink">ID: {widgetId}</span>
-                                  <span className="text-[9px] text-ink-muted truncate">Block ID: {block.id}</span>
+                                  <span className="font-semibold truncate text-foreground dark:text-foreground">ID: {widgetId}</span>
+                                  <span className="text-[9px] text-muted-foreground truncate">Block ID: {block.id}</span>
                                 </div>
                                 <div className="flex items-center gap-1.5 shrink-0">
                                   <button
@@ -1988,7 +1988,7 @@ if (isSearchOpen && searchQuery) {
                                       alert('Widget code copied to clipboard!');
                                     }}
                                     title="Copy Code"
-                                    className="p-1 hover:bg-surface-hover dark:hover:bg-surface-hover rounded text-ink-secondary cursor-pointer"
+                                    className="p-1 hover:bg-muted dark:hover:bg-muted rounded text-muted-foreground cursor-pointer"
                                   >
                                     <Copy className="w-3.5 h-3.5" />
                                   </button>
@@ -2001,7 +2001,7 @@ if (isSearchOpen && searchQuery) {
                                       });
                                     }}
                                     title="Duplicate Widget"
-                                    className="p-1 hover:bg-surface-hover dark:hover:bg-surface-hover rounded text-ink-secondary cursor-pointer"
+                                    className="p-1 hover:bg-muted dark:hover:bg-muted rounded text-muted-foreground cursor-pointer"
                                   >
                                     <Minus className="w-3.5 h-3.5 rotate-90" />
                                   </button>
@@ -2010,7 +2010,7 @@ if (isSearchOpen && searchQuery) {
                                       deleteBlock(block.id);
                                     }}
                                     title="Delete Widget"
-                                    className="p-1 hover:bg-surface-hover dark:hover:bg-surface-hover rounded text-danger cursor-pointer"
+                                    className="p-1 hover:bg-muted dark:hover:bg-muted rounded text-danger cursor-pointer"
                                   >
                                     <Trash2 className="w-3.5 h-3.5" />
                                   </button>

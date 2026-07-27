@@ -293,7 +293,7 @@ const App: React.FC = () => {
             setIsEditingTitle(false);
           }
         }}
-        className="px-2 py-0.5 border border-indigo-400 dark:border-indigo-500 rounded bg-secondary text-xs font-semibold text-foreground focus:outline-none focus:ring-1 focus:ring-indigo-500 w-36 sm:w-48"
+        className="px-2 py-0.5 border border-indigo-400 dark:border-indigo-500 rounded bg-secondary text-xs font-semibold text-foreground focus:outline-none focus:ring-1 focus:ring-accent w-36 sm:w-48"
         autoFocus
       />
     ) : (
@@ -308,7 +308,7 @@ const App: React.FC = () => {
         <button
           type="button"
           onClick={() => setIsEditingTitle(true)}
-          className="inline-flex items-center justify-center rounded-lg text-muted-foreground hover:text-indigo-500 hover:bg-secondary transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 p-0.5 opacity-0 group-hover/title:opacity-100"
+          className="inline-flex items-center justify-center rounded-lg text-muted-foreground hover:text-accent hover:bg-secondary transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent p-0.5 opacity-0 group-hover/title:opacity-100"
           title="Edit page title"
         >
           <Edit2 className="w-3 h-3" />
@@ -338,7 +338,7 @@ const App: React.FC = () => {
               onClick={() => handleModeChange(modeItem.id as ActiveMode)}
               className={`px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all duration-150 ${
                 isSelected
-                  ? 'bg-background text-indigo-600 dark:text-indigo-400 shadow-sm shadow-indigo-500/5 font-semibold'
+                  ? 'bg-background text-accent dark:text-accent shadow-sm shadow-accent/5 font-semibold'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
@@ -388,7 +388,7 @@ const App: React.FC = () => {
                       onClick={() => updatePageMeta({ fontStyle: f as any })}
                       className={`py-1 rounded text-center transition-colors ${
                         pageMeta?.fontStyle === f || (!pageMeta?.fontStyle && f === 'sans')
-                          ? 'bg-indigo-600 text-white font-bold'
+                          ? 'bg-accent text-accent-foreground text-white font-bold'
                           : 'bg-secondary text-muted-foreground hover:bg-accent'
                       }`}
                     >
@@ -445,7 +445,7 @@ const App: React.FC = () => {
                 toast(`Share Link generated: ${link}. Anyone with the passphrase can join.`, { variant: 'warning' });
               });
           }}
-          className="inline-flex items-center justify-center rounded-lg gap-1.5 p-1.5 border border-transparent hover:bg-secondary text-muted-foreground hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+          className="inline-flex items-center justify-center rounded-lg gap-1.5 p-1.5 border border-transparent hover:bg-secondary text-muted-foreground hover:text-accent dark:hover:text-accent transition-colors"
           title="Share document link"
         >
           <Share2 className="w-3.5 h-3.5" />
@@ -458,7 +458,7 @@ const App: React.FC = () => {
           className="inline-flex items-center justify-center gap-2 rounded-lg px-2 py-1 hover:bg-secondary text-xs font-medium text-muted-foreground border border-transparent hover:border-border/60"
           title="Auth Settings"
         >
-          <span className="w-5 h-5 rounded-full bg-indigo-500 text-white text-[10px] font-bold flex items-center justify-center shadow-sm">
+          <span className="w-5 h-5 rounded-full bg-accent text-accent-foreground text-white text-[10px] font-bold flex items-center justify-center shadow-sm">
             {userEmail.charAt(0).toUpperCase()}
           </span>
           <span className="max-w-[100px] truncate text-[10px] font-semibold hidden sm:inline">{userEmail}</span>
