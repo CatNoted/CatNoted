@@ -4,6 +4,7 @@ import { DocumentEditor, useDocumentStore } from '@catnoted/editor';
 import { JournalsView } from './pages/Journals/JournalsView.js';
 import { InfiniteCanvas } from '@catnoted/canvas';
 import { GraphView, parseDocumentGraph } from '@catnoted/graph';
+import { AllDocsView } from './pages/AllDocs/AllDocsView';
 import { ydoc } from '@catnoted/editor';
 import * as Y from 'yjs';
 import { Share2, Edit2, BookOpen, LayoutGrid } from 'lucide-react';
@@ -509,6 +510,9 @@ const App: React.FC = () => {
   const renderActiveView = () => {
     switch (activeMode) {
       case 'doc':
+        if (activePage === 'root-doc-node') {
+          return <AllDocsView />;
+        }
         return (
           <div className="h-full overflow-auto">
             <DocumentEditor activePage={activePage} onRenamePage={handleRenamePage} onPageSelect={setActivePage} />
