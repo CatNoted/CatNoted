@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-const BASE = process.env.BASE_URL || "http://localhost:3000";
+const BASE = process.env.BASE_URL || "http://localhost:5173";
 test.describe("CatNoted route health", () => {
   const routes = ["/", "/tools/quick-capture", "/tools/link-saver", "/tools/flashcards", "/tools/kanban", "/tools/emotion-jar", "/games"];
   for (const route of routes) {
