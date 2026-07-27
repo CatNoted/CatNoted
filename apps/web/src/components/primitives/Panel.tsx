@@ -11,7 +11,7 @@ export const Panel: React.FC<PanelProps> = ({
 }) => {
   return (
     <div
-      className={`bg-white dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800 rounded-2xl relative ${className}`}
+      className={`bg-surface dark:bg-surface border border-border/80 dark:border-border rounded-2xl relative ${className}`}
     >
       {children}
     </div>

@@ -41,8 +41,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
     [pages]
   );
 
-  const [favoritesCollapsed, setFavoritesCollapsed] = useState(false);
-  const [organizeCollapsed, setOrganizeCollapsed] = useState(false);
+  const [favoritesCollapsed, setFavoritesCollapsed] = useState(true);
+  const [organizeCollapsed, setOrganizeCollapsed] = useState(true);
   const [tagsCollapsed, setTagsCollapsed] = useState(false);
   const [collectionsCollapsed, setCollectionsCollapsed] = useState(false);
   const [othersCollapsed, setOthersCollapsed] = useState(true);
@@ -218,8 +218,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
 
         {renderSection('Organize', organizeCollapsed, setOrganizeCollapsed, FolderTree, (
           <>
-            {pages && pages.length > 0 ? (
-              pages.map(node => (
+            {pages && pages.filter((p: any) => !p?.isFavorite).length > 0 ? (
+              pages.filter((p: any) => !p?.isFavorite).map(node => (
                 <div
                   key={node.id}
                   onClick={() => onModeChange('doc')}

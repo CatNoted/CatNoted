@@ -6,9 +6,9 @@ export default {
 };
 
 export const GuestMode = () => (
-  <AuthModal isOpen={false} onClose={() => {}} onAuthSuccess={() => {}} userEmail="guest@catnoted.com" />
+  <AuthModal isOpen={true} onClose={() => {}} onAuthSuccess={() => {}} userEmail="guest@catnoted.com" />
 );
 
 export const LoggedIn = () => (
-  <AuthModal isOpen={false} onClose={() => {}} onAuthSuccess={() => {}} userEmail="aldani@catnoted.com" />
+  <AuthModal isOpen={true} onClose={() => {}} onAuthSuccess={() => {}} userEmail="aldani@catnoted.com" />
 );
