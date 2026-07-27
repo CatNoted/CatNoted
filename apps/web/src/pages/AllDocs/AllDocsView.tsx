@@ -8,14 +8,14 @@ export const AllDocsView: React.FC = () => {
       <div className="flex-1 flex flex-col min-w-0">
         {/* Header */}
         <header className="h-14 border-b border-border flex items-center justify-between px-6 shrink-0">
-          <div className="flex items-center gap-6">
-            <h1 className="text-sm font-medium text-foreground relative after:absolute after:-bottom-4 after:left-0 after:right-0 after:h-0.5 after:bg-foreground">
+          <div className="flex items-center gap-6 h-full">
+            <h1 className="text-sm font-medium text-foreground relative h-full flex items-center after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-foreground">
               Docs
             </h1>
-            <h1 className="text-sm font-medium text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
+            <h1 className="text-sm font-medium text-muted-foreground hover:text-foreground cursor-pointer transition-colors h-full flex items-center">
               Collections
             </h1>
-            <h1 className="text-sm font-medium text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
+            <h1 className="text-sm font-medium text-muted-foreground hover:text-foreground cursor-pointer transition-colors h-full flex items-center">
               Tags
             </h1>
           </div>
@@ -49,22 +49,22 @@ export const AllDocsView: React.FC = () => {
 
               <div className="space-y-1">
                 {/* Doc Item */}
-                <div className="flex items-center justify-between py-2.5 px-3 hover:bg-muted rounded-lg group cursor-pointer border border-transparent hover:border-border transition-colors">
-                  <div className="flex items-center gap-3">
-                    <FileText className="w-4 h-4 text-accent" />
-                    <span className="text-sm font-medium text-foreground">Getting Started with Affine</span>
+                <div className="flex items-center justify-between py-2.5 px-3 hover:bg-muted rounded-lg group cursor-pointer border border-transparent hover:border-border transition-colors min-w-0">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <FileText className="w-4 h-4 text-accent shrink-0" />
+                    <span className="text-sm font-medium text-foreground truncate min-w-0">Getting Started with Affine</span>
                   </div>
-                  <span className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
+                  <span className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-4">
                     10:45 AM
                   </span>
                 </div>
                 {/* Doc Item */}
-                <div className="flex items-center justify-between py-2.5 px-3 hover:bg-muted rounded-lg group cursor-pointer border border-transparent hover:border-border transition-colors">
-                  <div className="flex items-center gap-3">
-                    <FileText className="w-4 h-4 text-accent" />
-                    <span className="text-sm font-medium text-foreground">Project Roadmap Q3</span>
+                <div className="flex items-center justify-between py-2.5 px-3 hover:bg-muted rounded-lg group cursor-pointer border border-transparent hover:border-border transition-colors min-w-0">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <FileText className="w-4 h-4 text-accent shrink-0" />
+                    <span className="text-sm font-medium text-foreground truncate min-w-0">Project Roadmap Q3</span>
                   </div>
-                  <span className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
+                  <span className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-4">
                     09:30 AM
                   </span>
                 </div>
@@ -80,12 +80,12 @@ export const AllDocsView: React.FC = () => {
 
               <div className="space-y-1">
                 {/* Doc Item */}
-                <div className="flex items-center justify-between py-2.5 px-3 hover:bg-muted rounded-lg group cursor-pointer border border-transparent hover:border-border transition-colors">
-                  <div className="flex items-center gap-3">
-                    <FileText className="w-4 h-4 text-accent" />
-                    <span className="text-sm font-medium text-foreground">Untitled Document</span>
+                <div className="flex items-center justify-between py-2.5 px-3 hover:bg-muted rounded-lg group cursor-pointer border border-transparent hover:border-border transition-colors min-w-0">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <FileText className="w-4 h-4 text-accent shrink-0" />
+                    <span className="text-sm font-medium text-foreground truncate min-w-0">Untitled Document</span>
                   </div>
-                  <span className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
+                  <span className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-4">
                     -
                   </span>
                 </div>
