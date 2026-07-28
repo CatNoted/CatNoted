@@ -143,13 +143,13 @@ const HeadingBlockBase: React.FC<HeadingBlockProps> = ({
   const getHeadingClassName = () => {
     switch (level) {
       case 1:
-        return 'text-3xl font-semibold tracking-tight text-slate-900 dark:text-zinc-50';
+        return 'text-3xl font-semibold tracking-tight text-foreground';
       case 2:
-        return 'text-2xl font-semibold tracking-tight text-slate-900 dark:text-zinc-100';
+        return 'text-2xl font-semibold tracking-tight text-foreground';
       case 3:
-        return 'text-xl font-semibold tracking-tight text-slate-900 dark:text-zinc-100';
+        return 'text-xl font-semibold tracking-tight text-foreground';
       default:
-        return 'text-lg font-semibold tracking-tight text-slate-900 dark:text-zinc-100';
+        return 'text-lg font-semibold tracking-tight text-foreground';
     }
   };
 
@@ -179,7 +179,7 @@ const HeadingBlockBase: React.FC<HeadingBlockProps> = ({
         onBlur={onBlur}
         placeholder={`Heading ${level}`}
         rows={1}
-        className={`w-full bg-transparent resize-none border-none outline-none focus:ring-0 p-0 leading-snug placeholder-slate-300 dark:placeholder-zinc-700 ${getHeadingClassName()}`}
+        className={`w-full bg-transparent resize-none border-none outline-none focus:ring-0 p-0 leading-snug placeholder-muted-foreground ${getHeadingClassName()}`}
       />
 
       {slashActive &&

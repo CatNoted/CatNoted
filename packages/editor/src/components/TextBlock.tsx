@@ -220,11 +220,11 @@ const TextBlockBase: React.FC<TextBlockProps> = ({
             onClick={addClick}
             title="Add block below"
             aria-label="Add block below"
-            className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 transition-colors flex items-center justify-center cursor-pointer"
+            className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
           </button>
-          <span className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-400/80 dark:text-zinc-500/80 hover:text-slate-600 dark:hover:text-zinc-200 transition-colors cursor-grab flex items-center justify-center select-none">
+          <span className="p-1.5 rounded-md hover:bg-muted text-muted-foreground/80 hover:text-foreground transition-colors cursor-grab flex items-center justify-center select-none">
             <GripVertical className="w-3.5 h-3.5" />
           </span>
         </div>
@@ -241,7 +241,7 @@ const TextBlockBase: React.FC<TextBlockProps> = ({
           onBlur={handleBlur}
           placeholder="Type '/' for commands..."
           rows={1}
-          className="w-full bg-transparent resize-none text-slate-700 dark:text-zinc-300 border-none outline-none focus:ring-0 p-0 text-sm leading-6 placeholder-slate-300 dark:placeholder-zinc-600"
+          className="w-full bg-transparent resize-none text-foreground border-none outline-none focus:ring-0 p-0 text-sm leading-6 placeholder-muted-foreground"
         />
 
         {slashActive &&

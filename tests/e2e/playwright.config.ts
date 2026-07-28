@@ -9,6 +9,7 @@ export default defineConfig({
   webServer: {
     command: "pnpm --filter @catnoted/web dev --port 5173",
     url: "http://localhost:5173",
+    timeout: 120 * 1000,
     reuseExistingServer: !process.env.CI,
     stdout: "ignore",
     stderr: "pipe",

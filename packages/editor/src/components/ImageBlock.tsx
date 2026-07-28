@@ -35,7 +35,7 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
   return (
     <div className="w-full my-3 select-none group/img">
       {isEditing ? (
-        <div className="p-3 bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl flex items-center gap-2">
+        <div className="p-3 bg-muted border border-border rounded-xl flex items-center gap-2">
           <ImageIcon className="w-4 h-4 text-indigo-500 shrink-0" />
           <input
             type="text"
@@ -45,7 +45,7 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
               if (e.key === 'Enter') handleSaveUrl();
             }}
             placeholder="Paste image URL..."
-            className="flex-1 bg-transparent text-xs font-mono text-slate-800 dark:text-zinc-200 outline-none"
+            className="flex-1 bg-transparent text-xs font-mono text-foreground outline-none"
             autoFocus
           />
           <button
@@ -108,7 +108,7 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
             value={caption}
             onChange={(e) => onUpdateProps({ caption: e.target.value })}
             placeholder="Add image caption..."
-            className="w-full max-w-sm text-center text-xs text-slate-400 dark:text-zinc-500 bg-transparent border-none outline-none focus:ring-0 mt-1.5"
+            className="w-full max-w-sm text-center text-xs text-muted-foreground bg-transparent border-none outline-none focus:ring-0 mt-1.5"
           />
         </div>
       )}

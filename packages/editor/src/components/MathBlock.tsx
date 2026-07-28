@@ -19,16 +19,16 @@ export const MathBlock: React.FC<MathBlockProps> = ({
   const defaultFormula = content || 'E = mc^2';
 
   return (
-    <div className="w-full my-2 p-3 bg-slate-50 dark:bg-zinc-900/60 border border-slate-200 dark:border-zinc-800 rounded-xl transition-all group/math">
-      <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-200/60 dark:border-zinc-800 text-xs text-slate-400 font-mono">
-        <span className="flex items-center gap-1.5 font-semibold text-indigo-600 dark:text-indigo-400">
+    <div className="w-full my-2 p-3 bg-muted/50 border border-border rounded-xl transition-all group/math">
+      <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-200/60 dark:border-zinc-800 text-xs text-muted-foreground font-mono">
+        <span className="flex items-center gap-1.5 font-semibold text-accent">
           <Sigma className="w-3.5 h-3.5" />
           Math Formula (LaTeX)
         </span>
         <button
           type="button"
           onClick={() => setIsEditing(!isEditing)}
-          className="px-2 py-0.5 rounded hover:bg-slate-200 dark:hover:bg-zinc-800 text-slate-500 dark:text-zinc-400 flex items-center gap-1 transition-colors"
+          className="px-2 py-0.5 rounded hover:bg-muted text-muted-foreground flex items-center gap-1 transition-colors"
         >
           {isEditing ? (
             <>
@@ -51,19 +51,19 @@ export const MathBlock: React.FC<MathBlockProps> = ({
             onChange={(e) => onChange(e.target.value)}
             placeholder="e.g. \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}"
             rows={2}
-            className="w-full bg-white dark:bg-[#16161a] p-2.5 rounded-lg border border-slate-300 dark:border-zinc-700 text-xs font-mono text-slate-800 dark:text-zinc-200 outline-none focus:ring-1 focus:ring-indigo-500"
+            className="w-full bg-white bg-card p-2.5 rounded-lg border border-slate-300 dark:border-zinc-700 text-xs font-mono text-foreground outline-none focus:ring-1 focus:ring-accent"
             autoFocus
           />
-          <p className="text-[10px] text-slate-400">
+          <p className="text-[10px] text-muted-foreground">
             Supports standard LaTeX math syntax (e.g., \sum, \int, \frac, \sqrt)
           </p>
         </div>
       ) : (
         <div
           onDoubleClick={() => setIsEditing(true)}
-          className="py-3 px-4 text-center cursor-pointer hover:bg-slate-100 dark:hover:bg-zinc-800/40 rounded-lg transition-colors overflow-x-auto"
+          className="py-3 px-4 text-center cursor-pointer hover:bg-muted rounded-lg transition-colors overflow-x-auto"
         >
-          <div className="inline-block text-lg font-serif italic text-slate-800 dark:text-zinc-100 tracking-wide font-medium">
+          <div className="inline-block text-lg font-serif italic text-foreground tracking-wide font-medium">
             $${defaultFormula}$$
           </div>
         </div>

@@ -17,20 +17,20 @@ const WidgetBlockPlaceholderBase: React.FC<WidgetBlockPlaceholderProps> = ({
   const widgetId = properties?.widgetId || 'unassigned';
 
   return (
-    <div className="w-full my-4 border border-slate-200 dark:border-zinc-800 rounded-xl bg-slate-50 dark:bg-[#16161a] p-4 shadow-sm transition-all hover:shadow-md">
-      <div className="flex items-center justify-between border-b border-slate-100 dark:border-zinc-900 pb-2 mb-3">
-        <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
+    <div className="w-full my-4 border border-border rounded-xl bg-card p-4 shadow-sm transition-all hover:shadow-md">
+      <div className="flex items-center justify-between border-b border-border pb-2 mb-3">
+        <div className="flex items-center gap-2 text-accent">
           <Cpu className="w-4 h-4" />
           <span className="text-xs font-mono font-semibold">AI Widget Container</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] bg-indigo-100 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded-full font-mono">
+          <span className="text-[10px] bg-accent/20 text-accent px-2 py-0.5 rounded-full font-mono">
             ID: {widgetId}
           </span>
           <button 
             onClick={onDelete}
             title="Delete Widget"
-            className="p-1 hover:bg-slate-200 dark:hover:bg-zinc-800 rounded-lg text-slate-400 hover:text-red-500 transition-colors"
+            className="p-1 hover:bg-muted rounded-lg text-muted-foreground hover:text-destructive transition-colors"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </button>
@@ -38,11 +38,11 @@ const WidgetBlockPlaceholderBase: React.FC<WidgetBlockPlaceholderProps> = ({
       </div>
       
       <div className="py-6 flex flex-col items-center justify-center text-center">
-        <div className="w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-950/30 flex items-center justify-center mb-2">
+        <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center mb-2">
           <span className="text-sm">🤖</span>
         </div>
-        <p className="text-xs font-medium text-slate-700 dark:text-zinc-300">Widget Sandbox Standby</p>
-        <p className="text-[10px] text-slate-400 mt-1 max-w-xs">
+        <p className="text-xs font-medium text-foreground">Widget Sandbox Standby</p>
+        <p className="text-[10px] text-muted-foreground mt-1 max-w-xs">
           The Space Agent runtime will dynamically inject sandbox iframe and compiled JS widget here.
         </p>
       </div>
