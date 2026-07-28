@@ -51,13 +51,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
   const [othersCollapsed, setOthersCollapsed] = useState(true);
 
   const sectionClassName =
-    'px-2.5 text-[11px] font-semibold uppercase tracking-wider text-ink-muted';
+    'px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground';
 
   const itemClassName =
-    'flex items-center w-full px-3 py-2 text-[13px] leading-5 text-ink rounded-lg transition-all select-none gap-x-2.5 hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent font-medium';
+    'flex items-center w-full px-3 py-2 text-[13px] leading-5 text-foreground rounded-lg transition-all select-none gap-x-2.5 hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent font-medium';
 
   const getItemIconClass = (active: boolean) =>
-    `shrink-0 ${active ? 'text-accent' : 'text-ink-muted'}`;
+    `shrink-0 ${active ? 'text-accent' : 'text-muted-foreground'}`;
 
   const renderSection = (
     label: string,
@@ -73,15 +73,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         <button
           type="button"
           onClick={() => setCollapsed(!collapsed)}
-          className={`${sectionClassName} flex items-center justify-between w-full px-3 py-1.5 rounded-lg hover:bg-surface-hover transition-all gap-x-2 group`}
+          className={`${sectionClassName} flex items-center justify-between w-full px-3 py-1.5 rounded-lg hover:bg-muted transition-all gap-x-2 group`}
           aria-label={collapsed ? `Expand ${label}` : `Collapse ${label}`}
           aria-expanded={!collapsed}
         >
           <span className="flex items-center gap-x-2">
-            {SectionIcon && <SectionIcon className="w-3.5 h-3.5 shrink-0 text-ink-muted" />}
+            {SectionIcon && <SectionIcon className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />}
             <span>{label}</span>
           </span>
-          <Icon className="w-3.5 h-3.5 shrink-0 text-ink-muted opacity-60 group-hover:opacity-100 transition-opacity" />
+          <Icon className="w-3.5 h-3.5 shrink-0 text-muted-foreground opacity-60 group-hover:opacity-100 transition-opacity" />
         </button>
         {!collapsed && <div className="mt-1 space-y-0.5 px-1">{children}</div>}
       </div>
@@ -89,13 +89,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
   };
 
   return (
-    <div className="w-64 border-r border-soft bg-surface h-full flex flex-col shrink-0 text-ink select-none">
+    <div className="w-64 border-r border-border bg-sidebar h-full flex flex-col shrink-0 text-foreground select-none">
       <div className="px-4 pt-4 pb-2">
         <div className="flex items-center gap-2.5 px-1.5 py-1">
           <div className="w-6 h-6 rounded-lg bg-accent flex items-center justify-center text-white font-bold text-xs shadow-sm">
             CN
           </div>
-          <span className="font-semibold text-[14px] text-slate-800 dark:text-zinc-200 tracking-tight truncate min-w-0" title="CatNoted Workspace">
+          <span className="font-semibold text-[14px] text-foreground tracking-tight truncate min-w-0" title="CatNoted Workspace">
             CatNoted Workspace
           </span>
         </div>
@@ -145,7 +145,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
       </div>
 
       <div className="px-4 my-2">
-        <hr className="border-soft" />
+        <hr className="border-border" />
       </div>
 
       <div className="flex-1 overflow-y-auto py-2 space-y-2 px-1">
@@ -176,7 +176,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                             deletePage(node.id);
                           }
                         }}
-                        className="p-1 rounded text-ink-muted hover:text-danger hover:bg-danger-soft transition-colors"
+                        className="p-1 rounded text-muted-foreground hover:text-danger hover:bg-danger-soft transition-colors"
                         aria-label="Delete page"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -188,7 +188,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                         e.stopPropagation();
                         alert('More options');
                       }}
-                      className="p-1 rounded text-ink-muted hover:text-ink hover:bg-surface-hover transition-colors"
+                      className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                       aria-label="More options"
                     >
                       <MoreHorizontal className="w-3.5 h-3.5" />
@@ -246,7 +246,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                             deletePage(node.id);
                           }
                         }}
-                        className="p-1 rounded text-ink-muted hover:text-danger hover:bg-danger-soft transition-colors"
+                        className="p-1 rounded text-muted-foreground hover:text-danger hover:bg-danger-soft transition-colors"
                         aria-label="Delete page"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -258,7 +258,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                         e.stopPropagation();
                         alert('More options');
                       }}
-                      className="p-1 rounded text-ink-muted hover:text-ink hover:bg-surface-hover transition-colors"
+                      className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                       aria-label="More options"
                     >
                       <MoreHorizontal className="w-3.5 h-3.5" />
@@ -299,11 +299,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
 
         {renderSection('Tags', tagsCollapsed, setTagsCollapsed, Tag, (
           <div className="flex flex-wrap gap-1.5 p-2">
-            <button type="button" onClick={() => onModeChange('doc')} className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md bg-surface-hover text-ink hover:bg-surface dark:hover:bg-surface-hover transition-colors">
+            <button type="button" onClick={() => onModeChange('doc')} className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md bg-muted text-foreground hover:bg-card dark:hover:bg-muted transition-colors">
               <Tag className="w-3 h-3 text-warning" />
               <span>product</span>
             </button>
-            <button type="button" onClick={() => onModeChange('doc')} className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md bg-surface-hover text-ink hover:bg-surface dark:hover:bg-surface-hover transition-colors">
+            <button type="button" onClick={() => onModeChange('doc')} className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md bg-muted text-foreground hover:bg-card dark:hover:bg-muted transition-colors">
               <Tag className="w-3 h-3 text-warning" />
               <span>engineering</span>
             </button>
@@ -337,7 +337,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         ))}
       </div>
 
-      <div className="border-t border-soft dark:border-soft p-3 space-y-1">
+      <div className="border-t border-border dark:border-border p-3 space-y-1">
         <button
           type="button"
           onClick={() => onModeChange('doc')}
@@ -354,7 +354,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           className={itemClassName}
           title="Import"
         >
-          <Download className="w-4 h-4 text-ink-muted" />
+          <Download className="w-4 h-4 text-muted-foreground" />
           <span className="truncate">Import</span>
         </button>
 
@@ -364,7 +364,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           className={itemClassName}
           title="Template"
         >
-          <FileSpreadsheet className="w-4 h-4 text-ink-muted" />
+          <FileSpreadsheet className="w-4 h-4 text-muted-foreground" />
           <span className="truncate">Template</span>
         </button>
 
@@ -384,7 +384,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           className={itemClassName}
           title="Learn more"
         >
-          <CircleHelp className="w-4 h-4 text-ink-muted" />
+          <CircleHelp className="w-4 h-4 text-muted-foreground" />
           <span className="truncate">Learn more</span>
         </button>
       </div>
