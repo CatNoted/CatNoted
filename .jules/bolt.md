@@ -1,0 +1,3 @@
+## 2025-02-18 - [Optimized searchResults memoization to use graphData directly]
+**Learning:** Found an unnecessary re-render/re-computation in `AppLayout.tsx`. `searchResults` was dependent on `parsedGraphNodes` which simply returned `parseDocumentGraph(blocks).nodes`. But `graphData` already memoizes `parseDocumentGraph(blocks, pages)`. I updated `searchResults` to use `graphData.nodes` instead of calculating it again or using an intermediate memoized value.
+**Action:** Always check if a computed property (like `parsedGraphNodes`) is already available in another memoized variable (like `graphData`).
