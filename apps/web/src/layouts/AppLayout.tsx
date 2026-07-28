@@ -614,10 +614,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   // Search filtering logic
 // Search filtering logic
 
-const parsedGraphNodes = React.useMemo(() => {
-  return parseDocumentGraph(blocks).nodes;
-}, [blocks]);
-
 const searchResults = React.useMemo(() => {
   if (!searchQuery.trim()) return [];
 
@@ -637,7 +633,7 @@ const searchResults = React.useMemo(() => {
   });
 
   // Search in graph nodes (pages/tags)
-  parsedGraphNodes.forEach(node => {
+  graphData.nodes.forEach(node => {
     if (node.label.toLowerCase().includes(query) && node.id !== 'root-doc-node') {
       if (!results.some(r => r.content.includes(node.label.replace(/[📄#]/g, '').trim()))) {
         results.push({
@@ -651,7 +647,7 @@ const searchResults = React.useMemo(() => {
   });
 
   return results;
-}, [blocks, parsedGraphNodes, searchQuery]);
+}, [blocks, graphData.nodes, searchQuery]);
 
 if (isSearchOpen && searchQuery) {
   console.log(searchResults, setSearchQuery, setIsSearchOpen);
