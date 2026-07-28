@@ -20,16 +20,16 @@ export const AllDocsView: React.FC = () => {
             </h1>
           </div>
           <div className="flex items-center gap-2">
-            <button className="p-1.5 text-muted-foreground hover:bg-muted rounded-md transition-colors">
+            <button aria-label="Filter documents" className="p-1.5 text-muted-foreground hover:bg-muted rounded-md transition-colors">
               <Filter className="w-4 h-4" />
             </button>
-            <button className="p-1.5 text-muted-foreground hover:bg-muted rounded-md transition-colors">
+            <button aria-label="Sort documents" className="p-1.5 text-muted-foreground hover:bg-muted rounded-md transition-colors">
               <ListFilter className="w-4 h-4" />
             </button>
-            <button className="p-1.5 text-muted-foreground hover:bg-muted rounded-md transition-colors">
+            <button aria-label="Document settings" className="p-1.5 text-muted-foreground hover:bg-muted rounded-md transition-colors">
               <Settings className="w-4 h-4" />
             </button>
-            <button className="p-1.5 text-muted-foreground hover:bg-muted rounded-md transition-colors">
+            <button aria-label="Create new document" className="p-1.5 text-muted-foreground hover:bg-muted rounded-md transition-colors">
               <Plus className="w-4 h-4" />
             </button>
           </div>
@@ -101,7 +101,7 @@ export const AllDocsView: React.FC = () => {
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-sm font-medium text-foreground">Calendar</h3>
             <div className="flex gap-1">
-               <button className="p-1.5 text-muted-foreground hover:bg-muted rounded-md transition-colors"><Settings className="w-4 h-4" /></button>
+               <button aria-label="Calendar settings" className="p-1.5 text-muted-foreground hover:bg-muted rounded-md transition-colors"><Settings className="w-4 h-4" /></button>
             </div>
           </div>
           {/* Mock Calendar */}
