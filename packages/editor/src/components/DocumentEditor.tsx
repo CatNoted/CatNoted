@@ -294,13 +294,13 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       />
 
       {blocks.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20 text-slate-400 dark:text-zinc-500 opacity-60">
+        <div className="flex flex-col items-center justify-center py-20 text-muted-foreground opacity-60">
           <span className="text-4xl mb-3">📝</span>
           <p className="text-sm font-medium">This document is empty</p>
           <p className="text-xs mt-1">Start typing or type '/' for commands</p>
           <button
             onClick={() => handleCreateBlock('root')}
-            className="mt-4 px-4 py-1.5 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-md text-xs font-semibold hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition-colors"
+            className="mt-4 px-4 py-1.5 bg-accent/10 text-accent rounded-md text-xs font-semibold hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition-colors"
           >
             Create first block
           </button>
@@ -347,7 +347,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           <button
             type="button"
             onClick={() => setIsBacklinksExpanded(!isBacklinksExpanded)}
-            className="flex items-center gap-2 text-[11px] font-semibold text-slate-400 dark:text-zinc-500 hover:text-slate-600 dark:hover:text-zinc-300 transition-colors uppercase tracking-wider w-fit"
+            className="flex items-center gap-2 text-[11px] font-semibold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-wider w-fit"
             aria-expanded={isBacklinksExpanded}
             aria-label={`${backlinks.length} backlinks`}
           >
@@ -360,7 +360,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           {isBacklinksExpanded && (
             <div className="pl-5">
               {backlinks.length === 0 ? (
-                <p className="text-xs text-slate-400 dark:text-zinc-500 italic font-light">
+                <p className="text-xs text-muted-foreground italic font-light">
                   No pages link to this document.
                 </p>
               ) : (
@@ -374,18 +374,18 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                           onPageSelect(backlink.pageId);
                         }
                       }}
-                      className="w-full text-left p-2.5 rounded-xl border border-slate-100 dark:border-zinc-900/40 bg-slate-50/30 hover:bg-slate-50/80 dark:bg-zinc-900/10 dark:hover:bg-zinc-900/30 hover:border-slate-200 dark:hover:border-zinc-800 transition-all duration-200 flex flex-col gap-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 group"
+                      className="w-full text-left p-2.5 rounded-xl border border-border bg-slate-50/30 hover:bg-slate-50/80 dark:bg-zinc-900/10 dark:hover:bg-zinc-900/30 hover:border-slate-200 dark:hover:border-zinc-800 transition-all duration-200 flex flex-col gap-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 group"
                     >
                       {/* Referencing Page Info */}
                       <div className="flex items-center gap-2">
                         <span className="text-sm shrink-0">{backlink.pageIcon}</span>
-                        <span className="text-xs font-semibold text-slate-700 dark:text-zinc-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors truncate">
+                        <span className="text-xs font-semibold text-foreground group-hover:text-accent dark:group-hover:text-indigo-400 transition-colors truncate">
                           {backlink.pageTitle}
                         </span>
                       </div>
 
                       {/* Context Content Block Preview */}
-                      <div className="text-[11px] text-slate-500 dark:text-zinc-400 font-normal leading-relaxed truncate pl-6 border-l border-slate-200 dark:border-zinc-800">
+                      <div className="text-[11px] text-muted-foreground font-normal leading-relaxed truncate pl-6 border-l border-border">
                         {backlink.blockContent}
                       </div>
                     </button>

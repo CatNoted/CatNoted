@@ -117,7 +117,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                 type="button"
                 onClick={() => handleCreateBlock(block.id)}
                 title="Add block below"
-                className="p-1 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                className="p-1 hover:bg-muted rounded text-muted-foreground hover:text-accent transition-colors"
               >
                 <Plus className="w-3.5 h-3.5" />
               </button>
@@ -127,19 +127,19 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                   type="button"
                   onClick={() => setActiveMenuId(activeMenuId === block.id ? null : block.id)}
                   title="Block settings"
-                  className="p-1 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                  className="p-1 hover:bg-muted rounded text-muted-foreground hover:text-accent transition-colors"
                 >
                   <MoreVertical className="w-3.5 h-3.5" />
                 </button>
 
                 {activeMenuId === block.id && (
-                  <div className="absolute left-0 mt-1 w-40 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl shadow-lg z-50 py-1 text-xs">
+                  <div className="absolute left-0 mt-1 w-40 bg-card border border-border rounded-xl shadow-lg z-50 py-1 text-xs">
                     <button
                       onClick={() => {
                         updateBlockType(block.id, 'text');
                         setActiveMenuId(null);
                       }}
-                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-200"
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-muted text-foreground"
                     >
                       <AlignLeft className="w-3.5 h-3.5" /> Text Paragraph
                     </button>
@@ -148,7 +148,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                         updateBlockType(block.id, 'heading', { level: 1 });
                         setActiveMenuId(null);
                       }}
-                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-200"
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-muted text-foreground"
                     >
                       <Heading1 className="w-3.5 h-3.5" /> Heading 1
                     </button>
@@ -157,7 +157,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                         updateBlockType(block.id, 'heading', { level: 2 });
                         setActiveMenuId(null);
                       }}
-                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-200"
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-muted text-foreground"
                     >
                       <Heading2 className="w-3.5 h-3.5" /> Heading 2
                     </button>
@@ -166,7 +166,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                         updateBlockType(block.id, 'heading', { level: 3 });
                         setActiveMenuId(null);
                       }}
-                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-200"
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-muted text-foreground"
                     >
                       <Heading3 className="w-3.5 h-3.5" /> Heading 3
                     </button>
@@ -175,23 +175,23 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                         updateBlockType(block.id, 'kanban', { kanbanTitle: 'Kanban Board', columns: [] });
                         setActiveMenuId(null);
                       }}
-                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-200"
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-muted text-foreground"
                     >
                       <Columns className="w-3.5 h-3.5" /> Kanban Board
                     </button>
                     <button
                       onClick={() => handleAddWidget(block.id)}
-                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-indigo-600 dark:text-indigo-400"
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-muted text-accent"
                     >
                       <Cpu className="w-3.5 h-3.5" /> Insert AI Widget
                     </button>
-                    <div className="border-t border-slate-100 dark:border-zinc-800 my-1"></div>
+                    <div className="border-t border-border my-1"></div>
                     <button
                       onClick={() => {
                         deleteBlock(block.id);
                         setActiveMenuId(null);
                       }}
-                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-zinc-800 text-red-500"
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-muted text-destructive"
                     >
                       <Trash2 className="w-3.5 h-3.5" /> Delete Block
                     </button>
@@ -281,7 +281,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                   <div className="flex flex-col flex-shrink-0">
                     {block.content.split('\n').map((_: any, i: number) => (
                       <div key={i} className="h-7 w-1.5 flex items-center justify-center">
-                        <span className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-zinc-500" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground" />
                       </div>
                     ))}
                   </div>
@@ -303,7 +303,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
               {/* --- Ordered list --- */}
               {block.type === 'ordered' && (
                 <div className="flex items-start gap-2">
-                  <span className="mt-0.5 text-xs font-medium text-slate-400 dark:text-zinc-500 flex-shrink-0 w-4 text-right">
+                  <span className="mt-0.5 text-xs font-medium text-muted-foreground flex-shrink-0 w-4 text-right">
                     {index + 1}.
                   </span>
                   <TextBlock

@@ -79,14 +79,14 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
   // Render Page Selector
   if (!refPageId) {
     return (
-      <div className="w-full my-3 p-4 bg-slate-50/60 dark:bg-zinc-900/40 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-sm transition-all text-slate-800 dark:text-zinc-200">
+      <div className="w-full my-3 p-4 bg-slate-50/60 dark:bg-zinc-900/40 border border-border rounded-2xl shadow-sm transition-all text-foreground">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center shrink-0">
-            <Link2 className="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
+          <div className="w-9 h-9 rounded-xl bg-accent/10 flex items-center justify-center shrink-0">
+            <Link2 className="w-4 h-4 text-accent" />
           </div>
           <div className="flex-1 min-w-0">
             <h4 className="text-xs font-semibold">Page Embed Reference</h4>
-            <p className="text-[10px] text-slate-400 dark:text-zinc-500 mt-0.5">
+            <p className="text-[10px] text-muted-foreground mt-0.5">
               Select another page to display its content inline as a synced block
             </p>
           </div>
@@ -102,21 +102,21 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
             </button>
 
             {isDropdownOpen && (
-              <div className="absolute right-0 mt-1.5 w-60 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl shadow-xl z-50 py-1 text-xs max-h-52 overflow-y-auto">
+              <div className="absolute right-0 mt-1.5 w-60 bg-card border border-border rounded-xl shadow-xl z-50 py-1 text-xs max-h-52 overflow-y-auto">
                 {embeddablePages.length > 0 ? (
                   embeddablePages.map((page) => (
                     <button
                       key={page.id}
                       type="button"
                       onClick={() => handleSelectPage(page.id)}
-                      className="w-full px-3 py-2 text-left hover:bg-slate-50 dark:hover:bg-zinc-800/50 text-slate-700 dark:text-zinc-200 flex items-center gap-2 truncate"
+                      className="w-full px-3 py-2 text-left hover:bg-muted text-foreground flex items-center gap-2 truncate"
                     >
                       <span className="text-xs">{page.icon || '📄'}</span>
                       <span className="truncate">{page.title || 'Untitled Document'}</span>
                     </button>
                   ))
                 ) : (
-                  <p className="px-3 py-2 text-slate-400 dark:text-zinc-500 italic">
+                  <p className="px-3 py-2 text-muted-foreground italic">
                     No other pages available
                   </p>
                 )}
@@ -127,7 +127,7 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
           <button
             type="button"
             onClick={onDelete}
-            className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg transition-colors ml-1"
+            className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-muted rounded-lg transition-colors ml-1"
             title="Delete block"
           >
             <Trash2 className="w-4 h-4" />
@@ -147,15 +147,15 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
   ).slice(0, 5);
 
   return (
-    <div className="group/embed relative w-full my-4 border border-slate-200 dark:border-zinc-800/80 bg-slate-50/30 hover:bg-slate-50/60 dark:bg-zinc-900/20 dark:hover:bg-zinc-900/40 rounded-2xl p-4 transition-all">
+    <div className="group/embed relative w-full my-4 border border-border/80 bg-slate-50/30 hover:bg-slate-50/60 dark:bg-zinc-900/20 dark:hover:bg-zinc-900/40 rounded-2xl p-4 transition-all">
       {/* Header with page title & link badge */}
-      <div className="flex items-center justify-between border-b border-slate-200/50 dark:border-zinc-800/50 pb-2.5 mb-3">
+      <div className="flex items-center justify-between border-b border-border pb-2.5 mb-3">
         <div className="flex items-center gap-2.5 min-w-0 flex-1">
           <span className="text-base flex-shrink-0">{targetIcon}</span>
-          <h3 className="text-xs font-bold text-slate-800 dark:text-zinc-100 truncate">
+          <h3 className="text-xs font-bold text-foreground truncate">
             {targetTitle}
           </h3>
-          <span className="text-[9px] bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider scale-90 shrink-0">
+          <span className="text-[9px] bg-accent/10 text-accent px-2 py-0.5 rounded-full font-bold uppercase tracking-wider scale-90 shrink-0">
             Synced Block
           </span>
         </div>
@@ -164,7 +164,7 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
           <button
             type="button"
             onClick={handleReset}
-            className="p-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg transition-colors"
+            className="p-1 text-muted-foreground hover:text-accent hover:bg-muted rounded-lg transition-colors"
             title="Change embedded page"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -172,7 +172,7 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
           <button
             type="button"
             onClick={onDelete}
-            className="p-1 text-slate-400 hover:text-red-500 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg transition-colors"
+            className="p-1 text-muted-foreground hover:text-destructive hover:bg-muted rounded-lg transition-colors"
             title="Delete block"
           >
             <Trash2 className="w-3.5 h-3.5" />
@@ -181,7 +181,7 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
       </div>
 
       {/* Main Preview Content */}
-      <div className="space-y-2 text-xs leading-relaxed text-slate-600 dark:text-zinc-300 pointer-events-none select-none">
+      <div className="space-y-2 text-xs leading-relaxed text-muted-foreground pointer-events-none select-none">
         {filteredBlocksForPreview.length > 0 ? (
           filteredBlocksForPreview.map((block) => {
             // Render styled simple previews
@@ -190,7 +190,7 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
                 const level = block.properties?.level || 2;
                 const sizeClass = level === 1 ? 'text-sm font-bold' : level === 2 ? 'text-xs font-bold' : 'text-[11px] font-semibold';
                 return (
-                  <div key={block.id} className={`${sizeClass} text-slate-800 dark:text-zinc-100 pt-1`}>
+                  <div key={block.id} className={`${sizeClass} text-foreground pt-1`}>
                     {block.content || <span className="opacity-30 italic">Empty Heading</span>}
                   </div>
                 );
@@ -198,14 +198,14 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
               case 'bullet':
                 return (
                   <div key={block.id} className="flex items-start gap-1.5 pl-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-zinc-500 mt-1.5 shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground mt-1.5 shrink-0" />
                     <span>{block.content || <span className="opacity-30 italic">Empty List Item</span>}</span>
                   </div>
                 );
               case 'ordered':
                 return (
                   <div key={block.id} className="flex items-start gap-1.5 pl-1">
-                    <span className="text-slate-400 font-medium shrink-0">1.</span>
+                    <span className="text-muted-foreground font-medium shrink-0">1.</span>
                     <span>{block.content || <span className="opacity-30 italic">Empty List Item</span>}</span>
                   </div>
                 );
@@ -218,7 +218,7 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
                       disabled
                       className="w-3 h-3 rounded border-slate-300 dark:border-zinc-700 mt-1 accent-indigo-500 shrink-0"
                     />
-                    <span className={block.properties?.checked ? 'line-through text-slate-400 dark:text-zinc-500' : ''}>
+                    <span className={block.properties?.checked ? 'line-through text-muted-foreground' : ''}>
                       {block.content || <span className="opacity-30 italic">Empty Task</span>}
                     </span>
                   </div>
@@ -227,7 +227,7 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
                 return (
                   <div key={block.id} className="flex gap-2 pl-1 py-0.5">
                     <div className="w-0.5 bg-indigo-400 dark:bg-indigo-500 rounded-full shrink-0" />
-                    <span className="italic text-slate-500 dark:text-zinc-400">{block.content || <span className="opacity-30 italic">Empty Quote</span>}</span>
+                    <span className="italic text-muted-foreground">{block.content || <span className="opacity-30 italic">Empty Quote</span>}</span>
                   </div>
                 );
               case 'callout':
@@ -239,7 +239,7 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
                 );
               case 'code':
                 return (
-                  <div key={block.id} className="p-2 bg-slate-100/60 dark:bg-zinc-900/40 border border-slate-200/50 dark:border-zinc-800/50 rounded-lg font-mono text-[10px] text-emerald-600 dark:text-emerald-400 truncate">
+                  <div key={block.id} className="p-2 bg-slate-100/60 dark:bg-zinc-900/40 border border-border rounded-lg font-mono text-[10px] text-emerald-600 dark:text-emerald-400 truncate">
                     {block.content || <span className="opacity-30 italic">Code snippet</span>}
                   </div>
                 );
@@ -251,42 +251,42 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
                 );
               case 'table':
                 return (
-                  <div key={block.id} className="flex items-center gap-1.5 text-slate-400 text-[11px] py-1">
+                  <div key={block.id} className="flex items-center gap-1.5 text-muted-foreground text-[11px] py-1">
                     <span>📊</span>
                     <span>Table Grid</span>
                   </div>
                 );
               case 'math':
                 return (
-                  <div key={block.id} className="flex items-center gap-1.5 text-slate-400 text-[11px] py-1">
+                  <div key={block.id} className="flex items-center gap-1.5 text-muted-foreground text-[11px] py-1">
                     <span>🧮</span>
                     <span>Math Formula: {block.content}</span>
                   </div>
                 );
               case 'bookmark':
                 return (
-                  <div key={block.id} className="flex items-center gap-1.5 text-slate-400 text-[11px] py-1">
+                  <div key={block.id} className="flex items-center gap-1.5 text-muted-foreground text-[11px] py-1">
                     <span>🔗</span>
                     <span>Bookmark: {block.properties?.bookmarkTitle || block.properties?.bookmarkUrl}</span>
                   </div>
                 );
               case 'image':
                 return (
-                  <div key={block.id} className="flex items-center gap-1.5 text-slate-400 text-[11px] py-1">
+                  <div key={block.id} className="flex items-center gap-1.5 text-muted-foreground text-[11px] py-1">
                     <span>🖼️</span>
                     <span>Image Preview: {block.properties?.caption || 'untitled'}</span>
                   </div>
                 );
               case 'widget':
                 return (
-                  <div key={block.id} className="flex items-center gap-1.5 text-slate-400 text-[11px] py-1">
+                  <div key={block.id} className="flex items-center gap-1.5 text-muted-foreground text-[11px] py-1">
                     <span>🧩</span>
                     <span>AI Widget: {block.properties?.widgetId}</span>
                   </div>
                 );
               case 'kanban':
                 return (
-                  <div key={block.id} className="flex items-center gap-1.5 text-slate-400 text-[11px] py-1">
+                  <div key={block.id} className="flex items-center gap-1.5 text-muted-foreground text-[11px] py-1">
                     <span>📋</span>
                     <span>Kanban Board: {block.properties?.kanbanTitle || block.content}</span>
                   </div>
@@ -300,7 +300,7 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
             }
           })
         ) : (
-          <p className="text-[11px] text-slate-400 dark:text-zinc-500 italic pl-1">
+          <p className="text-[11px] text-muted-foreground italic pl-1">
             This page is empty
           </p>
         )}

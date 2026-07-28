@@ -20,7 +20,7 @@ const CALLOUT_BG_THEMES: Record<string, { bg: string; border: string; text: stri
   indigo: {
     bg: 'bg-indigo-50/80 dark:bg-indigo-950/30',
     border: 'border-indigo-200 dark:border-indigo-800/60',
-    text: 'text-indigo-900 dark:text-indigo-200',
+    text: 'text-accent',
   },
   emerald: {
     bg: 'bg-emerald-50/80 dark:bg-emerald-950/30',
@@ -118,7 +118,7 @@ export const CalloutBlock: React.FC<CalloutBlockProps> = ({
         {showIconPicker && (
           <div
             ref={menuRef}
-            className="absolute left-0 top-full mt-2 z-50 p-2 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl shadow-xl grid grid-cols-5 gap-1 w-44"
+            className="absolute left-0 top-full mt-2 z-50 p-2 bg-card border border-border rounded-xl shadow-xl grid grid-cols-5 gap-1 w-44"
           >
             {CALLOUT_ICONS.map((ic) => (
               <button
@@ -128,7 +128,7 @@ export const CalloutBlock: React.FC<CalloutBlockProps> = ({
                   onUpdateProps({ calloutIcon: ic });
                   setShowIconPicker(false);
                 }}
-                className="text-xl p-1 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded transition-transform hover:scale-110"
+                className="text-xl p-1 hover:bg-muted rounded transition-transform hover:scale-110"
               >
                 {ic}
               </button>
@@ -147,7 +147,7 @@ export const CalloutBlock: React.FC<CalloutBlockProps> = ({
           onFocus={onFocus}
           placeholder="Callout text..."
           rows={1}
-          className={`w-full bg-transparent resize-none border-none outline-none focus:ring-0 p-0 text-sm font-normal ${currentTheme.text} placeholder-slate-400 dark:placeholder-zinc-500 leading-relaxed`}
+          className={`w-full bg-transparent resize-none border-none outline-none focus:ring-0 p-0 text-sm font-normal ${currentTheme.text} placeholder-muted-foreground leading-relaxed`}
         />
       </div>
 
@@ -159,7 +159,7 @@ export const CalloutBlock: React.FC<CalloutBlockProps> = ({
             setShowBgPicker(!showBgPicker);
             setShowIconPicker(false);
           }}
-          className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 rounded hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+          className="p-1 text-muted-foreground hover:text-foreground rounded hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
           title="Change highlight color"
         >
           <Palette className="w-3.5 h-3.5" />
@@ -168,7 +168,7 @@ export const CalloutBlock: React.FC<CalloutBlockProps> = ({
         {showBgPicker && (
           <div
             ref={menuRef}
-            className="absolute right-0 top-full mt-2 z-50 p-2 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl shadow-xl flex items-center gap-1.5"
+            className="absolute right-0 top-full mt-2 z-50 p-2 bg-card border border-border rounded-xl shadow-xl flex items-center gap-1.5"
           >
             {Object.keys(CALLOUT_BG_THEMES).map((themeKey) => (
               <button
