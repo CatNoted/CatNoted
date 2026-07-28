@@ -101,7 +101,7 @@ export const AllDocsView: React.FC = () => {
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-sm font-medium text-foreground">Calendar</h3>
             <div className="flex gap-1">
-               <button className="p-1 hover:bg-muted rounded text-muted-foreground"><Settings className="w-3.5 h-3.5" /></button>
+               <button className="p-1.5 text-muted-foreground hover:bg-muted rounded-md transition-colors"><Settings className="w-4 h-4" /></button>
             </div>
           </div>
           {/* Mock Calendar */}
