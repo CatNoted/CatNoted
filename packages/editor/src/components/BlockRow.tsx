@@ -252,7 +252,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                     onSetType={onSetTypeBlock}
                     onAddWidget={onAddWidgetBlock}
                     focusOnMount={isFocused}
-                    showLeftActions={false}
+
                     isFocused={isFocused}
                     onAddClick={() => handleCreateBlock(block.id)}
                     blockType={block.type}
@@ -294,7 +294,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                     onSetType={onSetTypeBlock}
                     onAddWidget={onAddWidgetBlock}
                     focusOnMount={isFocused}
-                    showLeftActions={false}
+
                     blockType={block.type}
                   />
                 </div>
@@ -315,7 +315,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                     onSetType={onSetTypeBlock}
                     onAddWidget={onAddWidgetBlock}
                     focusOnMount={isFocused}
-                    showLeftActions={false}
+
                     blockType={block.type}
                   />
                 </div>
@@ -344,7 +344,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                     onSetType={onSetTypeBlock}
                     onAddWidget={onAddWidgetBlock}
                     focusOnMount={isFocused}
-                    showLeftActions={false}
+
                     blockType={block.type}
                   />
                 </div>
@@ -363,7 +363,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                     onSetType={onSetTypeBlock}
                     onAddWidget={onAddWidgetBlock}
                     focusOnMount={isFocused}
-                    showLeftActions={false}
+
                     blockType={block.type}
                   />
                 </div>
