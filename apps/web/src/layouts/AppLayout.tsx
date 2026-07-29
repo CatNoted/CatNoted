@@ -217,7 +217,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 }) => {
   const isModeActive = (mode: string) => window.location.pathname === (mode === 'doc' ? '/' : `/${mode}`) || activeMode === mode;
   const { blocks, addBlock, updateBlockType, pages, createPage, deletePage, deleteBlock, pageMeta, updatePageMeta } = useDocumentStore(activePage);
-  const favoritePages = (pages || []).filter((p: any) => p?.isFavorite);
+  // Optimization: Memoize favoritePages filtering to avoid O(N) array allocation on every render
+  const favoritePages = React.useMemo(() => (pages || []).filter((p: any) => p?.isFavorite), [pages]);
 
   const [activeAgentTab, setActiveAgentTab] = useState<'chat' | 'widgets'>('chat');
 
@@ -234,11 +235,16 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     return parseDocumentGraph(blocks, pages);
   }, [blocks, pages]);
 
-  const mainHeading = blocks.find(b => b.type === 'heading' && b.properties?.level === 1);
+  // Optimization: Memoize mainHeading find operation to avoid O(N) lookup on every render
+  const mainHeading = React.useMemo(() => blocks.find(b => b.type === 'heading' && b.properties?.level === 1), [blocks]);
+  // Removed unnecessary useMemo for simple logical OR assignment
   const docTitle = mainHeading?.content || 'Untitled Document';
 
-  const pageNodes = graphData.nodes.filter(n => n.type === 'page');
-  const tagNodes = graphData.nodes.filter(n => n.type === 'tag');
+  // Optimization: Memoize pageNodes filtering to prevent recreating the array reference on every render,
+  // which previously broke the memoization of recentDocs
+  const pageNodes = React.useMemo(() => graphData.nodes.filter(n => n.type === 'page'), [graphData.nodes]);
+  // Optimization: Memoize tagNodes filtering to prevent O(N) filtering on every render
+  const tagNodes = React.useMemo(() => graphData.nodes.filter(n => n.type === 'tag'), [graphData.nodes]);
   const widgetNodes = React.useMemo(() => {
     return blocks
       .filter(b => b.type === 'widget')
