@@ -1,0 +1,4 @@
+💡 What: Memoized derived states (`favoritePages`, `mainHeading`, `pageNodes`, and `tagNodes`) in `AppLayout.tsx`.
+🎯 Why: These arrays and values were being re-computed on every render. Because methods like `.filter()` and `.map()` return new references every time they run, downstream memoized dependencies (like `recentDocs`) were also unnecessarily re-evaluating on every single React render, leading to wasted O(N) operations and memory allocations.
+📊 Impact: Reduces unnecessary re-calculations of arrays on every AppLayout render, preventing cascading re-renders in dependent hook dependencies.
+🔬 Measurement: Verify using React Developer Tools Profiler and by ensuring `recentDocs` doesn't needlessly run when scrolling or typing.
