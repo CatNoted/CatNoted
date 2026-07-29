@@ -248,7 +248,7 @@ export const KanbanBlock: React.FC<KanbanBlockProps> = ({
   };
 
   return (
-    <div className="w-full my-6 p-4 rounded-2xl border border-border bg-slate-50/20 bg-card/30 shadow-sm select-none">
+    <div className="w-full my-6 p-4 rounded-2xl border border-border bg-muted/20 bg-card/30 shadow-sm select-none">
       {/* Board Header */}
       <div className="flex items-center gap-2 mb-4 group/header">
         <Columns className="w-4 h-4 text-muted-foreground" />
@@ -257,12 +257,12 @@ export const KanbanBlock: React.FC<KanbanBlockProps> = ({
           value={boardTitle}
           onChange={(e) => handleBoardTitleChange(e.target.value)}
           placeholder="Untitled Kanban Board"
-          className="text-sm font-semibold bg-transparent text-foreground border-none outline-none focus:ring-1 focus:ring-accent rounded px-1.5 py-0.5 placeholder:text-muted-foreground dark:placeholder:text-zinc-500 w-64 transition-all"
+          className="text-sm font-semibold bg-transparent text-foreground border-none outline-none focus:ring-1 focus:ring-accent rounded px-1.5 py-0.5 placeholder:text-muted-foreground w-64 transition-all"
         />
         <button
           type="button"
           onClick={handleAddColumn}
-          className="ml-auto flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-accent hover:text-accent hover:bg-indigo-50 dark:hover:bg-indigo-950/20 rounded-md transition-colors border border-dashed border-indigo-200 dark:border-indigo-800/40"
+          className="ml-auto flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-accent hover:text-accent hover:bg-accent/10 rounded-md transition-colors border border-dashed border-accent/30"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>Add Column</span>
@@ -291,15 +291,15 @@ export const KanbanBlock: React.FC<KanbanBlockProps> = ({
               onDragEnd={handleDragEnd}
               className={`flex-shrink-0 w-64 rounded-xl border p-3 flex flex-col max-h-[420px] transition-all ${
                 draggedColId === col.id
-                  ? 'opacity-40 border-slate-300/40 dark:border-zinc-800/40 bg-transparent'
+                  ? 'opacity-40 border-border bg-transparent'
                   : isOverCol
-                  ? 'border-indigo-400 dark:border-indigo-600 bg-indigo-50/20 dark:bg-indigo-950/10'
-                  : 'border-slate-200/60 dark:border-zinc-800/50 bg-slate-50/75 dark:bg-zinc-900/40'
+                  ? 'border-accent bg-accent/10'
+                  : 'border-border bg-muted/40'
               }`}
             >
               {/* Column Header */}
               <div className="flex items-center gap-1.5 mb-3 group/col-header">
-                <span className="cursor-grab active:cursor-grabbing p-0.5 rounded text-muted-foreground hover:bg-slate-150 dark:hover:bg-zinc-800 transition-colors">
+                <span className="cursor-grab active:cursor-grabbing p-0.5 rounded text-muted-foreground hover:bg-muted transition-colors">
                   <GripHorizontal className="w-3.5 h-3.5" />
                 </span>
 
@@ -308,17 +308,17 @@ export const KanbanBlock: React.FC<KanbanBlockProps> = ({
                   value={col.title}
                   onChange={(e) => handleRenameColumn(col.id, e.target.value)}
                   placeholder="Column Name"
-                  className="text-xs font-semibold bg-transparent text-foreground border-none outline-none focus:ring-1 focus:ring-accent rounded px-1 py-0.5 placeholder:text-muted-foreground dark:placeholder:text-zinc-500 flex-1 min-w-0 transition-colors focus:bg-white dark:focus:bg-zinc-800"
+                  className="text-xs font-semibold bg-transparent text-foreground border-none outline-none focus:ring-1 focus:ring-accent rounded px-1 py-0.5 placeholder:text-muted-foreground flex-1 min-w-0 transition-colors focus:bg-background"
                 />
 
-                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-slate-200/50 dark:bg-zinc-800 text-muted-foreground font-mono">
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground font-mono">
                   {col.cards.length}
                 </span>
 
                 <button
                   type="button"
                   onClick={() => handleDeleteColumn(col.id)}
-                  className="opacity-0 group-hover/col-header:opacity-100 p-1 rounded hover:bg-muted text-muted-foreground hover:text-destructive dark:hover:text-red-400 transition-all cursor-pointer"
+                  className="opacity-0 group-hover/col-header:opacity-100 p-1 rounded hover:bg-muted text-muted-foreground hover:text-destructive transition-all cursor-pointer"
                   title="Delete column"
                 >
                   <Trash2 className="w-3 h-3" />
@@ -355,14 +355,14 @@ export const KanbanBlock: React.FC<KanbanBlockProps> = ({
                       onDragEnd={handleDragEnd}
                       className={`group/card relative rounded-lg border p-2.5 flex flex-col gap-1.5 shadow-sm transition-all ${
                         isCardDragged
-                          ? 'opacity-35 border-slate-300/40 dark:border-zinc-800/40 bg-transparent shadow-none'
+                          ? 'opacity-35 border-border bg-transparent shadow-none'
                           : isCardOver
-                          ? 'border-indigo-500 dark:border-indigo-400 ring-2 ring-indigo-500/20 bg-indigo-50/50 dark:bg-indigo-950/20 scale-[0.98]'
-                          : 'border-border/60 bg-white dark:bg-zinc-800 hover:border-slate-300 dark:hover:border-zinc-600'
+                          ? 'border-accent ring-2 ring-accent/20 bg-accent/10 scale-[0.98]'
+                          : 'border-border/60 bg-card hover:border-accent/50'
                       }`}
                     >
                       <div className="flex items-start gap-1.5">
-                        <span className="cursor-grab active:cursor-grabbing p-0.5 rounded text-muted-foreground hover:bg-slate-100 dark:hover:bg-zinc-700 transition-colors mt-0.5 flex-shrink-0 opacity-0 group-hover/card:opacity-100">
+                        <span className="cursor-grab active:cursor-grabbing p-0.5 rounded text-muted-foreground hover:bg-muted transition-colors mt-0.5 flex-shrink-0 opacity-0 group-hover/card:opacity-100">
                           <GripVertical className="w-3 h-3" />
                         </span>
 
@@ -371,7 +371,7 @@ export const KanbanBlock: React.FC<KanbanBlockProps> = ({
                           value={card.title}
                           onChange={(e) => handleRenameCard(col.id, card.id, e.target.value)}
                           placeholder="Card Title"
-                          className="w-full resize-none text-[11px] leading-relaxed bg-transparent text-foreground border-none outline-none focus:ring-1 focus:ring-accent rounded p-0.5 placeholder:text-muted-foreground dark:placeholder:text-zinc-500 focus:bg-slate-50 dark:focus:bg-zinc-900 transition-all"
+                          className="w-full resize-none text-[11px] leading-relaxed bg-transparent text-foreground border-none outline-none focus:ring-1 focus:ring-accent rounded p-0.5 placeholder:text-muted-foreground focus:bg-muted transition-all"
                           style={{ height: 'auto' }}
                           onInput={(e) => {
                             const target = e.target as HTMLTextAreaElement;
@@ -383,7 +383,7 @@ export const KanbanBlock: React.FC<KanbanBlockProps> = ({
                         <button
                           type="button"
                           onClick={() => handleDeleteCard(col.id, card.id)}
-                          className="opacity-0 group-hover/card:opacity-100 p-1 rounded hover:bg-slate-100 dark:hover:bg-zinc-700 text-muted-foreground hover:text-destructive dark:hover:text-red-400 transition-all cursor-pointer flex-shrink-0"
+                          className="opacity-0 group-hover/card:opacity-100 p-1 rounded hover:bg-muted text-muted-foreground hover:text-destructive transition-all cursor-pointer flex-shrink-0"
                           title="Delete card"
                         >
                           <Trash2 className="w-3 h-3" />
@@ -404,7 +404,7 @@ export const KanbanBlock: React.FC<KanbanBlockProps> = ({
               <button
                 type="button"
                 onClick={() => handleAddCard(col.id)}
-                className="mt-2 w-full flex items-center justify-center gap-1.5 py-1.5 text-xs font-semibold text-muted-foreground hover:text-accent hover:bg-slate-100/50 dark:hover:bg-zinc-800/40 rounded-lg transition-colors border border-transparent hover:border-slate-200/50 dark:hover:border-zinc-800/40"
+                className="mt-2 w-full flex items-center justify-center gap-1.5 py-1.5 text-xs font-semibold text-muted-foreground hover:text-accent hover:bg-muted/50 rounded-lg transition-colors border border-transparent hover:border-border"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Add Card</span>

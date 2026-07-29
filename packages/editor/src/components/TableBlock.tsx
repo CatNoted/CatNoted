@@ -93,7 +93,7 @@ export const TableBlock: React.FC<TableBlockProps> = ({
                           type="text"
                           value={cell}
                           onChange={(e) => handleCellChange(0, cIndex, e.target.value)}
-                          className="w-full bg-transparent font-semibold text-foreground outline-none focus:ring-1 focus:ring-accent rounded px-0.5 placeholder:text-muted-foreground dark:placeholder:text-zinc-500"
+                          className="w-full bg-transparent font-semibold text-foreground outline-none focus:ring-1 focus:ring-accent rounded px-0.5 placeholder:text-muted-foreground"
                         />
                       </div>
                       {currentRows[0].length > 1 && (
@@ -116,7 +116,7 @@ export const TableBlock: React.FC<TableBlockProps> = ({
                   return (
                     <tr
                       key={actualRowIdx}
-                      className="group/row border-b border-border last:border-b-0 hover:bg-slate-50/80 dark:hover:bg-zinc-800/70 transition-colors"
+                      className="group/row border-b border-border last:border-b-0 hover:bg-muted/50 transition-colors"
                     >
                       <td className="w-8 p-0 border-r border-border text-center align-middle">
                         <div className="flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-opacity text-muted-foreground cursor-grab active:cursor-grabbing">
@@ -132,7 +132,7 @@ export const TableBlock: React.FC<TableBlockProps> = ({
                             type="text"
                             value={cell}
                             onChange={(e) => handleCellChange(actualRowIdx, cIdx, e.target.value)}
-                            className="w-full bg-transparent text-foreground outline-none focus:ring-1 focus:ring-accent rounded px-0.5 placeholder:text-muted-foreground dark:placeholder:text-zinc-500 transition-colors"
+                            className="w-full bg-transparent text-foreground outline-none focus:ring-1 focus:ring-accent rounded px-0.5 placeholder:text-muted-foreground transition-colors"
                           />
                         </td>
                       ))}

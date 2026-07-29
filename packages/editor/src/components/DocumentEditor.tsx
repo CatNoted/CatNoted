@@ -300,7 +300,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           <p className="text-xs mt-1">Start typing or type '/' for commands</p>
           <button
             onClick={() => handleCreateBlock('root')}
-            className="mt-4 px-4 py-1.5 bg-accent/10 text-accent rounded-md text-xs font-semibold hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition-colors"
+            className="mt-4 px-4 py-1.5 bg-accent/10 text-accent rounded-md text-xs font-semibold hover:bg-accent/20 transition-colors"
           >
             Create first block
           </button>
@@ -341,7 +341,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       })}
 
       {/* Backlinks Section */}
-      <div className="mt-12 select-none border-t border-slate-200/40 dark:border-zinc-800/40 pt-8 pb-12">
+      <div className="mt-12 select-none border-t border-border pt-8 pb-12">
         <div className="flex flex-col gap-3">
           {/* Header Row */}
           <button
@@ -374,12 +374,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                           onPageSelect(backlink.pageId);
                         }
                       }}
-                      className="w-full text-left p-2.5 rounded-xl border border-border bg-slate-50/30 hover:bg-slate-50/80 dark:bg-zinc-900/10 dark:hover:bg-zinc-900/30 hover:border-slate-200 dark:hover:border-zinc-800 transition-all duration-200 flex flex-col gap-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 group"
+                      className="w-full text-left p-2.5 rounded-xl border border-border bg-muted/30 hover:bg-muted/80 hover:border-border transition-all duration-200 flex flex-col gap-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent group"
                     >
                       {/* Referencing Page Info */}
                       <div className="flex items-center gap-2">
                         <span className="text-sm shrink-0">{backlink.pageIcon}</span>
-                        <span className="text-xs font-semibold text-foreground group-hover:text-accent dark:group-hover:text-indigo-400 transition-colors truncate">
+                        <span className="text-xs font-semibold text-foreground group-hover:text-accent transition-colors truncate">
                           {backlink.pageTitle}
                         </span>
                       </div>
