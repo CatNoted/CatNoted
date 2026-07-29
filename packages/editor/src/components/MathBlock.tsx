@@ -20,7 +20,7 @@ export const MathBlock: React.FC<MathBlockProps> = ({
 
   return (
     <div className="w-full my-2 p-3 bg-muted/50 border border-border rounded-xl transition-all group/math">
-      <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-200/60 dark:border-zinc-800 text-xs text-muted-foreground font-mono">
+      <div className="flex items-center justify-between pb-2 mb-2 border-b border-border text-xs text-muted-foreground font-mono">
         <span className="flex items-center gap-1.5 font-semibold text-accent">
           <Sigma className="w-3.5 h-3.5" />
           Math Formula (LaTeX)
@@ -51,7 +51,7 @@ export const MathBlock: React.FC<MathBlockProps> = ({
             onChange={(e) => onChange(e.target.value)}
             placeholder="e.g. \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}"
             rows={2}
-            className="w-full bg-white bg-card p-2.5 rounded-lg border border-slate-300 dark:border-zinc-700 text-xs font-mono text-foreground outline-none focus:ring-1 focus:ring-accent"
+            className="w-full bg-card p-2.5 rounded-lg border border-border text-xs font-mono text-foreground outline-none focus:ring-1 focus:ring-accent"
             autoFocus
           />
           <p className="text-[10px] text-muted-foreground">

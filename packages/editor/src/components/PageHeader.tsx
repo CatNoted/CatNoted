@@ -114,7 +114,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
       ref={emojiMenuRef}
       className="absolute left-0 top-full mt-2 z-50 p-4 bg-card border border-border rounded-2xl shadow-2xl w-72 text-left select-none animate-in fade-in-50 duration-200"
     >
-      <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-150 dark:border-zinc-800">
+      <div className="flex items-center justify-between pb-2 mb-2 border-b border-border">
         <span className="text-xs font-bold text-foreground">
           Choose Icon or Emoji
         </span>
@@ -208,7 +208,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
       </div>
 
       <div className="space-y-4">
-        <div className="space-y-3 bg-card p-2.5 rounded-xl border border-slate-150 dark:border-zinc-800/60">
+        <div className="space-y-3 bg-card p-2.5 rounded-xl border border-border">
           <div>
             <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">
               Upload Cover File
@@ -234,14 +234,13 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
                 file:mr-2 file:py-1 file:px-2.5
                 file:rounded-md file:border-0
                 file:text-[10px] file:font-semibold
-                file:bg-indigo-50 file:text-indigo-600
-                dark:file:bg-zinc-800 dark:file:text-zinc-300
-                hover:file:bg-indigo-100 dark:hover:file:bg-zinc-700
+                file:bg-muted file:text-foreground
+                hover:file:bg-muted/80
                 cursor-pointer"
             />
           </div>
 
-          <div className="border-t border-slate-200/60 dark:border-zinc-800/40 my-1"></div>
+          <div className="border-t border-border my-1"></div>
 
           <div>
             <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">
@@ -266,7 +265,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
                   }
                 }}
                 aria-label="Save custom cover URL"
-                className="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-[10px] font-semibold transition-colors"
+                className="px-2.5 py-1 bg-accent hover:bg-accent/90 text-white rounded-lg text-[10px] font-semibold transition-colors"
               >
                 Save
               </button>
@@ -353,7 +352,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
               type="button"
               onClick={() => onCoverChange(undefined)}
               aria-label="Remove cover image"
-              className="px-2.5 py-1.5 bg-black/60 hover:bg-rose-600/90 text-white rounded-lg text-xs font-medium backdrop-blur-md transition-all flex items-center gap-1.5 shadow-sm"
+              className="px-2.5 py-1.5 bg-black/60 hover:bg-destructive text-white rounded-lg text-xs font-medium backdrop-blur-md transition-all flex items-center gap-1.5 shadow-sm"
             >
               <LucideIcons.Trash2 className="w-3.5 h-3.5" />
               Remove cover
