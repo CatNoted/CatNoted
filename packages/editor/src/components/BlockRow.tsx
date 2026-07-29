@@ -101,7 +101,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
   return (
           <div
             key={block.id}
-            className="group flex items-start gap-0 px-4 py-0.5 rounded-lg transition-all hover:bg-slate-50/80 dark:hover:bg-zinc-900/30 hover:shadow-sm hover:ring-1 hover:ring-slate-100 dark:hover:ring-zinc-800/60"
+            className="group flex items-start gap-0 px-4 py-0.5 rounded-lg transition-all hover:bg-muted/50 hover:shadow-sm hover:ring-1 hover:ring-border"
           >
             {/* Left Block Controls - fixed width gutter, never overlaps content */}
             <div className={`w-12 flex-shrink-0 flex items-start justify-end gap-1 px-1 opacity-0 group-hover:opacity-100 transition-opacity ${
