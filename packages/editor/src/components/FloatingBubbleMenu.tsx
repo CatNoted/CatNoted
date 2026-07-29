@@ -98,6 +98,7 @@ export const FloatingBubbleMenu: React.FC<FloatingBubbleMenuProps> = ({
         }}
         className="p-1.5 hover:bg-slate-700 dark:hover:bg-zinc-800 rounded-lg transition-colors text-slate-200 hover:text-white"
         title="Bold (Ctrl+B)"
+        aria-label="Format bold text"
       >
         <Bold className="w-3.5 h-3.5" />
       </button>
@@ -110,6 +111,7 @@ export const FloatingBubbleMenu: React.FC<FloatingBubbleMenuProps> = ({
         }}
         className="p-1.5 hover:bg-slate-700 dark:hover:bg-zinc-800 rounded-lg transition-colors text-slate-200 hover:text-white"
         title="Italic (Ctrl+I)"
+        aria-label="Format italic text"
       >
         <Italic className="w-3.5 h-3.5" />
       </button>
@@ -122,6 +124,7 @@ export const FloatingBubbleMenu: React.FC<FloatingBubbleMenuProps> = ({
         }}
         className="p-1.5 hover:bg-slate-700 dark:hover:bg-zinc-800 rounded-lg transition-colors text-slate-200 hover:text-white"
         title="Underline (Ctrl+U)"
+        aria-label="Format underline text"
       >
         <Underline className="w-3.5 h-3.5" />
       </button>
@@ -134,6 +137,7 @@ export const FloatingBubbleMenu: React.FC<FloatingBubbleMenuProps> = ({
         }}
         className="p-1.5 hover:bg-slate-700 dark:hover:bg-zinc-800 rounded-lg transition-colors text-slate-200 hover:text-white"
         title="Strikethrough"
+        aria-label="Format strikethrough text"
       >
         <Strikethrough className="w-3.5 h-3.5" />
       </button>
@@ -149,6 +153,7 @@ export const FloatingBubbleMenu: React.FC<FloatingBubbleMenuProps> = ({
         }}
         className="p-1.5 hover:bg-slate-700 dark:hover:bg-zinc-800 rounded-lg transition-colors text-slate-200 hover:text-white"
         title="Inline Code"
+        aria-label="Format as inline code"
       >
         <Code className="w-3.5 h-3.5" />
       </button>
@@ -162,6 +167,9 @@ export const FloatingBubbleMenu: React.FC<FloatingBubbleMenuProps> = ({
           }}
           className="p-1.5 hover:bg-slate-700 dark:hover:bg-zinc-800 rounded-lg transition-colors text-amber-400 hover:text-amber-300"
           title="Highlight color"
+          aria-label="Choose highlight color"
+          aria-expanded={showColorPicker}
+          aria-haspopup="true"
         >
           <Highlighter className="w-3.5 h-3.5" />
         </button>
@@ -179,6 +187,7 @@ export const FloatingBubbleMenu: React.FC<FloatingBubbleMenuProps> = ({
                 }}
                 className={`w-5 h-5 rounded-full ${c.bg} hover:scale-110 transition-transform`}
                 title={c.name}
+                aria-label={`Highlight with ${c.name.toLowerCase()} color`}
               />
             ))}
           </div>
@@ -193,6 +202,7 @@ export const FloatingBubbleMenu: React.FC<FloatingBubbleMenuProps> = ({
         }}
         className="p-1.5 hover:bg-slate-700 dark:hover:bg-zinc-800 rounded-lg transition-colors text-slate-200 hover:text-white"
         title="Link"
+        aria-label="Insert link"
       >
         <Link className="w-3.5 h-3.5" />
       </button>
