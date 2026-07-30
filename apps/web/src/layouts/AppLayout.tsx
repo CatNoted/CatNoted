@@ -691,7 +691,7 @@ if (isSearchOpen && searchQuery) {
       {/* Minimal Conflict Resolution Dialog */}
       {syncStatus === 'conflict' && (
         <div className="fixed inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4" data-testid="conflict-resolution-modal">
-          <div className="bg-card  border border-slate-200 dark:border-zinc-800 rounded-3xl p-6 max-w-md w-full shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
+          <div className="bg-card  border border-border rounded-3xl p-6 max-w-md w-full shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
             <div className="flex items-start gap-4">
               <div className="w-10 h-10 rounded-2xl bg-rose-500/10 text-rose-500 flex items-center justify-center shrink-0">
                 <AlertTriangle className="w-5 h-5 animate-pulse" />
@@ -708,7 +708,7 @@ if (isSearchOpen && searchQuery) {
               <button
                 type="button"
                 onClick={() => onResolveConflict?.('local')}
-                className="w-full py-2.5 px-4 bg-primary hover:bg-primary text-white rounded-2xl text-xs font-semibold transition-all hover:shadow-lg hover:shadow-indigo-500/10 active:scale-98"
+                className="w-full py-2.5 px-4 bg-primary hover:bg-primary text-white rounded-2xl text-xs font-semibold transition-all hover:shadow-lg hover:shadow-accent/10 active:scale-98"
                 data-testid="resolve-local-btn"
               >
                 Keep Local Changes (Overwrite Remote)
@@ -723,7 +723,7 @@ if (isSearchOpen && searchQuery) {
               </button>
             </div>
 
-            <div className="mt-4 flex justify-end border-t border-slate-100 dark:border-zinc-900 pt-3">
+            <div className="mt-4 flex justify-end border-t border-border/50 pt-3">
               <button
                 type="button"
                 onClick={onDismissConflict}
@@ -769,7 +769,7 @@ if (isSearchOpen && searchQuery) {
                       aria-expanded={isActive}
                     className={`w-full py-2.5 rounded-lg flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accent ${
                       isActive 
-                        ? 'bg-accent-soft dark:bg-indigo-950/40 text-accent dark:text-indigo-400 font-semibold'
+                        ? 'bg-accent-soft dark:bg-accent/10 text-accent font-semibold'
                         : 'text-muted-foreground hover:text-accent hover:bg-black/5 dark:hover:bg-card/5'
                     }`}
                   >
@@ -786,7 +786,7 @@ if (isSearchOpen && searchQuery) {
             aria-label="Sidebar Actions"
           >
             {/* Sync Status Indicator Icon Rail */}
-            <div className="w-full flex flex-col items-center justify-center py-2 border-t border-slate-200/50 dark:border-zinc-800/50 gap-1.5">
+            <div className="w-full flex flex-col items-center justify-center py-2 border-t border-border/50 gap-1.5">
               {syncStatus === 'saving' && (
                 <div className="text-amber-500 hover:text-amber-600 transition-colors p-1" title="Syncing / Saving updates" data-testid="sync-status-saving">
                   <RefreshCw className="w-4 h-4 animate-spin" />
@@ -948,7 +948,7 @@ if (isSearchOpen && searchQuery) {
                         onClick={() => onModeChange(item.id)}
                         className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center gap-2 transition-colors ${
                           isActive
-                            ? 'bg-accent-soft dark:bg-indigo-950/40 text-accent dark:text-indigo-400 font-semibold'
+                            ? 'bg-accent-soft dark:bg-accent/10 text-accent font-semibold'
                             : 'text-muted-foreground hover:bg-accent-soft/40 hover:text-accent'
                         }`}
                       >
@@ -981,7 +981,7 @@ if (isSearchOpen && searchQuery) {
                         }}
                         className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between transition-colors ${
                           isActive
-                            ? 'bg-accent-soft dark:bg-indigo-950/40 text-accent dark:text-indigo-400 font-semibold'
+                            ? 'bg-accent-soft dark:bg-accent/10 text-accent font-semibold'
                             : 'text-muted-foreground hover:bg-accent-soft/40 hover:text-accent'
                         }`}
                       >
@@ -1096,7 +1096,7 @@ if (isSearchOpen && searchQuery) {
                                 }}
                                 className={`flex-1 text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
                                   isActive
-                                    ? 'bg-accent-soft dark:bg-indigo-950/40 text-accent dark:text-indigo-400 font-semibold'
+                                    ? 'bg-accent-soft dark:bg-accent/10 text-accent font-semibold'
                                     : 'text-muted-foreground hover:bg-accent-soft/30 hover:text-accent'
                                 }`}
                               >
@@ -1156,7 +1156,7 @@ if (isSearchOpen && searchQuery) {
                                 }}
                                 className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
                                   isActive
-                                    ? 'bg-accent-soft dark:bg-indigo-950/40 text-accent dark:text-indigo-400 font-semibold'
+                                    ? 'bg-accent-soft dark:bg-accent/10 text-accent font-semibold'
                                     : 'text-muted-foreground hover:bg-accent-soft/30 hover:text-accent'
                                 }`}
                               >
@@ -1498,7 +1498,7 @@ if (isSearchOpen && searchQuery) {
                           value={chatInput}
                           onChange={(e) => setChatInput(e.target.value)}
                           placeholder="Ask Space Agent docked..."
-                          className="w-full pl-3 pr-8 py-2 rounded-lg border border-border bg-card dark:bg-card text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                          className="w-full pl-3 pr-8 py-2 rounded-lg border border-border bg-card dark:bg-card text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-accent"
                         />
                         <button
                           type="submit"
@@ -1560,7 +1560,7 @@ if (isSearchOpen && searchQuery) {
 
                     {/* Item 2 */}
                     <div className="relative group">
-                      <span className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-accent ring-4 ring-white dark:ring-zinc-900" />
+                      <span className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-accent ring-4 ring-background" />
                       <button
                         type="button"
                         onClick={() => alert("Restored page backup to: 10 minutes ago")}
@@ -1573,7 +1573,7 @@ if (isSearchOpen && searchQuery) {
 
                     {/* Item 3 */}
                     <div className="relative group">
-                      <span className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-card dark:bg-muted ring-4 ring-white dark:ring-zinc-900" />
+                      <span className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-card dark:bg-muted ring-4 ring-background" />
                       <button
                         type="button"
                         onClick={() => alert("Restored page backup to original created state")}
@@ -1613,7 +1613,7 @@ if (isSearchOpen && searchQuery) {
                       aria-expanded={isActive}
                       className={`w-full py-2.5 rounded-lg flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accent ${
                         isActive
-                          ? 'bg-accent-soft dark:bg-indigo-950/40 text-accent dark:text-indigo-400 font-semibold'
+                          ? 'bg-accent-soft dark:bg-accent/10 text-accent font-semibold'
                           : 'text-muted-foreground hover:text-accent hover:bg-black/5 dark:hover:bg-card/5'
                       }`}
                     >
@@ -1628,7 +1628,7 @@ if (isSearchOpen && searchQuery) {
               <button
                 type="button"
                 onClick={() => alert("CatNoted Workspace - AFFiNE-style Right Rail")}
-                className="w-full py-2.5 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/10 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                className="w-full py-2.5 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/10 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                 title="Workspace Help"
                 aria-label="Workspace Help"
               >
@@ -1643,7 +1643,7 @@ if (isSearchOpen && searchQuery) {
       {!isAgentOpen && (
         <button
           onClick={() => setIsAgentOpen(true)}
-          className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-2xl bg-accent hover:bg-accent dark:bg-accent dark:hover:bg-accent text-white shadow-lg shadow-indigo-600/25 dark:shadow-indigo-500/30 hover:shadow-xl hover:shadow-indigo-500/40 dark:hover:shadow-indigo-400/35 flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 group"
+          className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-2xl bg-accent hover:bg-accent dark:bg-accent dark:hover:bg-accent text-white shadow-lg shadow-accent/30 hover:shadow-xl hover:shadow-accent/40 flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 group"
           title="Open Space Agent"
           style={{
             animation: "floatFab 3s ease-in-out infinite",
@@ -1654,7 +1654,7 @@ if (isSearchOpen && searchQuery) {
           {/* Pulsing notification dot */}
           <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-success border-2 border-white dark:border-border animate-pulse" />
           {/* Hover ring glow */}
-          <span className="absolute inset-0 rounded-2xl transition-all duration-300 opacity-0 group-hover:opacity-100 ring-2 ring-indigo-400/50 dark:ring-indigo-400/40" />
+          <span className="absolute inset-0 rounded-2xl transition-all duration-300 opacity-0 group-hover:opacity-100 ring-2 ring-accent/50" />
         </button>
       )}
 
@@ -1813,7 +1813,7 @@ if (isSearchOpen && searchQuery) {
                         <div
                           className={`p-3 rounded-2xl text-xs leading-relaxed ${
                             msg.sender === "user"
-                              ? "bg-accent text-white rounded-tr-none shadow-sm shadow-indigo-600/20"
+                              ? "bg-accent text-white rounded-tr-none shadow-sm shadow-accent/20"
                               : "bg-muted dark:bg-muted/80 text-foreground rounded-tl-none border border-transparent dark:border-ink-secondary/40"
                           }`}
                         >
@@ -1878,11 +1878,11 @@ if (isSearchOpen && searchQuery) {
                         value={chatInput}
                         onChange={(e) => setChatInput(e.target.value)}
                         placeholder="Ask agent to generate a widget..."
-                        className="w-full pl-3 pr-10 py-2.5 rounded-xl border border-border/60 bg-card/80 dark:bg-card/60 text-xs text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500/40 dark:focus:ring-indigo-400/30 focus:border-accent dark:focus:border-accent/50 hover:border-border dark:hover:border-ink-secondary transition-all duration-200"
+                        className="w-full pl-3 pr-10 py-2.5 rounded-xl border border-border/60 bg-card/80 dark:bg-card/60 text-xs text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 dark:focus:ring-accent/30 focus:border-accent dark:focus:border-accent/50 hover:border-border dark:hover:border-ink-secondary transition-all duration-200"
                       />
                       <button
                         type="submit"
-                        className="absolute right-1.5 p-1.5 bg-accent hover:bg-accent dark:hover:bg-accent text-white rounded-lg transition-all duration-200 hover:scale-110 hover:shadow-md hover:shadow-indigo-500/30 active:scale-95"
+                        className="absolute right-1.5 p-1.5 bg-accent hover:bg-accent dark:hover:bg-accent text-white rounded-lg transition-all duration-200 hover:scale-110 hover:shadow-md hover:shadow-accent/30 active:scale-95"
                       >
                         <Send className="w-3 h-3" />
                       </button>

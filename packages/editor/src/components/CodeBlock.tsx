@@ -42,18 +42,18 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
   };
 
   return (
-    <div className="w-full my-2 rounded-xl bg-slate-900 border border-slate-800 overflow-hidden shadow-md group/code">
+    <div className="w-full my-2 rounded-xl bg-card border border-border overflow-hidden shadow-md group/code">
       {/* Code Header Bar */}
-      <div className="h-9 px-3 bg-slate-950/80 border-b border-slate-800/80 flex items-center justify-between text-xs font-mono select-none">
+      <div className="h-9 px-3 bg-card/80 border-b border-border/80 flex items-center justify-between text-xs font-mono select-none">
         <div className="flex items-center gap-2 text-muted-foreground">
-          <Code2 className="w-3.5 h-3.5 text-indigo-400" />
+          <Code2 className="w-3.5 h-3.5 text-accent" />
           <select
             value={language}
             onChange={(e) => onUpdateProps({ language: e.target.value })}
-            className="bg-transparent border-none text-xs font-mono text-slate-300 focus:outline-none focus:ring-0 cursor-pointer capitalize hover:text-indigo-400 transition-colors"
+            className="bg-transparent border-none text-xs font-mono text-foreground focus:outline-none focus:ring-0 cursor-pointer capitalize hover:text-accent transition-colors"
           >
             {LANGUAGES.map((lang) => (
-              <option key={lang} value={lang} className="bg-slate-900 text-slate-200">
+              <option key={lang} value={lang} className="bg-card text-foreground">
                 {lang}
               </option>
             ))}
@@ -64,13 +64,13 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
           <button
             type="button"
             onClick={handleCopy}
-            className="px-2 py-1 hover:bg-slate-800 text-muted-foreground hover:text-slate-200 rounded flex items-center gap-1 transition-colors text-[11px]"
+            className="px-2 py-1 hover:bg-muted text-muted-foreground hover:text-foreground rounded flex items-center gap-1 transition-colors text-[11px]"
             title="Copy code"
           >
             {copied ? (
               <>
-                <Check className="w-3 h-3 text-emerald-400" />
-                <span className="text-emerald-400">Copied</span>
+                <Check className="w-3 h-3 text-accent" />
+                <span className="text-accent">Copied</span>
               </>
             ) : (
               <>
@@ -89,7 +89,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
           onChange={(e) => onChange(e.target.value)}
           placeholder="// Type or paste code here..."
           rows={Math.max(3, content.split('\n').length)}
-          className="w-full bg-transparent resize-y border-none outline-none focus:ring-0 p-0 text-xs font-mono text-emerald-300 placeholder-slate-600 leading-relaxed font-medium"
+          className="w-full bg-transparent resize-y border-none outline-none focus:ring-0 p-0 text-xs font-mono text-foreground placeholder-muted-foreground leading-relaxed font-medium"
           style={{ tabSize: 2 }}
         />
       </div>
