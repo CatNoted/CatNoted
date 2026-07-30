@@ -17,9 +17,9 @@ interface CalloutBlockProps {
 const CALLOUT_ICONS = ['💡', '⚠️', 'ℹ️', '📌', '🔥', '🚀', '⚡', '💬', '✅', '❓'];
 
 const CALLOUT_BG_THEMES: Record<string, { bg: string; border: string; text: string }> = {
-  indigo: {
-    bg: 'bg-indigo-50/80 dark:bg-indigo-950/30',
-    border: 'border-indigo-200 dark:border-indigo-800/60',
+  accent: {
+    bg: 'bg-accent/10',
+    border: 'border-accent/30',
     text: 'text-accent',
   },
   emerald: {
@@ -53,7 +53,7 @@ export const CalloutBlock: React.FC<CalloutBlockProps> = ({
   id: _id,
   content,
   icon = '💡',
-  bg = 'indigo',
+  bg = 'accent',
   onChange,
   onUpdateProps,
   onEnter,
@@ -66,7 +66,7 @@ export const CalloutBlock: React.FC<CalloutBlockProps> = ({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  const currentTheme = CALLOUT_BG_THEMES[bg] || CALLOUT_BG_THEMES.indigo;
+  const currentTheme = CALLOUT_BG_THEMES[bg] || CALLOUT_BG_THEMES.accent;
 
   useEffect(() => {
     if (focusOnMount && textareaRef.current) {
@@ -179,8 +179,8 @@ export const CalloutBlock: React.FC<CalloutBlockProps> = ({
                   setShowBgPicker(false);
                 }}
                 className={`w-5 h-5 rounded-full capitalize hover:scale-110 transition-transform ${
-                  themeKey === 'indigo'
-                    ? 'bg-indigo-400'
+                  themeKey === 'accent'
+                    ? 'bg-accent'
                     : themeKey === 'emerald'
                     ? 'bg-emerald-400'
                     : themeKey === 'amber'

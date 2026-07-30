@@ -58,7 +58,7 @@ export const BookmarkBlock: React.FC<BookmarkBlockProps> = ({
     <div className="w-full my-2 select-none">
       {isEditing ? (
         <div className="p-3 bg-muted border border-border rounded-xl flex items-center gap-2">
-          <Globe className="w-4 h-4 text-indigo-500 shrink-0" />
+          <Globe className="w-4 h-4 text-accent shrink-0" />
           <input
             type="text"
             value={urlInput}
@@ -73,7 +73,7 @@ export const BookmarkBlock: React.FC<BookmarkBlockProps> = ({
           <button
             type="button"
             onClick={handleSave}
-            className="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium rounded-lg transition-colors"
+            className="px-3 py-1 bg-accent hover:bg-accent/90 text-white text-xs font-medium rounded-lg transition-colors"
           >
             Create Bookmark
           </button>
@@ -81,11 +81,11 @@ export const BookmarkBlock: React.FC<BookmarkBlockProps> = ({
       ) : (
         <div className="group/bookmark relative flex items-center justify-between p-3.5 bg-card border border-border rounded-2xl shadow-sm hover:shadow-md transition-all">
           <div className="flex items-center gap-3.5 min-w-0 flex-1">
-            <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center shrink-0 overflow-hidden p-2 border border-slate-200/60 dark:border-zinc-700/60">
+            <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center shrink-0 overflow-hidden p-2 border border-border/60">
               {bookmarkFavicon ? (
                 <img src={bookmarkFavicon} alt="favicon" className="w-full h-full object-contain" />
               ) : (
-                <BookmarkIcon className="w-5 h-5 text-indigo-500" />
+                <BookmarkIcon className="w-5 h-5 text-accent" />
               )}
             </div>
 

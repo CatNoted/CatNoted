@@ -105,7 +105,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         <button
           type="button"
           onClick={() => onModeChange('doc')}
-          className={`${itemClassName} ${isModeActive('doc') ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
+          className={`${itemClassName} ${isModeActive('doc') ? 'bg-accent-soft text-accent font-semibold' : ''}`}
         >
           <FileText className={`${getItemIconClass(isModeActive('doc'))} w-4 h-4`} />
           <span className="truncate">Doc Mode</span>
@@ -113,7 +113,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         <button
           type="button"
           onClick={() => onModeChange('canvas')}
-          className={`${itemClassName} ${isModeActive('canvas') ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
+          className={`${itemClassName} ${isModeActive('canvas') ? 'bg-accent-soft text-accent font-semibold' : ''}`}
         >
           <LayoutGrid className={`${getItemIconClass(isModeActive('canvas'))} w-4 h-4`} />
           <span className="truncate">Canvas</span>
@@ -121,7 +121,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         <button
           type="button"
           onClick={() => onModeChange('graph')}
-          className={`${itemClassName} ${isModeActive('graph') ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
+          className={`${itemClassName} ${isModeActive('graph') ? 'bg-accent-soft text-accent font-semibold' : ''}`}
         >
           <Network className={`${getItemIconClass(isModeActive('graph'))} w-4 h-4`} />
           <span className="truncate">Graph</span>
@@ -129,7 +129,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         <button
           type="button"
           onClick={() => onModeChange('journals')}
-          className={`${itemClassName} ${isModeActive('journals') ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
+          className={`${itemClassName} ${isModeActive('journals') ? 'bg-accent-soft text-accent font-semibold' : ''}`}
         >
           <Calendar className={`${getItemIconClass(isModeActive('journals'))} w-4 h-4`} />
           <span className="truncate">Journals</span>
@@ -137,7 +137,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         <button
           type="button"
           onClick={() => onModeChange('settings')}
-          className={`${itemClassName} ${isModeActive('settings') ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold' : ''}`}
+          className={`${itemClassName} ${isModeActive('settings') ? 'bg-accent-soft text-accent font-semibold' : ''}`}
         >
           <Settings className={`${getItemIconClass(isModeActive('settings'))} w-4 h-4`} />
           <span className="truncate">Settings</span>
