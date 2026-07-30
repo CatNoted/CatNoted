@@ -198,17 +198,17 @@ export const JournalsView: React.FC = () => {
   // Render Onboarding Screen
   if (!isOnboarded) {
     return (
-      <div className="h-full w-full flex items-center justify-center bg-surface-soft dark:bg-surface p-6 overflow-y-auto">
-        <div className="max-w-2xl w-full bg-surface dark:bg-surface border border-soft rounded-3xl p-8 shadow-2xl flex flex-col items-center text-center gap-6 animate-in fade-in zoom-in-95 duration-300">
+      <div className="h-full w-full flex items-center justify-center bg-muted dark:bg-card p-6 overflow-y-auto">
+        <div className="max-w-2xl w-full bg-card dark:bg-card border border-border rounded-3xl p-8 shadow-2xl flex flex-col items-center text-center gap-6 animate-in fade-in zoom-in-95 duration-300">
           <div className="w-16 h-16 rounded-2xl bg-accent-soft flex items-center justify-center text-accent shadow-sm mb-2">
             <CalendarIcon className="w-8 h-8" />
           </div>
 
           <div className="space-y-2">
-            <h2 className="text-2xl font-bold text-ink tracking-tight">
+            <h2 className="text-2xl font-bold text-foreground tracking-tight">
               Welcome to Journals 📅
             </h2>
-            <p className="text-sm text-ink-secondary max-w-md">
+            <p className="text-sm text-muted-foreground max-w-md">
               Start your daily journaling practice in CatNoted. Choose a default template structure to guide your writing:
             </p>
           </div>
@@ -218,14 +218,14 @@ export const JournalsView: React.FC = () => {
             {/* Daily Reflection */}
             <button
               onClick={() => handleCompleteOnboarding('reflection')}
-              className="group p-5 rounded-2xl border border-soft dark:border-soft bg-surface-soft dark:bg-surface-hover text-left hover:border-accent hover:bg-surface dark:hover:bg-surface shadow-lg hover:shadow-accent/5 transition-all flex flex-col gap-3"
+              className="group p-5 rounded-2xl border border-border dark:border-border bg-muted dark:bg-muted text-left hover:border-accent hover:bg-card dark:hover:bg-card shadow-lg hover:shadow-accent/5 transition-all flex flex-col gap-3"
             >
               <div className="w-9 h-9 rounded-xl bg-accent-soft text-accent flex items-center justify-center">
                 <Sparkles className="w-4.5 h-4.5" />
               </div>
               <div>
-                <h4 className="text-sm font-semibold text-ink">Daily Reflection</h4>
-                <p className="text-[11px] text-ink-secondary mt-1 leading-relaxed">
+                <h4 className="text-sm font-semibold text-foreground">Daily Reflection</h4>
+                <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">
                   Focus on daily highlights, areas for growth, and gratitude elements.
                 </p>
               </div>
@@ -237,14 +237,14 @@ export const JournalsView: React.FC = () => {
             {/* Gratitude Journal */}
             <button
               onClick={() => handleCompleteOnboarding('gratitude')}
-              className="group p-5 rounded-2xl border border-soft dark:border-soft bg-surface-soft dark:bg-surface-hover text-left hover:border-accent hover:bg-surface dark:hover:bg-surface shadow-lg hover:shadow-accent/5 transition-all flex flex-col gap-3"
+              className="group p-5 rounded-2xl border border-border dark:border-border bg-muted dark:bg-muted text-left hover:border-accent hover:bg-card dark:hover:bg-card shadow-lg hover:shadow-accent/5 transition-all flex flex-col gap-3"
             >
               <div className="w-9 h-9 rounded-xl bg-success-soft text-success flex items-center justify-center">
                 <BookOpen className="w-4.5 h-4.5" />
               </div>
               <div>
-                <h4 className="text-sm font-semibold text-ink">Gratitude Journal</h4>
-                <p className="text-[11px] text-ink-secondary mt-1 leading-relaxed">
+                <h4 className="text-sm font-semibold text-foreground">Gratitude Journal</h4>
+                <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">
                   Start and end your day on a positive note of constructive affirmation.
                 </p>
               </div>
@@ -256,18 +256,18 @@ export const JournalsView: React.FC = () => {
             {/* Empty Note */}
             <button
               onClick={() => handleCompleteOnboarding('empty')}
-              className="group p-5 rounded-2xl border border-soft dark:border-soft bg-surface-soft dark:bg-surface-hover text-left hover:border-accent hover:bg-surface dark:hover:bg-surface shadow-lg hover:shadow-accent/5 transition-all flex flex-col gap-3"
+              className="group p-5 rounded-2xl border border-border dark:border-border bg-muted dark:bg-muted text-left hover:border-accent hover:bg-card dark:hover:bg-card shadow-lg hover:shadow-accent/5 transition-all flex flex-col gap-3"
             >
-              <div className="w-9 h-9 rounded-xl bg-surface-hover text-ink flex items-center justify-center">
+              <div className="w-9 h-9 rounded-xl bg-muted text-foreground flex items-center justify-center">
                 <CheckCircle className="w-4.5 h-4.5" />
               </div>
               <div>
-                <h4 className="text-sm font-semibold text-ink">Blank slate</h4>
-                <p className="text-[11px] text-ink-secondary mt-1 leading-relaxed">
+                <h4 className="text-sm font-semibold text-foreground">Blank slate</h4>
+                <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">
                   An empty canvas designed for full structural freedom and direct drafting.
                 </p>
               </div>
-              <span className="text-[10px] font-semibold text-ink mt-auto flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <span className="text-[10px] font-semibold text-foreground mt-auto flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 Select <ArrowRight className="w-3 h-3" />
               </span>
             </button>
@@ -281,12 +281,12 @@ export const JournalsView: React.FC = () => {
   const activeConflict = hasConflictForDate(selectedDate);
 
   return (
-    <div className="h-full w-full flex bg-surface-soft dark:bg-surface overflow-hidden">
+    <div className="h-full w-full flex bg-muted dark:bg-card overflow-hidden">
       {/* Sidebar Navigation Panel (Calendar sidebar) */}
-      <aside className="w-80 border-r border-soft dark:border-soft bg-surface dark:bg-surface shrink-0 flex flex-col h-full select-none">
+      <aside className="w-80 border-r border-border dark:border-border bg-card dark:bg-card shrink-0 flex flex-col h-full select-none">
         {/* Sidebar Header */}
-        <div className="h-14 px-4 border-b border-soft dark:border-soft flex items-center justify-between bg-surface-soft dark:bg-surface shrink-0">
-          <span className="font-semibold text-xs uppercase tracking-wider text-ink-secondary flex items-center gap-1.5">
+        <div className="h-14 px-4 border-b border-border dark:border-border flex items-center justify-between bg-muted dark:bg-card shrink-0">
+          <span className="font-semibold text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
             <CalendarIcon className="w-3.5 h-3.5 text-accent" />
             Journals Calendar
           </span>
@@ -299,22 +299,22 @@ export const JournalsView: React.FC = () => {
         </div>
 
         {/* Calendar Navigation Controller */}
-        <div className="p-4 flex flex-col gap-4 border-b border-muted dark:border-soft/40">
+        <div className="p-4 flex flex-col gap-4 border-b border-muted dark:border-border/40">
           <div className="flex items-center justify-between">
-            <span className="font-bold text-sm text-ink">
+            <span className="font-bold text-sm text-foreground">
               {currentMonthLabel}
             </span>
             <div className="flex items-center gap-1">
               <button
                 onClick={handlePrevMonth}
-                className="p-1 rounded-lg hover:bg-surface-hover dark:hover:bg-surface-hover text-ink-secondary"
+                className="p-1 rounded-lg hover:bg-muted dark:hover:bg-muted text-muted-foreground"
                 title="Previous Month"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <button
                 onClick={handleNextMonth}
-                className="p-1 rounded-lg hover:bg-surface-hover dark:hover:bg-surface-hover text-ink-secondary"
+                className="p-1 rounded-lg hover:bg-muted dark:hover:bg-muted text-muted-foreground"
                 title="Next Month"
               >
                 <ChevronRight className="w-4 h-4" />
@@ -326,7 +326,7 @@ export const JournalsView: React.FC = () => {
           <div className="grid grid-cols-7 gap-y-2 text-center">
             {/* Days of week */}
             {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
-              <span key={i} className="text-[10px] font-bold text-ink-muted uppercase">
+              <span key={i} className="text-[10px] font-bold text-muted-foreground uppercase">
                 {day}
               </span>
             ))}
@@ -344,14 +344,14 @@ export const JournalsView: React.FC = () => {
                   onClick={() => handleDateClick(cell.key)}
                   className={`relative w-8 h-8 rounded-full flex flex-col items-center justify-center text-xs font-medium transition-all ${
                     !cell.isCurrentMonth
-                      ? 'text-ink-muted hover:bg-surface-soft dark:hover:bg-surface/40'
-                      : 'text-ink'
+                      ? 'text-muted-foreground hover:bg-muted dark:hover:bg-card/40'
+                      : 'text-foreground'
                   } ${
                     isSelected
                       ? 'bg-accent text-white font-bold shadow-md shadow-accent/15'
                       : isToday
                         ? 'border border-accent dark:border-accent/50'
-                        : 'hover:bg-surface-hover'
+                        : 'hover:bg-muted'
                   }`}
                 >
                   <span>{cell.date.getDate()}</span>
@@ -374,8 +374,8 @@ export const JournalsView: React.FC = () => {
         </div>
 
         {/* Template Quick Settings */}
-        <div className="p-4 mt-auto border-t border-soft dark:border-soft bg-surface-soft dark:bg-surface-soft">
-          <div className="flex items-center gap-1.5 text-[10px] font-bold text-ink-muted uppercase tracking-wider mb-2.5">
+        <div className="p-4 mt-auto border-t border-border dark:border-border bg-muted dark:bg-muted">
+          <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2.5">
             <Settings className="w-3.5 h-3.5" />
             <span>Template Settings</span>
           </div>
@@ -394,7 +394,7 @@ export const JournalsView: React.FC = () => {
                   className={`w-full px-3 py-2 text-left rounded-lg flex items-center justify-between transition-colors ${
                     isSelected
                       ? 'bg-accent-soft text-accent font-semibold'
-                      : 'text-ink hover:bg-surface-hover hover:text-ink'
+                      : 'text-foreground hover:bg-muted hover:text-foreground'
                   }`}
                 >
                   <span>{tmpl.label}</span>
