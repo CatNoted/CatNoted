@@ -17,6 +17,8 @@
     "@playwright/test": "^1.62.0",
     "@testing-library/react": "^16.3.2",
     "@testing-library/react-hooks": "^8.0.1",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.1",
     "happy-dom": "^20.11.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
