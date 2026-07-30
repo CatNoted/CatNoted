@@ -198,9 +198,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   };
 
   // Calculate word count across document
-  const wordCount = blocks.reduce((acc, b) => acc + (b.content ? b.content.trim().split(/\s+/).filter(Boolean).length : 0), 0);
+  // ⚡ Bolt Optimization: Memoize wordCount calculation to prevent O(N) string splitting on every render
+  const wordCount = React.useMemo(() => blocks.reduce((acc, b) => acc + (b.content ? b.content.trim().split(/\s+/).filter(Boolean).length : 0), 0), [blocks]);
 
-  const headingBlock = blocks.find(b => b.type === 'heading' && b.properties?.level === 1);
+  // ⚡ Bolt Optimization: Memoize headingBlock find operation to avoid O(N) search on every render
+  const headingBlock = React.useMemo(() => blocks.find(b => b.type === 'heading' && b.properties?.level === 1), [blocks]);
   const displayTitle = pageMeta?.title || headingBlock?.content || 'Untitled Document';
 
   const fontClass = pageMeta?.fontStyle === 'serif' 

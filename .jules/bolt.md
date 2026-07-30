@@ -1,3 +1,6 @@
 ## 2025-02-18 - [Optimized searchResults memoization to use graphData directly]
 **Learning:** Found an unnecessary re-render/re-computation in `AppLayout.tsx`. `searchResults` was dependent on `parsedGraphNodes` which simply returned `parseDocumentGraph(blocks).nodes`. But `graphData` already memoizes `parseDocumentGraph(blocks, pages)`. I updated `searchResults` to use `graphData.nodes` instead of calculating it again or using an intermediate memoized value.
 **Action:** Always check if a computed property (like `parsedGraphNodes`) is already available in another memoized variable (like `graphData`).
+## 2025-02-18 - [Optimized document word count and heading extraction]
+**Learning:** In a highly reactive editor environment, operations that scan entire collections (like `blocks.reduce` for word count or `blocks.find` for headings) should always be memoized. Computing these values on every keystroke or selection change leads to unnecessary CPU overhead, especially as the document grows.
+**Action:** Always memoize derived states calculated via array iterations (map, filter, reduce, find) when their source data updates less frequently than the component's re-renders, or if the calculation itself is heavy.
