@@ -87,32 +87,32 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           <div className="w-9 h-9 bg-accent-soft rounded-xl flex items-center justify-center text-accent mb-2.5">
             <KeyRound className="w-4 h-4" />
           </div>
-          <h2 className="text-base font-semibold text-ink tracking-tight">
+          <h2 className="text-base font-semibold text-foreground tracking-tight">
             {!isGuest ? 'Workspace Account' : isSignUp ? 'Create your workspace' : 'Welcome back'}
           </h2>
           {!isGuest ? (
-            <p className="text-[11px] text-ink-muted mt-1 leading-relaxed">
+            <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">
               You are currently logged in securely.
             </p>
           ) : (
-            <p className="text-[11px] text-ink-muted mt-1 max-w-[260px] leading-relaxed">
+            <p className="text-[11px] text-muted-foreground mt-1 max-w-[260px] leading-relaxed">
               End-to-End Encryption keeps your spatial notes completely private.
             </p>
           )}
         </div>
 
         {errorMsg && (
-          <div className="mb-3.5 p-2 bg-danger-soft text-danger text-[11px] font-medium rounded-lg border border-soft/20 text-center">
+          <div className="mb-3.5 p-2 bg-danger-soft text-danger text-[11px] font-medium rounded-lg border border-border/20 text-center">
             {errorMsg}
           </div>
         )}
 
         {!isGuest ? (
           <div className="flex flex-col items-center gap-3.5">
-            <div className="w-12 h-12 rounded-full bg-surface-soft flex items-center justify-center text-ink dark:text-ink text-base font-semibold border border-muted dark:border-soft">
+            <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center text-foreground dark:text-foreground text-base font-semibold border border-muted dark:border-border">
               {userEmail.charAt(0).toUpperCase()}
             </div>
-            <div className="text-xs font-medium text-ink text-center break-all px-2">
+            <div className="text-xs font-medium text-foreground text-center break-all px-2">
               {userEmail}
             </div>
             <button
@@ -128,9 +128,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           <>
             <form onSubmit={handleSubmit} className="space-y-3">
               {/* Form Grouping with Clear Visual Boundaries */}
-              <div className="rounded-xl border border-soft/80 bg-surface-soft dark:bg-surface-soft p-3 space-y-2.5 shadow-sm">
+              <div className="rounded-xl border border-border/80 bg-muted dark:bg-muted p-3 space-y-2.5 shadow-sm">
                 <div className="space-y-1">
-                  <label className="block text-[10px] font-semibold text-ink-muted uppercase tracking-wider">
+                  <label className="block text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
                     Email address
                   </label>
                   <input
@@ -139,12 +139,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="name@domain.com"
-                    className="w-full px-2.5 py-1.5 rounded-lg border border-soft bg-surface dark:bg-surface text-xs text-ink placeholder:text-ink-muted dark:placeholder:text-ink-muted focus:outline-none focus:ring-1 focus:ring-accent-dark:focus:ring-accent focus:border-transparent transition-all"
+                    className="w-full px-2.5 py-1.5 rounded-lg border border-border bg-card dark:bg-card text-xs text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-accent-dark:focus:ring-accent focus:border-transparent transition-all"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="block text-[10px] font-semibold text-ink-muted uppercase tracking-wider">
+                  <label className="block text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
                     Password
                   </label>
                   <input
@@ -153,7 +153,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full px-2.5 py-1.5 rounded-lg border border-soft bg-surface dark:bg-surface text-xs text-ink placeholder:text-ink-muted dark:placeholder:text-ink-muted focus:outline-none focus:ring-1 focus:ring-accent-dark:focus:ring-accent focus:border-transparent transition-all"
+                    className="w-full px-2.5 py-1.5 rounded-lg border border-border bg-card dark:bg-card text-xs text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-accent-dark:focus:ring-accent focus:border-transparent transition-all"
                   />
                 </div>
               </div>
@@ -172,7 +172,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             {/* Restrained Separator */}
             <div className="relative flex py-2 items-center">
               <div className="flex-grow border-t border-muted"></div>
-              <span className="flex-shrink mx-2.5 text-[9px] font-semibold text-ink-muted uppercase tracking-widest">
+              <span className="flex-shrink mx-2.5 text-[9px] font-semibold text-muted-foreground uppercase tracking-widest">
                 or
               </span>
               <div className="flex-grow border-t border-muted"></div>
@@ -181,7 +181,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             {/* Offline Guest Mode Button - Subtle and Calm */}
             <button
               onClick={handleGuestMode}
-              className="w-full py-2 rounded-lg border border-soft hover:bg-surface-soft dark:hover:bg-surface-soft text-ink hover:text-ink dark:hover:text-ink font-medium text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm"
+              className="w-full py-2 rounded-lg border border-border hover:bg-muted dark:hover:bg-muted text-foreground hover:text-foreground dark:hover:text-foreground font-medium text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm"
             >
               <Sparkles className="w-3.5 h-3.5 text-accent" />
               Continue in Offline Guest Mode
@@ -192,7 +192,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               <button
                 type="button"
                 onClick={() => setIsSignUp(!isSignUp)}
-                className="text-ink-muted hover:text-accent dark:hover:text-accent hover:underline font-medium transition-colors"
+                className="text-muted-foreground hover:text-accent dark:hover:text-accent hover:underline font-medium transition-colors"
               >
                 {isSignUp ? 'Already have an account? Log In' : "Don't have an account? Create one"}
               </button>

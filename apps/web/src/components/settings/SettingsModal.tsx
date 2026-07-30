@@ -135,12 +135,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       <Panel className="w-full max-w-[760px] h-[580px] shadow-2xl flex flex-col md:flex-row overflow-hidden">
 
         {/* Left Sidebar */}
-        <div className="w-full md:w-[220px] border-b md:border-b-0 md:border-r border-muted dark:border-soft bg-surface-soft dark:bg-surface-soft p-5 flex flex-col justify-between shrink-0">
+        <div className="w-full md:w-[220px] border-b md:border-b-0 md:border-r border-muted dark:border-border bg-muted dark:bg-muted p-5 flex flex-col justify-between shrink-0">
           <div>
             {/* Sidebar Header */}
             <div className="flex items-center gap-2 mb-6 px-1">
-              <Settings className="w-4 h-4 text-ink-muted" />
-              <span className="text-sm font-semibold text-ink">Settings</span>
+              <Settings className="w-4 h-4 text-muted-foreground" />
+              <span className="text-sm font-semibold text-foreground">Settings</span>
             </div>
 
             {/* Sidebar Nav */}
@@ -150,8 +150,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 onClick={() => setActiveTab('byok')}
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all shrink-0 text-left w-full ${
                   activeTab === 'byok'
-                    ? 'bg-surface-hover text-ink font-semibold'
-                    : 'text-ink-muted hover:text-ink hover:bg-surface-soft'
+                    ? 'bg-muted text-foreground font-semibold'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                 }`}
               >
                 <KeyRound className="w-4 h-4" />
@@ -162,8 +162,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 onClick={() => setActiveTab('sync')}
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all shrink-0 text-left w-full ${
                   activeTab === 'sync'
-                    ? 'bg-surface-hover text-ink font-semibold'
-                    : 'text-ink-muted hover:text-ink hover:bg-surface-soft'
+                    ? 'bg-muted text-foreground font-semibold'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                 }`}
               >
                 <Cloud className="w-4 h-4" />
@@ -174,21 +174,21 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
           {/* Sidebar Footer or Meta */}
           <div className="hidden md:block px-1">
-            <span className="text-[10px] text-ink-muted font-mono">v1.0.0-affine-style</span>
+            <span className="text-[10px] text-muted-foreground font-mono">v1.0.0-affine-style</span>
           </div>
         </div>
 
         {/* Right Content Area */}
-        <div className="flex-1 flex flex-col h-full min-w-0 bg-surface dark:bg-surface">
+        <div className="flex-1 flex flex-col h-full min-w-0 bg-card dark:bg-card">
           {/* Header */}
           <div className="flex items-center justify-between px-6 pt-5 pb-3 shrink-0">
-            <span className="text-[11px] font-semibold tracking-wider text-ink-muted uppercase">
+            <span className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
               {activeTab === 'byok' ? 'Bring Your Own Key' : 'Security & Sync Connection'}
             </span>
             <button
               type="button"
               onClick={onClose}
-              className="h-7 w-7 inline-flex items-center justify-center rounded-lg text-ink-muted hover:text-ink hover:bg-surface-soft transition-colors"
+              className="h-7 w-7 inline-flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
@@ -199,67 +199,67 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             {activeTab === 'byok' && (
               <form onSubmit={handleSaveKeys} className="flex flex-col h-full justify-between gap-6">
                 <div className="space-y-5">
-                  <div className="p-3.5 rounded-xl border border-muted dark:border-soft/60 bg-surface-soft dark:bg-surface-soft">
-                    <p className="text-xs leading-relaxed text-ink-muted">
+                  <div className="p-3.5 rounded-xl border border-muted dark:border-border/60 bg-muted dark:bg-muted">
+                    <p className="text-xs leading-relaxed text-muted-foreground">
                       Use your own LLM API keys. Keys are stored encrypted in session storage and never touch CatNoted servers.
                     </p>
                   </div>
 
                   {/* Section Title */}
                   <div className="space-y-4">
-                    <h3 className="text-[11px] font-semibold text-ink-muted uppercase tracking-wider">
+                    <h3 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                       Provider Credentials
                     </h3>
 
                     <div className="space-y-3.5">
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 items-center">
-                        <label className="text-xs font-medium text-ink">OpenAI Key</label>
+                        <label className="text-xs font-medium text-foreground">OpenAI Key</label>
                         <div className="sm:col-span-2">
                           <input
                             type="password"
                             value={openaiKey}
                             onChange={(e) => setOpenaiKey(e.target.value)}
                             placeholder="sk-..."
-                            className="w-full px-3 py-1.5 rounded-lg border border-soft dark:border-soft bg-surface-soft dark:bg-surface-soft text-xs placeholder:text-ink-muted dark:placeholder:text-ink-muted text-ink focus:outline-none focus:ring-1 focus:ring-accent dark:focus:ring-accent transition-all"
+                            className="w-full px-3 py-1.5 rounded-lg border border-border dark:border-border bg-muted dark:bg-muted text-xs placeholder:text-muted-foreground dark:placeholder:text-muted-foreground text-foreground focus:outline-none focus:ring-1 focus:ring-accent dark:focus:ring-accent transition-all"
                           />
                         </div>
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 items-center">
-                        <label className="text-xs font-medium text-ink">Gemini Key</label>
+                        <label className="text-xs font-medium text-foreground">Gemini Key</label>
                         <div className="sm:col-span-2">
                           <input
                             type="password"
                             value={geminiKey}
                             onChange={(e) => setGeminiKey(e.target.value)}
                             placeholder="AIzaSy..."
-                            className="w-full px-3 py-1.5 rounded-lg border border-soft dark:border-soft bg-surface-soft dark:bg-surface-soft text-xs placeholder:text-ink-muted dark:placeholder:text-ink-muted text-ink focus:outline-none focus:ring-1 focus:ring-accent dark:focus:ring-accent transition-all"
+                            className="w-full px-3 py-1.5 rounded-lg border border-border dark:border-border bg-muted dark:bg-muted text-xs placeholder:text-muted-foreground dark:placeholder:text-muted-foreground text-foreground focus:outline-none focus:ring-1 focus:ring-accent dark:focus:ring-accent transition-all"
                           />
                         </div>
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 items-center">
-                        <label className="text-xs font-medium text-ink">Anthropic Key</label>
+                        <label className="text-xs font-medium text-foreground">Anthropic Key</label>
                         <div className="sm:col-span-2">
                           <input
                             type="password"
                             value={anthropicKey}
                             onChange={(e) => setAnthropicKey(e.target.value)}
                             placeholder="sk-ant-..."
-                            className="w-full px-3 py-1.5 rounded-lg border border-soft dark:border-soft bg-surface-soft dark:bg-surface-soft text-xs placeholder:text-ink-muted dark:placeholder:text-ink-muted text-ink focus:outline-none focus:ring-1 focus:ring-accent dark:focus:ring-accent transition-all"
+                            className="w-full px-3 py-1.5 rounded-lg border border-border dark:border-border bg-muted dark:bg-muted text-xs placeholder:text-muted-foreground dark:placeholder:text-muted-foreground text-foreground focus:outline-none focus:ring-1 focus:ring-accent dark:focus:ring-accent transition-all"
                           />
                         </div>
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 items-center">
-                        <label className="text-xs font-medium text-ink">Ollama Host URL</label>
+                        <label className="text-xs font-medium text-foreground">Ollama Host URL</label>
                         <div className="sm:col-span-2">
                           <input
                             type="text"
                             value={ollamaUrl}
                             onChange={(e) => setOllamaUrl(e.target.value)}
                             placeholder="http://localhost:11434"
-                            className="w-full px-3 py-1.5 rounded-lg border border-soft dark:border-soft bg-surface-soft dark:bg-surface-soft text-xs placeholder:text-ink-muted dark:placeholder:text-ink-muted text-ink focus:outline-none focus:ring-1 focus:ring-accent dark:focus:ring-accent transition-all"
+                            className="w-full px-3 py-1.5 rounded-lg border border-border dark:border-border bg-muted dark:bg-muted text-xs placeholder:text-muted-foreground dark:placeholder:text-muted-foreground text-foreground focus:outline-none focus:ring-1 focus:ring-accent dark:focus:ring-accent transition-all"
                           />
                         </div>
                       </div>
@@ -267,24 +267,24 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   </div>
 
                   <div className="pt-2">
-                    <label className="flex items-center gap-2.5 rounded-xl border border-muted dark:border-soft/60 bg-surface-soft dark:bg-surface-soft px-3.5 py-2.5 cursor-pointer select-none transition-colors hover:bg-surface-soft dark:hover:bg-surface-soft">
+                    <label className="flex items-center gap-2.5 rounded-xl border border-muted dark:border-border/60 bg-muted dark:bg-muted px-3.5 py-2.5 cursor-pointer select-none transition-colors hover:bg-muted dark:hover:bg-muted">
                       <input
                         type="checkbox"
                         checked={rememberChoice}
                         onChange={(e) => setRememberChoice(e.target.checked)}
-                        className="h-4 w-4 rounded border-soft text-accent focus:ring-accent focus:ring-offset-0 bg-transparent"
+                        className="h-4 w-4 rounded border-border text-accent focus:ring-accent focus:ring-offset-0 bg-transparent"
                       />
-                      <span className="text-xs text-ink">Use current passphrase for session unlock</span>
+                      <span className="text-xs text-foreground">Use current passphrase for session unlock</span>
                     </label>
                   </div>
                 </div>
 
                 {/* Explicit Actions */}
-                <div className="flex items-center justify-end gap-2 pt-4 border-t border-muted dark:border-soft/60 mt-6 shrink-0">
+                <div className="flex items-center justify-end gap-2 pt-4 border-t border-muted dark:border-border/60 mt-6 shrink-0">
                   <button
                     type="button"
                     onClick={onClose}
-                    className="inline-flex h-8 items-center justify-center rounded-lg px-3.5 text-xs font-medium text-ink-muted hover:text-ink hover:bg-surface-hover dark:hover:bg-surface-hover transition-colors"
+                    className="inline-flex h-8 items-center justify-center rounded-lg px-3.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted dark:hover:bg-muted transition-colors"
                   >
                     Cancel
                   </button>
@@ -312,39 +312,39 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   </div>
 
                   <div className="space-y-4">
-                    <h3 className="text-[11px] font-semibold text-ink-muted uppercase tracking-wider">
+                    <h3 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                       Encryption Key
                     </h3>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 items-center">
-                      <label className="text-xs font-medium text-ink">E2EE Passphrase</label>
+                      <label className="text-xs font-medium text-foreground">E2EE Passphrase</label>
                       <div className="sm:col-span-2">
                         <input
                           type="password"
                           value={passphrase}
                           onChange={(e) => onPassphraseChange(e.target.value)}
                           placeholder="Insert secure E2EE passphrase..."
-                          className="w-full px-3 py-1.5 rounded-lg border border-soft dark:border-soft bg-surface-soft dark:bg-surface-soft text-xs placeholder:text-ink-muted dark:placeholder:text-ink-muted text-ink focus:outline-none focus:ring-1 focus:ring-accent dark:focus:ring-accent transition-all"
+                          className="w-full px-3 py-1.5 rounded-lg border border-border dark:border-border bg-muted dark:bg-muted text-xs placeholder:text-muted-foreground dark:placeholder:text-muted-foreground text-foreground focus:outline-none focus:ring-1 focus:ring-accent dark:focus:ring-accent transition-all"
                         />
                       </div>
                     </div>
                   </div>
 
                   <div className="space-y-3.5">
-                    <h3 className="text-[11px] font-semibold text-ink-muted uppercase tracking-wider">
+                    <h3 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                       Connection Status
                     </h3>
 
-                    <div className="rounded-xl border border-muted dark:border-soft/60 bg-surface-soft dark:bg-surface-soft p-4 space-y-2.5">
+                    <div className="rounded-xl border border-muted dark:border-border/60 bg-muted dark:bg-muted p-4 space-y-2.5">
                       <div className="flex justify-between items-center text-xs">
-                        <span className="text-ink-muted">Local-First Storage (VFS)</span>
+                        <span className="text-muted-foreground">Local-First Storage (VFS)</span>
                         <span className="font-semibold text-success flex items-center gap-1.5">
                           <span className="w-1.5 h-1.5 rounded-full bg-success" />
                           Active (IndexedDB)
                         </span>
                       </div>
-                      <div className="flex justify-between items-center text-xs border-t border-muted dark:border-soft/40 pt-2.5">
-                        <span className="text-ink-muted">Cloud Sync Provider</span>
+                      <div className="flex justify-between items-center text-xs border-t border-muted dark:border-border/40 pt-2.5">
+                        <span className="text-muted-foreground">Cloud Sync Provider</span>
                         <span className="font-semibold text-accent flex items-center gap-1.5">
                           <span className="w-1.5 h-1.5 rounded-full bg-accent" />
                           Supabase E2EE Broadcast Active
@@ -352,8 +352,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       </div>
                     </div>
 
-                    <div className="rounded-xl border border-dashed border-soft dark:border-soft bg-surface dark:bg-surface px-3.5 py-2.5">
-                      <p className="text-[11px] leading-relaxed text-ink-muted">
+                    <div className="rounded-xl border border-dashed border-border dark:border-border bg-card dark:bg-card px-3.5 py-2.5">
+                      <p className="text-[11px] leading-relaxed text-muted-foreground">
                         Sync channel details are derived from the active session.
                       </p>
                     </div>
@@ -361,11 +361,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 </div>
 
                 {/* Explicit Actions */}
-                <div className="flex items-center justify-end gap-2 pt-4 border-t border-muted dark:border-soft/60 mt-6 shrink-0">
+                <div className="flex items-center justify-end gap-2 pt-4 border-t border-muted dark:border-border/60 mt-6 shrink-0">
                   <button
                     type="button"
                     onClick={onClose}
-                    className="inline-flex h-8 items-center justify-center rounded-lg px-3.5 text-xs font-medium text-ink-muted hover:text-ink hover:bg-surface-hover dark:hover:bg-surface-hover transition-colors"
+                    className="inline-flex h-8 items-center justify-center rounded-lg px-3.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted dark:hover:bg-muted transition-colors"
                   >
                     Cancel
                   </button>
