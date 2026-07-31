@@ -103,29 +103,29 @@ export const Toast: React.FC<ToastProps> = ({ item, onClose }) => {
       case 'success':
         return {
           container:
-            'bg-emerald-50 border-emerald-200 text-emerald-900 dark:bg-emerald-950/40 dark:border-emerald-900/50 dark:text-emerald-300',
-          iconColor: 'text-emerald-500 dark:text-emerald-400',
+            'bg-success-soft border-border text-success',
+          iconColor: 'text-success',
           Icon: CheckCircle2,
         };
       case 'warning':
         return {
           container:
-            'bg-amber-50 border-amber-200 text-amber-900 dark:bg-amber-950/40 dark:border-amber-900/50 dark:text-amber-300',
-          iconColor: 'text-amber-500 dark:text-amber-400',
+            'bg-warning-soft border-border text-warning',
+          iconColor: 'text-warning',
           Icon: AlertTriangle,
         };
       case 'danger':
         return {
           container:
-            'bg-rose-50 border-rose-200 text-rose-900 dark:bg-rose-950/40 dark:border-rose-900/50 dark:text-rose-300',
-          iconColor: 'text-rose-500 dark:text-rose-400',
+            'bg-danger-soft border-border text-danger',
+          iconColor: 'text-danger',
           Icon: AlertCircle,
         };
       default:
         return {
           container:
-            'bg-slate-50 border-slate-150 text-slate-900 dark:bg-background dark:border-border dark:text-zinc-200',
-          iconColor: 'text-slate-500',
+            'bg-muted border-border text-foreground',
+          iconColor: 'text-muted-foreground',
           Icon: CheckCircle2,
         };
     }

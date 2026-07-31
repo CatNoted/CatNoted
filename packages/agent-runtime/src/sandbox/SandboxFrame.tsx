@@ -91,7 +91,7 @@ export const SandboxFrame: React.FC<SandboxFrameProps> = ({
       srcDoc={combinedSrcDoc}
       sandbox="allow-scripts"
       style={{ width: '100%', height, border: 'none', borderRadius: '12px' }}
-      className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 transition-colors duration-200"
+      className="bg-background border border-border transition-colors duration-200"
     />
   );
 };

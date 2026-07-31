@@ -200,7 +200,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
               setShowCoverPicker(false);
             }}
             aria-label="Remove page cover image"
-            className="text-[10px] text-destructive hover:text-red-600 font-semibold"
+            className="text-[10px] text-destructive hover:opacity-80 font-semibold"
           >
             Remove
           </button>

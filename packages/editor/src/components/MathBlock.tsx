@@ -32,8 +32,8 @@ export const MathBlock: React.FC<MathBlockProps> = ({
         >
           {isEditing ? (
             <>
-              <Check className="w-3 h-3 text-emerald-500" />
-              <span className="text-emerald-500 font-semibold">Done</span>
+              <Check className="w-3 h-3 text-success" />
+              <span className="text-success font-semibold">Done</span>
             </>
           ) : (
             <>
