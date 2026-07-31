@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { SlashCommandMenu, buildSlashCommands } from './SlashCommandMenu.js';
-import { Plus, GripVertical } from 'lucide-react';
 
 interface TextBlockProps {
   onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
@@ -17,9 +16,6 @@ interface TextBlockProps {
   blockType?: string;
   onFocus?: () => void;
   onBlur?: () => void;
-  showLeftActions?: boolean;
-  isFocused?: boolean;
-  onAddClick?: () => void;
 }
 
 const TextBlockBase: React.FC<TextBlockProps> = ({
@@ -34,9 +30,6 @@ const TextBlockBase: React.FC<TextBlockProps> = ({
   blockType,
   onFocus,
   onBlur,
-  showLeftActions = true,
-  isFocused = false,
-  onAddClick,
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -203,32 +196,8 @@ const TextBlockBase: React.FC<TextBlockProps> = ({
     onBlur?.();
   }, [onBlur]);
 
-  const addClick = useCallback(() => {
-    if (onAddClick) onAddClick();
-  }, [onAddClick]);
-
-  const isCurrentlyFocused = isFocused || localFocused;
-
   return (
     <div className="relative flex items-start group">
-      {showLeftActions && (
-        <div className={`flex items-center gap-1 pr-2 h-6 transition-opacity duration-150 ${
-          isCurrentlyFocused ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
-        }`}>
-          <button
-            type="button"
-            onClick={addClick}
-            title="Add block below"
-            aria-label="Add block below"
-            className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center cursor-pointer"
-          >
-            <Plus className="w-3.5 h-3.5" />
-          </button>
-          <span className="p-1.5 rounded-md hover:bg-muted text-muted-foreground/80 hover:text-foreground transition-colors cursor-grab flex items-center justify-center select-none">
-            <GripVertical className="w-3.5 h-3.5" />
-          </span>
-        </div>
-      )}
       <div className="flex-1 min-w-0">
         <textarea
           aria-label={`Text block`}

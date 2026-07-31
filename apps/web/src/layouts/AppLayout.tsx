@@ -958,7 +958,7 @@ if (isSearchOpen && searchQuery) {
                         }`}
                       >
                         <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-accent' : 'text-muted-foreground'}`} />
-                        <span className="truncate">{item.label}</span>
+                        <span className="truncate min-w-0">{item.label}</span>
                         {isActive && (
                           <span className="ml-auto w-1.5 h-1.5 rounded-full bg-accent dark:bg-accent" />
                         )}
@@ -1055,7 +1055,7 @@ if (isSearchOpen && searchQuery) {
                                   if (onPageSelect) onPageSelect(node.id);
                                   onModeChange('doc');
                                 }}
-                                className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
+                                className={`w-full text-left px-2 py-1 rounded-md truncate min-w-0 flex items-center gap-2 transition-colors ${
                                   isActive
                                     ? 'bg-warning-soft dark:bg-warning-soft/30 text-warning-foreground font-medium'
                                     : 'text-foreground hover:bg-muted dark:hover:bg-muted/30 hover:text-foreground dark:hover:text-foreground'
@@ -1099,7 +1099,7 @@ if (isSearchOpen && searchQuery) {
                                   if (onPageSelect) onPageSelect(node.id);
                                   onModeChange('doc');
                                 }}
-                                className={`flex-1 text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
+                                className={`flex-1 text-left px-2 py-1 rounded-md truncate min-w-0 flex items-center gap-2 transition-colors ${
                                   isActive
                                     ? 'bg-accent-soft dark:bg-accent/10 text-accent font-semibold'
                                     : 'text-muted-foreground hover:bg-accent-soft/30 hover:text-accent'
@@ -1159,14 +1159,14 @@ if (isSearchOpen && searchQuery) {
                                   if (onPageSelect) onPageSelect(node.id);
                                   onModeChange('doc');
                                 }}
-                                className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
+                                className={`w-full text-left px-2 py-1 rounded-md truncate min-w-0 flex items-center gap-2 transition-colors ${
                                   isActive
                                     ? 'bg-accent-soft dark:bg-accent/10 text-accent font-semibold'
                                     : 'text-muted-foreground hover:bg-accent-soft/30 hover:text-accent'
                                 }`}
                               >
                                 <FileText className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                                <span className="truncate text-xs">{displayLabel}</span>
+                                <span className="truncate min-w-0 text-xs">{displayLabel}</span>
                               </button>
                             </li>
                           );
@@ -1206,14 +1206,14 @@ if (isSearchOpen && searchQuery) {
                                   if (onPageSelect) onPageSelect(node.id);
                                   onModeChange('doc');
                                 }}
-                                className={`w-full text-left px-2 py-1 rounded-md truncate flex items-center gap-2 transition-colors ${
+                                className={`w-full text-left px-2 py-1 rounded-md truncate min-w-0 flex items-center gap-2 transition-colors ${
                                   isActive
                                     ? 'bg-muted dark:bg-muted text-foreground font-medium'
                                     : 'text-foreground hover:bg-muted dark:hover:bg-muted/30 hover:text-foreground dark:hover:text-foreground'
                                 }`}
                               >
                                 <Cpu className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                                <span className="truncate text-xs">{node.label}</span>
+                                <span className="truncate min-w-0 text-xs">{node.label}</span>
                               </button>
                             </li>
                           );
@@ -1294,7 +1294,7 @@ if (isSearchOpen && searchQuery) {
                   <div className="flex items-center justify-between p-3 bg-muted dark:bg-muted/40 border border-border dark:border-border/60 rounded-xl">
                     <div className="flex items-center gap-2 min-w-0">
                       <span className="text-xl shrink-0">{pageMeta?.icon || '📄'}</span>
-                      <span className="font-semibold truncate text-foreground min-w-0" title={pageMeta?.title || docTitle}>{pageMeta?.title || docTitle}</span>
+                      <span className="font-semibold truncate min-w-0 text-foreground" title={pageMeta?.title || docTitle}>{pageMeta?.title || docTitle}</span>
                     </div>
                     <button
                       type="button"
@@ -1426,7 +1426,7 @@ if (isSearchOpen && searchQuery) {
                                 el.scrollIntoView({ behavior: 'smooth', block: 'center' });
                               }
                             }}
-                            className={`w-full text-left py-1.5 px-2 rounded-lg hover:bg-muted dark:hover:bg-muted/40 text-foreground hover:text-accent dark:hover:text-accent transition-colors truncate ${indentClass}`}
+                            className={`w-full text-left py-1.5 px-2 rounded-lg hover:bg-muted dark:hover:bg-muted/40 text-foreground hover:text-accent dark:hover:text-accent transition-colors truncate min-w-0 ${indentClass}`}
                           >
                             {block.content || 'Untitled Heading'}
                           </button>
@@ -1523,8 +1523,8 @@ if (isSearchOpen && searchQuery) {
                         ].map((item) => (
                           <div key={item.id} className="p-2 rounded-lg bg-muted dark:bg-muted/30 border border-border dark:border-border/60 flex items-center justify-between text-xs">
                             <div className="min-w-0 pr-1 flex flex-col">
-                              <span className="font-semibold text-foreground dark:text-foreground truncate">{item.title}</span>
-                              <span className="text-[10px] text-muted-foreground truncate">{item.desc}</span>
+                              <span className="font-semibold text-foreground dark:text-foreground truncate min-w-0">{item.title}</span>
+                              <span className="text-[10px] text-muted-foreground truncate min-w-0">{item.desc}</span>
                             </div>
                             <button
                               type="button"
@@ -2005,8 +2005,8 @@ if (isSearchOpen && searchQuery) {
                             return (
                               <div key={block.id} className="p-3 rounded-xl bg-muted dark:bg-card/40 border border-border dark:border-border/60 flex items-center justify-between text-xs">
                                 <div className="flex flex-col min-w-0 pr-2">
-                                  <span className="font-semibold truncate text-foreground dark:text-foreground">ID: {widgetId}</span>
-                                  <span className="text-[9px] text-muted-foreground truncate">Block ID: {block.id}</span>
+                                  <span className="font-semibold truncate min-w-0 text-foreground dark:text-foreground">ID: {widgetId}</span>
+                                  <span className="text-[9px] text-muted-foreground truncate min-w-0">Block ID: {block.id}</span>
                                 </div>
                                 <div className="flex items-center gap-1.5 shrink-0">
                                   <button

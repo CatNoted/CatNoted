@@ -301,7 +301,7 @@ const App: React.FC = () => {
       <div className="flex items-center gap-1.5 group/title min-w-0 truncate">
         <span
           onDoubleClick={() => setIsEditingTitle(true)}
-          className="text-xs font-semibold text-foreground truncate cursor-pointer hover:bg-secondary/60 px-1.5 py-0.5 rounded transition-colors"
+          className="text-xs font-semibold text-foreground truncate min-w-0 cursor-pointer hover:bg-secondary/60 px-1.5 py-0.5 rounded transition-colors"
           title="Double click to edit title"
         >
           {pageTitle}
@@ -462,7 +462,7 @@ const App: React.FC = () => {
           <span className="w-5 h-5 rounded-full bg-accent text-white text-[10px] font-bold flex items-center justify-center shadow-sm">
             {userEmail.charAt(0).toUpperCase()}
           </span>
-          <span className="max-w-[100px] truncate text-[10px] font-semibold hidden sm:inline">{userEmail}</span>
+          <span className="max-w-[100px] truncate min-w-0 text-[10px] font-semibold hidden sm:inline">{userEmail}</span>
         </button>
       </div>
     );
