@@ -74,6 +74,9 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
                   className={`px-1.5 py-0.5 rounded font-mono text-[10px] ${
                     width === w ? 'bg-accent text-white font-bold' : 'hover:bg-muted text-muted-foreground'
                   }`}
+                  title={`Set width to ${w}%`}
+                  aria-label={`Set width to ${w}%`}
+                  aria-pressed={width === w}
                 >
                   {w}%
                 </button>
@@ -83,6 +86,9 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
                 type="button"
                 onClick={() => onUpdateProps({ align: 'left' })}
                 className={`p-1 rounded ${align === 'left' ? 'bg-accent' : 'hover:bg-muted text-muted-foreground'}`}
+                title="Align left"
+                aria-label="Align left"
+                aria-pressed={align === 'left'}
               >
                 <AlignLeft className="w-3 h-3" />
               </button>
@@ -90,6 +96,9 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
                 type="button"
                 onClick={() => onUpdateProps({ align: 'center' })}
                 className={`p-1 rounded ${align === 'center' ? 'bg-accent' : 'hover:bg-muted text-muted-foreground'}`}
+                title="Align center"
+                aria-label="Align center"
+                aria-pressed={align === 'center'}
               >
                 <AlignCenter className="w-3 h-3" />
               </button>
@@ -97,6 +106,9 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
                 type="button"
                 onClick={() => onUpdateProps({ align: 'right' })}
                 className={`p-1 rounded ${align === 'right' ? 'bg-accent' : 'hover:bg-muted text-muted-foreground'}`}
+                title="Align right"
+                aria-label="Align right"
+                aria-pressed={align === 'right'}
               >
                 <AlignRight className="w-3 h-3" />
               </button>
