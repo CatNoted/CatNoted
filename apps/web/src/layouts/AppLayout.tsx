@@ -693,7 +693,7 @@ if (isSearchOpen && searchQuery) {
         <div className="fixed inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4" data-testid="conflict-resolution-modal">
           <div className="bg-card  border border-border rounded-3xl p-6 max-w-md w-full shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
             <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-2xl bg-rose-500/10 text-rose-500 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-2xl bg-danger-soft text-danger flex items-center justify-center shrink-0">
                 <AlertTriangle className="w-5 h-5 animate-pulse" />
               </div>
               <div className="flex-1 min-w-0">
@@ -788,12 +788,12 @@ if (isSearchOpen && searchQuery) {
             {/* Sync Status Indicator Icon Rail */}
             <div className="w-full flex flex-col items-center justify-center py-2 border-t border-border/50 gap-1.5">
               {syncStatus === 'saving' && (
-                <div className="text-amber-500 hover:text-amber-600 transition-colors p-1" title="Syncing / Saving updates" data-testid="sync-status-saving">
+                <div className="text-warning hover:text-warning/80 transition-colors p-1" title="Syncing / Saving updates" data-testid="sync-status-saving">
                   <RefreshCw className="w-4 h-4 animate-spin" />
                 </div>
               )}
               {syncStatus === 'saved' && (
-                <div className="text-emerald-500 hover:text-emerald-600 transition-colors p-1" title="All changes synced" data-testid="sync-status-saved">
+                <div className="text-success hover:text-success/80 transition-colors p-1" title="All changes synced" data-testid="sync-status-saved">
                   <Cloud className="w-4 h-4" />
                 </div>
               )}
@@ -803,12 +803,12 @@ if (isSearchOpen && searchQuery) {
                 </div>
               )}
               {syncStatus === 'conflict' && (
-                <div className="text-rose-500 hover:text-rose-600 transition-colors p-1" title="Sync Version Conflict" data-testid="sync-status-conflict">
+                <div className="text-danger hover:text-danger/80 transition-colors p-1" title="Sync Version Conflict" data-testid="sync-status-conflict">
                   <AlertTriangle className="w-4 h-4 animate-pulse" />
                 </div>
               )}
               {syncStatus === 'error' && (
-                <div className="text-rose-500 hover:text-rose-600 transition-colors p-1" title="Sync Error" data-testid="sync-status-error">
+                <div className="text-danger hover:text-danger/80 transition-colors p-1" title="Sync Error" data-testid="sync-status-error">
                   <AlertCircle className="w-4 h-4" />
                 </div>
               )}
@@ -823,7 +823,7 @@ if (isSearchOpen && searchQuery) {
               onKeyDown={(e) => handleUtilKeyDown(e, 0)}
               onFocus={() => setFocusedUtilIndex(0)}
               tabIndex={focusedUtilIndex === 0 ? 0 : -1}
-              className="w-full py-2.5 rounded-lg flex items-center justify-center text-muted-foreground hover:text-warning hover:bg-warning-soft transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 dark:focus-visible:ring-amber-400"
+              className="w-full py-2.5 rounded-lg flex items-center justify-center text-muted-foreground hover:text-warning hover:bg-warning-soft transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-warning"
               title={isDarkMode ? 'Light Mode' : 'Dark Mode'}
               aria-label={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             >
@@ -1301,7 +1301,7 @@ if (isSearchOpen && searchQuery) {
                       }`}
                       title={pageMeta?.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
                     >
-                      <Star className={`w-4 h-4 ${pageMeta?.isFavorite ? 'fill-amber-500' : ''}`} />
+                      <Star className={`w-4 h-4 ${pageMeta?.isFavorite ? 'fill-warning text-warning' : ''}`} />
                     </button>
                   </div>
 
@@ -1724,7 +1724,7 @@ if (isSearchOpen && searchQuery) {
                   setIsAgentOpen(false);
                   setIsMinimized(false);
                 }}
-                className="w-7 h-7 rounded-lg flex items-center justify-center text-muted-foreground hover:text-danger dark:hover:text-rose-400 hover:bg-danger-soft dark:hover:bg-danger-soft0/15 transition-all duration-200 hover:scale-110"
+                className="w-7 h-7 rounded-lg flex items-center justify-center text-muted-foreground hover:text-danger hover:bg-danger-soft transition-all duration-200 hover:scale-110"
                 title="Close"
               >
                 <X className="w-4 h-4" />

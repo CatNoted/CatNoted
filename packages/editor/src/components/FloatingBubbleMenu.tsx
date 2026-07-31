@@ -77,11 +77,11 @@ export const FloatingBubbleMenu: React.FC<FloatingBubbleMenuProps> = ({
   };
 
   const colors = [
-    { name: 'Yellow', bg: 'bg-yellow-200 dark:bg-yellow-500/30' },
-    { name: 'Green', bg: 'bg-emerald-200 dark:bg-emerald-500/30' },
-    { name: 'Blue', bg: 'bg-sky-200 dark:bg-sky-500/30' },
-    { name: 'Pink', bg: 'bg-rose-200 dark:bg-rose-500/30' },
-    { name: 'Purple', bg: 'bg-purple-200 dark:bg-purple-500/30' },
+    { name: 'Yellow', bg: 'bg-warning-soft' },
+    { name: 'Green', bg: 'bg-success-soft' },
+    { name: 'Blue', bg: 'bg-accent-soft' },
+    { name: 'Pink', bg: 'bg-danger-soft' },
+    { name: 'Purple', bg: 'bg-muted' },
   ];
 
   return (
@@ -219,7 +219,7 @@ export const FloatingBubbleMenu: React.FC<FloatingBubbleMenuProps> = ({
           className="px-2 py-1 bg-accent hover:bg-accent/90 text-white rounded-lg text-xs font-medium flex items-center gap-1 transition-colors shadow-sm"
           title="Ask Space Agent AI"
         >
-          <Sparkles className="w-3 h-3 text-amber-300" />
+          <Sparkles className="w-3 h-3 text-warning" />
           <span>Ask AI</span>
         </button>
       )}

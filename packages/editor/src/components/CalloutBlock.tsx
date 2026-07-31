@@ -23,29 +23,29 @@ const CALLOUT_BG_THEMES: Record<string, { bg: string; border: string; text: stri
     text: 'text-accent',
   },
   emerald: {
-    bg: 'bg-emerald-50/80 dark:bg-emerald-950/30',
-    border: 'border-emerald-200 dark:border-emerald-800/60',
-    text: 'text-emerald-900 dark:text-emerald-200',
+    bg: 'bg-success-soft',
+    border: 'border-success-soft',
+    text: 'text-success',
   },
   amber: {
-    bg: 'bg-amber-50/80 dark:bg-amber-950/30',
-    border: 'border-amber-200 dark:border-amber-800/60',
-    text: 'text-amber-900 dark:text-amber-200',
+    bg: 'bg-warning-soft',
+    border: 'border-warning-soft',
+    text: 'text-warning',
   },
   rose: {
-    bg: 'bg-rose-50/80 dark:bg-rose-950/30',
-    border: 'border-rose-200 dark:border-rose-800/60',
-    text: 'text-rose-900 dark:text-rose-200',
+    bg: 'bg-danger-soft',
+    border: 'border-danger-soft',
+    text: 'text-danger',
   },
   sky: {
-    bg: 'bg-sky-50/80 dark:bg-sky-950/30',
-    border: 'border-sky-200 dark:border-sky-800/60',
-    text: 'text-sky-900 dark:text-sky-200',
+    bg: 'bg-accent-soft',
+    border: 'border-accent/30',
+    text: 'text-accent',
   },
   purple: {
-    bg: 'bg-purple-50/80 dark:bg-purple-950/30',
-    border: 'border-purple-200 dark:border-purple-800/60',
-    text: 'text-purple-900 dark:text-purple-200',
+    bg: 'bg-muted',
+    border: 'border-border',
+    text: 'text-muted-foreground',
   },
 };
 
@@ -182,14 +182,14 @@ export const CalloutBlock: React.FC<CalloutBlockProps> = ({
                   themeKey === 'accent'
                     ? 'bg-accent'
                     : themeKey === 'emerald'
-                    ? 'bg-emerald-400'
+                    ? 'bg-success'
                     : themeKey === 'amber'
-                    ? 'bg-amber-400'
+                    ? 'bg-warning'
                     : themeKey === 'rose'
-                    ? 'bg-rose-400'
+                    ? 'bg-danger'
                     : themeKey === 'sky'
-                    ? 'bg-sky-400'
-                    : 'bg-purple-400'
+                    ? 'bg-accent'
+                    : 'bg-muted border border-border'
                 }`}
                 title={themeKey}
               />

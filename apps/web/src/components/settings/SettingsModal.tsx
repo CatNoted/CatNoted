@@ -131,7 +131,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   };
 
   return (
-    <Overlay isOpen={isOpen} className="bg-slate-900/40 dark:bg-black/60 backdrop-blur-[2px]">
+    <Overlay isOpen={isOpen} className="bg-background/80 backdrop-blur-[2px]">
       <Panel className="w-full max-w-[760px] h-[580px] shadow-2xl flex flex-col md:flex-row overflow-hidden">
 
         {/* Left Sidebar */}
