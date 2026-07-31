@@ -57,7 +57,7 @@ describe('Toast Component & Provider Tests', () => {
 
     await new Promise((resolve) => setTimeout(resolve, 10));
     expect(container.innerHTML).toContain('Operation was successful!');
-    expect(container.innerHTML).toContain('bg-emerald-50'); // Variant container style
+    expect(container.innerHTML).toContain('bg-success-soft'); // Variant container style
 
     // Trigger Warning Toast
     const warningBtn = container.querySelector('#warning-btn') as HTMLButtonElement;
@@ -67,7 +67,7 @@ describe('Toast Component & Provider Tests', () => {
 
     await new Promise((resolve) => setTimeout(resolve, 10));
     expect(container.innerHTML).toContain('Warning: payload limit reached');
-    expect(container.innerHTML).toContain('bg-amber-50'); // Variant container style
+    expect(container.innerHTML).toContain('bg-warning-soft'); // Variant container style
 
     cleanup();
   });

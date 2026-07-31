@@ -92,7 +92,7 @@ export const ConnectorLine: React.FC<ConnectorLineProps> = ({
           markerHeight="5"
           orient="auto-start-reverse"
         >
-          <path d="M 0 1 L 9 5 L 0 9 z" className="fill-rose-500 dark:fill-rose-600" />
+          <path d="M 0 1 L 9 5 L 0 9 z" className="fill-destructive" />
         </marker>
       </defs>
 
@@ -124,7 +124,7 @@ export const ConnectorLine: React.FC<ConnectorLineProps> = ({
         d={path}
         fill="none"
         className={isBroken
-          ? `stroke-rose-500/80 dark:stroke-rose-600/80 hover:stroke-rose-600 dark:hover:stroke-rose-500 transition-colors`
+          ? `stroke-destructive/80 hover:stroke-destructive transition-colors`
           : `${
               isSelected
                 ? 'stroke-primary'
@@ -142,7 +142,7 @@ export const ConnectorLine: React.FC<ConnectorLineProps> = ({
           x={(startX + endX) / 2}
           y={(startY + endY) / 2 - 8}
           className={isBroken
-            ? `fill-rose-600 dark:fill-rose-400 font-semibold text-[10px] tracking-wide pointer-events-none opacity-100`
+            ? `fill-destructive font-semibold text-[10px] tracking-wide pointer-events-none opacity-100`
             : `fill-primary font-medium text-[10px] tracking-wide transition-opacity duration-200 pointer-events-none ${
                 forceShowLabel ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
               }`
