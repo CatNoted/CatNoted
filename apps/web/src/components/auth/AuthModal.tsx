@@ -79,8 +79,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   };
 
   return (
-    <Overlay isOpen={isOpen} className="bg-slate-900/30 dark:bg-black/40 backdrop-blur-sm">
-      <Panel className="w-full max-w-[340px] p-5 shadow-xl transition-all dark:border-zinc-800/80">
+    <Overlay isOpen={isOpen} className="bg-background/80 backdrop-blur-sm">
+      <Panel className="w-full max-w-[340px] p-5 shadow-xl transition-all border-border">
         
         {/* Header - Calm AFFiNE design with soft brand accent */}
         <div className="flex flex-col items-center text-center mb-4">

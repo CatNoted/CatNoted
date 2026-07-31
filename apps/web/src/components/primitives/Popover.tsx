@@ -82,7 +82,7 @@ export const Popover: React.FC<PopoverProps> = ({
 
       {isOpen && (
         <div
-          className={`absolute z-40 min-w-[200px] rounded-xl border border-border bg-surface p-3 shadow-xl dark:border-border/80 dark:bg-surface text-slate-800 dark:text-zinc-200 transition-all ${getPlacementClasses(
+          className={`absolute z-40 min-w-[200px] rounded-xl border border-border bg-surface p-3 shadow-xl dark:border-border/80 dark:bg-surface text-foreground transition-all ${getPlacementClasses(
             placement
           )} ${className}`}
           role="dialog"

@@ -358,8 +358,8 @@ const App: React.FC = () => {
           onClick={() => updatePageMeta({ isFavorite: !pageMeta?.isFavorite })}
           className={`inline-flex items-center justify-center rounded-lg p-1.5 border transition-colors ${
             pageMeta?.isFavorite
-              ? 'border-transparent bg-amber-400/10 text-amber-500'
-              : 'border-transparent text-muted-foreground hover:text-amber-500 hover:bg-secondary'
+              ? 'border-transparent bg-warning-soft text-warning'
+              : 'border-transparent text-muted-foreground hover:text-warning hover:bg-secondary'
           }`}
           title={pageMeta?.isFavorite ? 'Unstar page' : 'Star page'}
         >
@@ -470,15 +470,15 @@ const App: React.FC = () => {
     const syncStatus =
       status === 'saving'
         ? (
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-warning-soft text-warning border border-warning-soft">
+              <span className="w-1.5 h-1.5 rounded-full bg-warning animate-pulse" />
               <span className="hidden sm:inline">Saving...</span>
             </span>
           )
         : status === 'saved'
           ? (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-success-soft text-success border border-success-soft">
+                <span className="w-1.5 h-1.5 rounded-full bg-success" />
                 <span className="hidden sm:inline">Saved</span>
               </span>
             )
