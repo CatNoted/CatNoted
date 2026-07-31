@@ -245,15 +245,20 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   const pageNodes = React.useMemo(() => graphData.nodes.filter(n => n.type === 'page'), [graphData.nodes]);
   // Optimization: Memoize tagNodes filtering to prevent O(N) filtering on every render
   const tagNodes = React.useMemo(() => graphData.nodes.filter(n => n.type === 'tag'), [graphData.nodes]);
+
+  // ⚡ Bolt Optimization: Memoize filtered block arrays to prevent O(N) scans on every render
+  const headingBlocks = React.useMemo(() => blocks.filter(b => b.type === 'heading'), [blocks]);
+  const textBlocks = React.useMemo(() => blocks.filter(b => b.type === 'text'), [blocks]);
+  const widgetBlocks = React.useMemo(() => blocks.filter(b => b.type === 'widget'), [blocks]);
+
   const widgetNodes = React.useMemo(() => {
-    return blocks
-      .filter(b => b.type === 'widget')
+    return widgetBlocks
       .map(b => ({
         id: b.id,
         label: b.properties?.widgetId || 'AI Widget',
         type: 'widget' as const
       }));
-  }, [blocks]);
+  }, [widgetBlocks]);
 
   const recentDocs = React.useMemo(() => {
     const otherPages = pageNodes
@@ -1362,15 +1367,15 @@ if (isSearchOpen && searchQuery) {
                       </div>
                       <div className="p-2.5 rounded-lg bg-muted dark:bg-muted border border-muted dark:border-border/40">
                         <div className="text-[10px] text-muted-foreground">Heading Nodes</div>
-                        <div className="text-base font-bold text-foreground mt-0.5">{blocks.filter(b => b.type === 'heading').length}</div>
+                        <div className="text-base font-bold text-foreground mt-0.5">{headingBlocks.length}</div>
                       </div>
                       <div className="p-2.5 rounded-lg bg-muted dark:bg-muted border border-muted dark:border-border/40">
                         <div className="text-[10px] text-muted-foreground">Text Nodes</div>
-                        <div className="text-base font-bold text-foreground mt-0.5">{blocks.filter(b => b.type === 'text').length}</div>
+                        <div className="text-base font-bold text-foreground mt-0.5">{textBlocks.length}</div>
                       </div>
                       <div className="p-2.5 rounded-lg bg-muted dark:bg-muted border border-muted dark:border-border/40">
                         <div className="text-[10px] text-muted-foreground">Custom Widgets</div>
-                        <div className="text-base font-bold text-foreground mt-0.5">{blocks.filter(b => b.type === 'widget').length}</div>
+                        <div className="text-base font-bold text-foreground mt-0.5">{widgetBlocks.length}</div>
                       </div>
                     </div>
                   </div>
@@ -1399,14 +1404,14 @@ if (isSearchOpen && searchQuery) {
                     Click an outline heading below to quickly navigate and scroll to its position in the document.
                   </p>
 
-                  {blocks.filter(b => b.type === 'heading').length === 0 ? (
+                  {headingBlocks.length === 0 ? (
                     <div className="text-center py-8 border border-dashed border-border rounded-xl">
                       <List className="w-6 h-6 mx-auto text-muted-foreground mb-1.5" />
                       <span className="text-xs text-muted-foreground">No headings in document outline.</span>
                     </div>
                   ) : (
                     <nav className="flex flex-col gap-1">
-                      {blocks.filter(b => b.type === 'heading').map(block => {
+                      {headingBlocks.map(block => {
                         const level = block.properties?.level || 1;
                         let indentClass = 'pl-0 font-semibold';
                         if (level === 2) indentClass = 'pl-4 text-xs font-medium';
@@ -1989,13 +1994,13 @@ if (isSearchOpen && searchQuery) {
                       <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5">
                         <Cpu className="w-3 h-3 text-success" /> Page Widgets List
                       </h4>
-                      {blocks.filter(b => b.type === 'widget').length === 0 ? (
+                      {widgetBlocks.length === 0 ? (
                         <div className="p-6 text-center border border-dashed border-border rounded-xl text-xs text-muted-foreground">
                           No widgets on this page yet.
                         </div>
                       ) : (
                         <div className="space-y-2">
-                          {blocks.filter(b => b.type === 'widget').map(block => {
+                          {widgetBlocks.map(block => {
                             const widgetId = block.properties?.widgetId || 'unassigned';
                             return (
                               <div key={block.id} className="p-3 rounded-xl bg-muted dark:bg-card/40 border border-border dark:border-border/60 flex items-center justify-between text-xs">
