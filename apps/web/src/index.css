@@ -64,28 +64,6 @@
   }
 }
 
-/* App shell surfaces */
-.surface {
-  background-color: hsl(var(--panel));
-  color: hsl(var(--text-primary));
-}
-.surface-soft {
-  background-color: hsl(var(--panel-soft));
-  color: hsl(var(--text-primary));
-}
-.surface-hover {
-  background-color: hsl(var(--panel-hover));
-}
-.border-soft {
-  border-color: hsl(var(--border-soft));
-}
-.border-muted {
-  border-color: hsl(var(--border-muted));
-}
-.text-primary { color: hsl(var(--text-primary)); }
-.text-secondary { color: hsl(var(--text-secondary)); }
-.text-muted { color: hsl(var(--text-muted)); }
-
 /* Semantic accents */
 .text-accent { color: hsl(var(--accent)); }
 .text-danger { color: hsl(var(--danger)); }
@@ -118,11 +96,11 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--border-soft));
+  background: hsl(var(--border));
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--text-muted));
+  background: hsl(var(--muted-foreground));
 }
 
 @media (prefers-reduced-motion: reduce) {

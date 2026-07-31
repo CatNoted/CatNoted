@@ -10,7 +10,7 @@ export function Surface({ className, children }: SurfaceProps) {
     <div
       className={
         [
-          'rounded-2xl border border-soft bg-surface dark:bg-surface',
+          'rounded-2xl border border-border bg-card',
           'shadow-sm',
           className || ''
         ].join(' ')
