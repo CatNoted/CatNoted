@@ -1551,7 +1551,7 @@ if (isSearchOpen && searchQuery) {
                   <div className="relative pl-4 border-l-2 border-muted dark:border-border ml-1.5 space-y-4">
                     {/* Item 1 */}
                     <div className="relative">
-                      <span className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-success ring-4 ring-surface dark:ring-surface" />
+                      <span className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-success ring-4 ring-background" />
                       <div className="flex flex-col">
                         <span className="text-xs font-semibold text-foreground">Current active version</span>
                         <span className="text-[10px] text-muted-foreground">Just now — Auto-saved local session</span>
