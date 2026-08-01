@@ -90,13 +90,13 @@ export const BookmarkBlock: React.FC<BookmarkBlockProps> = ({
             </div>
 
             <div className="min-w-0 flex-1">
-              <h4 className="text-xs font-semibold text-foreground truncate">
+              <h4 className="text-xs font-semibold text-foreground truncate min-w-0">
                 {bookmarkTitle || bookmarkUrl}
               </h4>
-              <p className="text-[11px] text-muted-foreground truncate mt-0.5">
+              <p className="text-[11px] text-muted-foreground truncate min-w-0 mt-0.5">
                 {bookmarkDescription || bookmarkUrl}
               </p>
-              <span className="text-[10px] font-mono text-accent truncate block mt-1">
+              <span className="text-[10px] font-mono text-accent truncate min-w-0 block mt-1">
                 {bookmarkUrl}
               </span>
             </div>

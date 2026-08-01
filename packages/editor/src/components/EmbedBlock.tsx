@@ -109,10 +109,10 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
                       key={page.id}
                       type="button"
                       onClick={() => handleSelectPage(page.id)}
-                      className="w-full px-3 py-2 text-left hover:bg-muted text-foreground flex items-center gap-2 truncate"
+                      className="w-full px-3 py-2 text-left hover:bg-muted text-foreground flex items-center gap-2 truncate min-w-0"
                     >
                       <span className="text-xs">{page.icon || '📄'}</span>
-                      <span className="truncate">{page.title || 'Untitled Document'}</span>
+                      <span className="truncate min-w-0">{page.title || 'Untitled Document'}</span>
                     </button>
                   ))
                 ) : (
@@ -152,7 +152,7 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
       <div className="flex items-center justify-between border-b border-border pb-2.5 mb-3">
         <div className="flex items-center gap-2.5 min-w-0 flex-1">
           <span className="text-base flex-shrink-0">{targetIcon}</span>
-          <h3 className="text-xs font-bold text-foreground truncate">
+          <h3 className="text-xs font-bold text-foreground truncate min-w-0">
             {targetTitle}
           </h3>
           <span className="text-[9px] bg-accent/10 text-accent px-2 py-0.5 rounded-full font-bold uppercase tracking-wider scale-90 shrink-0">
@@ -239,7 +239,7 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
                 );
               case 'code':
                 return (
-                  <div key={block.id} className="p-2 bg-muted border border-border rounded-lg font-mono text-[10px] text-accent truncate">
+                  <div key={block.id} className="p-2 bg-muted border border-border rounded-lg font-mono text-[10px] text-accent truncate min-w-0">
                     {block.content || <span className="opacity-30 italic">Code snippet</span>}
                   </div>
                 );
