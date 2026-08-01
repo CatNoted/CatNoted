@@ -153,7 +153,7 @@ CatNoted follows the **SecureCoder** guidelines (see `AGENTS.md` → *Agent Exec
    ```
 5. Open a Pull Request against the `main` branch.
 
-Please read the **Code of Conduct** and **Contributing Guidelines** (TODO) before contributing.
+Please read the **Code of Conduct** and **Contributing Guidelines**  before contributing.
 
 ---
 
