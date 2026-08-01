@@ -7,3 +7,6 @@
 ## 2025-02-18 - [Optimized block filtering in AppLayout]
 **Learning:** Found multiple redundant array scans (`blocks.filter`) running inside the JSX render loop for the same block types (headings, text, widgets) in `AppLayout.tsx`. In a highly reactive editor environment where `blocks` updates frequently, these O(N) operations cause unnecessary CPU overhead.
 **Action:** Always memoize derived arrays (using `React.useMemo`) when they are used multiple times in the render cycle or when they scan a large collection, especially in components that re-render frequently based on user input.
+## 2025-02-18 - [Optimized InfiniteCanvas array mapping and filtering]
+**Learning:** Found multiple redundant array mappings and scans (`Object.values(elements).filter` and `selectedIds.map(id => elements[id]).filter`) running inside the JSX render loop in `InfiniteCanvas.tsx`. `InfiniteCanvas` re-renders frequently due to panning, zooming, and interacting with the UI. In a reactive canvas environment with many elements, these O(N) operations cause unnecessary CPU overhead on every frame or state change.
+**Action:** Always memoize derived arrays (using `React.useMemo`) when they are used in the render cycle or when they scan a large collection, especially in components that re-render frequently like a canvas viewport.
