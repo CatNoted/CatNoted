@@ -1114,6 +1114,7 @@ if (isSearchOpen && searchQuery) {
                                   onClick={(e) => { e.stopPropagation(); handleDeletePage(node.id, displayLabel); }}
                                   className="opacity-0 group-hover/pageitem:opacity-100 p-1 mr-1 rounded text-muted-foreground hover:text-danger hover:bg-danger-soft transition-all shrink-0"
                                   title={`Hapus "${displayLabel}"`}
+                                  aria-label={`Hapus "${displayLabel}"`}
                                 >
                                   <Trash2 className="w-3 h-3" />
                                 </button>
@@ -1305,6 +1306,7 @@ if (isSearchOpen && searchQuery) {
                           : 'text-muted-foreground hover:text-warning hover:bg-muted'
                       }`}
                       title={pageMeta?.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+                      aria-label={pageMeta?.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
                     >
                       <Star className={`w-4 h-4 ${pageMeta?.isFavorite ? 'fill-warning text-warning' : ''}`} />
                     </button>
@@ -1721,6 +1723,7 @@ if (isSearchOpen && searchQuery) {
                 onClick={() => setIsMinimized(!isMinimized)}
                 className="w-7 h-7 rounded-lg flex items-center justify-center text-muted-foreground hover:text-accent dark:hover:text-accent hover:bg-accent-soft dark:hover:bg-accent/15 transition-all duration-200 hover:scale-110"
                 title={isMinimized ? "Expand" : "Minimize"}
+                aria-label={isMinimized ? "Expand" : "Minimize"}
               >
                 <Minus className="w-4 h-4" />
               </button>
@@ -1731,6 +1734,7 @@ if (isSearchOpen && searchQuery) {
                 }}
                 className="w-7 h-7 rounded-lg flex items-center justify-center text-muted-foreground hover:text-danger hover:bg-danger-soft transition-all duration-200 hover:scale-110"
                 title="Close"
+                aria-label="Close"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -2015,6 +2019,7 @@ if (isSearchOpen && searchQuery) {
                                       alert('Widget code copied to clipboard!');
                                     }}
                                     title="Copy Code"
+                                    aria-label="Copy Code"
                                     className="p-1 hover:bg-muted dark:hover:bg-muted rounded text-muted-foreground cursor-pointer"
                                   >
                                     <Copy className="w-3.5 h-3.5" />
@@ -2028,6 +2033,7 @@ if (isSearchOpen && searchQuery) {
                                       });
                                     }}
                                     title="Duplicate Widget"
+                                    aria-label="Duplicate Widget"
                                     className="p-1 hover:bg-muted dark:hover:bg-muted rounded text-muted-foreground cursor-pointer"
                                   >
                                     <Minus className="w-3.5 h-3.5 rotate-90" />
@@ -2037,6 +2043,7 @@ if (isSearchOpen && searchQuery) {
                                       deleteBlock(block.id);
                                     }}
                                     title="Delete Widget"
+                                    aria-label="Delete Widget"
                                     className="p-1 hover:bg-muted dark:hover:bg-muted rounded text-danger cursor-pointer"
                                   >
                                     <Trash2 className="w-3.5 h-3.5" />
