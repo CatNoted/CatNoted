@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useDocumentStore, ydoc, yblocks } from '@catnoted/editor';
 import { CanvasElement } from '@catnoted/shared';
 import { useCanvasViewport } from '../hooks/useCanvasViewport.js';
@@ -670,13 +670,23 @@ export const InfiniteCanvas: React.FC = () => {
     });
   };
 
-  const customConnectors = Object.values(elements).filter(
-    el => el.type === 'connector' && el.connector
+  // ⚡ Bolt Optimization: Memoize connector filtering to prevent O(N) scans on every frame/render
+  const customConnectors = useMemo(() =>
+    Object.values(elements).filter(el => el.type === 'connector' && el.connector),
+    [elements]
   );
 
-  const selectedElements = selectedIds.map(id => elements[id]).filter(Boolean);
+  // ⚡ Bolt Optimization: Memoize selected element resolution
+  const selectedElements = useMemo(() =>
+    selectedIds.map(id => elements[id]).filter(Boolean),
+    [selectedIds, elements]
+  );
 
-  const nonBlockElements = Object.values(elements).filter(el => el.type !== 'card' && el.type !== 'connector');
+  // ⚡ Bolt Optimization: Memoize non-block element filtering
+  const nonBlockElements = useMemo(() =>
+    Object.values(elements).filter(el => el.type !== 'card' && el.type !== 'connector'),
+    [elements]
+  );
 
   const hasContent = blocks.length > 0 || nonBlockElements.length > 0 || customConnectors.length > 0;
 
