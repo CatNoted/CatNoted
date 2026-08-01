@@ -54,6 +54,17 @@ export const BookmarkBlock: React.FC<BookmarkBlockProps> = ({
     }
   };
 
+  const isSafeUrl = (url: string) => {
+    try {
+      const parsed = new URL(url);
+      return ['http:', 'https:'].includes(parsed.protocol);
+    } catch {
+      return false;
+    }
+  };
+
+  const safeHref = isSafeUrl(bookmarkUrl) ? bookmarkUrl : '#';
+
   return (
     <div className="w-full my-2 select-none">
       {isEditing ? (
@@ -103,7 +114,7 @@ export const BookmarkBlock: React.FC<BookmarkBlockProps> = ({
           </div>
 
           <a
-            href={bookmarkUrl}
+            href={safeHref}
             target="_blank"
             rel="noopener noreferrer"
             className="p-2 text-muted-foreground hover:text-accent hover:bg-muted rounded-xl transition-colors shrink-0 ml-3"
