@@ -3,7 +3,7 @@ import { Plus, Settings, Sparkles, Filter, ChevronDown, ListFilter, FileText } f
 
 export const AllDocsView: React.FC = () => {
   return (
-    <div className="flex-1 flex overflow-hidden bg-background">
+    <div className="flex-1 min-w-0 flex overflow-hidden bg-background">
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Header */}
@@ -36,7 +36,7 @@ export const AllDocsView: React.FC = () => {
         </header>
 
         {/* Document List Container */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 min-w-0 overflow-y-auto">
           <div className="max-w-4xl mx-auto py-8 px-6">
             <h2 className="text-3xl font-semibold text-foreground mb-8">All docs</h2>
 
@@ -127,7 +127,7 @@ export const AllDocsView: React.FC = () => {
           </div>
         </div>
 
-        <div className="p-4 flex-1">
+        <div className="p-4 flex-1 min-w-0">
           <div className="bg-muted/50 rounded-xl p-4 border border-border text-center">
              <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-3 text-accent">
                <Sparkles className="w-5 h-5" />
