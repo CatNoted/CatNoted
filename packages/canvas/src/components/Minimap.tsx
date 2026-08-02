@@ -26,15 +26,41 @@ export const Minimap: React.FC<MinimapProps> = ({
   const minimapHeight = 100;
 
   // 1. Calculate boundaries of all elements on the canvas
-  const elementList = Object.values(elements).filter(el => el.type === 'card');
+  // ⚡ Bolt Optimization: Memoize filtering to prevent O(N) scans on every frame
+  const elementList = React.useMemo(() => Object.values(elements).filter(el => el.type === 'card'), [elements]);
 
-  const boundsMinX = Math.min(-200, ...elementList.map(el => el.x)) - 200;
-  const boundsMaxX = Math.max(1200, ...elementList.map(el => el.x + (el.width || 260))) + 200;
-  const boundsMinY = Math.min(-200, ...elementList.map(el => el.y)) - 200;
-  const boundsMaxY = Math.max(800, ...elementList.map(el => el.y + (el.height || 120))) + 200;
+  // ⚡ Bolt Optimization: Memoize boundary calculation using a single-pass iteration
+  // rather than multiple map/spread operations to reduce allocations and CPU overhead on every pan/zoom
+  const bounds = React.useMemo(() => {
+    let minX = -200;
+    let maxX = 1200;
+    let minY = -200;
+    let maxY = 800;
 
-  const boundsWidth = boundsMaxX - boundsMinX;
-  const boundsHeight = boundsMaxY - boundsMinY;
+    for (let i = 0; i < elementList.length; i++) {
+      const el = elementList[i];
+      if (el.x < minX) minX = el.x;
+      if (el.x + (el.width || 260) > maxX) maxX = el.x + (el.width || 260);
+      if (el.y < minY) minY = el.y;
+      if (el.y + (el.height || 120) > maxY) maxY = el.y + (el.height || 120);
+    }
+
+    const boundsMinX = minX - 200;
+    const boundsMaxX = maxX + 200;
+    const boundsMinY = minY - 200;
+    const boundsMaxY = maxY + 200;
+
+    return {
+      boundsMinX,
+      boundsMaxX,
+      boundsMinY,
+      boundsMaxY,
+      boundsWidth: boundsMaxX - boundsMinX,
+      boundsHeight: boundsMaxY - boundsMinY
+    };
+  }, [elementList]);
+
+  const { boundsMinX, boundsMaxX, boundsMinY, boundsMaxY, boundsWidth, boundsHeight } = bounds;
 
   // Map canvas coordinate to minimap scale
   const scaleX = (x: number) => ((x - boundsMinX) / boundsWidth) * minimapWidth;
