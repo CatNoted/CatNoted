@@ -10,12 +10,7 @@
     "jsx": "react-jsx",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "baseUrl": ".",
-    "paths": {
-      "@catnoted/shared": ["../shared/dist/index.d.ts"],
-      "@catnoted/agent-runtime": ["../agent-runtime/dist/index.d.ts"]
-    }
+    "forceConsistentCasingInFileNames": true
   },
   "include": ["src/**/*"]
 }
