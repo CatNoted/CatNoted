@@ -50,7 +50,7 @@ export const AllDocsView: React.FC = () => {
               <div className="space-y-1">
                 {/* Doc Item */}
                 <div className="flex items-center justify-between py-2.5 px-3 hover:bg-muted rounded-lg group cursor-pointer border border-transparent hover:border-border transition-colors min-w-0">
-                  <div className="flex items-center gap-3 min-w-0">
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
                     <FileText className="w-4 h-4 text-accent shrink-0" />
                     <span className="text-sm font-medium text-foreground truncate min-w-0">Getting Started with Affine</span>
                   </div>
@@ -60,7 +60,7 @@ export const AllDocsView: React.FC = () => {
                 </div>
                 {/* Doc Item */}
                 <div className="flex items-center justify-between py-2.5 px-3 hover:bg-muted rounded-lg group cursor-pointer border border-transparent hover:border-border transition-colors min-w-0">
-                  <div className="flex items-center gap-3 min-w-0">
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
                     <FileText className="w-4 h-4 text-accent shrink-0" />
                     <span className="text-sm font-medium text-foreground truncate min-w-0">Project Roadmap Q3</span>
                   </div>
@@ -81,7 +81,7 @@ export const AllDocsView: React.FC = () => {
               <div className="space-y-1">
                 {/* Doc Item */}
                 <div className="flex items-center justify-between py-2.5 px-3 hover:bg-muted rounded-lg group cursor-pointer border border-transparent hover:border-border transition-colors min-w-0">
-                  <div className="flex items-center gap-3 min-w-0">
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
                     <FileText className="w-4 h-4 text-accent shrink-0" />
                     <span className="text-sm font-medium text-foreground truncate min-w-0">Untitled Document</span>
                   </div>

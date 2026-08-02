@@ -1293,7 +1293,7 @@ if (isSearchOpen && searchQuery) {
                 <div className="space-y-6">
                   {/* Title & Star Toggler */}
                   <div className="flex items-center justify-between p-3 bg-muted dark:bg-muted/40 border border-border dark:border-border/60 rounded-xl">
-                    <div className="flex items-center gap-2 min-w-0">
+                    <div className="flex items-center gap-2 flex-1 min-w-0">
                       <span className="text-xl shrink-0">{pageMeta?.icon || '📄'}</span>
                       <span className="font-semibold truncate min-w-0 text-foreground" title={pageMeta?.title || docTitle}>{pageMeta?.title || docTitle}</span>
                     </div>
@@ -2008,7 +2008,7 @@ if (isSearchOpen && searchQuery) {
                             const widgetId = block.properties?.widgetId || 'unassigned';
                             return (
                               <div key={block.id} className="p-3 rounded-xl bg-muted dark:bg-card/40 border border-border dark:border-border/60 flex items-center justify-between text-xs">
-                                <div className="flex flex-col min-w-0 pr-2">
+                                <div className="flex flex-col flex-1 min-w-0 pr-2">
                                   <span className="font-semibold truncate min-w-0 text-foreground dark:text-foreground">ID: {widgetId}</span>
                                   <span className="text-[9px] text-muted-foreground truncate min-w-0">Block ID: {block.id}</span>
                                 </div>
