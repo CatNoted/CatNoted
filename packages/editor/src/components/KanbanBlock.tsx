@@ -289,7 +289,7 @@ export const KanbanBlock: React.FC<KanbanBlockProps> = ({
                 }
               }}
               onDragEnd={handleDragEnd}
-              className={`flex-shrink-0 w-64 rounded-xl border p-3 flex flex-col max-h-[420px] transition-all ${
+              className={`flex-shrink-0 w-64 min-w-0 rounded-xl border p-3 flex flex-col max-h-[420px] transition-all ${
                 draggedColId === col.id
                   ? 'opacity-40 border-border bg-transparent'
                   : isOverCol
@@ -308,7 +308,7 @@ export const KanbanBlock: React.FC<KanbanBlockProps> = ({
                   value={col.title}
                   onChange={(e) => handleRenameColumn(col.id, e.target.value)}
                   placeholder="Column Name"
-                  className="text-xs font-semibold bg-transparent text-foreground border-none outline-none focus:ring-1 focus:ring-accent rounded px-1 py-0.5 placeholder:text-muted-foreground flex-1 min-w-0 transition-colors focus:bg-background"
+                  className="text-xs font-semibold bg-transparent text-foreground border-none outline-none focus:ring-1 focus:ring-accent rounded px-1 py-0.5 placeholder:text-muted-foreground flex-1 min-w-0 shrink transition-colors focus:bg-background"
                 />
 
                 <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground font-mono">
@@ -327,7 +327,7 @@ export const KanbanBlock: React.FC<KanbanBlockProps> = ({
 
               {/* Cards List */}
               <div
-                className="flex-1 overflow-y-auto space-y-2 min-h-[80px] pb-2 scrollbar-none"
+                className="flex-1 min-w-0 overflow-y-auto space-y-2 min-h-[80px] pb-2 scrollbar-none"
                 onDragOver={(e) => handleCardDragOver(e, col.id)}
                 onDrop={(e) => {
                   const type = e.dataTransfer.getData('type');

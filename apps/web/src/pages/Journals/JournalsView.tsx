@@ -410,9 +410,9 @@ export const JournalsView: React.FC = () => {
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden select-text">
+      <div className="flex-1 min-w-0 flex flex-col h-full overflow-hidden select-text">
         {/* Editor Wrapper Container */}
-        <div className="flex-1 overflow-auto p-6 md:p-8">
+        <div className="flex-1 min-w-0 overflow-auto p-6 md:p-8">
           {/* Duplication Warning Banner */}
           {activeConflict && (
             <div className="mb-6 p-4 bg-warning-soft dark:bg-warning-soft/20 border border-warning-soft dark:border-warning-soft/50 shadow-sm rounded-2xl flex items-start gap-3 animate-in slide-in-from-top-3">
