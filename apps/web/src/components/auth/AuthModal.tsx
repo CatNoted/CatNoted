@@ -102,7 +102,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         </div>
 
         {errorMsg && (
-          <div className="mb-3.5 p-2 bg-danger-soft text-danger text-[11px] font-medium rounded-lg border border-border/20 text-center">
+          <div role="alert" aria-live="assertive" className="mb-3.5 p-2 bg-danger-soft text-danger text-[11px] font-medium rounded-lg border border-border/20 text-center">
             {errorMsg}
           </div>
         )}
@@ -130,10 +130,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               {/* Form Grouping with Clear Visual Boundaries */}
               <div className="rounded-xl border border-border/80 bg-muted dark:bg-muted p-3 space-y-2.5 shadow-sm">
                 <div className="space-y-1">
-                  <label className="block text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+                  <label htmlFor="auth-email" className="block text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
                     Email address
                   </label>
                   <input
+                    id="auth-email"
                     type="email"
                     required
                     value={email}
@@ -144,10 +145,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 </div>
 
                 <div className="space-y-1">
-                  <label className="block text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+                  <label htmlFor="auth-password" className="block text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
                     Password
                   </label>
                   <input
+                    id="auth-password"
                     type="password"
                     required
                     value={password}
