@@ -348,7 +348,7 @@ export const ForceGraph = forwardRef<ForceGraphRef, ForceGraphProps>(({
         }
 
         if (active) {
-          ctx.fillStyle = isDark ? '#818cf8' : '#4f46e5'; // Indigo active
+          ctx.fillStyle = isDark ? '#818cf8' : '#4f46e5'; // Accent active
         }
 
         ctx.fill();

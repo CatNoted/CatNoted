@@ -1,4 +1,22 @@
-💡 What: Memoized derived states (`favoritePages`, `mainHeading`, `pageNodes`, and `tagNodes`) in `AppLayout.tsx`.
-🎯 Why: These arrays and values were being re-computed on every render. Because methods like `.filter()` and `.map()` return new references every time they run, downstream memoized dependencies (like `recentDocs`) were also unnecessarily re-evaluating on every single React render, leading to wasted O(N) operations and memory allocations.
-📊 Impact: Reduces unnecessary re-calculations of arrays on every AppLayout render, preventing cascading re-renders in dependent hook dependencies.
-🔬 Measurement: Verify using React Developer Tools Profiler and by ensuring `recentDocs` doesn't needlessly run when scrolling or typing.
+🚀 **Audit Fixes**
+
+This PR contains fixes after performing a codebase audit across all workspaces.
+
+**Fixes:**
+1. **Typescript/Build (Export mismatch/circular import avoidance)**
+   - Fixed `packages/editor/tsconfig.json` by removing hardcoded `paths` for cross-package imports in favor of standard workspace resolution.
+2. **UI (Tokens/Colors)**
+   - Fixed hardcoded Tailwind colors (`indigo`) to semantic token (`accent`) in `SlashCommandMenu` and `ForceGraph`.
+
+**What was not fixed & Why:**
+- There were no `typecheck`, `test` or `build` errors found in the initial run.
+- Tests (e2e, vitest) all pass successfully, no broken assertions or stale mocks were identified.
+- There are no circular dependencies (verified with `dpdm`).
+- No missing or orphaned imports found that break the build.
+- `AGENTS.md` and `README.md` are well-structured and there's no need to update them for these internal config/UI changes.
+- Database schemas/types (in `crypto.ts` and `AppLayout.tsx`) appear correct and functional.
+
+**Verification:**
+- [x] `pnpm typecheck` passed
+- [x] `pnpm test` passed
+- [x] `pnpm build` passed

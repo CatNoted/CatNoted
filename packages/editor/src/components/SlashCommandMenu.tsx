@@ -285,7 +285,7 @@ export function buildSlashCommands(opts: {
       description: 'Highlighted callout box',
       icon: <Lightbulb className="w-4 h-4" />,
       keywords: ['callout', 'info', 'box', 'highlight', 'note', 'c', 'alert'],
-      action: exec(() => onSetType('callout', { calloutIcon: '💡', calloutBg: 'indigo' })),
+      action: exec(() => onSetType('callout', { calloutIcon: '💡', calloutBg: 'accent' })),
     },
     {
       id: 'toggle',
