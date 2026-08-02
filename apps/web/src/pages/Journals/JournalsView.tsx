@@ -293,6 +293,7 @@ export const JournalsView: React.FC = () => {
           <button
             onClick={handleGoToToday}
             className="px-2.5 py-1 text-[10px] font-bold bg-accent hover:bg-accent-hover text-white rounded-lg shadow-sm shadow-accent/10 transition-colors cursor-pointer"
+            aria-label="Go to Today"
           >
             Today
           </button>
@@ -309,6 +310,7 @@ export const JournalsView: React.FC = () => {
                 onClick={handlePrevMonth}
                 className="p-1 rounded-lg hover:bg-muted dark:hover:bg-muted text-muted-foreground"
                 title="Previous Month"
+                aria-label="Previous Month"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
@@ -316,6 +318,7 @@ export const JournalsView: React.FC = () => {
                 onClick={handleNextMonth}
                 className="p-1 rounded-lg hover:bg-muted dark:hover:bg-muted text-muted-foreground"
                 title="Next Month"
+                aria-label="Next Month"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>

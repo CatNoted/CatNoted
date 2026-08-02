@@ -28,7 +28,7 @@ export const GenericShape: React.FC<GenericShapeProps> = ({
 
   // Base classes and Colors
   if (element.type === 'note') {
-    shapeClass += 'bg-yellow-100/90 dark:bg-yellow-900/90 rounded text-foreground ';
+    shapeClass += 'bg-warning-soft text-foreground rounded ';
   } else if (element.type === 'frame') {
     shapeClass += 'bg-transparent border-border rounded-xl ';
   } else {
