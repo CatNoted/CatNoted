@@ -217,6 +217,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     const list: Array<{ pageId: string; pageTitle: string; pageIcon: string; blockContent: string; blockId: string }> = [];
     const seenBlockIds = new Set<string>();
 
+    // ⚡ Bolt Optimization: Pre-calculate map and common find operations outside the loop
+    // to prevent O(N) array scans inside the block iteration.
+    const pagesMap = new Map(allPages.map(p => [p.id, p]));
+    let precomputedRootTitle: string | undefined;
+
     allBlocks.forEach(block => {
       const sourceId = block.parentId || 'root-doc-node';
       if (sourceId === activePage) return;
@@ -234,12 +239,15 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           if (!seenBlockIds.has(block.id)) {
             seenBlockIds.add(block.id);
 
-            const sourceMeta = allPages.find(p => p.id === sourceId);
+            const sourceMeta = pagesMap.get(sourceId);
             let sourceTitle = sourceMeta?.title;
             if (!sourceTitle) {
               if (sourceId === 'root-doc-node') {
-                const rootHeading = allBlocks.find(b => b.type === 'heading' && b.properties?.level === 1 && (!b.parentId || b.parentId === 'root-doc-node'));
-                sourceTitle = rootHeading?.content || 'Root Note';
+                if (precomputedRootTitle === undefined) {
+                  const rootHeading = allBlocks.find(b => b.type === 'heading' && b.properties?.level === 1 && (!b.parentId || b.parentId === 'root-doc-node'));
+                  precomputedRootTitle = rootHeading?.content || 'Root Note';
+                }
+                sourceTitle = precomputedRootTitle;
               } else {
                 const rawName = sourceId.startsWith('page-') ? sourceId.slice(5) : sourceId;
                 sourceTitle = rawName.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
