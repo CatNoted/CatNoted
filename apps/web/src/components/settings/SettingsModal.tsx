@@ -213,9 +213,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
                     <div className="space-y-3.5">
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 items-center">
-                        <label className="text-xs font-medium text-foreground">OpenAI Key</label>
+                        <label htmlFor="openaiKey" className="text-xs font-medium text-foreground">OpenAI Key</label>
                         <div className="sm:col-span-2">
                           <input
+                            id="openaiKey"
                             type="password"
                             value={openaiKey}
                             onChange={(e) => setOpenaiKey(e.target.value)}
@@ -226,9 +227,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 items-center">
-                        <label className="text-xs font-medium text-foreground">Gemini Key</label>
+                        <label htmlFor="geminiKey" className="text-xs font-medium text-foreground">Gemini Key</label>
                         <div className="sm:col-span-2">
                           <input
+                            id="geminiKey"
                             type="password"
                             value={geminiKey}
                             onChange={(e) => setGeminiKey(e.target.value)}
@@ -239,9 +241,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 items-center">
-                        <label className="text-xs font-medium text-foreground">Anthropic Key</label>
+                        <label htmlFor="anthropicKey" className="text-xs font-medium text-foreground">Anthropic Key</label>
                         <div className="sm:col-span-2">
                           <input
+                            id="anthropicKey"
                             type="password"
                             value={anthropicKey}
                             onChange={(e) => setAnthropicKey(e.target.value)}
@@ -252,9 +255,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 items-center">
-                        <label className="text-xs font-medium text-foreground">Ollama Host URL</label>
+                        <label htmlFor="ollamaUrl" className="text-xs font-medium text-foreground">Ollama Host URL</label>
                         <div className="sm:col-span-2">
                           <input
+                            id="ollamaUrl"
                             type="text"
                             value={ollamaUrl}
                             onChange={(e) => setOllamaUrl(e.target.value)}
@@ -267,8 +271,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   </div>
 
                   <div className="pt-2">
-                    <label className="flex items-center gap-2.5 rounded-xl border border-muted dark:border-border/60 bg-muted dark:bg-muted px-3.5 py-2.5 cursor-pointer select-none transition-colors hover:bg-muted dark:hover:bg-muted">
+                    <label htmlFor="rememberChoice" className="flex items-center gap-2.5 rounded-xl border border-muted dark:border-border/60 bg-muted dark:bg-muted px-3.5 py-2.5 cursor-pointer select-none transition-colors hover:bg-muted dark:hover:bg-muted">
                       <input
+                        id="rememberChoice"
                         type="checkbox"
                         checked={rememberChoice}
                         onChange={(e) => setRememberChoice(e.target.checked)}
@@ -317,9 +322,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     </h3>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 items-center">
-                      <label className="text-xs font-medium text-foreground">E2EE Passphrase</label>
+                      <label htmlFor="e2eePassphrase" className="text-xs font-medium text-foreground">E2EE Passphrase</label>
                       <div className="sm:col-span-2">
                         <input
+                          id="e2eePassphrase"
                           type="password"
                           value={passphrase}
                           onChange={(e) => onPassphraseChange(e.target.value)}
