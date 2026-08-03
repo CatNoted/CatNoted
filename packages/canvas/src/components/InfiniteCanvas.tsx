@@ -269,7 +269,6 @@ export const InfiniteCanvas: React.FC = () => {
   // Handle starting a connection drag
   const handleStartConnector = (e: React.MouseEvent, fromId: string) => {
     e.stopPropagation();
-    console.log("Connection drag started from:", fromId);
     setActiveConnectorStart(fromId);
 
     // Convert client coordinates to canvas coordinates
@@ -476,8 +475,6 @@ export const InfiniteCanvas: React.FC = () => {
           }
         });
       }
-
-      console.log("Connection drag released. canvasX:", canvasX, "canvasY:", canvasY, "targetId:", targetId);
 
       if (targetId) {
         const connId = `connector-${activeConnectorStart}-${targetId}`;
