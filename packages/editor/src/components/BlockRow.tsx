@@ -8,7 +8,8 @@ import {
   Heading3,
   AlignLeft,
   Cpu,
-  MoreVertical
+  MoreVertical,
+  GripVertical
 } from 'lucide-react';
 import { TextBlock } from './TextBlock.js';
 import { HeadingBlock } from './HeadingBlock.js';
@@ -101,10 +102,16 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
   return (
           <div
             key={block.id}
-            className="group flex items-start gap-0 px-4 py-0.5 rounded-lg transition-all hover:bg-muted/50 hover:shadow-sm hover:ring-1 hover:ring-border"
+            className={`group flex items-start gap-0 px-4 py-0.5 rounded-lg transition-all hover:bg-muted/50 hover:shadow-sm hover:ring-1 hover:ring-border ${
+              dragOverBlockId === block.id && draggedBlockId !== block.id
+                ? 'border-t-2 border-t-accent bg-accent/5'
+                : ''
+            } ${draggedBlockId === block.id ? 'opacity-50' : ''}`}
+            onDragOver={(e) => handleDragOver(e, block.id)}
+            onDrop={(e) => handleDrop(e, block.id)}
           >
             {/* Left Block Controls - fixed width gutter, never overlaps content */}
-            <div className={`w-12 flex-shrink-0 flex items-start justify-end gap-1 px-1 opacity-0 group-hover:opacity-100 transition-opacity ${
+            <div className={`w-10 flex-shrink-0 flex items-start justify-end gap-0.5 px-1 opacity-0 group-hover:opacity-100 transition-opacity ${
               block.type === 'heading'
                 ? block.properties?.level === 1
                   ? 'pt-2'
@@ -125,11 +132,17 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
               <div className="relative">
                 <button
                   type="button"
-                  onClick={() => setActiveMenuId(activeMenuId === block.id ? null : block.id)}
-                  title="Block settings"
-                  className="p-1 hover:bg-muted rounded text-muted-foreground hover:text-accent transition-colors"
+                  onClick={(e) => {
+                    // Prevent drag start on click
+                    e.stopPropagation();
+                    setActiveMenuId(activeMenuId === block.id ? null : block.id);
+                  }}
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, block.id)}
+                  title="Drag to move, click for block settings"
+                  className="p-1 cursor-grab active:cursor-grabbing hover:bg-muted rounded text-muted-foreground hover:text-accent transition-colors flex items-center justify-center"
                 >
-                  <MoreVertical className="w-3.5 h-3.5" />
+                  <GripVertical className="w-3.5 h-3.5" />
                 </button>
 
                 {activeMenuId === block.id && (
