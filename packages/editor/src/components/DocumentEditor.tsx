@@ -18,13 +18,11 @@ import { EmbedBlock } from './EmbedBlock.js';
 import { BlockRow } from './BlockRow.js';
 
 import { 
-  Plus, 
   Trash2, 
   Heading1, 
   Heading2, 
   AlignLeft, 
   Cpu, 
-  GripVertical,
   Copy,
   Lightbulb,
   ChevronRight,
