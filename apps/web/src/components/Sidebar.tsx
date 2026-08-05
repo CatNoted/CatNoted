@@ -197,24 +197,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                 </div>
               ))
             ) : (
-              <>
-                <button
-                  type="button"
-                  onClick={() => onModeChange('doc')}
-                  className={itemClassName}
-                >
-                  <FileText className={`${getItemIconClass(false)} w-4 h-4`} />
-                  <span className="truncate min-w-0">Getting Started</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => onModeChange('doc')}
-                  className={itemClassName}
-                >
-                  <FileText className={`${getItemIconClass(false)} w-4 h-4`} />
-                  <span className="truncate min-w-0">Architecture Specs</span>
-                </button>
-              </>
+              <div className="px-3 py-2 text-xs text-muted-foreground opacity-75">
+                Star pages to pin them here.
+              </div>
             )}
           </>
         ))}

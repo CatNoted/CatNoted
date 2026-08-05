@@ -989,22 +989,27 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
               <div className="space-y-1.5">
                 {/* 0. Favorites Category */}
-                {favoritePages.length > 0 && (
-                  <div>
-                    <button
-                      onClick={() => toggleSection('favorites')}
-                      className="w-full flex items-center justify-between px-2 py-1.5 hover:bg-muted/60 dark:hover:bg-muted/30 rounded-lg text-xs font-semibold text-muted-foreground"
-                    >
-                      <span className="flex items-center gap-1.5">
-                        {sectionsExpanded.favorites ? <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" /> : <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />}
-                        <span className="text-xs">⭐</span>
-                        <span>Favorites</span>
-                      </span>
-                      <span className="text-[9px] bg-warning-soft text-warning px-1.5 py-0.5 rounded-full font-bold">{favoritePages.length}</span>
-                    </button>
-                    {sectionsExpanded.favorites && (
-                      <ul className="pl-4 mt-1 space-y-0.5 border-l border-warning-soft dark:border-warning-soft/40 ml-3.5">
-                        {favoritePages.map((node: any) => {
+                <div>
+                  <button
+                    onClick={() => toggleSection('favorites')}
+                    className="w-full flex items-center justify-between px-2 py-1.5 hover:bg-muted/60 dark:hover:bg-muted/30 rounded-lg text-xs font-semibold text-muted-foreground"
+                  >
+                    <span className="flex items-center gap-1.5">
+                      {sectionsExpanded.favorites ? <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" /> : <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />}
+                      <span className="text-xs">⭐</span>
+                      <span>Favorites</span>
+                    </span>
+                    <span className="text-[9px] bg-warning-soft text-warning px-1.5 py-0.5 rounded-full font-bold">{favoritePages.length}</span>
+                  </button>
+                  {sectionsExpanded.favorites && (
+                    <ul className="pl-4 mt-1 space-y-0.5 border-l border-warning-soft dark:border-warning-soft/40 ml-3.5">
+                      {favoritePages.length === 0 ? (
+                        <div className="px-2 py-3 flex flex-col items-center justify-center text-center gap-1.5 opacity-60">
+                          <Star className="w-4 h-4 text-muted-foreground" />
+                          <span className="text-[10px] text-muted-foreground">Star pages to pin them here.</span>
+                        </div>
+                      ) : (
+                        favoritePages.map((node: any) => {
                           const isActive = activePage === node.id;
                           const displayLabel = node.title || 'Untitled';
                           return (
@@ -1025,11 +1030,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                               </button>
                             </li>
                           );
-                        })}
-                      </ul>
-                    )}
-                  </div>
-                )}
+                        })
+                      )}
+                    </ul>
+                  )}
+                </div>
 
                 {/* 1. Pages Category */}
                 <div>
