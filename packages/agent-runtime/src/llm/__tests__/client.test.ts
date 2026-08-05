@@ -52,7 +52,7 @@ describe('Whitebox Test: requestLlmWidget', () => {
     const result = await promise;
 
     expect(global.fetch).toHaveBeenCalledTimes(1);
-    expect(console.error).toHaveBeenCalledWith('LLM API call failed, falling back to mock generator:', expect.any(Error));
+    expect(console.error).toHaveBeenCalledWith('LLM API call failed, falling back to mock generator');
     expect(result.code).toContain('id="todo-list"');
     expect(result.text).toContain('Successfully compiled a secure HTML/JS widget for');
   });
