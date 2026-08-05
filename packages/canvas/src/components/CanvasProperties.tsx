@@ -212,6 +212,7 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
             onClick={() => handleUpdate({ borderStyle: 'solid' })}
             className="py-1 text-[10px] font-semibold rounded-md transition-colors text-foreground/90 hover:bg-muted"
             type="button"
+            aria-label="Solid border"
           >
             <Square className="w-4 h-4" />
           </button>
@@ -219,6 +220,7 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
             onClick={() => handleUpdate({ borderStyle: 'dashed' })}
             className="py-1 text-[10px] font-semibold rounded-md transition-colors text-foreground/90 hover:bg-muted"
             type="button"
+            aria-label="Dashed border"
           >
             <CircleDashed className="w-4 h-4" />
           </button>
@@ -226,6 +228,7 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
             onClick={() => handleUpdate({ borderStyle: 'none' })}
             className="py-1 text-[10px] font-semibold rounded-md transition-colors text-foreground/90 hover:bg-muted px-1.5"
             type="button"
+            aria-label="No border"
           >
             None
           </button>
@@ -290,6 +293,7 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
               onClick={() => handleUpdate({ textAlign: 'left' })}
               className={`p-1.5 rounded-md transition-colors ${element.textAlign === 'left' ? 'bg-background shadow-sm text-primary font-bold' : 'text-muted-foreground hover:text-foreground'}`}
               type="button"
+              aria-label="Align text left"
             >
               <AlignLeft className="w-4 h-4" />
             </button>
@@ -297,6 +301,7 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
               onClick={() => handleUpdate({ textAlign: 'center' })}
               className={`p-1.5 rounded-md transition-colors ${!element.textAlign || element.textAlign === 'center' ? 'bg-background shadow-sm text-primary font-bold' : 'text-muted-foreground hover:text-foreground'}`}
               type="button"
+              aria-label="Align text center"
             >
               <AlignCenter className="w-4 h-4" />
             </button>
@@ -304,6 +309,7 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
               onClick={() => handleUpdate({ textAlign: 'right' })}
               className={`p-1.5 rounded-md transition-colors ${element.textAlign === 'right' ? 'bg-background shadow-sm text-primary font-bold' : 'text-muted-foreground hover:text-foreground'}`}
               type="button"
+              aria-label="Align text right"
             >
               <AlignRight className="w-4 h-4" />
             </button>
