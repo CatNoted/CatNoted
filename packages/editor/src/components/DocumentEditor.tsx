@@ -196,8 +196,17 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   };
 
   // Calculate word count across document
-  // ⚡ Bolt Optimization: Memoize wordCount calculation to prevent O(N) string splitting on every render
-  const wordCount = React.useMemo(() => blocks.reduce((acc, b) => acc + (b.content ? b.content.trim().split(/\s+/).filter(Boolean).length : 0), 0), [blocks]);
+  // ⚡ Bolt Optimization: Replace expensive split/filter operations with a single regex match
+  // to avoid temporary array allocations while preserving readability and correct Unicode whitespace handling.
+  const wordCount = React.useMemo(() => {
+    let count = 0;
+    for (let i = 0; i < blocks.length; i++) {
+      if (!blocks[i].content) continue;
+      const matches = blocks[i].content.match(/\S+/g);
+      if (matches) count += matches.length;
+    }
+    return count;
+  }, [blocks]);
 
   // ⚡ Bolt Optimization: Memoize headingBlock find operation to avoid O(N) search on every render
   const headingBlock = React.useMemo(() => blocks.find(b => b.type === 'heading' && b.properties?.level === 1), [blocks]);
