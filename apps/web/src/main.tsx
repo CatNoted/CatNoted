@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
+import App from './App'
 import { ToastProvider } from './components/primitives/Toast.js'
 import './index.css'
 
