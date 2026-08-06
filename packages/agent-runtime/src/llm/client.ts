@@ -148,7 +148,7 @@ export async function requestLlmWidget(prompt: string, config?: LLMConfig): Prom
       const code = data.choices[0].message.content;
       return { code, text: 'Successfully generated widget using BYOK LLM key!' };
     } catch (e) {
-      console.error('LLM API call failed, falling back to mock generator');
+      console.error('LLM API call failed, falling back to mock generator', e instanceof Error ? e.message : String(e));
     }
   }
 

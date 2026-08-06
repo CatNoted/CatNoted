@@ -68,7 +68,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           const decryptedString = new TextDecoder().decode(decryptedBytes);
           setter(decryptedString);
         } catch (e) {
-          console.error('Failed to decrypt settings item');
+          console.error('Failed to decrypt settings item', e instanceof Error ? e.message : String(e));
           setter('');
         }
       } else {
@@ -94,7 +94,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           const encryptedBase64 = encodeBase64(encryptedBytes);
           sessionStorage.setItem(keyName, encryptedBase64);
         } catch (e) {
-          console.error('Failed to encrypt settings item');
+          console.error('Failed to encrypt settings item', e instanceof Error ? e.message : String(e));
         }
       } else {
         sessionStorage.removeItem(keyName);

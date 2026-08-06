@@ -196,7 +196,7 @@ const App: React.FC = () => {
         mockSyncChannel.broadcast({ id: Math.random().toString(36).substring(2), sender: 'local-tab', payload: payloadArray });
         persistUpdate(payloadArray);
       } catch (e) {
-        console.error('Encryption failed during local Yjs update');
+        console.error('Encryption failed during local Yjs update', e instanceof Error ? e.message : String(e));
       }
     };
 
@@ -214,7 +214,7 @@ const App: React.FC = () => {
         const decryptedBytes = await decryptPayload(new Uint8Array(msg.payload), passphrase);
         Y.applyUpdate(ydoc, decryptedBytes, 'remote-sync');
       } catch (e) {
-        console.warn('Decryption failed for incoming sync update. Passphrase may be mismatched.');
+        console.warn('Decryption failed for incoming sync update. Passphrase may be mismatched.', e instanceof Error ? e.message : String(e));
       }
     });
     return () => {
@@ -442,7 +442,7 @@ const App: React.FC = () => {
             navigator.clipboard.writeText(link)
               .then(() => toast(`Share Link copied to clipboard! (Workspace passphrase required for E2EE room sync)`, { variant: 'success' }))
               .catch((err) => {
-                console.error('Failed to copy link: ', err);
+                console.error('Failed to copy link: ', err instanceof Error ? err.message : String(err));
                 toast(`Share Link generated: ${link}. Anyone with the passphrase can join.`, { variant: 'warning' });
               });
           }}
