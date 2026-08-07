@@ -44,6 +44,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
     [pages]
   );
 
+  // ⚡ Bolt Optimization: Memoize non-favorite pages to prevent O(N) double filtering on every render
+  const nonFavoritePages = useMemo(
+    () => (pages || []).filter((p: any) => !p?.isFavorite),
+    [pages]
+  );
+
   const [favoritesCollapsed, setFavoritesCollapsed] = useState(true);
   const [organizeCollapsed, setOrganizeCollapsed] = useState(true);
   const [tagsCollapsed, setTagsCollapsed] = useState(false);
@@ -206,8 +212,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
 
         {renderSection('Organize', organizeCollapsed, setOrganizeCollapsed, FolderTree, (
           <>
-            {pages && pages.filter((p: any) => !p?.isFavorite).length > 0 ? (
-              pages.filter((p: any) => !p?.isFavorite).map(node => (
+            {nonFavoritePages.length > 0 ? (
+              nonFavoritePages.map(node => (
                 <div
                   key={node.id}
                   onClick={() => onModeChange('doc')}
