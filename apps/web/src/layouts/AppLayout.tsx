@@ -1019,14 +1019,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                   if (onPageSelect) onPageSelect(node.id);
                                   onModeChange('doc');
                                 }}
-                                className={`w-full text-left px-2 py-1 rounded-md truncate min-w-0 flex items-center gap-2 transition-colors ${
+                                className={`w-full text-left px-2 py-1 rounded-md min-w-0 flex items-center gap-2 transition-colors ${
                                   isActive
                                     ? 'bg-warning-soft dark:bg-warning-soft/30 text-warning-foreground font-medium'
                                     : 'text-foreground hover:bg-muted dark:hover:bg-muted/30 hover:text-foreground dark:hover:text-foreground'
                                 }`}
                               >
                                 {renderPageIcon(node.icon, "w-3.5 h-3.5 shrink-0 flex items-center justify-center")}
-                                <span className="truncate text-xs min-w-0" title={displayLabel}>{displayLabel}</span>
+                                <span className="truncate text-xs min-w-0 flex-1" title={displayLabel}>{displayLabel}</span>
                               </button>
                             </li>
                           );
@@ -1063,14 +1063,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                   if (onPageSelect) onPageSelect(node.id);
                                   onModeChange('doc');
                                 }}
-                                className={`flex-1 text-left px-2 py-1 rounded-md truncate min-w-0 flex items-center gap-2 transition-colors ${
+                                className={`flex-1 text-left px-2 py-1 rounded-md min-w-0 flex items-center gap-2 transition-colors ${
                                   isActive
                                     ? 'bg-accent-soft dark:bg-accent/10 text-accent font-semibold'
                                     : 'text-muted-foreground hover:bg-accent-soft/30 hover:text-accent'
                                 }`}
                               >
                                 {renderPageIcon(node.icon, "w-3.5 h-3.5 shrink-0 flex items-center justify-center")}
-                                <span className="truncate text-xs min-w-0" title={displayLabel}>{displayLabel}</span>
+                                <span className="truncate text-xs min-w-0 flex-1" title={displayLabel}>{displayLabel}</span>
                               </button>
                               {node.id !== 'root-doc-node' && (
                                 <button
@@ -1124,14 +1124,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                   if (onPageSelect) onPageSelect(node.id);
                                   onModeChange('doc');
                                 }}
-                                className={`w-full text-left px-2 py-1 rounded-md truncate min-w-0 flex items-center gap-2 transition-colors ${
+                                className={`w-full text-left px-2 py-1 rounded-md min-w-0 flex items-center gap-2 transition-colors ${
                                   isActive
                                     ? 'bg-accent-soft dark:bg-accent/10 text-accent font-semibold'
                                     : 'text-muted-foreground hover:bg-accent-soft/30 hover:text-accent'
                                 }`}
                               >
                                 <FileText className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                                <span className="truncate min-w-0 text-xs">{displayLabel}</span>
+                                <span className="truncate min-w-0 text-xs flex-1">{displayLabel}</span>
                               </button>
                             </li>
                           );
@@ -1171,14 +1171,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                   if (onPageSelect) onPageSelect(node.id);
                                   onModeChange('doc');
                                 }}
-                                className={`w-full text-left px-2 py-1 rounded-md truncate min-w-0 flex items-center gap-2 transition-colors ${
+                                className={`w-full text-left px-2 py-1 rounded-md min-w-0 flex items-center gap-2 transition-colors ${
                                   isActive
                                     ? 'bg-muted dark:bg-muted text-foreground font-medium'
                                     : 'text-foreground hover:bg-muted dark:hover:bg-muted/30 hover:text-foreground dark:hover:text-foreground'
                                 }`}
                               >
                                 <Cpu className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                                <span className="truncate min-w-0 text-xs">{node.label}</span>
+                                <span className="truncate min-w-0 text-xs flex-1">{node.label}</span>
                               </button>
                             </li>
                           );

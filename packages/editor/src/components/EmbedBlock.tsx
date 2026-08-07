@@ -109,10 +109,10 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
                       key={page.id}
                       type="button"
                       onClick={() => handleSelectPage(page.id)}
-                      className="w-full px-3 py-2 text-left hover:bg-muted text-foreground flex items-center gap-2 truncate min-w-0"
+                      className="w-full px-3 py-2 text-left hover:bg-muted text-foreground flex items-center gap-2 min-w-0"
                     >
-                      <span className="text-xs">{page.icon || '📄'}</span>
-                      <span className="truncate min-w-0">{page.title || 'Untitled Document'}</span>
+                      <span className="text-xs shrink-0">{page.icon || '📄'}</span>
+                      <span className="truncate min-w-0 flex-1">{page.title || 'Untitled Document'}</span>
                     </button>
                   ))
                 ) : (
