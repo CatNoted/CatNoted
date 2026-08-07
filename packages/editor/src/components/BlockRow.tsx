@@ -120,15 +120,6 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                   : 'pt-1'
                 : 'pt-1'
             }`}>
-              <button
-                type="button"
-                onClick={() => handleCreateBlock(block.id)}
-                title="Add block below"
-                className="p-1 hover:bg-muted rounded text-muted-foreground hover:text-accent transition-colors"
-              >
-                <Plus className="w-3.5 h-3.5" />
-              </button>
-
               <div className="relative">
                 <button
                   type="button"
@@ -147,6 +138,16 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
 
                 {activeMenuId === block.id && (
                   <div className="absolute left-0 mt-1 w-40 bg-card border border-border rounded-xl shadow-lg z-50 py-1 text-xs">
+                    <button
+                      onClick={() => {
+                        handleCreateBlock(block.id);
+                        setActiveMenuId(null);
+                      }}
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-muted text-foreground"
+                    >
+                      <Plus className="w-3.5 h-3.5" /> Add block below
+                    </button>
+                    <div className="w-full h-px bg-border my-1" />
                     <button
                       onClick={() => {
                         updateBlockType(block.id, 'text');
