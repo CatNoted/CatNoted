@@ -282,12 +282,12 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                           : 'text-muted-foreground'
                       ].join(' ')}
                     />
-                    <span className="min-w-0 truncate text-[13px] font-medium">
+                    <span className="min-w-0 truncate text-[13px] font-medium flex-1">
                       {cmd.title}
                     </span>
                     <span
                       className={[
-                        'ml-auto text-[11px] font-normal transition-colors',
+                        'ml-auto text-[11px] font-normal transition-colors shrink-0',
                         isSelected
                           ? 'text-muted-foreground dark:text-muted-foreground'
                           : 'text-muted-foreground/80/80'
