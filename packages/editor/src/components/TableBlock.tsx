@@ -102,6 +102,7 @@ export const TableBlock: React.FC<TableBlockProps> = ({
                           onClick={() => handleRemoveColumn(cIndex)}
                           className="absolute right-1 top-1 opacity-0 group-hover/th:opacity-100 p-0.5 text-muted-foreground hover:text-destructive transition-colors"
                           title="Remove column"
+                          aria-label="Remove column"
                         >
                           ×
                         </button>
@@ -148,9 +149,11 @@ export const TableBlock: React.FC<TableBlockProps> = ({
               type="button"
               onClick={() => setExpanded((v) => !v)}
               className="w-full flex items-center justify-center gap-1 py-1.5 text-[11px] text-muted-foreground hover:text-accent transition-colors border-t border-border hover:bg-muted"
+              aria-expanded={expanded}
             >
               <ChevronDown
                 className={`w-3.5 h-3.5 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}
+                aria-hidden="true"
               />
               {expanded ? 'Show fewer rows' : `Show ${currentRows.length - 1 - maxVisibleRows} more rows`}
             </button>

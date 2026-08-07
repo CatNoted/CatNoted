@@ -111,6 +111,9 @@ export const CalloutBlock: React.FC<CalloutBlockProps> = ({
           }}
           className="text-2xl hover:scale-110 transition-transform select-none cursor-pointer"
           title="Change callout icon"
+          aria-label="Change callout icon"
+          aria-haspopup="menu"
+          aria-expanded={showIconPicker}
         >
           {icon}
         </button>
@@ -118,12 +121,16 @@ export const CalloutBlock: React.FC<CalloutBlockProps> = ({
         {showIconPicker && (
           <div
             ref={menuRef}
+            role="menu"
+            aria-label="Callout icons"
             className="absolute left-0 top-full mt-2 z-50 p-2 bg-card border border-border rounded-xl shadow-xl grid grid-cols-5 gap-1 w-44"
           >
             {CALLOUT_ICONS.map((ic) => (
               <button
                 key={ic}
                 type="button"
+                role="menuitem"
+                aria-label={`Select icon ${ic}`}
                 onClick={() => {
                   onUpdateProps({ calloutIcon: ic });
                   setShowIconPicker(false);
@@ -161,6 +168,9 @@ export const CalloutBlock: React.FC<CalloutBlockProps> = ({
           }}
           className="p-1 text-muted-foreground hover:text-foreground rounded hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
           title="Change highlight color"
+          aria-label="Change highlight color"
+          aria-haspopup="menu"
+          aria-expanded={showBgPicker}
         >
           <Palette className="w-3.5 h-3.5" />
         </button>
@@ -168,12 +178,16 @@ export const CalloutBlock: React.FC<CalloutBlockProps> = ({
         {showBgPicker && (
           <div
             ref={menuRef}
+            role="menu"
+            aria-label="Callout colors"
             className="absolute right-0 top-full mt-2 z-50 p-2 bg-card border border-border rounded-xl shadow-xl flex items-center gap-1.5"
           >
             {Object.keys(CALLOUT_BG_THEMES).map((themeKey) => (
               <button
                 key={themeKey}
                 type="button"
+                role="menuitem"
+                aria-label={`Select color ${themeKey}`}
                 onClick={() => {
                   onUpdateProps({ calloutBg: themeKey });
                   setShowBgPicker(false);
