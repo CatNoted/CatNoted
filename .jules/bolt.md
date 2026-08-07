@@ -19,3 +19,6 @@
 ## 2025-02-18 - [Optimized document word count calculation using match(/\S+/g)]
 **Learning:** Using regex string `.split(/\s+/)` combined with `.filter(Boolean)` inside a `.reduce` loop on every React render creates massive amounts of intermediate arrays and GC overhead. I initially tried a manual `charCodeAt` scan for speed, but it broke Unicode whitespace handling and degraded code readability, violating the core principle of balancing optimization and maintainability.
 **Action:** Replace `split` + `filter` chains for word counting with `match(/\S+/g)`. It avoids the double-array allocations of the former while being vastly more readable and correct (handling all Unicode spaces) than a manual `for` loop character scanner.
+## 2025-02-18 - [Memoized non-favorite pages filtering in Sidebar]
+**Learning:** Found redundant array filtering (`pages.filter(p => !p?.isFavorite)`) being called multiple times during render in `Sidebar.tsx`. In a highly reactive application where pages might update frequently or the sidebar re-renders often, these O(N) operations cause unnecessary CPU overhead on every render cycle.
+**Action:** Always memoize derived arrays (using `React.useMemo`) when they scan a collection and are used in the render loop, especially if the filtering is done identically multiple times.
