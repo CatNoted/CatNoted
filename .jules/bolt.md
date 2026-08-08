@@ -22,3 +22,6 @@
 ## 2025-02-18 - [Memoized non-favorite pages filtering in Sidebar]
 **Learning:** Found redundant array filtering (`pages.filter(p => !p?.isFavorite)`) being called multiple times during render in `Sidebar.tsx`. In a highly reactive application where pages might update frequently or the sidebar re-renders often, these O(N) operations cause unnecessary CPU overhead on every render cycle.
 **Action:** Always memoize derived arrays (using `React.useMemo`) when they scan a collection and are used in the render loop, especially if the filtering is done identically multiple times.
+## 2025-02-18 - [Hoisted expensive Date allocation out of loop in Journals]
+**Learning:** Found O(N) performance bottleneck in `JournalsView.tsx` where `new Date()` and `toLocaleDateString()` were instantiated inside a `.filter` array iteration. This caused redundant memory allocation and CPU overhead on every calendar day check.
+**Action:** Always hoist static object instantiations and expensive formatting calls outside the array iteration callback if they do not depend on the iteration variable itself.

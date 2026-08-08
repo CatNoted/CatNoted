@@ -86,15 +86,17 @@ export const JournalsView: React.FC = () => {
 
   // Helper to check what journal pages exist for a date
   const getJournalPagesForDate = (dateStr: string) => {
+    // ⚡ Bolt Optimization: Hoist expensive Date allocation and string formatting outside the O(N) loop
+    const date = new Date(dateStr);
+    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = date.toLocaleDateString('en-US', options);
+
     return (pages || []).filter((p: any) => {
       // Direct match
       if (p.journalDate === dateStr) return true;
       if (p.id === `journal-${dateStr}`) return true;
 
       // Title exact or formatted match
-      const date = new Date(dateStr);
-      const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
-      const formattedDate = date.toLocaleDateString('en-US', options);
       if (p.title === dateStr || p.title === formattedDate) return true;
 
       return false;
