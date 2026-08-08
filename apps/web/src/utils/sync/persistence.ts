@@ -28,7 +28,7 @@ const loadQueue = (): QueuedUpdate[] => {
       try {
         return JSON.parse(data);
       } catch (e) {
-        console.error('Failed to parse offline sync queue', e instanceof Error ? e.message : String(e));
+        console.error('Failed to parse offline sync queue');
       }
     }
   }
@@ -101,7 +101,7 @@ export function usePersistence(documentId: string = '00000000-0000-0000-0000-000
         retryTimerRef.current = null;
       }
     } catch (e: any) {
-      console.error('Failed to sync crdt_update', e instanceof Error ? e.message : String(e));
+      console.error('Failed to sync crdt_update');
       setStatus('error');
       // Re-queue items that failed to process
       queueRef.current = [...itemsToProcess, ...queueRef.current];

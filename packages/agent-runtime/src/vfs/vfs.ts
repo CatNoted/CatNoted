@@ -15,7 +15,14 @@ export class BrowserVFS {
     }
   }
 
+  private validatePath(path: string): void {
+    if (path.includes('../') || path.includes('..\\')) {
+      throw new Error('Path traversal detected');
+    }
+  }
+
   write(path: string, content: string): void {
+    this.validatePath(path);
     const node: VFSNode = {
       path,
       content,
@@ -26,6 +33,7 @@ export class BrowserVFS {
   }
 
   read(path: string): string | null {
+    this.validatePath(path);
     const raw = localStorage.getItem(this.prefix + path);
     if (!raw) return null;
     try {
@@ -37,6 +45,7 @@ export class BrowserVFS {
   }
 
   delete(path: string): void {
+    this.validatePath(path);
     localStorage.removeItem(this.prefix + path);
   }
 
