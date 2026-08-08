@@ -705,7 +705,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       {!zenMode && (
         <aside className="w-14 flex flex-col items-center justify-between py-3 border-r border-border dark:border-border bg-card z-20 shrink-0">
           <div className="flex flex-col items-center gap-4 w-full">
-            <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center text-white font-bold text-xs shadow-sm dark:shadow-none">
+            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-bold text-xs shadow-sm dark:shadow-none">
               CN
             </div>
 
@@ -837,7 +837,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 aria-label="Expand Workspace Sidebar"
                 aria-expanded={false}
               >
-                <span className="w-6 h-6 rounded-md bg-accent text-white text-[10px] font-bold flex items-center justify-center shadow-sm">CN</span>
+                <span className="w-6 h-6 rounded-md bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center shadow-sm">CN</span>
               </button>
             ) : (
               <>
@@ -1452,7 +1452,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                             <div
                               className={`p-2.5 rounded-xl text-xs leading-relaxed ${
                                 msg.sender === "user"
-                                  ? "bg-accent text-white rounded-tr-none shadow-sm"
+                                  ? "bg-primary text-primary-foreground rounded-tr-none shadow-sm"
                                   : "bg-muted dark:bg-muted text-foreground rounded-tl-none border border-transparent dark:border-ink-secondary"
                               }`}
                             >
@@ -1473,7 +1473,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         />
                         <button
                           type="submit"
-                          className="absolute right-1.5 p-1 bg-accent text-white rounded-md hover:bg-accent"
+                          className="absolute right-1.5 p-1 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
                         >
                           <Send className="w-3 h-3" />
                         </button>
@@ -1501,7 +1501,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                   srcDoc: item.template
                                 });
                               }}
-                              className="px-2 py-1 bg-accent hover:bg-accent text-white rounded text-[10px] font-semibold transition-colors cursor-pointer shrink-0"
+                              className="px-2 py-1 bg-primary hover:bg-primary/90 text-primary-foreground rounded text-[10px] font-semibold transition-colors cursor-pointer shrink-0"
                             >
                               Insert
                             </button>
@@ -1614,7 +1614,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       {!isAgentOpen && (
         <button
           onClick={() => setIsAgentOpen(true)}
-          className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-2xl bg-accent hover:bg-accent dark:bg-accent dark:hover:bg-accent text-white shadow-lg shadow-accent/30 hover:shadow-xl hover:shadow-accent/40 flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 group"
+          className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-2xl bg-primary hover:bg-primary/90 dark:bg-primary dark:hover:bg-primary/90 text-primary-foreground shadow-lg shadow-accent/30 hover:shadow-xl hover:shadow-accent/40 flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 group"
           title="Open Space Agent"
           style={{
             animation: "floatFab 3s ease-in-out infinite",
@@ -1786,7 +1786,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         <div
                           className={`p-3 rounded-2xl text-xs leading-relaxed ${
                             msg.sender === "user"
-                              ? "bg-accent text-white rounded-tr-none shadow-sm shadow-accent/20"
+                              ? "bg-primary text-primary-foreground rounded-tr-none shadow-sm shadow-accent/20"
                               : "bg-muted dark:bg-muted/80 text-foreground rounded-tl-none border border-transparent dark:border-ink-secondary/40"
                           }`}
                         >
@@ -1806,7 +1806,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                     srcDoc: msg.code!
                                   });
                                 }}
-                                className="px-2.5 py-1 bg-accent hover:bg-accent text-white rounded-md text-[10px] font-semibold transition-colors"
+                                className="px-2.5 py-1 bg-primary hover:bg-primary/90 text-primary-foreground rounded-md text-[10px] font-semibold transition-colors"
                               >
                                 Insert Widget
                               </button>
@@ -1855,7 +1855,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                       />
                       <button
                         type="submit"
-                        className="absolute right-1.5 p-1.5 bg-accent hover:bg-accent dark:hover:bg-accent text-white rounded-lg transition-all duration-200 hover:scale-110 hover:shadow-md hover:shadow-accent/30 active:scale-95"
+                        className="absolute right-1.5 p-1.5 bg-primary hover:bg-primary/90 dark:hover:bg-primary/90 text-primary-foreground rounded-lg transition-all duration-200 hover:scale-110 hover:shadow-md hover:shadow-accent/30 active:scale-95"
                       >
                         <Send className="w-3 h-3" />
                       </button>
@@ -1911,7 +1911,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                 srcDoc: WIDGET_TEMPLATES.clock
                               });
                             }}
-                            className="px-2.5 py-1 bg-accent hover:bg-accent text-white rounded-md text-[10px] font-semibold transition-colors cursor-pointer shrink-0"
+                            className="px-2.5 py-1 bg-primary hover:bg-primary/90 text-primary-foreground rounded-md text-[10px] font-semibold transition-colors cursor-pointer shrink-0"
                           >
                             Insert
                           </button>
@@ -1930,7 +1930,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                 srcDoc: WIDGET_TEMPLATES.calculator
                               });
                             }}
-                            className="px-2.5 py-1 bg-accent hover:bg-accent text-white rounded-md text-[10px] font-semibold transition-colors cursor-pointer shrink-0"
+                            className="px-2.5 py-1 bg-primary hover:bg-primary/90 text-primary-foreground rounded-md text-[10px] font-semibold transition-colors cursor-pointer shrink-0"
                           >
                             Insert
                           </button>
@@ -1949,7 +1949,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                 srcDoc: WIDGET_TEMPLATES.todo
                               });
                             }}
-                            className="px-2.5 py-1 bg-accent hover:bg-accent text-white rounded-md text-[10px] font-semibold transition-colors cursor-pointer shrink-0"
+                            className="px-2.5 py-1 bg-primary hover:bg-primary/90 text-primary-foreground rounded-md text-[10px] font-semibold transition-colors cursor-pointer shrink-0"
                           >
                             Insert
                           </button>

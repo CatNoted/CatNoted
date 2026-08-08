@@ -265,7 +265,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
                   }
                 }}
                 aria-label="Save custom cover URL"
-                className="px-2.5 py-1 bg-accent hover:bg-accent/90 text-white rounded-lg text-[10px] font-semibold transition-colors"
+                className="px-2.5 py-1 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg text-[10px] font-semibold transition-colors"
               >
                 Save
               </button>

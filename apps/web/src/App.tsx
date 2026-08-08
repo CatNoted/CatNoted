@@ -389,7 +389,7 @@ const App: React.FC = () => {
                       onClick={() => updatePageMeta({ fontStyle: f as any })}
                       className={`py-1 rounded text-center transition-colors ${
                         pageMeta?.fontStyle === f || (!pageMeta?.fontStyle && f === 'sans')
-                          ? 'bg-accent text-white font-bold'
+                          ? 'bg-primary text-primary-foreground font-bold'
                           : 'bg-secondary text-muted-foreground hover:bg-accent'
                       }`}
                     >
@@ -459,7 +459,7 @@ const App: React.FC = () => {
           className="inline-flex items-center justify-center gap-2 rounded-lg px-2 py-1 hover:bg-secondary text-xs font-medium text-muted-foreground border border-transparent hover:border-border/60"
           title="Auth Settings"
         >
-          <span className="w-5 h-5 rounded-full bg-accent text-white text-[10px] font-bold flex items-center justify-center shadow-sm">
+          <span className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center shadow-sm">
             {userEmail.charAt(0).toUpperCase()}
           </span>
           <span className="max-w-[100px] truncate min-w-0 text-[10px] font-semibold hidden sm:inline">{userEmail}</span>

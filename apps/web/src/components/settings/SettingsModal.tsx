@@ -295,7 +295,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   </button>
                   <button
                     type="submit"
-                    className="inline-flex h-8 items-center justify-center rounded-lg px-3.5 text-xs font-semibold text-white bg-accent hover:bg-accent-hover transition-colors shadow-sm"
+                    className="inline-flex h-8 items-center justify-center rounded-lg px-3.5 text-xs font-semibold text-primary-foreground bg-primary hover:bg-primary/90 transition-colors shadow-sm"
                   >
                     Save Keys
                   </button>
@@ -377,7 +377,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   </button>
                   <button
                     type="submit"
-                    className="inline-flex h-8 items-center justify-center rounded-lg px-3.5 text-xs font-semibold text-white bg-accent hover:bg-accent-hover transition-colors shadow-sm"
+                    className="inline-flex h-8 items-center justify-center rounded-lg px-3.5 text-xs font-semibold text-primary-foreground bg-primary hover:bg-primary/90 transition-colors shadow-sm"
                   >
                     Save Sync Settings
                   </button>

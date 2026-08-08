@@ -84,7 +84,7 @@ export const BookmarkBlock: React.FC<BookmarkBlockProps> = ({
           <button
             type="button"
             onClick={handleSave}
-            className="px-3 py-1 bg-accent hover:bg-accent/90 text-white text-xs font-medium rounded-lg transition-colors"
+            className="px-3 py-1 bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-medium rounded-lg transition-colors"
           >
             Create Bookmark
           </button>
