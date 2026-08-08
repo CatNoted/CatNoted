@@ -672,7 +672,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               <button
                 type="button"
                 onClick={() => onResolveConflict?.('local')}
-                className="w-full py-2.5 px-4 bg-primary hover:bg-primary text-white rounded-2xl text-xs font-semibold transition-all hover:shadow-lg hover:shadow-accent/10 active:scale-98"
+                className="w-full py-2.5 px-4 bg-primary hover:bg-primary/90 text-primary-foreground rounded-2xl text-xs font-semibold transition-all hover:shadow-lg hover:shadow-accent/10 active:scale-98"
                 data-testid="resolve-local-btn"
               >
                 Keep Local Changes (Overwrite Remote)
@@ -1824,7 +1824,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                   // Just append the proposed edit as a text block
                                   addBlock(null, 'text', msg.editProposal!);
                                 }}
-                                className="px-2.5 py-1 bg-success hover:bg-success text-white rounded-md text-[10px] font-semibold transition-colors"
+                                className="px-2.5 py-1 bg-success hover:bg-success/90 text-primary-foreground rounded-md text-[10px] font-semibold transition-colors"
                               >
                                 Append to Document
                               </button>
