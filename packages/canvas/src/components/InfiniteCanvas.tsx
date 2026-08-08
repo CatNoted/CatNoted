@@ -815,7 +815,7 @@ export const InfiniteCanvas: React.FC = () => {
               >
                 <button
                   onClick={() => deleteConnector(elem.id)}
-                  className="w-5 h-5 rounded-full bg-destructive hover:bg-destructive/90 border border-background flex items-center justify-center text-white text-[10px] shadow-sm cursor-pointer transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive"
+                  className="w-5 h-5 rounded-full bg-destructive hover:bg-destructive/90 border border-background flex items-center justify-center text-destructive-foreground text-[10px] shadow-sm cursor-pointer transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive"
                   title="Delete Connection"
                   aria-label="Delete this connection line"
                   type="button"
