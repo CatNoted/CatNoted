@@ -216,7 +216,7 @@ export const FloatingBubbleMenu: React.FC<FloatingBubbleMenuProps> = ({
             e.preventDefault();
             onAskAI(selectedText);
           }}
-          className="px-2 py-1 bg-accent hover:bg-accent/90 text-white rounded-lg text-xs font-medium flex items-center gap-1 transition-colors shadow-sm"
+          className="px-2 py-1 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg text-xs font-medium flex items-center gap-1 transition-colors shadow-sm"
           title="Ask Space Agent AI"
         >
           <Sparkles className="w-3 h-3 text-warning" />

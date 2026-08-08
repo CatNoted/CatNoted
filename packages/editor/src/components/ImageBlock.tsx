@@ -72,7 +72,7 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
                   type="button"
                   onClick={() => onUpdateProps({ width: w })}
                   className={`px-1.5 py-0.5 rounded font-mono text-[10px] ${
-                    width === w ? 'bg-accent text-white font-bold' : 'hover:bg-muted text-muted-foreground'
+                    width === w ? 'bg-primary text-primary-foreground font-bold' : 'hover:bg-muted text-muted-foreground'
                   }`}
                   title={`Set width to ${w}%`}
                   aria-label={`Set width to ${w}%`}

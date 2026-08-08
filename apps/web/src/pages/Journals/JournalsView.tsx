@@ -292,7 +292,7 @@ export const JournalsView: React.FC = () => {
           </span>
           <button
             onClick={handleGoToToday}
-            className="px-2.5 py-1 text-[10px] font-bold bg-accent hover:bg-accent-hover text-white rounded-lg shadow-sm shadow-accent/10 transition-colors cursor-pointer"
+            className="px-2.5 py-1 text-[10px] font-bold bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-sm shadow-accent/10 transition-colors cursor-pointer"
             aria-label="Go to Today"
           >
             Today
@@ -351,7 +351,7 @@ export const JournalsView: React.FC = () => {
                       : 'text-foreground'
                   } ${
                     isSelected
-                      ? 'bg-accent text-white font-bold shadow-md shadow-accent/15'
+                      ? 'bg-primary text-primary-foreground font-bold shadow-md shadow-accent/15'
                       : isToday
                         ? 'border border-accent dark:border-accent/50'
                         : 'hover:bg-muted'

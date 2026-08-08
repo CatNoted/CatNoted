@@ -98,7 +98,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
     <div className="w-64 border-r border-border bg-sidebar h-full flex flex-col shrink-0 text-foreground select-none">
       <div className="px-4 pt-4 pb-2">
         <div className="flex items-center gap-2.5 px-1.5 py-1">
-          <div className="w-6 h-6 rounded-lg bg-accent flex items-center justify-center text-white font-bold text-xs shadow-sm">
+          <div className="w-6 h-6 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-bold text-xs shadow-sm">
             CN
           </div>
           <span className="font-semibold text-[14px] text-foreground tracking-tight truncate min-w-0" title="CatNoted Workspace">
