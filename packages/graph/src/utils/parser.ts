@@ -174,9 +174,13 @@ export function parseDocumentGraph(
     }
   });
 
+  // ⚡ Bolt Optimization: Precompute Map of pages to avoid O(N) lookup repeatedly inside `.map()` array scan loop
+  // Expected Impact: Eliminates O(N*M) time complexity bottleneck resulting in significantly faster graph compilation.
+  const pagesMap = new Map(pages?.map(p => [p.id, p] as const) || []);
+
   const finalNodes: GraphNode[] = Array.from(nodesMap.values()).map(n => {
     if (n.id === rootId) {
-      const rootPage = pages?.find(p => p.id === rootId);
+      const rootPage = pagesMap.get(rootId);
       const rootIcon = getDisplayIcon(rootPage?.icon || '📁');
       return {
         id: n.id,
@@ -187,7 +191,7 @@ export function parseDocumentGraph(
         icon: rootPage?.icon || '📁'
       };
     }
-    const pageMeta = pages?.find(p => p.id === n.id);
+    const pageMeta = pagesMap.get(n.id);
     const rawTitle = pageMeta?.title || n._rawName;
     const pageIcon = pageMeta?.icon || '📄';
     const displayIcon = getDisplayIcon(pageIcon);
