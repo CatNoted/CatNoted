@@ -25,3 +25,6 @@
 ## 2025-02-18 - [Hoisted expensive Date allocation out of loop in Journals]
 **Learning:** Found O(N) performance bottleneck in `JournalsView.tsx` where `new Date()` and `toLocaleDateString()` were instantiated inside a `.filter` array iteration. This caused redundant memory allocation and CPU overhead on every calendar day check.
 **Action:** Always hoist static object instantiations and expensive formatting calls outside the array iteration callback if they do not depend on the iteration variable itself.
+## 2025-02-18 - [Optimized graph node parser by using Map for page lookup]
+**Learning:** Found redundant O(N) array scanning (`pages?.find(...)`) running repeatedly inside a `.map()` loop in `packages/graph/src/utils/parser.ts`. Since the loop constructs node labels dynamically for the graph, finding the corresponding page via linear search repeatedly adds unnecessary overhead. Pre-computing a `Map` is possible for O(1) lookups.
+**Action:** Replace `Array.find()` inside `.map()` loops when pre-computing a `Map` is possible for O(1) lookups.
