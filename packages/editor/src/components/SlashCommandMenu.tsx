@@ -66,15 +66,18 @@ export const SlashCommandMenu: React.FC<SlashCommandMenuProps> = ({
   const menuRef = useRef<HTMLDivElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const filtered = commands.filter((cmd) => {
+  // ⚡ Bolt Optimization: Hoist query.toLowerCase() out of filter loop and memoize results
+  const filtered = React.useMemo(() => {
     const q = query.toLowerCase();
-    if (!q) return true;
-    return (
-      cmd.label.toLowerCase().includes(q) ||
-      cmd.description.toLowerCase().includes(q) ||
-      cmd.keywords.some((k) => k.toLowerCase().includes(q))
-    );
-  });
+    if (!q) return commands;
+    return commands.filter((cmd) => {
+      return (
+        cmd.label.toLowerCase().includes(q) ||
+        cmd.description.toLowerCase().includes(q) ||
+        cmd.keywords.some((k) => k.toLowerCase().includes(q))
+      );
+    });
+  }, [commands, query]);
 
   // Reset selection when filter changes
   useEffect(() => {
