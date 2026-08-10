@@ -102,7 +102,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         </div>
 
         {errorMsg && (
-          <div role="alert" aria-live="assertive" className="mb-3.5 p-2 bg-danger-soft text-danger text-[11px] font-medium rounded-lg border border-border/20 text-center">
+          <div role="alert" id="auth-error" aria-live="assertive" className="mb-3.5 p-2 bg-danger-soft text-danger text-[11px] font-medium rounded-lg border border-border/20 text-center">
             {errorMsg}
           </div>
         )}
@@ -135,6 +135,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   </label>
                   <input
                     id="auth-email"
+                    aria-invalid={!!errorMsg}
+                    aria-describedby={errorMsg ? "auth-error" : undefined}
                     type="email"
                     required
                     value={email}
@@ -150,6 +152,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   </label>
                   <input
                     id="auth-password"
+                    aria-invalid={!!errorMsg}
+                    aria-describedby={errorMsg ? "auth-error" : undefined}
                     type="password"
                     required
                     value={password}
