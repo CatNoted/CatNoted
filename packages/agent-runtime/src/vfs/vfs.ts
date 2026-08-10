@@ -16,7 +16,7 @@ export class BrowserVFS {
   }
 
   private validatePath(path: string): void {
-    if (path.includes('../') || path.includes('..\\')) {
+    if (/(^|\/|\\)\.\.(\/|\\|$)/.test(path)) {
       throw new Error('Path traversal detected');
     }
   }
