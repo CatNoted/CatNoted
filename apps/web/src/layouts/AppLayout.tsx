@@ -1473,6 +1473,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         />
                         <button
                           type="submit"
+                          aria-label="Send message"
                           className="absolute right-1.5 p-1 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
                         >
                           <Send className="w-3 h-3" />
@@ -1535,6 +1536,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                       <button
                         type="button"
                         onClick={() => alert("Restored page backup to: 10 minutes ago")}
+                        aria-label="Restore to 10 minutes ago"
                         className="text-left w-full hover:bg-muted dark:hover:bg-muted/40 p-1.5 rounded-lg transition-colors"
                       >
                         <span className="text-xs font-semibold text-foreground group-hover:text-accent dark:group-hover:text-accent">10 minutes ago</span>
@@ -1548,6 +1550,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                       <button
                         type="button"
                         onClick={() => alert("Restored page backup to original created state")}
+                        aria-label="Restore to page created state"
                         className="text-left w-full hover:bg-muted dark:hover:bg-muted/40 p-1.5 rounded-lg transition-colors"
                       >
                         <span className="text-xs font-semibold text-foreground group-hover:text-accent dark:group-hover:text-accent">Page Created</span>
@@ -1616,6 +1619,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           onClick={() => setIsAgentOpen(true)}
           className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-2xl bg-primary hover:bg-primary/90 dark:bg-primary dark:hover:bg-primary/90 text-primary-foreground shadow-lg shadow-accent/30 hover:shadow-xl hover:shadow-accent/40 flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 group"
           title="Open Space Agent"
+          aria-label="Open Space Agent"
           style={{
             animation: "floatFab 3s ease-in-out infinite",
           }}
@@ -1855,6 +1859,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                       />
                       <button
                         type="submit"
+                        aria-label="Send message"
                         className="absolute right-1.5 p-1.5 bg-primary hover:bg-primary/90 dark:hover:bg-primary/90 text-primary-foreground rounded-lg transition-all duration-200 hover:scale-110 hover:shadow-md hover:shadow-accent/30 active:scale-95"
                       >
                         <Send className="w-3 h-3" />
