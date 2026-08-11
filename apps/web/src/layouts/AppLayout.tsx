@@ -848,7 +848,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     title={activeWorkspace}
                     className="font-semibold text-xs text-foreground hover:text-foreground flex items-center justify-between w-full gap-1.5 py-1 px-2 rounded-lg hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                   >
-                    <span className="truncate min-w-0" title={activeWorkspace}>{activeWorkspace}</span>
+                    <span className="flex-1 min-w-0 truncate" title={activeWorkspace}>{activeWorkspace}</span>
                     <ChevronDown className="w-3.5 h-3.5 shrink-0" />
                   </button>
 
@@ -917,7 +917,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         }`}
                       >
                         <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-accent' : 'text-muted-foreground'}`} />
-                        <span className="truncate min-w-0">{item.label}</span>
+                        <span className="flex-1 min-w-0 truncate">{item.label}</span>
                         {isActive && (
                           <span className="ml-auto w-1.5 h-1.5 rounded-full bg-accent dark:bg-accent" />
                         )}
@@ -951,7 +951,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                       >
                         <div className="flex items-center min-w-0 flex-1 gap-x-2.5" title={doc.title}>
                           {renderPageIcon(doc.icon, "w-4 h-4 text-muted-foreground shrink-0 flex items-center justify-center")}
-                          <span className="truncate min-w-0">{doc.title}</span>
+                          <span className="flex-1 min-w-0 truncate">{doc.title}</span>
                         </div>
                         <span className="text-[10px] text-muted-foreground opacity-60 shrink-0 ml-1">Recent</span>
                       </button>
@@ -1026,7 +1026,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                 }`}
                               >
                                 {renderPageIcon(node.icon, "w-3.5 h-3.5 shrink-0 flex items-center justify-center")}
-                                <span className="truncate text-xs min-w-0 flex-1" title={displayLabel}>{displayLabel}</span>
+                                <span className="flex-1 min-w-0 truncate text-xs" title={displayLabel}>{displayLabel}</span>
                               </button>
                             </li>
                           );
@@ -1070,7 +1070,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                 }`}
                               >
                                 {renderPageIcon(node.icon, "w-3.5 h-3.5 shrink-0 flex items-center justify-center")}
-                                <span className="truncate text-xs min-w-0 flex-1" title={displayLabel}>{displayLabel}</span>
+                                <span className="flex-1 min-w-0 truncate text-xs" title={displayLabel}>{displayLabel}</span>
                               </button>
                               {node.id !== 'root-doc-node' && (
                                 <button
@@ -1131,7 +1131,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                 }`}
                               >
                                 <FileText className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                                <span className="truncate min-w-0 text-xs flex-1">{displayLabel}</span>
+                                <span className="flex-1 min-w-0 truncate text-xs">{displayLabel}</span>
                               </button>
                             </li>
                           );
@@ -1178,7 +1178,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                 }`}
                               >
                                 <Cpu className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                                <span className="truncate min-w-0 text-xs flex-1">{node.label}</span>
+                                <span className="flex-1 min-w-0 truncate text-xs">{node.label}</span>
                               </button>
                             </li>
                           );
@@ -1259,7 +1259,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                   <div className="flex items-center justify-between p-3 bg-muted dark:bg-muted/40 border border-border dark:border-border/60 rounded-xl">
                     <div className="flex items-center gap-2 flex-1 min-w-0">
                       <span className="text-xl shrink-0">{pageMeta?.icon || '📄'}</span>
-                      <span className="font-semibold truncate min-w-0 text-foreground" title={pageMeta?.title || docTitle}>{pageMeta?.title || docTitle}</span>
+                      <span className="font-semibold flex-1 min-w-0 truncate text-foreground" title={pageMeta?.title || docTitle}>{pageMeta?.title || docTitle}</span>
                     </div>
                     <button
                       type="button"
@@ -1392,7 +1392,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                 el.scrollIntoView({ behavior: 'smooth', block: 'center' });
                               }
                             }}
-                            className={`w-full text-left py-1.5 px-2 rounded-lg hover:bg-muted dark:hover:bg-muted/40 text-foreground hover:text-accent dark:hover:text-accent transition-colors truncate min-w-0 ${indentClass}`}
+                            className={`w-full text-left py-1.5 px-2 rounded-lg hover:bg-muted dark:hover:bg-muted/40 text-foreground hover:text-accent dark:hover:text-accent transition-colors flex-1 min-w-0 truncate ${indentClass}`}
                           >
                             {block.content || 'Untitled Heading'}
                           </button>
@@ -1489,8 +1489,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         ].map((item) => (
                           <div key={item.id} className="p-2 rounded-lg bg-muted dark:bg-muted/30 border border-border dark:border-border/60 flex items-center justify-between text-xs">
                             <div className="min-w-0 pr-1 flex flex-col">
-                              <span className="font-semibold text-foreground dark:text-foreground truncate min-w-0">{item.title}</span>
-                              <span className="text-[10px] text-muted-foreground truncate min-w-0">{item.desc}</span>
+                              <span className="font-semibold text-foreground dark:text-foreground flex-1 min-w-0 truncate">{item.title}</span>
+                              <span className="text-[10px] text-muted-foreground flex-1 min-w-0 truncate">{item.desc}</span>
                             </div>
                             <button
                               type="button"
@@ -1973,8 +1973,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                             return (
                               <div key={block.id} className="p-3 rounded-xl bg-muted dark:bg-card/40 border border-border dark:border-border/60 flex items-center justify-between text-xs">
                                 <div className="flex flex-col flex-1 min-w-0 pr-2">
-                                  <span className="font-semibold truncate min-w-0 text-foreground dark:text-foreground">ID: {widgetId}</span>
-                                  <span className="text-[9px] text-muted-foreground truncate min-w-0">Block ID: {block.id}</span>
+                                  <span className="font-semibold flex-1 min-w-0 truncate text-foreground dark:text-foreground">ID: {widgetId}</span>
+                                  <span className="text-[9px] text-muted-foreground flex-1 min-w-0 truncate">Block ID: {block.id}</span>
                                 </div>
                                 <div className="flex items-center gap-1.5 shrink-0">
                                   <button

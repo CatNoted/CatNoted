@@ -282,7 +282,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                           : 'text-muted-foreground'
                       ].join(' ')}
                     />
-                    <span className="min-w-0 truncate text-[13px] font-medium flex-1">
+                    <span className="flex-1 min-w-0 truncate text-[13px] font-medium">
                       {cmd.title}
                     </span>
                     <span
