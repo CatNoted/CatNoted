@@ -654,7 +654,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     <div className="flex h-screen w-screen overflow-hidden  bg-background text-foreground relative">
       {/* Minimal Conflict Resolution Dialog */}
       {syncStatus === 'conflict' && (
-        <div className="fixed inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4" data-testid="conflict-resolution-modal">
+        <div className="fixed inset-0 bg-black/40 dark:bg-background/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4" data-testid="conflict-resolution-modal">
           <div className="bg-card  border border-border rounded-3xl p-6 max-w-md w-full shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
             <div className="flex items-start gap-4">
               <div className="w-10 h-10 rounded-2xl bg-danger-soft text-danger flex items-center justify-center shrink-0">
@@ -734,7 +734,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     className={`w-full py-2.5 rounded-lg flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accent ${
                       isActive 
                         ? 'bg-accent-soft dark:bg-accent/10 text-accent font-semibold'
-                        : 'text-muted-foreground hover:text-accent hover:bg-black/5 dark:hover:bg-card/5'
+                        : 'text-muted-foreground hover:text-accent hover:bg-muted'
                     }`}
                   >
                     <Icon className="w-4 h-4" />
@@ -1588,7 +1588,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                       className={`w-full py-2.5 rounded-lg flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accent ${
                         isActive
                           ? 'bg-accent-soft dark:bg-accent/10 text-accent font-semibold'
-                          : 'text-muted-foreground hover:text-accent hover:bg-black/5 dark:hover:bg-card/5'
+                          : 'text-muted-foreground hover:text-accent hover:bg-muted'
                       }`}
                     >
                       <Icon className="w-4 h-4" />

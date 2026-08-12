@@ -1,0 +1,3 @@
+## 2026-08-11 - [UX Improvement] Replace Hardcoded UI Overlays with Semantic Tokens
+**Learning:** For hover affordances across the UI, using semantic Tailwind tokens (e.g., `hover:bg-muted`) rather than raw hardcoded utility classes (e.g., `hover:bg-black/5` or `dark:hover:bg-white/5`) guarantees native support for both themes without manual overrides.
+**Action:** When migrating UI components, replace manual opacity/color hover hacks with semantic variables like `bg-muted` and `bg-background` to ensure uniform dark and light mode rendering and alignment with the overarching token design system.

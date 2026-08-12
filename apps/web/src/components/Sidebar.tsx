@@ -332,7 +332,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         <button
           type="button"
           onClick={() => onModeChange('doc')}
-          className={`${itemClassName} text-accent hover:bg-accent-soft`}
+          className={`${itemClassName} text-accent hover:bg-accent/10`}
           title="New page"
         >
           <Plus className="w-4 h-4" />
