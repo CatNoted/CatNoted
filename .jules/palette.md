@@ -1,3 +1,7 @@
 ## 2026-08-11 - [UX Improvement] Replace Hardcoded UI Overlays with Semantic Tokens
 **Learning:** For hover affordances across the UI, using semantic Tailwind tokens (e.g., `hover:bg-muted`) rather than raw hardcoded utility classes (e.g., `hover:bg-black/5` or `dark:hover:bg-white/5`) guarantees native support for both themes without manual overrides.
 **Action:** When migrating UI components, replace manual opacity/color hover hacks with semantic variables like `bg-muted` and `bg-background` to ensure uniform dark and light mode rendering and alignment with the overarching token design system.
+
+## $(date +%Y-%m-%d) - [AppLayout Hover and Flex Truncation Polish]
+**Learning:** Applying `flex-1 min-w-0` to text spans inside a `flex-col` container forces them to stretch vertically, which breaks layout compactness when the intention is merely to truncate text horizontally. Additionally, hardcoded non-semantic tokens like `hover:bg-accent-soft` or `hover:text-accent` frequently fail to provide adequate contrast or native theming support compared to `hover:bg-muted` and `hover:text-foreground`.
+**Action:** Use only `truncate` on text child elements inside `flex-col` wrappers if horizontal truncation is needed without vertical stretching. Uniformly prefer standard semantic hover tokens (`hover:bg-muted text-muted-foreground hover:text-foreground`) to guarantee contrast and correct aesthetic behavior across both light and dark modes.

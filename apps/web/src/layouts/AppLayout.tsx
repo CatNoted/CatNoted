@@ -680,7 +680,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               <button
                 type="button"
                 onClick={() => onResolveConflict?.('remote')}
-                className="w-full py-2.5 px-4 bg-accent-soft hover:bg-accent-soft  dark:hover:bg-accent-soft text-foreground rounded-2xl text-xs font-semibold transition-all active:scale-98"
+                className="w-full py-2.5 px-4 bg-muted hover:bg-muted dark:hover:bg-muted text-foreground rounded-2xl text-xs font-semibold transition-all active:scale-98"
                 data-testid="resolve-remote-btn"
               >
                 Discard Local Changes (Accept Remote)
@@ -913,7 +913,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center gap-2 transition-colors ${
                           isActive
                             ? 'bg-accent-soft dark:bg-accent/10 text-accent font-semibold'
-                            : 'text-muted-foreground hover:bg-accent-soft/40 hover:text-accent'
+                            : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                         }`}
                       >
                         <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-accent' : 'text-muted-foreground'}`} />
@@ -946,7 +946,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between transition-colors ${
                           isActive
                             ? 'bg-accent-soft dark:bg-accent/10 text-accent font-semibold'
-                            : 'text-muted-foreground hover:bg-accent-soft/40 hover:text-accent'
+                            : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                         }`}
                       >
                         <div className="flex items-center min-w-0 flex-1 gap-x-2.5" title={doc.title}>
@@ -1066,7 +1066,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                 className={`flex-1 text-left px-2 py-1 rounded-md min-w-0 flex items-center gap-2 transition-colors ${
                                   isActive
                                     ? 'bg-accent-soft dark:bg-accent/10 text-accent font-semibold'
-                                    : 'text-muted-foreground hover:bg-accent-soft/30 hover:text-accent'
+                                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                                 }`}
                               >
                                 {renderPageIcon(node.icon, "w-3.5 h-3.5 shrink-0 flex items-center justify-center")}
@@ -1127,7 +1127,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                 className={`w-full text-left px-2 py-1 rounded-md min-w-0 flex items-center gap-2 transition-colors ${
                                   isActive
                                     ? 'bg-accent-soft dark:bg-accent/10 text-accent font-semibold'
-                                    : 'text-muted-foreground hover:bg-accent-soft/30 hover:text-accent'
+                                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                                 }`}
                               >
                                 <FileText className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
@@ -1689,7 +1689,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setIsMinimized(!isMinimized)}
-                className="w-7 h-7 rounded-lg flex items-center justify-center text-muted-foreground hover:text-accent dark:hover:text-accent hover:bg-accent-soft dark:hover:bg-accent/15 transition-all duration-200 hover:scale-110"
+                className="w-7 h-7 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground dark:hover:text-foreground hover:bg-muted dark:hover:bg-muted transition-all duration-200 hover:scale-110"
                 title={isMinimized ? "Expand" : "Minimize"}
                 aria-label={isMinimized ? "Expand" : "Minimize"}
               >
@@ -1752,11 +1752,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     <button
                       onClick={handleExportWidgets}
                       title="Export widget codes"
-                      className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 border border-border/60 hover:bg-accent-soft dark:hover:bg-accent/10 hover:border-accent-soft dark:hover:border-accent/30 hover:text-accent dark:hover:text-accent rounded-lg text-[10px] font-semibold text-muted-foreground transition-all duration-200"
+                      className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 border border-border/60 hover:bg-muted dark:hover:bg-muted hover:border-border dark:hover:border-border hover:text-foreground dark:hover:text-foreground rounded-lg text-[10px] font-semibold text-muted-foreground transition-all duration-200"
                     >
                       <Download className="w-3.5 h-3.5" /> Export Catalog
                     </button>
-                    <label className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 border border-border/60 hover:bg-accent-soft dark:hover:bg-accent/10 hover:border-accent-soft dark:hover:border-accent/30 hover:text-accent dark:hover:text-accent rounded-lg text-[10px] font-semibold text-muted-foreground cursor-pointer text-center transition-all duration-200">
+                    <label className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 border border-border/60 hover:bg-muted dark:hover:bg-muted hover:border-border dark:hover:border-border hover:text-foreground dark:hover:text-foreground rounded-lg text-[10px] font-semibold text-muted-foreground cursor-pointer text-center transition-all duration-200">
                       <Upload className="w-3.5 h-3.5" /> Import Catalog
                       <input
                         type="file"
@@ -1881,11 +1881,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     <button
                       onClick={handleExportWidgets}
                       title="Export widget codes"
-                      className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 border border-border/60 hover:bg-accent-soft dark:hover:bg-accent/10 hover:border-accent-soft dark:hover:border-accent/30 hover:text-accent dark:hover:text-accent rounded-lg text-[10px] font-semibold text-muted-foreground transition-all duration-200"
+                      className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 border border-border/60 hover:bg-muted dark:hover:bg-muted hover:border-border dark:hover:border-border hover:text-foreground dark:hover:text-foreground rounded-lg text-[10px] font-semibold text-muted-foreground transition-all duration-200"
                     >
                       <Download className="w-3.5 h-3.5" /> Export Catalog
                     </button>
-                    <label className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 border border-border/60 hover:bg-accent-soft dark:hover:bg-accent/10 hover:border-accent-soft dark:hover:border-accent/30 hover:text-accent dark:hover:text-accent rounded-lg text-[10px] font-semibold text-muted-foreground cursor-pointer text-center transition-all duration-200">
+                    <label className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 border border-border/60 hover:bg-muted dark:hover:bg-muted hover:border-border dark:hover:border-border hover:text-foreground dark:hover:text-foreground rounded-lg text-[10px] font-semibold text-muted-foreground cursor-pointer text-center transition-all duration-200">
                       <Upload className="w-3.5 h-3.5" /> Import Catalog
                       <input
                         type="file"
@@ -1978,8 +1978,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                             return (
                               <div key={block.id} className="p-3 rounded-xl bg-muted dark:bg-card/40 border border-border dark:border-border/60 flex items-center justify-between text-xs">
                                 <div className="flex flex-col flex-1 min-w-0 pr-2">
-                                  <span className="font-semibold flex-1 min-w-0 truncate text-foreground dark:text-foreground">ID: {widgetId}</span>
-                                  <span className="text-[9px] text-muted-foreground flex-1 min-w-0 truncate">Block ID: {block.id}</span>
+                                  <span className="font-semibold truncate text-foreground dark:text-foreground">ID: {widgetId}</span>
+                                  <span className="text-[9px] text-muted-foreground truncate">Block ID: {block.id}</span>
                                 </div>
                                 <div className="flex items-center gap-1.5 shrink-0">
                                   <button
