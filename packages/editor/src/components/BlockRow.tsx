@@ -131,81 +131,95 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                   draggable
                   onDragStart={(e) => handleDragStart(e, block.id)}
                   title="Drag to move, click for block settings"
-                  className="p-1 cursor-grab active:cursor-grabbing hover:bg-muted rounded text-muted-foreground hover:text-accent transition-colors flex items-center justify-center"
+                  aria-label="Block settings and drag handle"
+                  aria-haspopup="menu"
+                  aria-expanded={activeMenuId === block.id}
+                  className="p-1 cursor-grab active:cursor-grabbing hover:bg-muted rounded text-muted-foreground hover:text-accent transition-colors flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                 >
                   <GripVertical className="w-3.5 h-3.5" />
                 </button>
 
                 {activeMenuId === block.id && (
-                  <div className="absolute left-0 mt-1 w-40 bg-card border border-border rounded-xl shadow-lg z-50 py-1 text-xs">
+                  <div
+                    className="absolute left-0 mt-1 w-40 bg-card border border-border rounded-xl shadow-lg z-50 py-1 text-xs"
+                    role="menu"
+                  >
                     <button
+                      role="menuitem"
                       onClick={() => {
                         handleCreateBlock(block.id);
                         setActiveMenuId(null);
                       }}
-                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-muted text-foreground"
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-muted text-foreground focus-visible:outline-none focus-visible:bg-muted"
                     >
                       <Plus className="w-3.5 h-3.5" /> Add block below
                     </button>
                     <div className="w-full h-px bg-border my-1" />
                     <button
+                      role="menuitem"
                       onClick={() => {
                         updateBlockType(block.id, 'text');
                         setActiveMenuId(null);
                       }}
-                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-muted text-foreground"
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-muted text-foreground focus-visible:outline-none focus-visible:bg-muted"
                     >
                       <AlignLeft className="w-3.5 h-3.5" /> Text Paragraph
                     </button>
                     <button
+                      role="menuitem"
                       onClick={() => {
                         updateBlockType(block.id, 'heading', { level: 1 });
                         setActiveMenuId(null);
                       }}
-                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-muted text-foreground"
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-muted text-foreground focus-visible:outline-none focus-visible:bg-muted"
                     >
                       <Heading1 className="w-3.5 h-3.5" /> Heading 1
                     </button>
                     <button
+                      role="menuitem"
                       onClick={() => {
                         updateBlockType(block.id, 'heading', { level: 2 });
                         setActiveMenuId(null);
                       }}
-                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-muted text-foreground"
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-muted text-foreground focus-visible:outline-none focus-visible:bg-muted"
                     >
                       <Heading2 className="w-3.5 h-3.5" /> Heading 2
                     </button>
                     <button
+                      role="menuitem"
                       onClick={() => {
                         updateBlockType(block.id, 'heading', { level: 3 });
                         setActiveMenuId(null);
                       }}
-                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-muted text-foreground"
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-muted text-foreground focus-visible:outline-none focus-visible:bg-muted"
                     >
                       <Heading3 className="w-3.5 h-3.5" /> Heading 3
                     </button>
                     <button
+                      role="menuitem"
                       onClick={() => {
                         updateBlockType(block.id, 'kanban', { kanbanTitle: 'Kanban Board', columns: [] });
                         setActiveMenuId(null);
                       }}
-                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-muted text-foreground"
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-muted text-foreground focus-visible:outline-none focus-visible:bg-muted"
                     >
                       <Columns className="w-3.5 h-3.5" /> Kanban Board
                     </button>
                     <button
+                      role="menuitem"
                       onClick={() => handleAddWidget(block.id)}
-                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-muted text-accent"
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-muted text-accent focus-visible:outline-none focus-visible:bg-muted"
                     >
                       <Cpu className="w-3.5 h-3.5" /> Insert AI Widget
                     </button>
                     <div className="border-t border-border my-1"></div>
                     <button
+                      role="menuitem"
                       onClick={() => {
                         deleteBlock(block.id);
                         setActiveMenuId(null);
                       }}
-                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-muted text-destructive"
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-muted text-destructive focus-visible:outline-none focus-visible:bg-muted"
                     >
                       <Trash2 className="w-3.5 h-3.5" /> Delete Block
                     </button>
