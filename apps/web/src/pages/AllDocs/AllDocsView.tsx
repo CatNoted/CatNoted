@@ -52,7 +52,7 @@ export const AllDocsView: React.FC = () => {
                 <div className="flex items-center justify-between py-2.5 px-3 hover:bg-muted rounded-lg group cursor-pointer border border-transparent hover:border-border transition-colors min-w-0">
                   <div className="flex items-center gap-3 flex-1 min-w-0">
                     <FileText className="w-4 h-4 text-accent shrink-0" />
-                    <span className="text-sm font-medium text-foreground truncate min-w-0">Getting Started with Affine</span>
+                    <span className="text-sm font-medium text-foreground flex-1 min-w-0 truncate">Getting Started with Affine</span>
                   </div>
                   <span className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-4">
                     10:45 AM
@@ -62,7 +62,7 @@ export const AllDocsView: React.FC = () => {
                 <div className="flex items-center justify-between py-2.5 px-3 hover:bg-muted rounded-lg group cursor-pointer border border-transparent hover:border-border transition-colors min-w-0">
                   <div className="flex items-center gap-3 flex-1 min-w-0">
                     <FileText className="w-4 h-4 text-accent shrink-0" />
-                    <span className="text-sm font-medium text-foreground truncate min-w-0">Project Roadmap Q3</span>
+                    <span className="text-sm font-medium text-foreground flex-1 min-w-0 truncate">Project Roadmap Q3</span>
                   </div>
                   <span className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-4">
                     09:30 AM
@@ -83,7 +83,7 @@ export const AllDocsView: React.FC = () => {
                 <div className="flex items-center justify-between py-2.5 px-3 hover:bg-muted rounded-lg group cursor-pointer border border-transparent hover:border-border transition-colors min-w-0">
                   <div className="flex items-center gap-3 flex-1 min-w-0">
                     <FileText className="w-4 h-4 text-accent shrink-0" />
-                    <span className="text-sm font-medium text-foreground truncate min-w-0">Untitled Document</span>
+                    <span className="text-sm font-medium text-foreground flex-1 min-w-0 truncate">Untitled Document</span>
                   </div>
                   <span className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-4">
                     -

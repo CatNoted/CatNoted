@@ -134,7 +134,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                   aria-label="Block settings and drag handle"
                   aria-haspopup="menu"
                   aria-expanded={activeMenuId === block.id}
-                  className="p-1 cursor-grab active:cursor-grabbing hover:bg-muted rounded text-muted-foreground hover:text-accent transition-colors flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                  className="p-1 cursor-grab active:cursor-grabbing hover:bg-muted rounded text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                 >
                   <GripVertical className="w-3.5 h-3.5" />
                 </button>

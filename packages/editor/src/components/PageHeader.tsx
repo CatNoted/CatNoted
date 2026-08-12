@@ -148,7 +148,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
                   onIconChange(`lucide:${iconName}`);
                   setShowEmojiPicker(false);
                 }}
-                className="p-1.5 text-muted-foreground hover:text-accent hover:bg-muted rounded-lg transition-transform hover:scale-110 flex items-center justify-center border border-border"
+                className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-transform hover:scale-110 flex items-center justify-center border border-border"
                 title={iconName}
                 aria-label={`Select icon ${iconName}`}
               >

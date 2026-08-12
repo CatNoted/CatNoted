@@ -144,7 +144,7 @@ export const SlashCommandMenu: React.FC<SlashCommandMenuProps> = ({
         <p className="text-[12.5px] font-medium text-foreground">
           No matching commands
         </p>
-        <p className="text-[10.5px] text-muted-foreground mt-1 truncate min-w-0">
+        <p className="text-[10.5px] text-muted-foreground mt-1 truncate">
           No matches for "{query}"
         </p>
       </div>
@@ -216,7 +216,7 @@ export const SlashCommandMenu: React.FC<SlashCommandMenuProps> = ({
                         <p className={`text-[12.5px] font-medium leading-tight ${isSelected ? 'text-accent' : 'text-foreground'}`}>
                           {cmd.label}
                         </p>
-                        <p className="text-[10.5px] leading-snug text-muted-foreground truncate min-w-0 mt-0.5 font-normal">
+                        <p className="text-[10.5px] leading-snug text-muted-foreground truncate mt-0.5 font-normal">
                           {cmd.description}
                         </p>
                       </span>

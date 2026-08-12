@@ -734,7 +734,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     className={`w-full py-2.5 rounded-lg flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accent ${
                       isActive 
                         ? 'bg-accent-soft dark:bg-accent/10 text-accent font-semibold'
-                        : 'text-muted-foreground hover:text-accent hover:bg-muted'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                     }`}
                   >
                     <Icon className="w-4 h-4" />
@@ -973,7 +973,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         const newId = createPage(title);
                         if (onPageSelect) onPageSelect(newId);
                     }
-                }} className="text-xs text-accent hover:text-accent font-semibold cursor-pointer px-1">+ Add</button>
+                }} className="text-xs text-accent hover:text-foreground font-semibold cursor-pointer px-1">+ Add</button>
               </div>
 
               {onCreatePage && (
@@ -1392,7 +1392,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                 el.scrollIntoView({ behavior: 'smooth', block: 'center' });
                               }
                             }}
-                            className={`w-full text-left py-1.5 px-2 rounded-lg hover:bg-muted dark:hover:bg-muted/40 text-foreground hover:text-accent dark:hover:text-accent transition-colors flex-1 min-w-0 truncate ${indentClass}`}
+                            className={`w-full text-left py-1.5 px-2 rounded-lg hover:bg-muted dark:hover:bg-muted/40 text-foreground hover:text-foreground dark:hover:text-foreground transition-colors flex-1 min-w-0 truncate ${indentClass}`}
                           >
                             {block.content || 'Untitled Heading'}
                           </button>
@@ -1539,7 +1539,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         aria-label="Restore to 10 minutes ago"
                         className="text-left w-full hover:bg-muted dark:hover:bg-muted/40 p-1.5 rounded-lg transition-colors"
                       >
-                        <span className="text-xs font-semibold text-foreground group-hover:text-accent dark:group-hover:text-accent">10 minutes ago</span>
+                        <span className="text-xs font-semibold text-foreground group-hover:text-foreground dark:group-hover:text-foreground">10 minutes ago</span>
                         <div className="text-[10px] text-muted-foreground">Backup snapshot auto-save</div>
                       </button>
                     </div>
@@ -1553,7 +1553,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         aria-label="Restore to page created state"
                         className="text-left w-full hover:bg-muted dark:hover:bg-muted/40 p-1.5 rounded-lg transition-colors"
                       >
-                        <span className="text-xs font-semibold text-foreground group-hover:text-accent dark:group-hover:text-accent">Page Created</span>
+                        <span className="text-xs font-semibold text-foreground group-hover:text-foreground dark:group-hover:text-foreground">Page Created</span>
                         <div className="text-[10px] text-muted-foreground">
                           {pageMeta?.createdAt ? new Date(pageMeta.createdAt).toLocaleString() : 'Initial blank slate'}
                         </div>
@@ -1588,7 +1588,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                       className={`w-full py-2.5 rounded-lg flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accent ${
                         isActive
                           ? 'bg-accent-soft dark:bg-accent/10 text-accent font-semibold'
-                          : 'text-muted-foreground hover:text-accent hover:bg-muted'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                       }`}
                     >
                       <Icon className="w-4 h-4" />

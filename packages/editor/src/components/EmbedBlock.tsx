@@ -164,7 +164,7 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
           <button
             type="button"
             onClick={handleReset}
-            className="p-1 text-muted-foreground hover:text-accent hover:bg-muted rounded-lg transition-colors"
+            className="p-1 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
             title="Change embedded page"
           >
             <RotateCcw className="w-3.5 h-3.5" />
