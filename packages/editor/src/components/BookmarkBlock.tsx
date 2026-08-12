@@ -101,13 +101,13 @@ export const BookmarkBlock: React.FC<BookmarkBlockProps> = ({
             </div>
 
             <div className="min-w-0 flex-1">
-              <h4 className="text-xs font-semibold text-foreground truncate min-w-0">
+              <h4 className="text-xs font-semibold text-foreground truncate">
                 {bookmarkTitle || bookmarkUrl}
               </h4>
-              <p className="text-[11px] text-muted-foreground truncate min-w-0 mt-0.5">
+              <p className="text-[11px] text-muted-foreground truncate mt-0.5">
                 {bookmarkDescription || bookmarkUrl}
               </p>
-              <span className="text-[10px] font-mono text-accent truncate min-w-0 block mt-1">
+              <span className="text-[10px] font-mono text-accent truncate block mt-1">
                 {bookmarkUrl}
               </span>
             </div>
@@ -117,7 +117,7 @@ export const BookmarkBlock: React.FC<BookmarkBlockProps> = ({
             href={safeHref}
             target="_blank"
             rel="noopener noreferrer"
-            className="p-2 text-muted-foreground hover:text-accent hover:bg-muted rounded-xl transition-colors shrink-0 ml-3"
+            className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition-colors shrink-0 ml-3"
             title="Open external link"
           >
             <ExternalLink className="w-4 h-4" />

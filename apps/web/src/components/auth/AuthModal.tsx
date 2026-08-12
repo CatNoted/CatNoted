@@ -198,7 +198,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               <button
                 type="button"
                 onClick={() => setIsSignUp(!isSignUp)}
-                className="text-muted-foreground hover:text-accent dark:hover:text-accent hover:underline font-medium transition-colors"
+                className="text-muted-foreground hover:text-foreground dark:hover:text-foreground hover:underline font-medium transition-colors"
               >
                 {isSignUp ? 'Already have an account? Log In' : "Don't have an account? Create one"}
               </button>

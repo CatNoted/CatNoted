@@ -309,7 +309,7 @@ const App: React.FC = () => {
         <button
           type="button"
           onClick={() => setIsEditingTitle(true)}
-          className="inline-flex items-center justify-center rounded-lg text-muted-foreground hover:text-accent hover:bg-secondary transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent p-0.5 opacity-0 group-hover/title:opacity-100"
+          className="inline-flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent p-0.5 opacity-0 group-hover/title:opacity-100"
           title="Edit page title"
         >
           <Edit2 className="w-3 h-3" />
@@ -446,7 +446,7 @@ const App: React.FC = () => {
                 toast(`Share Link generated: ${link}. Anyone with the passphrase can join.`, { variant: 'warning' });
               });
           }}
-          className="inline-flex items-center justify-center rounded-lg gap-1.5 p-1.5 border border-transparent hover:bg-secondary text-muted-foreground hover:text-accent transition-colors"
+          className="inline-flex items-center justify-center rounded-lg gap-1.5 p-1.5 border border-transparent hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
           title="Share document link"
         >
           <Share2 className="w-3.5 h-3.5" />

@@ -50,7 +50,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
           <select
             value={language}
             onChange={(e) => onUpdateProps({ language: e.target.value })}
-            className="bg-transparent border-none text-xs font-mono text-foreground focus:outline-none focus:ring-0 cursor-pointer capitalize hover:text-accent transition-colors"
+            className="bg-transparent border-none text-xs font-mono text-foreground focus:outline-none focus:ring-0 cursor-pointer capitalize hover:text-foreground transition-colors"
           >
             {LANGUAGES.map((lang) => (
               <option key={lang} value={lang} className="bg-card text-foreground">

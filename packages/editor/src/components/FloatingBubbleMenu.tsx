@@ -165,7 +165,7 @@ export const FloatingBubbleMenu: React.FC<FloatingBubbleMenuProps> = ({
             e.preventDefault();
             setShowColorPicker(!showColorPicker);
           }}
-          className="p-1.5 hover:bg-muted rounded-lg transition-colors text-accent hover:text-accent/80"
+          className="p-1.5 hover:bg-muted rounded-lg transition-colors text-accent hover:text-foreground"
           title="Highlight color"
           aria-label="Choose highlight color"
           aria-expanded={showColorPicker}

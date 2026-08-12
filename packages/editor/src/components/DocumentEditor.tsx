@@ -396,13 +396,13 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                       {/* Referencing Page Info */}
                       <div className="flex items-center gap-2">
                         <span className="text-sm shrink-0">{backlink.pageIcon}</span>
-                        <span className="text-xs font-semibold text-foreground group-hover:text-accent transition-colors truncate min-w-0">
+                        <span className="text-xs font-semibold text-foreground group-hover:text-foreground transition-colors flex-1 min-w-0 truncate">
                           {backlink.pageTitle}
                         </span>
                       </div>
 
                       {/* Context Content Block Preview */}
-                      <div className="text-[11px] text-muted-foreground font-normal leading-relaxed truncate min-w-0 pl-6 border-l border-border">
+                      <div className="text-[11px] text-muted-foreground font-normal leading-relaxed truncate pl-6 border-l border-border">
                         {backlink.blockContent}
                       </div>
                     </button>

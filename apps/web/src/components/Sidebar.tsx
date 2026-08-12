@@ -101,7 +101,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           <div className="w-6 h-6 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-bold text-xs shadow-sm">
             CN
           </div>
-          <span className="font-semibold text-[14px] text-foreground tracking-tight truncate min-w-0" title="CatNoted Workspace">
+          <span className="font-semibold text-[14px] text-foreground tracking-tight flex-1 min-w-0 truncate" title="CatNoted Workspace">
             CatNoted Workspace
           </span>
         </div>
@@ -114,7 +114,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           className={`${itemClassName} ${isModeActive('doc') ? 'bg-accent-soft text-accent font-semibold' : ''}`}
         >
           <FileText className={`${getItemIconClass(isModeActive('doc'))} w-4 h-4`} />
-          <span className="truncate min-w-0">Doc Mode</span>
+          <span className="flex-1 min-w-0 truncate">Doc Mode</span>
         </button>
         <button
           type="button"
@@ -122,7 +122,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           className={`${itemClassName} ${isModeActive('canvas') ? 'bg-accent-soft text-accent font-semibold' : ''}`}
         >
           <LayoutGrid className={`${getItemIconClass(isModeActive('canvas'))} w-4 h-4`} />
-          <span className="truncate min-w-0">Canvas</span>
+          <span className="flex-1 min-w-0 truncate">Canvas</span>
         </button>
         <button
           type="button"
@@ -130,7 +130,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           className={`${itemClassName} ${isModeActive('graph') ? 'bg-accent-soft text-accent font-semibold' : ''}`}
         >
           <Network className={`${getItemIconClass(isModeActive('graph'))} w-4 h-4`} />
-          <span className="truncate min-w-0">Graph</span>
+          <span className="flex-1 min-w-0 truncate">Graph</span>
         </button>
         <button
           type="button"
@@ -138,7 +138,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           className={`${itemClassName} ${isModeActive('journals') ? 'bg-accent-soft text-accent font-semibold' : ''}`}
         >
           <Calendar className={`${getItemIconClass(isModeActive('journals'))} w-4 h-4`} />
-          <span className="truncate min-w-0">Journals</span>
+          <span className="flex-1 min-w-0 truncate">Journals</span>
         </button>
         <button
           type="button"
@@ -146,7 +146,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           className={`${itemClassName} ${isModeActive('settings') ? 'bg-accent-soft text-accent font-semibold' : ''}`}
         >
           <Settings className={`${getItemIconClass(isModeActive('settings'))} w-4 h-4`} />
-          <span className="truncate min-w-0">Settings</span>
+          <span className="flex-1 min-w-0 truncate">Settings</span>
         </button>
       </div>
 
@@ -169,7 +169,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                     <span className="w-4 h-4 shrink-0 flex items-center justify-center text-xs">
                       {node.icon || '📄'}
                     </span>
-                    <span className="truncate min-w-0">{node.title || 'Untitled'}</span>
+                    <span className="flex-1 min-w-0 truncate">{node.title || 'Untitled'}</span>
                   </div>
                   {/* Hover Actions */}
                   <div className="opacity-0 group-hover/sidebar-row:opacity-100 flex items-center gap-1 transition-opacity shrink-0">
@@ -224,7 +224,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                     <span className="w-4 h-4 shrink-0 flex items-center justify-center text-xs">
                       {node.icon || '📄'}
                     </span>
-                    <span className="truncate min-w-0">{node.title || 'Untitled'}</span>
+                    <span className="flex-1 min-w-0 truncate">{node.title || 'Untitled'}</span>
                   </div>
                   {/* Hover Actions */}
                   <div className="opacity-0 group-hover/sidebar-row:opacity-100 flex items-center gap-1 transition-opacity shrink-0">
@@ -265,7 +265,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                   className={itemClassName}
                 >
                   <FolderOpen className={`${getItemIconClass(false)} w-4 h-4`} />
-                  <span className="truncate min-w-0">Folders</span>
+                  <span className="flex-1 min-w-0 truncate">Folders</span>
                 </button>
                 <button
                   type="button"
@@ -273,7 +273,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                   className={`${itemClassName} pl-6`}
                 >
                   <FileText className={`${getItemIconClass(false)} w-4 h-4`} />
-                  <span className="truncate min-w-0">Getting Started</span>
+                  <span className="flex-1 min-w-0 truncate">Getting Started</span>
                 </button>
                 <button
                   type="button"
@@ -281,7 +281,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                   className={`${itemClassName} pl-6`}
                 >
                   <FileText className={`${getItemIconClass(false)} w-4 h-4`} />
-                  <span className="truncate min-w-0">Architecture Specs</span>
+                  <span className="flex-1 min-w-0 truncate">Architecture Specs</span>
                 </button>
               </>
             )}
@@ -305,11 +305,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           <>
             <button type="button" onClick={() => onModeChange('doc')} className={itemClassName}>
               <LayoutGrid className={`${getItemIconClass(false)} w-4 h-4 text-accent`} />
-              <span className="truncate min-w-0">Design Review</span>
+              <span className="flex-1 min-w-0 truncate">Design Review</span>
             </button>
             <button type="button" onClick={() => onModeChange('doc')} className={itemClassName}>
               <LayoutGrid className={`${getItemIconClass(false)} w-4 h-4 text-success`} />
-              <span className="truncate min-w-0">Weekly Sync</span>
+              <span className="flex-1 min-w-0 truncate">Weekly Sync</span>
             </button>
           </>
         ))}
@@ -318,11 +318,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           <>
             <button type="button" onClick={() => onModeChange('doc')} className={itemClassName}>
               <CircleHelp className={`${getItemIconClass(false)} w-4 h-4`} />
-              <span className="truncate min-w-0">Read Only Docs</span>
+              <span className="flex-1 min-w-0 truncate">Read Only Docs</span>
             </button>
             <button type="button" onClick={() => onModeChange('doc')} className={itemClassName}>
               <FolderOpen className={`${getItemIconClass(false)} w-4 h-4`} />
-              <span className="truncate min-w-0">Shared Room</span>
+              <span className="flex-1 min-w-0 truncate">Shared Room</span>
             </button>
           </>
         ))}
@@ -336,7 +336,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           title="New page"
         >
           <Plus className="w-4 h-4" />
-          <span className="truncate min-w-0">New Page</span>
+          <span className="flex-1 min-w-0 truncate">New Page</span>
         </button>
 
         <button
@@ -346,7 +346,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           title="Import"
         >
           <Download className="w-4 h-4 text-muted-foreground" />
-          <span className="truncate min-w-0">Import</span>
+          <span className="flex-1 min-w-0 truncate">Import</span>
         </button>
 
         <button
@@ -356,7 +356,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           title="Template"
         >
           <FileSpreadsheet className="w-4 h-4 text-muted-foreground" />
-          <span className="truncate min-w-0">Template</span>
+          <span className="flex-1 min-w-0 truncate">Template</span>
         </button>
 
         <button
@@ -366,7 +366,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           title="Trash"
         >
           <Trash2 className="w-4 h-4 text-danger" />
-          <span className="truncate min-w-0 text-danger">Trash</span>
+          <span className="flex-1 min-w-0 truncate text-danger">Trash</span>
         </button>
 
         <button
@@ -376,7 +376,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           title="Learn more"
         >
           <CircleHelp className="w-4 h-4 text-muted-foreground" />
-          <span className="truncate min-w-0">Learn more</span>
+          <span className="flex-1 min-w-0 truncate">Learn more</span>
         </button>
       </div>
     </div>
