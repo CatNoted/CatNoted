@@ -166,7 +166,7 @@ export const CalloutBlock: React.FC<CalloutBlockProps> = ({
             setShowBgPicker(!showBgPicker);
             setShowIconPicker(false);
           }}
-          className="p-1 text-muted-foreground hover:text-foreground rounded hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+          className="p-1 text-muted-foreground hover:text-foreground rounded hover:bg-muted transition-colors"
           title="Change highlight color"
           aria-label="Change highlight color"
           aria-haspopup="menu"
