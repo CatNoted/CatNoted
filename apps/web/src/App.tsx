@@ -294,7 +294,7 @@ const App: React.FC = () => {
             setIsEditingTitle(false);
           }
         }}
-        className="px-2 py-0.5 border border-accent rounded bg-secondary text-xs font-semibold text-foreground focus:outline-none focus:ring-1 focus:ring-accent w-36 sm:w-48"
+        className="px-2 py-0.5 border border-accent rounded bg-secondary text-xs font-semibold text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-accent w-36 sm:w-48"
         autoFocus
       />
     ) : (

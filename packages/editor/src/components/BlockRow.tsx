@@ -448,7 +448,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                         <textarea
                           value={editorCode[block.id] ?? block.properties?.srcDoc ?? ''}
                           onChange={(e) => setEditorCode(prev => ({ ...prev, [block.id]: e.target.value }))}
-                          className="w-full h-40 p-2 font-mono text-xs bg-muted text-foreground rounded-lg border border-border focus:outline-none focus:ring-1 focus:ring-accent resize-y"
+                          className="w-full h-40 p-2 font-mono text-xs bg-muted text-foreground rounded-lg border border-border focus:outline-none focus-visible:ring-1 focus-visible:ring-accent resize-y"
                           placeholder="Write widget code here..."
                         />
                         <div className="flex justify-end gap-2">

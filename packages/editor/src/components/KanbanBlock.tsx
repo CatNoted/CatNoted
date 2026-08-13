@@ -257,7 +257,7 @@ export const KanbanBlock: React.FC<KanbanBlockProps> = ({
           value={boardTitle}
           onChange={(e) => handleBoardTitleChange(e.target.value)}
           placeholder="Untitled Kanban Board"
-          className="text-sm font-semibold bg-transparent text-foreground border-none outline-none focus:ring-1 focus:ring-accent rounded px-1.5 py-0.5 placeholder:text-muted-foreground w-64 transition-all"
+          className="text-sm font-semibold bg-transparent text-foreground border-none outline-none focus-visible:ring-1 focus-visible:ring-accent rounded px-1.5 py-0.5 placeholder:text-muted-foreground w-64 transition-all"
         />
         <button
           type="button"
@@ -308,7 +308,7 @@ export const KanbanBlock: React.FC<KanbanBlockProps> = ({
                   value={col.title}
                   onChange={(e) => handleRenameColumn(col.id, e.target.value)}
                   placeholder="Column Name"
-                  className="text-xs font-semibold bg-transparent text-foreground border-none outline-none focus:ring-1 focus:ring-accent rounded px-1 py-0.5 placeholder:text-muted-foreground flex-1 min-w-0 shrink transition-colors focus:bg-background"
+                  className="text-xs font-semibold bg-transparent text-foreground border-none outline-none focus-visible:ring-1 focus-visible:ring-accent rounded px-1 py-0.5 placeholder:text-muted-foreground flex-1 min-w-0 shrink transition-colors focus-visible:bg-background"
                 />
 
                 <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground font-mono">
@@ -371,7 +371,7 @@ export const KanbanBlock: React.FC<KanbanBlockProps> = ({
                           value={card.title}
                           onChange={(e) => handleRenameCard(col.id, card.id, e.target.value)}
                           placeholder="Card Title"
-                          className="w-full resize-none text-[11px] leading-relaxed bg-transparent text-foreground border-none outline-none focus:ring-1 focus:ring-accent rounded p-0.5 placeholder:text-muted-foreground focus:bg-muted transition-all"
+                          className="w-full resize-none text-[11px] leading-relaxed bg-transparent text-foreground border-none outline-none focus-visible:ring-1 focus-visible:ring-accent rounded p-0.5 placeholder:text-muted-foreground focus-visible:bg-muted transition-all"
                           style={{ height: 'auto' }}
                           onInput={(e) => {
                             const target = e.target as HTMLTextAreaElement;
