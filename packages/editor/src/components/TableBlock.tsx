@@ -93,7 +93,7 @@ export const TableBlock: React.FC<TableBlockProps> = ({
                           type="text"
                           value={cell}
                           onChange={(e) => handleCellChange(0, cIndex, e.target.value)}
-                          className="w-full bg-transparent font-semibold text-foreground outline-none focus:ring-1 focus:ring-accent rounded px-0.5 placeholder:text-muted-foreground"
+                          className="w-full bg-transparent font-semibold text-foreground outline-none focus-visible:ring-1 focus-visible:ring-accent rounded px-0.5 placeholder:text-muted-foreground"
                         />
                       </div>
                       {currentRows[0].length > 1 && (
@@ -133,7 +133,7 @@ export const TableBlock: React.FC<TableBlockProps> = ({
                             type="text"
                             value={cell}
                             onChange={(e) => handleCellChange(actualRowIdx, cIdx, e.target.value)}
-                            className="w-full bg-transparent text-foreground outline-none focus:ring-1 focus:ring-accent rounded px-0.5 placeholder:text-muted-foreground transition-colors"
+                            className="w-full bg-transparent text-foreground outline-none focus-visible:ring-1 focus-visible:ring-accent rounded px-0.5 placeholder:text-muted-foreground transition-colors"
                           />
                         </td>
                       ))}

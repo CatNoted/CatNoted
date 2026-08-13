@@ -1469,7 +1469,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                           value={chatInput}
                           onChange={(e) => setChatInput(e.target.value)}
                           placeholder="Ask Space Agent docked..."
-                          className="w-full pl-3 pr-8 py-2 rounded-lg border border-border bg-card dark:bg-card text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-accent"
+                          className="w-full pl-3 pr-8 py-2 rounded-lg border border-border bg-card dark:bg-card text-xs text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
                         />
                         <button
                           type="submit"
@@ -1855,7 +1855,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         value={chatInput}
                         onChange={(e) => setChatInput(e.target.value)}
                         placeholder="Ask agent to generate a widget..."
-                        className="w-full pl-3 pr-10 py-2.5 rounded-xl border border-border/60 bg-card/80 dark:bg-card/60 text-xs text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 dark:focus:ring-accent/30 focus:border-accent dark:focus:border-accent/50 hover:border-border dark:hover:border-ink-secondary transition-all duration-200"
+                        className="w-full pl-3 pr-10 py-2.5 rounded-xl border border-border/60 bg-card/80 dark:bg-card/60 text-xs text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:focus-visible:ring-accent/30 focus-visible:border-accent dark:focus-visible:border-accent/50 hover:border-border dark:hover:border-ink-secondary transition-all duration-200"
                       />
                       <button
                         type="submit"

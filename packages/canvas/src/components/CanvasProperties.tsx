@@ -128,7 +128,7 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
                 type="checkbox"
                 checked={arrowStart}
                 onChange={(e) => handleUpdateConnector({ arrowStart: e.target.checked })}
-                className="rounded border-border text-primary focus:ring-primary dark:bg-muted"
+                className="rounded border-border text-primary focus-visible:ring-primary dark:bg-muted"
               />
               <span>Start arrow</span>
             </label>
@@ -137,7 +137,7 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
                 type="checkbox"
                 checked={arrowEnd}
                 onChange={(e) => handleUpdateConnector({ arrowEnd: e.target.checked })}
-                className="rounded border-border text-primary focus:ring-primary dark:bg-muted"
+                className="rounded border-border text-primary focus-visible:ring-primary dark:bg-muted"
               />
               <span>End arrow</span>
             </label>
@@ -152,7 +152,7 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
             value={labelVal}
             onChange={(e) => handleUpdateConnector({ label: e.target.value })}
             placeholder="No label"
-            className="w-full text-xs bg-muted border border-border rounded-lg px-2.5 py-1.5 outline-none focus:border-primary transition-colors text-foreground placeholder-muted-foreground/50"
+            className="w-full text-xs bg-muted border border-border rounded-lg px-2.5 py-1.5 outline-none focus-visible:border-primary transition-colors text-foreground placeholder-muted-foreground/50"
           />
         </div>
       </div>
