@@ -1490,8 +1490,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         ].map((item) => (
                           <div key={item.id} className="p-2 rounded-lg bg-muted dark:bg-muted/30 border border-border dark:border-border/60 flex items-center justify-between text-xs">
                             <div className="min-w-0 pr-1 flex flex-col">
-                              <span className="font-semibold text-foreground dark:text-foreground flex-1 min-w-0 truncate">{item.title}</span>
-                              <span className="text-[10px] text-muted-foreground flex-1 min-w-0 truncate">{item.desc}</span>
+                              <span className="font-semibold text-foreground dark:text-foreground truncate">{item.title}</span>
+                              <span className="text-[10px] text-muted-foreground truncate">{item.desc}</span>
                             </div>
                             <button
                               type="button"
