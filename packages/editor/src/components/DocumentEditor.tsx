@@ -317,7 +317,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           <p className="text-xs mt-1">Start typing or type '/' for commands</p>
           <button
             onClick={() => handleCreateBlock('root')}
-            className="mt-4 px-4 py-1.5 bg-accent/10 text-accent rounded-md text-xs font-semibold hover:bg-accent/20 transition-colors"
+            className="mt-4 px-4 py-1.5 bg-accent/10 text-accent rounded-md text-xs font-semibold hover:bg-muted transition-colors"
           >
             Create first block
           </button>

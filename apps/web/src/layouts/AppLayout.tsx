@@ -1602,7 +1602,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               <button
                 type="button"
                 onClick={() => alert("CatNoted Workspace - AFFiNE-style Right Rail")}
-                className="w-full py-2.5 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/10 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                className="w-full py-2.5 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                 title="Workspace Help"
                 aria-label="Workspace Help"
               >

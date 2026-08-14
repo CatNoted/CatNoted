@@ -390,7 +390,7 @@ const App: React.FC = () => {
                       className={`py-1 rounded text-center transition-colors ${
                         pageMeta?.fontStyle === f || (!pageMeta?.fontStyle && f === 'sans')
                           ? 'bg-primary text-primary-foreground font-bold'
-                          : 'bg-secondary text-muted-foreground hover:bg-accent'
+                          : 'bg-secondary text-muted-foreground hover:bg-muted hover:text-foreground'
                       }`}
                     >
                       {f[0].toUpperCase() + f.slice(1)}
