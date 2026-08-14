@@ -217,6 +217,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
               setSelectedIndex(0);
             }}
             placeholder="Type a command..."
+            role="combobox"
             aria-label="Search commands"
             aria-autocomplete="list"
             aria-controls={`${paletteId}-list`}
