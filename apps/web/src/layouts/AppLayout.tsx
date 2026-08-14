@@ -1026,7 +1026,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                 }`}
                               >
                                 {renderPageIcon(node.icon, "w-3.5 h-3.5 shrink-0 flex items-center justify-center")}
-                                <span className="flex-1 min-w-0 truncate text-xs" title={displayLabel}>{displayLabel}</span>
+                                <span className="truncate text-xs" title={displayLabel}>{displayLabel}</span>
                               </button>
                             </li>
                           );
@@ -1070,7 +1070,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                 }`}
                               >
                                 {renderPageIcon(node.icon, "w-3.5 h-3.5 shrink-0 flex items-center justify-center")}
-                                <span className="flex-1 min-w-0 truncate text-xs" title={displayLabel}>{displayLabel}</span>
+                                <span className="truncate text-xs" title={displayLabel}>{displayLabel}</span>
                               </button>
                               {node.id !== 'root-doc-node' && (
                                 <button
@@ -1131,7 +1131,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                 }`}
                               >
                                 <FileText className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                                <span className="flex-1 min-w-0 truncate text-xs">{displayLabel}</span>
+                                <span className="truncate text-xs">{displayLabel}</span>
                               </button>
                             </li>
                           );
@@ -1178,7 +1178,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                 }`}
                               >
                                 <Cpu className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                                <span className="flex-1 min-w-0 truncate text-xs">{node.label}</span>
+                                <span className="truncate text-xs">{node.label}</span>
                               </button>
                             </li>
                           );

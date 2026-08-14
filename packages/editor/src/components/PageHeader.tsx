@@ -352,7 +352,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
               type="button"
               onClick={() => onCoverChange(undefined)}
               aria-label="Remove cover image"
-              className="px-2.5 py-1.5 bg-black/60 hover:bg-destructive hover:text-destructive-foreground text-white rounded-lg text-xs font-medium backdrop-blur-md transition-all flex items-center gap-1.5 shadow-sm"
+              className="px-2.5 py-1.5 bg-black/60 hover:bg-destructive hover:text-white text-white rounded-lg text-xs font-medium backdrop-blur-md transition-all flex items-center gap-1.5 shadow-sm"
             >
               <LucideIcons.Trash2 className="w-3.5 h-3.5" />
               Remove cover
