@@ -51,7 +51,7 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
           <button
             type="button"
             onClick={handleSaveUrl}
-            className="px-3 py-1 bg-accent hover:bg-accent/90 text-foreground text-xs font-medium rounded-lg transition-colors"
+            className="px-3 py-1 bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-medium rounded-lg transition-colors"
           >
             Insert Image
           </button>
@@ -85,7 +85,7 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
               <button
                 type="button"
                 onClick={() => onUpdateProps({ align: 'left' })}
-                className={`p-1 rounded ${align === 'left' ? 'bg-accent' : 'hover:bg-muted text-muted-foreground'}`}
+                className={`p-1 rounded ${align === 'left' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted text-muted-foreground'}`}
                 title="Align left"
                 aria-label="Align left"
                 aria-pressed={align === 'left'}
@@ -95,7 +95,7 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
               <button
                 type="button"
                 onClick={() => onUpdateProps({ align: 'center' })}
-                className={`p-1 rounded ${align === 'center' ? 'bg-accent' : 'hover:bg-muted text-muted-foreground'}`}
+                className={`p-1 rounded ${align === 'center' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted text-muted-foreground'}`}
                 title="Align center"
                 aria-label="Align center"
                 aria-pressed={align === 'center'}
@@ -105,7 +105,7 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
               <button
                 type="button"
                 onClick={() => onUpdateProps({ align: 'right' })}
-                className={`p-1 rounded ${align === 'right' ? 'bg-accent' : 'hover:bg-muted text-muted-foreground'}`}
+                className={`p-1 rounded ${align === 'right' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted text-muted-foreground'}`}
                 title="Align right"
                 aria-label="Align right"
                 aria-pressed={align === 'right'}
