@@ -111,7 +111,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         <button
           type="button"
           onClick={() => onModeChange('doc')}
-          className={`${itemClassName} ${isModeActive('doc') ? 'bg-accent-soft text-accent font-semibold' : ''}`}
+          className={`${itemClassName} ${isModeActive('doc') ? 'bg-muted text-foreground font-semibold' : ''}`}
         >
           <FileText className={`${getItemIconClass(isModeActive('doc'))} w-4 h-4`} />
           <span className="flex-1 min-w-0 truncate">Doc Mode</span>
@@ -119,7 +119,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         <button
           type="button"
           onClick={() => onModeChange('canvas')}
-          className={`${itemClassName} ${isModeActive('canvas') ? 'bg-accent-soft text-accent font-semibold' : ''}`}
+          className={`${itemClassName} ${isModeActive('canvas') ? 'bg-muted text-foreground font-semibold' : ''}`}
         >
           <LayoutGrid className={`${getItemIconClass(isModeActive('canvas'))} w-4 h-4`} />
           <span className="flex-1 min-w-0 truncate">Canvas</span>
@@ -127,7 +127,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         <button
           type="button"
           onClick={() => onModeChange('graph')}
-          className={`${itemClassName} ${isModeActive('graph') ? 'bg-accent-soft text-accent font-semibold' : ''}`}
+          className={`${itemClassName} ${isModeActive('graph') ? 'bg-muted text-foreground font-semibold' : ''}`}
         >
           <Network className={`${getItemIconClass(isModeActive('graph'))} w-4 h-4`} />
           <span className="flex-1 min-w-0 truncate">Graph</span>
@@ -135,7 +135,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         <button
           type="button"
           onClick={() => onModeChange('journals')}
-          className={`${itemClassName} ${isModeActive('journals') ? 'bg-accent-soft text-accent font-semibold' : ''}`}
+          className={`${itemClassName} ${isModeActive('journals') ? 'bg-muted text-foreground font-semibold' : ''}`}
         >
           <Calendar className={`${getItemIconClass(isModeActive('journals'))} w-4 h-4`} />
           <span className="flex-1 min-w-0 truncate">Journals</span>
@@ -143,7 +143,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         <button
           type="button"
           onClick={() => onModeChange('settings')}
-          className={`${itemClassName} ${isModeActive('settings') ? 'bg-accent-soft text-accent font-semibold' : ''}`}
+          className={`${itemClassName} ${isModeActive('settings') ? 'bg-muted text-foreground font-semibold' : ''}`}
         >
           <Settings className={`${getItemIconClass(isModeActive('settings'))} w-4 h-4`} />
           <span className="flex-1 min-w-0 truncate">Settings</span>
@@ -332,7 +332,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         <button
           type="button"
           onClick={() => onModeChange('doc')}
-          className={`${itemClassName} text-accent hover:bg-muted`}
+          className={`${itemClassName} text-foreground hover:bg-muted`}
           title="New page"
         >
           <Plus className="w-4 h-4" />
