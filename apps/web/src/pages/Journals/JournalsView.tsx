@@ -222,7 +222,7 @@ export const JournalsView: React.FC = () => {
               onClick={() => handleCompleteOnboarding('reflection')}
               className="group p-5 rounded-2xl border border-border dark:border-border bg-muted dark:bg-muted text-left hover:border-accent hover:bg-card dark:hover:bg-card shadow-lg hover:shadow-accent/5 transition-all flex flex-col gap-3"
             >
-              <div className="w-9 h-9 rounded-xl bg-accent-soft text-accent flex items-center justify-center">
+              <div className="w-9 h-9 rounded-xl bg-muted text-foreground flex items-center justify-center">
                 <Sparkles className="w-4.5 h-4.5" />
               </div>
               <div>
@@ -398,7 +398,7 @@ export const JournalsView: React.FC = () => {
                   onClick={() => handleSelectTemplateSetting(tmpl.id)}
                   className={`w-full px-3 py-2 text-left rounded-lg flex items-center justify-between transition-colors ${
                     isSelected
-                      ? 'bg-accent-soft text-accent font-semibold'
+                      ? 'bg-muted text-foreground font-semibold'
                       : 'text-foreground hover:bg-muted hover:text-foreground'
                   }`}
                 >

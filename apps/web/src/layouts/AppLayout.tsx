@@ -1291,7 +1291,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                             onClick={() => updatePageMeta({ fontStyle: font })}
                             className={`py-1.5 text-xs rounded-lg border capitalize font-medium transition-all ${
                               (pageMeta?.fontStyle || 'sans') === font
-                                ? 'bg-accent-soft text-accent border-accent dark:border-accent'
+                                ? 'bg-muted text-foreground border-border dark:border-border'
                                 : 'bg-transparent text-foreground border-border dark:border-border hover:bg-muted'
                             }`}
                           >
@@ -1441,11 +1441,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                             className={`flex gap-2 max-w-[90%] ${msg.sender === "user" ? "ml-auto flex-row-reverse" : ""}`}
                           >
                             <div
-                              className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] shrink-0 ${
-                                msg.sender === "user"
-                                  ? "bg-muted text-foreground"
-                                  : "bg-accent-soft dark:bg-accent-soft text-accent"
-                              }`}
+                              className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] shrink-0 bg-muted text-foreground"
                             >
                               {msg.sender === "user" ? <User className="w-3 h-3" /> : <Bot className="w-3 h-3" />}
                             </div>
