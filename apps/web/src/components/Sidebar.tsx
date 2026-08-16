@@ -101,7 +101,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
           <div className="w-6 h-6 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-bold text-xs shadow-sm">
             CN
           </div>
-          <span className="font-semibold text-[14px] text-foreground tracking-tight truncate" title="CatNoted Workspace">
+          <span className="flex-1 min-w-0 font-semibold text-[14px] text-foreground tracking-tight truncate" title="CatNoted Workspace">
             CatNoted Workspace
           </span>
         </div>

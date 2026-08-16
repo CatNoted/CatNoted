@@ -320,7 +320,7 @@ const App: React.FC = () => {
     const left = (
       <div className="flex items-center gap-2 min-w-0">
         {breadcrumbs}
-        <div className="min-w-0 truncate">{titleField}</div>
+        <div className="flex-1 min-w-0 truncate">{titleField}</div>
       </div>
     );
 
