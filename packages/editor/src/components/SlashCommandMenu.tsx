@@ -199,21 +199,21 @@ export const SlashCommandMenu: React.FC<SlashCommandMenuProps> = ({
                       onMouseEnter={() => setSelectedIndex(originalIndex)}
                       className={`w-full flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-left transition-colors group ${
                         isSelected
-                          ? 'bg-accent/10 text-accent'
+                          ? 'bg-muted text-foreground'
                           : 'text-foreground hover:bg-muted'
                       }`}
                     >
                       <span
                         className={`flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-md text-sm border transition-colors ${
                           isSelected
-                            ? 'bg-accent/20 text-accent border-accent/30'
+                            ? 'bg-muted text-foreground border-border'
                             : 'bg-muted/50 text-muted-foreground border-border'
                         }`}
                       >
                         {cmd.icon}
                       </span>
                       <span className="min-w-0 flex-1 leading-tight">
-                        <p className={`text-[12.5px] font-medium leading-tight ${isSelected ? 'text-accent' : 'text-foreground'}`}>
+                        <p className={`text-[12.5px] font-medium leading-tight text-foreground`}>
                           {cmd.label}
                         </p>
                         <p className="text-[10.5px] leading-snug text-muted-foreground truncate mt-0.5 font-normal">
