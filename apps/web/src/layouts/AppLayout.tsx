@@ -733,7 +733,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                       aria-expanded={isActive}
                     className={`w-full py-2.5 rounded-lg flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accent ${
                       isActive 
-                        ? 'bg-accent-soft dark:bg-accent/10 text-accent font-semibold'
+                        ? 'bg-muted dark:bg-accent/10 text-foreground font-semibold'
                         : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                     }`}
                   >
@@ -912,7 +912,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         onClick={() => onModeChange(item.id)}
                         className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center gap-2 transition-colors ${
                           isActive
-                            ? 'bg-accent-soft dark:bg-accent/10 text-accent font-semibold'
+                            ? 'bg-muted dark:bg-accent/10 text-foreground font-semibold'
                             : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                         }`}
                       >
@@ -945,7 +945,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         }}
                         className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between transition-colors ${
                           isActive
-                            ? 'bg-accent-soft dark:bg-accent/10 text-accent font-semibold'
+                            ? 'bg-muted dark:bg-accent/10 text-foreground font-semibold'
                             : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                         }`}
                       >
@@ -1065,7 +1065,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                 }}
                                 className={`flex-1 text-left px-2 py-1 rounded-md min-w-0 flex items-center gap-2 transition-colors ${
                                   isActive
-                                    ? 'bg-accent-soft dark:bg-accent/10 text-accent font-semibold'
+                                    ? 'bg-muted dark:bg-accent/10 text-foreground font-semibold'
                                     : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                                 }`}
                               >
@@ -1126,7 +1126,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                 }}
                                 className={`w-full text-left px-2 py-1 rounded-md min-w-0 flex items-center gap-2 transition-colors ${
                                   isActive
-                                    ? 'bg-accent-soft dark:bg-accent/10 text-accent font-semibold'
+                                    ? 'bg-muted dark:bg-accent/10 text-foreground font-semibold'
                                     : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                                 }`}
                               >
@@ -1412,7 +1412,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                       onClick={() => setActiveAgentTab('chat')}
                       className={`flex-1 py-1.5 text-center font-medium transition-colors cursor-pointer ${
                         activeAgentTab === 'chat'
-                          ? 'text-accent border-b-2 border-accent font-semibold bg-accent/5'
+                          ? 'text-foreground border-b-2 border-accent font-semibold bg-accent/5'
                           : 'text-muted-foreground hover:text-foreground'
                       }`}
                     >
@@ -1423,7 +1423,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                       onClick={() => setActiveAgentTab('widgets')}
                       className={`flex-1 py-1.5 text-center font-medium transition-colors cursor-pointer ${
                         activeAgentTab === 'widgets'
-                          ? 'text-accent border-b-2 border-accent font-semibold bg-accent/5'
+                          ? 'text-foreground border-b-2 border-accent font-semibold bg-accent/5'
                           : 'text-muted-foreground hover:text-foreground'
                       }`}
                     >
@@ -1485,7 +1485,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                           { title: 'Quick Tasks Todo', desc: 'Interactive task tracker', template: WIDGET_TEMPLATES.todo, id: 'todo' }
                         ].map((item) => (
                           <div key={item.id} className="p-2 rounded-lg bg-muted dark:bg-muted/30 border border-border dark:border-border/60 flex items-center justify-between text-xs">
-                            <div className="min-w-0 pr-1 flex flex-col">
+                            <div className="flex flex-col min-w-0 pr-1">
                               <span className="font-semibold text-foreground dark:text-foreground truncate">{item.title}</span>
                               <span className="text-[10px] text-muted-foreground truncate">{item.desc}</span>
                             </div>
@@ -1583,7 +1583,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                       aria-expanded={isActive}
                       className={`w-full py-2.5 rounded-lg flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accent ${
                         isActive
-                          ? 'bg-accent-soft dark:bg-accent/10 text-accent font-semibold'
+                          ? 'bg-muted dark:bg-accent/10 text-foreground font-semibold'
                           : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                       }`}
                     >
@@ -1675,12 +1675,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             <div className="flex items-center gap-2.5">
               <GripVertical className="w-4 h-4 text-muted-foreground dark:text-muted-foreground opacity-50" />
               <div className="w-7 h-7 rounded-lg bg-accent/10 dark:bg-accent/10 flex items-center justify-center">
-                <Bot className="w-4 h-4 text-accent" />
+                <Bot className="w-4 h-4 text-foreground" />
               </div>
               <span className="font-semibold text-sm text-foreground dark:text-foreground tracking-tight">
                 Space Agent
               </span>
-              <Sparkles className="w-3.5 h-3.5 text-accent animate-pulse" />
+              <Sparkles className="w-3.5 h-3.5 text-foreground animate-pulse" />
             </div>
             <div className="flex items-center gap-1">
               <button
@@ -1715,7 +1715,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                   onClick={() => setActiveAgentTab('chat')}
                   className={`flex-1 py-2 text-center font-medium transition-colors cursor-pointer ${
                     activeAgentTab === 'chat'
-                      ? 'text-accent border-b-2 border-accent font-semibold bg-accent/5'
+                      ? 'text-foreground border-b-2 border-accent font-semibold bg-accent/5'
                       : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
@@ -1726,7 +1726,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                   onClick={() => setActiveAgentTab('widgets')}
                   className={`flex-1 py-2 text-center font-medium transition-colors cursor-pointer ${
                     activeAgentTab === 'widgets'
-                      ? 'text-accent border-b-2 border-accent font-semibold bg-accent/5'
+                      ? 'text-foreground border-b-2 border-accent font-semibold bg-accent/5'
                       : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
@@ -1774,7 +1774,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                           className={`w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0 ${
                             msg.sender === "user"
                               ? "bg-muted dark:bg-muted text-foreground"
-                              : "bg-accent-soft dark:bg-accent-soft/40 text-accent"
+                              : "bg-muted dark:bg-muted/40 text-foreground"
                           }`}
                         >
                           {msg.sender === "user" ? (
@@ -1896,7 +1896,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     {/* Preset Library */}
                     <div>
                       <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                        <Sparkles className="w-3 h-3 text-accent" /> Preset Library
+                        <Sparkles className="w-3 h-3 text-foreground" /> Preset Library
                       </h4>
                       <div className="grid grid-cols-1 gap-2">
                         <div className="p-3 rounded-xl bg-muted dark:bg-card/50 border border-border dark:border-border/60 flex items-center justify-between text-xs transition-all hover:border-accent/30">
@@ -1973,7 +1973,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                             const widgetId = block.properties?.widgetId || 'unassigned';
                             return (
                               <div key={block.id} className="p-3 rounded-xl bg-muted dark:bg-card/40 border border-border dark:border-border/60 flex items-center justify-between text-xs">
-                                <div className="flex flex-col flex-1 min-w-0 pr-2">
+                                <div className="flex flex-col min-w-0 pr-2">
                                   <span className="font-semibold truncate text-foreground dark:text-foreground">ID: {widgetId}</span>
                                   <span className="text-[9px] text-muted-foreground truncate">Block ID: {block.id}</span>
                                 </div>

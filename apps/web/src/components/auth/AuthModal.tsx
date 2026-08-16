@@ -84,7 +84,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         
         {/* Header - Calm AFFiNE design with soft brand accent */}
         <div className="flex flex-col items-center text-center mb-4">
-          <div className="w-9 h-9 bg-accent-soft rounded-xl flex items-center justify-center text-accent mb-2.5">
+          <div className="w-9 h-9 bg-muted rounded-xl flex items-center justify-center text-foreground mb-2.5">
             <KeyRound className="w-4 h-4" />
           </div>
           <h2 className="text-base font-semibold text-foreground tracking-tight">
@@ -189,7 +189,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               onClick={handleGuestMode}
               className="w-full py-2 rounded-lg border border-border hover:bg-muted dark:hover:bg-muted text-foreground hover:text-foreground dark:hover:text-foreground font-medium text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm"
             >
-              <Sparkles className="w-3.5 h-3.5 text-accent" />
+              <Sparkles className="w-3.5 h-3.5 text-foreground" />
               Continue in Offline Guest Mode
             </button>
 

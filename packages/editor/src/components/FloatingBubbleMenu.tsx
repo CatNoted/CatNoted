@@ -79,7 +79,7 @@ export const FloatingBubbleMenu: React.FC<FloatingBubbleMenuProps> = ({
   const colors = [
     { name: 'Yellow', bg: 'bg-warning-soft' },
     { name: 'Green', bg: 'bg-success-soft' },
-    { name: 'Blue', bg: 'bg-accent-soft' },
+    { name: 'Blue', bg: 'bg-muted' },
     { name: 'Pink', bg: 'bg-danger-soft' },
     { name: 'Purple', bg: 'bg-muted' },
   ];
@@ -152,7 +152,7 @@ export const FloatingBubbleMenu: React.FC<FloatingBubbleMenuProps> = ({
             const escaped = text.replace(/[&<>"']/g, (m) => {
               return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m as '&' | '<' | '>' | '"' | "'"] || m;
             });
-            applyFormat('insertHTML', `<code class="bg-muted px-1 py-0.5 rounded font-mono text-xs text-accent">${escaped}</code>`);
+            applyFormat('insertHTML', `<code class="bg-muted px-1 py-0.5 rounded font-mono text-xs text-foreground">${escaped}</code>`);
           }
         }}
         className="p-1.5 hover:bg-muted rounded-lg transition-colors text-muted-foreground hover:text-foreground"
@@ -169,7 +169,7 @@ export const FloatingBubbleMenu: React.FC<FloatingBubbleMenuProps> = ({
             e.preventDefault();
             setShowColorPicker(!showColorPicker);
           }}
-          className="p-1.5 hover:bg-muted rounded-lg transition-colors text-accent hover:text-foreground"
+          className="p-1.5 hover:bg-muted rounded-lg transition-colors text-foreground hover:text-foreground"
           title="Highlight color"
           aria-label="Choose highlight color"
           aria-expanded={showColorPicker}

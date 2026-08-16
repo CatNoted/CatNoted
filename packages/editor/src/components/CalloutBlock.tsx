@@ -20,7 +20,7 @@ const CALLOUT_BG_THEMES: Record<string, { bg: string; border: string; text: stri
   accent: {
     bg: 'bg-accent/10',
     border: 'border-accent/30',
-    text: 'text-accent',
+    text: 'text-foreground',
   },
   emerald: {
     bg: 'bg-success-soft',
@@ -38,9 +38,9 @@ const CALLOUT_BG_THEMES: Record<string, { bg: string; border: string; text: stri
     text: 'text-danger',
   },
   sky: {
-    bg: 'bg-accent-soft',
+    bg: 'bg-muted',
     border: 'border-accent/30',
-    text: 'text-accent',
+    text: 'text-foreground',
   },
   purple: {
     bg: 'bg-muted',
