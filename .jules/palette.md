@@ -18,3 +18,6 @@
 ## $(date +%Y-%m-%d) - [UX Improvement] Replace Hardcoded UI Overlays with Semantic Tokens in Editor and Layout
 **Learning:** Hardcoded classes like `bg-accent/10 text-accent` and `dark:bg-accent/10` break structural theming logic and can cause contrast issues. Standard semantic active/selected states (`bg-muted text-foreground`) and hover states (`hover:bg-muted text-foreground`) automatically resolve contrast problems and scale better natively across light and dark modes.
 **Action:** Always prefer standard semantic tokens (`bg-muted text-foreground`, `hover:bg-muted`) over raw arbitrary combinations like `bg-accent/10` or conditionally switching `text-accent` for active affordances. Remove conditional `text-accent` logic when indicating selected items unless specifically instructed by design.
+## 2024-08-16 - Missing ARIA Labels on Modal Close Buttons
+**Learning:** Found an accessibility issue pattern specific to modal components in this application (e.g., `SettingsModal.tsx`) where icon-only close buttons lacked descriptive `aria-label`s. Screen reader users would just hear "button" without understanding its purpose.
+**Action:** When implementing or refactoring modals or any component utilizing icon-only buttons, always ensure an `aria-label` (e.g., `aria-label="Close settings"`) is included on the `<button>` element.
