@@ -129,7 +129,7 @@ export const AllDocsView: React.FC = () => {
 
         <div className="p-4 flex-1 min-w-0">
           <div className="bg-muted/50 rounded-xl p-4 border border-border text-center">
-             <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-3 text-accent">
+             <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3 text-primary">
                <Sparkles className="w-5 h-5" />
              </div>
              <h4 className="text-sm font-medium text-foreground mb-1">Set a Template</h4>

@@ -733,7 +733,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                       aria-expanded={isActive}
                     className={`w-full py-2.5 rounded-lg flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accent ${
                       isActive 
-                        ? 'bg-muted dark:bg-accent/10 text-foreground font-semibold'
+                        ? 'bg-muted text-foreground font-semibold'
                         : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                     }`}
                   >
@@ -912,11 +912,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         onClick={() => onModeChange(item.id)}
                         className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center gap-2 transition-colors ${
                           isActive
-                            ? 'bg-muted dark:bg-accent/10 text-foreground font-semibold'
+                            ? 'bg-muted text-foreground font-semibold'
                             : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                         }`}
                       >
-                        <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-accent' : 'text-muted-foreground'}`} />
+                        <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-foreground' : 'text-muted-foreground'}`} />
                         <span className="flex-1 min-w-0 truncate">{item.label}</span>
                         {isActive && (
                           <span className="ml-auto w-1.5 h-1.5 rounded-full bg-accent dark:bg-accent" />
@@ -945,7 +945,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         }}
                         className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between transition-colors ${
                           isActive
-                            ? 'bg-muted dark:bg-accent/10 text-foreground font-semibold'
+                            ? 'bg-muted text-foreground font-semibold'
                             : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                         }`}
                       >
@@ -973,7 +973,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         const newId = createPage(title);
                         if (onPageSelect) onPageSelect(newId);
                     }
-                }} className="text-xs text-accent hover:text-foreground font-semibold cursor-pointer px-1">+ Add</button>
+                }} className="text-xs text-foreground hover:text-foreground font-semibold cursor-pointer px-1">+ Add</button>
               </div>
 
               {onCreatePage && (
@@ -1045,7 +1045,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                   >
                     <span className="flex items-center gap-1.5">
                       {sectionsExpanded.pages ? <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" /> : <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />}
-                      {sectionsExpanded.pages ? <FolderOpen className="w-3.5 h-3.5 text-accent" /> : <Folder className="w-3.5 h-3.5 text-accent" />}
+                      {sectionsExpanded.pages ? <FolderOpen className="w-3.5 h-3.5 text-foreground" /> : <Folder className="w-3.5 h-3.5 text-foreground" />}
                       <span>Pages</span>
                     </span>
                     <span className="text-[9px] bg-muted px-1.5 py-0.5 rounded-full">{Object.keys(pages || {}).length}</span>
@@ -1065,7 +1065,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                 }}
                                 className={`flex-1 text-left px-2 py-1 rounded-md min-w-0 flex items-center gap-2 transition-colors ${
                                   isActive
-                                    ? 'bg-muted dark:bg-accent/10 text-foreground font-semibold'
+                                    ? 'bg-muted text-foreground font-semibold'
                                     : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                                 }`}
                               >
@@ -1126,7 +1126,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                 }}
                                 className={`w-full text-left px-2 py-1 rounded-md min-w-0 flex items-center gap-2 transition-colors ${
                                   isActive
-                                    ? 'bg-muted dark:bg-accent/10 text-foreground font-semibold'
+                                    ? 'bg-muted text-foreground font-semibold'
                                     : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                                 }`}
                               >
@@ -1583,7 +1583,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                       aria-expanded={isActive}
                       className={`w-full py-2.5 rounded-lg flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accent ${
                         isActive
-                          ? 'bg-muted dark:bg-accent/10 text-foreground font-semibold'
+                          ? 'bg-muted text-foreground font-semibold'
                           : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                       }`}
                     >
@@ -1674,7 +1674,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           >
             <div className="flex items-center gap-2.5">
               <GripVertical className="w-4 h-4 text-muted-foreground dark:text-muted-foreground opacity-50" />
-              <div className="w-7 h-7 rounded-lg bg-accent/10 dark:bg-accent/10 flex items-center justify-center">
+              <div className="w-7 h-7 rounded-lg bg-accent/10 flex items-center justify-center">
                 <Bot className="w-4 h-4 text-foreground" />
               </div>
               <span className="font-semibold text-sm text-foreground dark:text-foreground tracking-tight">
