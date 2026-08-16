@@ -202,7 +202,7 @@ export const JournalsView: React.FC = () => {
     return (
       <div className="h-full w-full flex items-center justify-center bg-muted dark:bg-card p-6 overflow-y-auto">
         <div className="max-w-2xl w-full bg-card dark:bg-card border border-border rounded-3xl p-8 shadow-2xl flex flex-col items-center text-center gap-6 animate-in fade-in zoom-in-95 duration-300">
-          <div className="w-16 h-16 rounded-2xl bg-accent-soft flex items-center justify-center text-accent shadow-sm mb-2">
+          <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center text-foreground shadow-sm mb-2">
             <CalendarIcon className="w-8 h-8" />
           </div>
 
@@ -231,7 +231,7 @@ export const JournalsView: React.FC = () => {
                   Focus on daily highlights, areas for growth, and gratitude elements.
                 </p>
               </div>
-              <span className="text-[10px] font-semibold text-accent mt-auto flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <span className="text-[10px] font-semibold text-foreground mt-auto flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 Select <ArrowRight className="w-3 h-3" />
               </span>
             </button>
@@ -289,7 +289,7 @@ export const JournalsView: React.FC = () => {
         {/* Sidebar Header */}
         <div className="h-14 px-4 border-b border-border dark:border-border flex items-center justify-between bg-muted dark:bg-card shrink-0">
           <span className="font-semibold text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-            <CalendarIcon className="w-3.5 h-3.5 text-accent" />
+            <CalendarIcon className="w-3.5 h-3.5 text-foreground" />
             Journals Calendar
           </span>
           <button

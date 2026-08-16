@@ -12,3 +12,6 @@
 ## 2026-08-14 - [Layout truncation and contrast fixes]
 **Learning:** Found remaining anti-patterns with `flex-1 min-w-0` used on children of `flex-col` wrappers, which breaks vertical layout. Also found `PageHeader.tsx` using `hover:text-destructive-foreground` on a hardcoded dark background (`bg-black/60`).
 **Action:** When truncating inside `flex-col`, only apply `truncate` and remove `flex-1 min-w-0`. When applying foreground text color on hardcoded dark backgrounds, use `text-white` or `hover:text-white` to prevent WCAG contrast failures in light mode.
+## 2026-08-16 - [UX improvement] Fix semantic active states and flex layout anti-patterns
+**Learning:** Found several anti-patterns including usage of `bg-accent-soft text-accent` for active/selected states which can have bad contrast compared to the standard `bg-muted text-foreground`. Also found cases of `flex-1 min-w-0` correctly being removed from text nodes inside `flex-col` containers (like in AppLayout and KanbanBlock) to prevent unwanted layout stretching.
+**Action:** Replace all `bg-accent-soft` combined with `text-accent` in interactive elements with `bg-muted` and `text-foreground`. Ensure `flex-1 min-w-0` is not applied on children of `flex-col` containers unless the flex direction is row.

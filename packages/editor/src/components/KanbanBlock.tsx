@@ -327,7 +327,7 @@ export const KanbanBlock: React.FC<KanbanBlockProps> = ({
 
               {/* Cards List */}
               <div
-                className="flex-1 min-w-0 overflow-y-auto space-y-2 min-h-[80px] pb-2 scrollbar-none"
+                className="flex-1 overflow-y-auto space-y-2 min-h-[80px] pb-2 scrollbar-none"
                 onDragOver={(e) => handleCardDragOver(e, col.id)}
                 onDrop={(e) => {
                   const type = e.dataTransfer.getData('type');
