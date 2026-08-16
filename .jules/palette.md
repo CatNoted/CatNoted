@@ -21,3 +21,6 @@
 ## 2024-08-16 - Missing ARIA Labels on Modal Close Buttons
 **Learning:** Found an accessibility issue pattern specific to modal components in this application (e.g., `SettingsModal.tsx`) where icon-only close buttons lacked descriptive `aria-label`s. Screen reader users would just hear "button" without understanding its purpose.
 **Action:** When implementing or refactoring modals or any component utilizing icon-only buttons, always ensure an `aria-label` (e.g., `aria-label="Close settings"`) is included on the `<button>` element.
+## $(date +%Y-%m-%d) - Fix flex truncation anti-pattern
+**Learning:** Adding `truncate` directly to an element inside a flex row container (`flex items-center`) does not work natively in Tailwind. The element will still stretch or overflow. It must be combined with `flex-1 min-w-0` to guarantee correct truncation and responsive shrinking.
+**Action:** Always combine `truncate` with `flex-1 min-w-0` on text child elements inside `flex items-center` row layouts.

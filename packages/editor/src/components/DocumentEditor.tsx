@@ -396,7 +396,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                       {/* Referencing Page Info */}
                       <div className="flex items-center gap-2">
                         <span className="text-sm shrink-0">{backlink.pageIcon}</span>
-                        <span className="text-xs font-semibold text-foreground group-hover:text-foreground transition-colors truncate">
+                        <span className="flex-1 min-w-0 text-xs font-semibold text-foreground group-hover:text-foreground transition-colors truncate">
                           {backlink.pageTitle}
                         </span>
                       </div>
