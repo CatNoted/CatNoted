@@ -132,6 +132,13 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     [visibleGroups]
   );
 
+  // ⚡ Bolt Optimization: Precompute Map of command indices to avoid O(N) indexOf lookups repeatedly inside .map() array scan loop
+  // Expected Impact: Eliminates O(N*M) time complexity bottleneck on every keystroke or selection change.
+  const flatItemsIndexMap = useMemo(
+    () => new Map(flatItems.map((item, idx) => [item.id, idx])),
+    [flatItems]
+  );
+
   const selectedCommand = flatItems[selectedIndex];
 
   useEffect(() => {
@@ -253,7 +260,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
               </div>
               {group.items.map((cmd) => {
                 const Icon = cmd.icon;
-                const idx = flatItems.indexOf(cmd);
+                const idx = flatItemsIndexMap.get(cmd.id) ?? -1;
                 const isSelected = selectedIndex === idx;
                 return (
                   <button
