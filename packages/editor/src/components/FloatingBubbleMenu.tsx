@@ -72,6 +72,12 @@ export const FloatingBubbleMenu: React.FC<FloatingBubbleMenuProps> = ({
   const handleLink = () => {
     const url = prompt('Enter URL link:', 'https://');
     if (url) {
+      const lowerUrl = url.trim().toLowerCase();
+      // 🛡️ Sentinel: Prevent XSS by blocking unsafe protocols in user-provided link URLs
+      if (lowerUrl.startsWith('javascript:') || lowerUrl.startsWith('data:') || lowerUrl.startsWith('vbscript:')) {
+        alert('Unsafe URL protocols are not allowed');
+        return;
+      }
       applyFormat('createLink', url);
     }
   };
