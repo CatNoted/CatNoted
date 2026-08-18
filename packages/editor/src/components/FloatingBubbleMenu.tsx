@@ -71,9 +71,28 @@ export const FloatingBubbleMenu: React.FC<FloatingBubbleMenuProps> = ({
 
   const handleLink = () => {
     const url = prompt('Enter URL link:', 'https://');
-    if (url) {
-      applyFormat('createLink', url);
+    if (!url) return;
+
+    let sanitizedUrl = url.trim();
+
+    // Auto-prepend https:// if no scheme provided and not a relative path
+    if (!/^[a-zA-Z0-9-]+:/i.test(sanitizedUrl) && !sanitizedUrl.startsWith('/') && !sanitizedUrl.startsWith('#')) {
+      sanitizedUrl = 'https://' + sanitizedUrl;
     }
+
+    // Validate URL to prevent XSS (javascript:, data:, vbscript:)
+    try {
+      const parsedUrl = new URL(sanitizedUrl, window.location.origin);
+      if (['javascript:', 'data:', 'vbscript:'].includes(parsedUrl.protocol.toLowerCase())) {
+        console.error('Invalid URL scheme');
+        return;
+      }
+    } catch (e) {
+      // If parsing fails completely, it's likely malformed; we still let the browser handle it
+      // if it somehow got past regexes, but it won't be a recognized protocol.
+    }
+
+    applyFormat('createLink', sanitizedUrl);
   };
 
   const colors = [
