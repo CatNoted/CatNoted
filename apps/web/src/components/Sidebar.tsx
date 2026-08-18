@@ -63,7 +63,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
     'flex items-center w-full px-3 py-2 text-[13px] leading-5 text-foreground rounded-lg transition-all select-none gap-x-2.5 hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent font-medium';
 
   const getItemIconClass = (active: boolean) =>
-    `shrink-0 ${active ? 'text-accent' : 'text-muted-foreground'}`;
+    `shrink-0 ${active ? 'text-foreground' : 'text-muted-foreground'}`;
 
   const renderSection = (
     label: string,
@@ -304,7 +304,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         {renderSection('Collections', collectionsCollapsed, setCollectionsCollapsed, LayoutGrid, (
           <>
             <button type="button" onClick={() => onModeChange('doc')} className={itemClassName}>
-              <LayoutGrid className={`${getItemIconClass(false)} w-4 h-4 text-accent`} />
+              <LayoutGrid className={`${getItemIconClass(false)} w-4 h-4 text-foreground`} />
               <span className="flex-1 min-w-0 truncate">Design Review</span>
             </button>
             <button type="button" onClick={() => onModeChange('doc')} className={itemClassName}>

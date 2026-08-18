@@ -339,7 +339,7 @@ const App: React.FC = () => {
               onClick={() => handleModeChange(modeItem.id as ActiveMode)}
               className={`px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all duration-150 ${
                 isSelected
-                  ? 'bg-background text-accent shadow-sm shadow-accent/5 font-semibold'
+                  ? 'bg-background text-foreground shadow-sm shadow-primary/5 font-semibold'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >

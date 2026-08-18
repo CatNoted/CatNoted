@@ -21,7 +21,7 @@ export const MathBlock: React.FC<MathBlockProps> = ({
   return (
     <div className="w-full my-2 p-3 bg-muted/50 border border-border rounded-xl transition-all group/math">
       <div className="flex items-center justify-between pb-2 mb-2 border-b border-border text-xs text-muted-foreground font-mono">
-        <span className="flex items-center gap-1.5 font-semibold text-accent">
+        <span className="flex items-center gap-1.5 font-semibold text-foreground">
           <Sigma className="w-3.5 h-3.5" />
           Math Formula (LaTeX)
         </span>

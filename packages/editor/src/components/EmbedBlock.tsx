@@ -81,8 +81,8 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
     return (
       <div className="w-full my-3 p-4 bg-muted border border-border rounded-2xl shadow-sm transition-all text-foreground">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-accent/10 flex items-center justify-center shrink-0">
-            <Link2 className="w-4 h-4 text-accent" />
+          <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+            <Link2 className="w-4 h-4 text-primary" />
           </div>
           <div className="flex-1 min-w-0">
             <h4 className="text-xs font-semibold">Page Embed Reference</h4>
@@ -155,7 +155,7 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
           <h3 className="text-xs font-bold text-foreground flex-1 min-w-0 truncate">
             {targetTitle}
           </h3>
-          <span className="text-[9px] bg-accent/10 text-accent px-2 py-0.5 rounded-full font-bold uppercase tracking-wider scale-90 shrink-0">
+          <span className="text-[9px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold uppercase tracking-wider scale-90 shrink-0">
             Synced Block
           </span>
         </div>
@@ -239,7 +239,7 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
                 );
               case 'code':
                 return (
-                  <div key={block.id} className="p-2 bg-muted border border-border rounded-lg font-mono text-[10px] text-accent flex-1 min-w-0 truncate">
+                  <div key={block.id} className="p-2 bg-muted border border-border rounded-lg font-mono text-[10px] text-muted-foreground flex-1 min-w-0 truncate">
                     {block.content || <span className="opacity-30 italic">Code snippet</span>}
                   </div>
                 );

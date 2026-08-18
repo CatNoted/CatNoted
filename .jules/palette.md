@@ -24,3 +24,6 @@
 ## $(date +%Y-%m-%d) - Fix flex truncation anti-pattern
 **Learning:** Adding `truncate` directly to an element inside a flex row container (`flex items-center`) does not work natively in Tailwind. The element will still stretch or overflow. It must be combined with `flex-1 min-w-0` to guarantee correct truncation and responsive shrinking.
 **Action:** Always combine `truncate` with `flex-1 min-w-0` on text child elements inside `flex items-center` row layouts.
+## 2026-08-17 - Standardize semantic active and hover UI affordances (final sweep)
+**Learning:** Overuse of the `accent` design token (e.g., `text-accent`, `bg-accent`) for active states, selected states, and inactive functional icons caused contrast issues and violated the semantic design system rules (where `accent` is reserved for subtle hover backgrounds mapping to light gray in light mode).
+**Action:** When updating active or selected UI states, always use standardized semantic Tailwind tokens such as `bg-primary text-primary-foreground` for primary actions, `bg-muted text-foreground` for selected list items/tabs, and `text-success` for positive/active indicators. For inactive functional icons, default to `text-muted-foreground` and change to `text-foreground` on hover or active states.

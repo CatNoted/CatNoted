@@ -19,12 +19,12 @@ const WidgetBlockPlaceholderBase: React.FC<WidgetBlockPlaceholderProps> = ({
   return (
     <div className="w-full my-4 border border-border rounded-xl bg-card p-4 shadow-sm transition-all hover:shadow-md">
       <div className="flex items-center justify-between border-b border-border pb-2 mb-3">
-        <div className="flex items-center gap-2 text-accent">
+        <div className="flex items-center gap-2 text-foreground">
           <Cpu className="w-4 h-4" />
           <span className="text-xs font-mono font-semibold">AI Widget Container</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] bg-accent/20 text-accent px-2 py-0.5 rounded-full font-mono">
+          <span className="text-[10px] bg-muted text-muted-foreground px-2 py-0.5 rounded-full font-mono">
             ID: {widgetId}
           </span>
           <button 
