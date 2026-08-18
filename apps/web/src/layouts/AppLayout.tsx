@@ -672,7 +672,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               <button
                 type="button"
                 onClick={() => onResolveConflict?.('local')}
-                className="w-full py-2.5 px-4 bg-primary hover:bg-primary/90 text-primary-foreground rounded-2xl text-xs font-semibold transition-all hover:shadow-lg hover:shadow-accent/10 active:scale-98"
+                className="w-full py-2.5 px-4 bg-primary hover:bg-primary/90 text-primary-foreground rounded-2xl text-xs font-semibold transition-all hover:shadow-lg  active:scale-98"
                 data-testid="resolve-local-btn"
               >
                 Keep Local Changes (Overwrite Remote)
@@ -1613,7 +1613,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       {!isAgentOpen && (
         <button
           onClick={() => setIsAgentOpen(true)}
-          className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-2xl bg-primary hover:bg-primary/90 dark:bg-primary dark:hover:bg-primary/90 text-primary-foreground shadow-lg shadow-accent/30 hover:shadow-xl hover:shadow-accent/40 flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 group"
+          className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-2xl bg-primary hover:bg-primary/90 dark:bg-primary dark:hover:bg-primary/90 text-primary-foreground shadow-lg shadow-black/10 hover:shadow-xl hover:shadow-black/20 flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 group"
           title="Open Space Agent"
           aria-label="Open Space Agent"
           style={{
@@ -1856,7 +1856,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                       <button
                         type="submit"
                         aria-label="Send message"
-                        className="absolute right-1.5 p-1.5 bg-primary hover:bg-primary/90 dark:hover:bg-primary/90 text-primary-foreground rounded-lg transition-all duration-200 hover:scale-110 hover:shadow-md hover:shadow-accent/30 active:scale-95"
+                        className="absolute right-1.5 p-1.5 bg-primary hover:bg-primary/90 dark:hover:bg-primary/90 text-primary-foreground rounded-lg transition-all duration-200 hover:scale-110 hover:shadow-md hover:shadow-black/10 active:scale-95"
                       >
                         <Send className="w-3 h-3" />
                       </button>
@@ -1899,7 +1899,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         <Sparkles className="w-3 h-3 text-foreground" /> Preset Library
                       </h4>
                       <div className="grid grid-cols-1 gap-2">
-                        <div className="p-3 rounded-xl bg-muted dark:bg-card/50 border border-border dark:border-border/60 flex items-center justify-between text-xs transition-all hover:border-accent/30">
+                        <div className="p-3 rounded-xl bg-muted dark:bg-card/50 border border-border dark:border-border/60 flex items-center justify-between text-xs transition-all hover:border-border/50">
                           <div className="flex flex-col">
                             <span className="font-semibold text-foreground dark:text-foreground">Analog Clock</span>
                             <span className="text-[10px] text-muted-foreground">Live time widget with smooth animation</span>
@@ -1918,7 +1918,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                           </button>
                         </div>
 
-                        <div className="p-3 rounded-xl bg-muted dark:bg-card/50 border border-border dark:border-border/60 flex items-center justify-between text-xs transition-all hover:border-accent/30">
+                        <div className="p-3 rounded-xl bg-muted dark:bg-card/50 border border-border dark:border-border/60 flex items-center justify-between text-xs transition-all hover:border-border/50">
                           <div className="flex flex-col">
                             <span className="font-semibold text-foreground dark:text-foreground">Mini Calculator</span>
                             <span className="text-[10px] text-muted-foreground">Grid based mathematical calculator</span>
@@ -1937,7 +1937,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                           </button>
                         </div>
 
-                        <div className="p-3 rounded-xl bg-muted dark:bg-card/50 border border-border dark:border-border/60 flex items-center justify-between text-xs transition-all hover:border-accent/30">
+                        <div className="p-3 rounded-xl bg-muted dark:bg-card/50 border border-border dark:border-border/60 flex items-center justify-between text-xs transition-all hover:border-border/50">
                           <div className="flex flex-col">
                             <span className="font-semibold text-foreground dark:text-foreground">Quick Tasks Todo</span>
                             <span className="text-[10px] text-muted-foreground">Interactive todo list with state</span>

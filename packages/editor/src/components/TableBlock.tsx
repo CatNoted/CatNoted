@@ -64,14 +64,14 @@ export const TableBlock: React.FC<TableBlockProps> = ({
             <button
               type="button"
               onClick={handleAddRow}
-              className="px-2 py-0.5 rounded bg-card border border-border hover:border-accent text-muted-foreground hover:text-foreground text-[11px] font-medium flex items-center gap-1 transition-colors"
+              className="px-2 py-0.5 rounded bg-card border border-border  text-muted-foreground hover:text-foreground text-[11px] font-medium flex items-center gap-1 transition-colors"
             >
               <Plus className="w-3 h-3" /> Row
             </button>
             <button
               type="button"
               onClick={handleAddColumn}
-              className="px-2 py-0.5 rounded bg-card border border-border hover:border-accent text-muted-foreground hover:text-foreground text-[11px] font-medium flex items-center gap-1 transition-colors"
+              className="px-2 py-0.5 rounded bg-card border border-border  text-muted-foreground hover:text-foreground text-[11px] font-medium flex items-center gap-1 transition-colors"
             >
               <Plus className="w-3 h-3" /> Column
             </button>

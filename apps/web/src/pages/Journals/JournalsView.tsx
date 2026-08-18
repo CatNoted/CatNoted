@@ -220,7 +220,7 @@ export const JournalsView: React.FC = () => {
             {/* Daily Reflection */}
             <button
               onClick={() => handleCompleteOnboarding('reflection')}
-              className="group p-5 rounded-2xl border border-border dark:border-border bg-muted dark:bg-muted text-left hover:border-accent hover:bg-card dark:hover:bg-card shadow-lg hover:shadow-accent/5 transition-all flex flex-col gap-3"
+              className="group p-5 rounded-2xl border border-border dark:border-border bg-muted dark:bg-muted text-left hover:border-border hover:bg-card dark:hover:bg-card shadow-lg hover:shadow-foreground/5 transition-all flex flex-col gap-3"
             >
               <div className="w-9 h-9 rounded-xl bg-muted text-foreground flex items-center justify-center">
                 <Sparkles className="w-4.5 h-4.5" />
@@ -239,7 +239,7 @@ export const JournalsView: React.FC = () => {
             {/* Gratitude Journal */}
             <button
               onClick={() => handleCompleteOnboarding('gratitude')}
-              className="group p-5 rounded-2xl border border-border dark:border-border bg-muted dark:bg-muted text-left hover:border-accent hover:bg-card dark:hover:bg-card shadow-lg hover:shadow-accent/5 transition-all flex flex-col gap-3"
+              className="group p-5 rounded-2xl border border-border dark:border-border bg-muted dark:bg-muted text-left hover:border-border hover:bg-card dark:hover:bg-card shadow-lg hover:shadow-foreground/5 transition-all flex flex-col gap-3"
             >
               <div className="w-9 h-9 rounded-xl bg-success-soft text-success flex items-center justify-center">
                 <BookOpen className="w-4.5 h-4.5" />
@@ -258,7 +258,7 @@ export const JournalsView: React.FC = () => {
             {/* Empty Note */}
             <button
               onClick={() => handleCompleteOnboarding('empty')}
-              className="group p-5 rounded-2xl border border-border dark:border-border bg-muted dark:bg-muted text-left hover:border-accent hover:bg-card dark:hover:bg-card shadow-lg hover:shadow-accent/5 transition-all flex flex-col gap-3"
+              className="group p-5 rounded-2xl border border-border dark:border-border bg-muted dark:bg-muted text-left hover:border-border hover:bg-card dark:hover:bg-card shadow-lg hover:shadow-foreground/5 transition-all flex flex-col gap-3"
             >
               <div className="w-9 h-9 rounded-xl bg-muted text-foreground flex items-center justify-center">
                 <CheckCircle className="w-4.5 h-4.5" />
