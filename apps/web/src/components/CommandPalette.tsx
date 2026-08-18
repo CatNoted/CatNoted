@@ -132,6 +132,14 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     [visibleGroups]
   );
 
+  const flatItemIndices = useMemo(() => {
+    const map = new Map<string, number>();
+    flatItems.forEach((item, index) => {
+      map.set(item.id, index);
+    });
+    return map;
+  }, [flatItems]);
+
   const selectedCommand = flatItems[selectedIndex];
 
   useEffect(() => {
@@ -253,7 +261,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
               </div>
               {group.items.map((cmd) => {
                 const Icon = cmd.icon;
-                const idx = flatItems.indexOf(cmd);
+                const idx = flatItemIndices.get(cmd.id) ?? -1;
                 const isSelected = selectedIndex === idx;
                 return (
                   <button
