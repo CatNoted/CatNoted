@@ -54,6 +54,7 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
       // Deduplicate blocks by id to avoid duplicate rendering from Yjs observer noise
       const seen = new Set<string>();
       const deduped = pageBlocks.filter(b => {
+        if (!b || !b.id) return false;
         if (seen.has(b.id)) return false;
         seen.add(b.id);
         return true;
@@ -273,6 +274,7 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
       // Deduplicate blocks by id to avoid duplicate rendering from Yjs observer noise
       const seen = new Set<string>();
       const deduped = pageBlocks.filter(b => {
+        if (!b || !b.id) return false;
         if (seen.has(b.id)) return false;
         seen.add(b.id);
         return true;

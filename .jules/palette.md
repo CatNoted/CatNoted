@@ -27,3 +27,7 @@
 ## 2026-08-17 - Standardize semantic active and hover UI affordances (final sweep)
 **Learning:** Overuse of the `accent` design token (e.g., `text-accent`, `bg-accent`) for active states, selected states, and inactive functional icons caused contrast issues and violated the semantic design system rules (where `accent` is reserved for subtle hover backgrounds mapping to light gray in light mode).
 **Action:** When updating active or selected UI states, always use standardized semantic Tailwind tokens such as `bg-primary text-primary-foreground` for primary actions, `bg-muted text-foreground` for selected list items/tabs, and `text-success` for positive/active indicators. For inactive functional icons, default to `text-muted-foreground` and change to `text-foreground` on hover or active states.
+
+## 2026-08-18 - Fix flex truncation bugs in flex-row layouts
+**Learning:** Applying `.truncate` on a child element within a `flex flex-row` layout often requires `.flex-col` wrapper on the text components to avoid stretching and breaking container boundaries.
+**Action:** When mapping lists of rich elements like bookmarks and slash commands, wrap the text details in `flex-col flex-1 min-w-0` to enforce strict layout boundaries.

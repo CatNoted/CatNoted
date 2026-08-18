@@ -50,13 +50,17 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   useEffect(() => {
     const update = () => {
       const allArray = yblocks.toArray();
+      const dedupedAll: any[] = [];
       const seen = new Set<string>();
-      const dedupedAll = allArray.filter(b => {
-        if (!b || !b.id) return false;
-        if (seen.has(b.id)) return false;
-        seen.add(b.id);
-        return true;
-      });
+
+      for (let i = 0; i < allArray.length; i++) {
+        const b = allArray[i];
+        if (b && b.id && !seen.has(b.id)) {
+          seen.add(b.id);
+          dedupedAll.push(b);
+        }
+      }
+
       setAllBlocks(dedupedAll);
       setAllPages(ypages.toJSON() ? Object.values(ypages.toJSON()) : []);
     };
@@ -76,7 +80,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     updateBlockContent, 
     updateBlockType, 
     updateBlockProperties,
-    duplicateBlock,
     deleteBlock,
     moveBlock,
     updatePageMeta
@@ -351,7 +354,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             setFocusBlockId={setFocusBlockId}
             titleOnFocusRef={titleOnFocusRef}
             updateBlockProperties={updateBlockProperties}
-            duplicateBlock={duplicateBlock}
             handleEnterBlock={handleEnterBlock}
           />
         );

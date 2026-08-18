@@ -212,8 +212,8 @@ export const SlashCommandMenu: React.FC<SlashCommandMenuProps> = ({
                       >
                         {cmd.icon}
                       </span>
-                      <span className="min-w-0 flex-1 leading-tight">
-                        <p className={`text-[12.5px] font-medium leading-tight text-foreground`}>
+                      <span className="min-w-0 flex-1 leading-tight flex flex-col">
+                        <p className={`text-[12.5px] font-medium leading-tight text-foreground truncate`}>
                           {cmd.label}
                         </p>
                         <p className="text-[10.5px] leading-snug text-muted-foreground truncate mt-0.5 font-normal">
