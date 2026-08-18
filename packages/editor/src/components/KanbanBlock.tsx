@@ -358,7 +358,7 @@ export const KanbanBlock: React.FC<KanbanBlockProps> = ({
                           ? 'opacity-35 border-border bg-transparent shadow-none'
                           : isCardOver
                           ? 'border-accent ring-2 ring-accent/20 bg-accent/10 scale-[0.98]'
-                          : 'border-border/60 bg-card hover:border-accent/50'
+                          : 'border-border/60 bg-card hover:border-border/50'
                       }`}
                     >
                       <div className="flex items-start gap-1.5">
