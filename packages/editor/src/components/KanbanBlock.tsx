@@ -262,7 +262,7 @@ export const KanbanBlock: React.FC<KanbanBlockProps> = ({
         <button
           type="button"
           onClick={handleAddColumn}
-          className="ml-auto flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-accent hover:text-foreground hover:bg-muted rounded-md transition-colors border border-dashed border-accent/30"
+          className="ml-auto flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors border border-dashed border-border"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>Add Column</span>

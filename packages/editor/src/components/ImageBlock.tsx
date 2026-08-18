@@ -36,7 +36,7 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
     <div className="w-full my-3 select-none group/img">
       {isEditing ? (
         <div className="p-3 bg-muted border border-border rounded-xl flex items-center gap-2">
-          <ImageIcon className="w-4 h-4 text-accent shrink-0" />
+          <ImageIcon className="w-4 h-4 text-muted-foreground shrink-0" />
           <input
             type="text"
             value={urlInput}

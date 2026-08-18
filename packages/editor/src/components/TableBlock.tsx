@@ -56,7 +56,7 @@ export const TableBlock: React.FC<TableBlockProps> = ({
     <div>
       <div className="w-full my-3 overflow-x-auto select-none group/table">
         <div className="flex items-center justify-between pb-1.5 mb-1.5 text-xs text-muted-foreground font-mono">
-          <span className="flex items-center gap-1.5 font-semibold text-accent">
+          <span className="flex items-center gap-1.5 font-semibold text-foreground">
             <TableIcon className="w-3.5 h-3.5" />
             Table ({currentRows.length}x{currentRows[0]?.length || 0})
           </span>

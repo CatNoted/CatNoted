@@ -69,7 +69,7 @@ export const BookmarkBlock: React.FC<BookmarkBlockProps> = ({
     <div className="w-full my-2 select-none">
       {isEditing ? (
         <div className="p-3 bg-muted border border-border rounded-xl flex items-center gap-2">
-          <Globe className="w-4 h-4 text-accent shrink-0" />
+          <Globe className="w-4 h-4 text-muted-foreground shrink-0" />
           <input
             type="text"
             value={urlInput}
@@ -96,7 +96,7 @@ export const BookmarkBlock: React.FC<BookmarkBlockProps> = ({
               {bookmarkFavicon ? (
                 <img src={bookmarkFavicon} alt="favicon" className="w-full h-full object-contain" />
               ) : (
-                <BookmarkIcon className="w-5 h-5 text-accent" />
+                <BookmarkIcon className="w-5 h-5 text-muted-foreground" />
               )}
             </div>
 
@@ -107,7 +107,7 @@ export const BookmarkBlock: React.FC<BookmarkBlockProps> = ({
               <p className="text-[11px] text-muted-foreground truncate mt-0.5">
                 {bookmarkDescription || bookmarkUrl}
               </p>
-              <span className="text-[10px] font-mono text-accent truncate block mt-1">
+              <span className="text-[10px] font-mono text-muted-foreground truncate block mt-1">
                 {bookmarkUrl}
               </span>
             </div>

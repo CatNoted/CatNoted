@@ -278,7 +278,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                         type="checkbox"
                         checked={rememberChoice}
                         onChange={(e) => setRememberChoice(e.target.checked)}
-                        className="h-4 w-4 rounded border-border text-accent focus-visible:ring-accent focus-visible:ring-offset-0 bg-transparent"
+                        className="h-4 w-4 rounded border-border text-primary focus-visible:ring-primary focus-visible:ring-offset-0 bg-transparent"
                       />
                       <span className="text-xs text-foreground">Use current passphrase for session unlock</span>
                     </label>
@@ -352,8 +352,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       </div>
                       <div className="flex justify-between items-center text-xs border-t border-muted dark:border-border/40 pt-2.5">
                         <span className="text-muted-foreground">Cloud Sync Provider</span>
-                        <span className="font-semibold text-accent flex items-center gap-1.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                        <span className="font-semibold text-success flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-success" />
                           Supabase E2EE Broadcast Active
                         </span>
                       </div>

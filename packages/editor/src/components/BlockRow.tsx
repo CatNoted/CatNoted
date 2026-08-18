@@ -208,7 +208,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                     <button
                       role="menuitem"
                       onClick={() => handleAddWidget(block.id)}
-                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-muted text-accent focus-visible:outline-none focus-visible:bg-muted"
+                      className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-muted text-foreground focus-visible:outline-none focus-visible:bg-muted"
                     >
                       <Cpu className="w-3.5 h-3.5" /> Insert AI Widget
                     </button>
@@ -424,13 +424,13 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                       <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center gap-3">
                         <button
                           onClick={() => handleEditClick(block.id, block.properties?.srcDoc || '')}
-                          className="text-accent hover:opacity-80 font-sans flex items-center gap-1 cursor-pointer font-medium"
+                          className="text-muted-foreground hover:text-foreground font-sans flex items-center gap-1 cursor-pointer font-medium"
                         >
                           ✎ Edit
                         </button>
                         <button
                           onClick={() => handleRerun(block.id)}
-                          className="text-accent hover:opacity-80 font-sans flex items-center gap-1 cursor-pointer font-medium"
+                          className="text-muted-foreground hover:text-foreground font-sans flex items-center gap-1 cursor-pointer font-medium"
                         >
                           ↻ Rerun
                         </button>
@@ -464,7 +464,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                               updateBlockType(block.id, 'widget', { ...block.properties, srcDoc: newCode });
                               handleRerun(block.id);
                             }}
-                            className="px-2.5 py-1 text-[10px] font-sans font-semibold bg-accent text-accent-foreground hover:opacity-90 rounded-md transition-colors cursor-pointer"
+                            className="px-2.5 py-1 text-[10px] font-sans font-semibold bg-primary text-primary-foreground hover:bg-primary/90 rounded-md transition-colors cursor-pointer"
                           >
                             Run Code
                           </button>
