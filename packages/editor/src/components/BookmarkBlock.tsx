@@ -100,14 +100,14 @@ export const BookmarkBlock: React.FC<BookmarkBlockProps> = ({
               )}
             </div>
 
-            <div className="min-w-0 flex-1">
+            <div className="min-w-0 flex-1 flex flex-col">
               <h4 className="text-xs font-semibold text-foreground truncate">
                 {bookmarkTitle || bookmarkUrl}
               </h4>
               <p className="text-[11px] text-muted-foreground truncate mt-0.5">
                 {bookmarkDescription || bookmarkUrl}
               </p>
-              <span className="text-[10px] font-mono text-muted-foreground truncate block mt-1">
+              <span className="text-[10px] font-mono text-muted-foreground truncate mt-1">
                 {bookmarkUrl}
               </span>
             </div>

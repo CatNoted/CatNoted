@@ -41,7 +41,6 @@ interface BlockRowProps {
   setFocusBlockId: (id: string | null) => void;
   titleOnFocusRef: React.MutableRefObject<string>;
   updateBlockProperties: (id: string, props: any) => void;
-  duplicateBlock: (id: string) => void;
   handleEnterBlock: (id: string, index: number) => void;
 }
 
@@ -67,7 +66,6 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
   setFocusBlockId,
   titleOnFocusRef,
   updateBlockProperties,
-  duplicateBlock,
   handleEnterBlock,
 }) => {
   const [editingWidgetId, setEditingWidgetId] = useState<string | null>(null);
