@@ -293,7 +293,7 @@ export const KanbanBlock: React.FC<KanbanBlockProps> = ({
                 draggedColId === col.id
                   ? 'opacity-40 border-border bg-transparent'
                   : isOverCol
-                  ? 'border-accent bg-accent/10'
+                  ? 'border-primary bg-muted'
                   : 'border-border bg-muted/40'
               }`}
             >
@@ -357,7 +357,7 @@ export const KanbanBlock: React.FC<KanbanBlockProps> = ({
                         isCardDragged
                           ? 'opacity-35 border-border bg-transparent shadow-none'
                           : isCardOver
-                          ? 'border-accent ring-2 ring-accent/20 bg-accent/10 scale-[0.98]'
+                          ? 'border-primary ring-2 ring-primary/20 bg-muted scale-[0.98]'
                           : 'border-border/60 bg-card hover:border-border/50'
                       }`}
                     >
