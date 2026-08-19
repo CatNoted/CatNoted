@@ -226,13 +226,13 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
               case 'quote':
                 return (
                   <div key={block.id} className="flex gap-2 pl-1 py-0.5">
-                    <div className="w-0.5 bg-accent rounded-full shrink-0" />
+                    <div className="w-0.5 bg-primary rounded-full shrink-0" />
                     <span className="italic text-muted-foreground">{block.content || <span className="opacity-30 italic">Empty Quote</span>}</span>
                   </div>
                 );
               case 'callout':
                 return (
-                  <div key={block.id} className="flex gap-2 p-2 bg-accent/10 border border-accent/20 rounded-lg">
+                  <div key={block.id} className="flex gap-2 p-2 bg-muted border border-border rounded-lg">
                     <span>{block.properties?.calloutIcon || '💡'}</span>
                     <span>{block.content || <span className="opacity-30 italic">Callout</span>}</span>
                   </div>

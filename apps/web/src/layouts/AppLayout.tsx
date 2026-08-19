@@ -867,7 +867,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                           }`}
                         >
                           <span>{ws}</span>
-                          {activeWorkspace === ws && <span className="w-1.5 h-1.5 rounded-full bg-accent" />}
+                          {activeWorkspace === ws && <span className="w-1.5 h-1.5 rounded-full bg-primary" />}
                         </button>
                       ))}
                     </div>
@@ -919,7 +919,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-foreground' : 'text-muted-foreground'}`} />
                         <span className="flex-1 min-w-0 truncate">{item.label}</span>
                         {isActive && (
-                          <span className="ml-auto w-1.5 h-1.5 rounded-full bg-accent dark:bg-accent" />
+                          <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary dark:bg-primary" />
                         )}
                       </button>
                     </li>
@@ -1311,7 +1311,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         type="button"
                         onClick={() => updatePageMeta({ fullWidth: !pageMeta?.fullWidth })}
                         className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                          pageMeta?.fullWidth ? 'bg-accent' : 'bg-muted dark:bg-muted'
+                          pageMeta?.fullWidth ? 'bg-primary' : 'bg-muted dark:bg-muted'
                         }`}
                       >
                         <span
@@ -1412,7 +1412,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                       onClick={() => setActiveAgentTab('chat')}
                       className={`flex-1 py-1.5 text-center font-medium transition-colors cursor-pointer ${
                         activeAgentTab === 'chat'
-                          ? 'text-foreground border-b-2 border-accent font-semibold bg-accent/5'
+                            ? 'text-foreground border-b-2 border-primary font-semibold bg-muted'
                           : 'text-muted-foreground hover:text-foreground'
                       }`}
                     >
@@ -1423,7 +1423,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                       onClick={() => setActiveAgentTab('widgets')}
                       className={`flex-1 py-1.5 text-center font-medium transition-colors cursor-pointer ${
                         activeAgentTab === 'widgets'
-                          ? 'text-foreground border-b-2 border-accent font-semibold bg-accent/5'
+                            ? 'text-foreground border-b-2 border-primary font-semibold bg-muted'
                           : 'text-muted-foreground hover:text-foreground'
                       }`}
                     >
@@ -1528,7 +1528,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
                     {/* Item 2 */}
                     <div className="relative group">
-                      <span className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-accent ring-4 ring-background" />
+                      <span className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-primary ring-4 ring-background" />
                       <button
                         type="button"
                         onClick={() => alert("Restored page backup to: 10 minutes ago")}
@@ -1674,7 +1674,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           >
             <div className="flex items-center gap-2.5">
               <GripVertical className="w-4 h-4 text-muted-foreground dark:text-muted-foreground opacity-50" />
-              <div className="w-7 h-7 rounded-lg bg-accent/10 flex items-center justify-center">
+              <div className="w-7 h-7 rounded-lg bg-muted flex items-center justify-center">
                 <Bot className="w-4 h-4 text-foreground" />
               </div>
               <span className="font-semibold text-sm text-foreground dark:text-foreground tracking-tight">
@@ -1715,7 +1715,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                   onClick={() => setActiveAgentTab('chat')}
                   className={`flex-1 py-2 text-center font-medium transition-colors cursor-pointer ${
                     activeAgentTab === 'chat'
-                      ? 'text-foreground border-b-2 border-accent font-semibold bg-accent/5'
+                      ? 'text-foreground border-b-2 border-primary font-semibold bg-muted'
                       : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
@@ -1726,7 +1726,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                   onClick={() => setActiveAgentTab('widgets')}
                   className={`flex-1 py-2 text-center font-medium transition-colors cursor-pointer ${
                     activeAgentTab === 'widgets'
-                      ? 'text-foreground border-b-2 border-accent font-semibold bg-accent/5'
+                      ? 'text-foreground border-b-2 border-primary font-semibold bg-muted'
                       : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >

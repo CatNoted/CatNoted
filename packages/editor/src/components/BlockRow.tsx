@@ -102,7 +102,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
             key={block.id}
             className={`group flex items-start gap-0 px-4 py-0.5 rounded-lg transition-all hover:bg-muted/50 hover:shadow-sm hover:ring-1 hover:ring-border ${
               dragOverBlockId === block.id && draggedBlockId !== block.id
-                ? 'border-t-2 border-t-accent bg-accent/5'
+                ? 'border-t-2 border-t-primary bg-muted/50'
                 : ''
             } ${draggedBlockId === block.id ? 'opacity-50' : ''}`}
             onDragOver={(e) => handleDragOver(e, block.id)}
@@ -377,7 +377,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
               {/* --- Quote --- */}
               {block.type === 'quote' && (
                 <div className="flex gap-3">
-                  <div className="w-0.5 bg-accent rounded-full flex-shrink-0 self-stretch" />
+                  <div className="w-0.5 bg-primary rounded-full flex-shrink-0 self-stretch" />
                   <TextBlock
                     id={block.id}
                     content={block.content}

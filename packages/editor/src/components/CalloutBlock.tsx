@@ -18,8 +18,8 @@ const CALLOUT_ICONS = ['💡', '⚠️', 'ℹ️', '📌', '🔥', '🚀', '⚡'
 
 const CALLOUT_BG_THEMES: Record<string, { bg: string; border: string; text: string }> = {
   accent: {
-    bg: 'bg-accent/10',
-    border: 'border-accent/30',
+    bg: 'bg-muted',
+    border: 'border-border',
     text: 'text-foreground',
   },
   emerald: {
@@ -194,7 +194,7 @@ export const CalloutBlock: React.FC<CalloutBlockProps> = ({
                 }}
                 className={`w-5 h-5 rounded-full capitalize hover:scale-110 transition-transform ${
                   themeKey === 'accent'
-                    ? 'bg-accent'
+                      ? 'bg-primary'
                     : themeKey === 'emerald'
                     ? 'bg-success'
                     : themeKey === 'amber'
@@ -202,7 +202,7 @@ export const CalloutBlock: React.FC<CalloutBlockProps> = ({
                     : themeKey === 'rose'
                     ? 'bg-danger'
                     : themeKey === 'sky'
-                    ? 'bg-accent'
+                      ? 'bg-primary'
                     : 'bg-muted border border-border'
                 }`}
                 title={themeKey}

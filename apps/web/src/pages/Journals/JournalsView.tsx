@@ -369,7 +369,7 @@ export const JournalsView: React.FC = () => {
                     )}
                     {/* Existing Note Indicator */}
                     {hasJournal && !isConflict && (
-                      <span className={`w-1 h-1 rounded-full ${isSelected ? 'bg-white' : 'bg-accent'}`} />
+                      <span className={`w-1 h-1 rounded-full ${isSelected ? 'bg-white' : 'bg-primary'}`} />
                     )}
                   </div>
                 </button>
@@ -403,7 +403,7 @@ export const JournalsView: React.FC = () => {
                   }`}
                 >
                   <span>{tmpl.label}</span>
-                  {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-accent" />}
+                  {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-primary" />}
                 </button>
               );
             })}

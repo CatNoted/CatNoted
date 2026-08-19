@@ -38,7 +38,7 @@ const WidgetBlockPlaceholderBase: React.FC<WidgetBlockPlaceholderProps> = ({
       </div>
       
       <div className="py-6 flex flex-col items-center justify-center text-center">
-        <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center mb-2">
+        <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center mb-2">
           <span className="text-sm">🤖</span>
         </div>
         <p className="text-xs font-medium text-foreground">Widget Sandbox Standby</p>
