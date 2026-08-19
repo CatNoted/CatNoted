@@ -194,8 +194,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                         e.stopPropagation();
                         alert('More options');
                       }}
-                      className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                      className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                       aria-label="More options"
+                      aria-haspopup="menu"
+                      aria-expanded={false}
                     >
                       <MoreHorizontal className="w-3.5 h-3.5" />
                     </button>
@@ -249,8 +251,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                         e.stopPropagation();
                         alert('More options');
                       }}
-                      className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                      className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                       aria-label="More options"
+                      aria-haspopup="menu"
+                      aria-expanded={false}
                     >
                       <MoreHorizontal className="w-3.5 h-3.5" />
                     </button>

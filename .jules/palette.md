@@ -31,3 +31,6 @@
 ## 2026-08-18 - Fix flex truncation bugs in flex-row layouts
 **Learning:** Applying `.truncate` on a child element within a `flex flex-row` layout often requires `.flex-col` wrapper on the text components to avoid stretching and breaking container boundaries.
 **Action:** When mapping lists of rich elements like bookmarks and slash commands, wrap the text details in `flex-col flex-1 min-w-0` to enforce strict layout boundaries.
+## $(date +%Y-%m-%d) - [Dropdown Menu Accessibility Patterns]
+**Learning:** Icon-only buttons used as menu triggers often lack screen-reader context if `aria-label`, `aria-haspopup`, and `aria-expanded` are missing. Furthermore, the dropdown containers themselves must employ `role="menu"` and their child interactive items `role="menuitem"` to enable proper semantic navigation. The use of `focus-visible:` utilities over global `focus:` ensures focus rings are strictly visible during keyboard navigation (preventing unsightly outlines on mouse clicks).
+**Action:** When implementing custom dropdowns (like block action menus or floating toolbars), ensure the trigger button explicitly states its purpose (`aria-label`) and state (`aria-expanded`). The container and its actionable items must always carry `role="menu"` and `role="menuitem"` respectively, and employ `focus-visible` styling for robust keyboard accessibility.
