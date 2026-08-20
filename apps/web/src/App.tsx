@@ -44,10 +44,18 @@ const App: React.FC = () => {
     return parseDocumentGraph(rootBlocks, pages, deletedSet);
   }, [rootBlocks, pages, deletedPages]);
 
-  const activeHeading = activeBlocks.find(b => b.type === 'heading' && b.properties?.level === 1);
+  // ⚡ Bolt Optimization: Memoize activeHeading to prevent O(N) array search on every render
+  const activeHeading = React.useMemo(
+    () => activeBlocks.find(b => b.type === 'heading' && b.properties?.level === 1),
+    [activeBlocks]
+  );
   const docTitle = activeHeading?.content || 'Untitled Document';
 
-  const activePageNode = graphData.nodes.find((n: any) => n.id === activePage);
+  // ⚡ Bolt Optimization: Memoize activePageNode to prevent O(N) array search on every render
+  const activePageNode = React.useMemo(
+    () => graphData.nodes.find((n: any) => n.id === activePage),
+    [graphData.nodes, activePage]
+  );
   const pageTitle = activePage === 'root-doc-node'
     ? docTitle
     : (activePageNode
