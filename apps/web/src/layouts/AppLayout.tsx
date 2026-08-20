@@ -1021,7 +1021,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                 }}
                                 className={`w-full text-left px-2 py-1 rounded-md min-w-0 flex items-center gap-2 transition-colors ${
                                   isActive
-                                    ? 'bg-warning-soft dark:bg-warning-soft/30 text-warning-foreground font-medium'
+                                    ? 'bg-muted text-foreground font-semibold'
                                     : 'text-foreground hover:bg-muted dark:hover:bg-muted/30 hover:text-foreground dark:hover:text-foreground'
                                 }`}
                               >
@@ -1392,7 +1392,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                 el.scrollIntoView({ behavior: 'smooth', block: 'center' });
                               }
                             }}
-                            className={`w-full text-left py-1.5 px-2 rounded-lg hover:bg-muted dark:hover:bg-muted/40 text-foreground hover:text-foreground dark:hover:text-foreground transition-colors flex-1 min-w-0 truncate ${indentClass}`}
+                            className={`w-full text-left py-1.5 px-2 rounded-lg hover:bg-muted dark:hover:bg-muted/40 text-foreground hover:text-foreground dark:hover:text-foreground transition-colors truncate ${indentClass}`}
                           >
                             {block.content || 'Untitled Heading'}
                           </button>
