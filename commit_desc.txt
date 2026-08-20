@@ -1,6 +1,0 @@
-🎨 Palette: [UX improvement] Fix contrast issues on primary buttons
-
-💡 What: Replaced usages of the anti-pattern `bg-accent text-white` with the semantic standard `bg-primary text-primary-foreground` for primary actionable elements across all application components (e.g., Modals, Sidebar, AppLayout, and Editor blocks like ImageBlock, EmbedBlock, and FloatingBubbleMenu).
-🎯 Why: In the semantic design system, the `accent` token is reserved for subtle background hover states (rendering as a light gray in light mode). When incorrectly paired with `text-white` on primary solid buttons, it causes severe contrast failures and poor readability. The `primary` scale ensures optimal readability and auto-inversion.
-📊 Before/After: Before, buttons like the chat "Send" button or settings trigger used `bg-accent text-white`, appearing washed out in light mode. After, they use `bg-primary text-primary-foreground`, providing high contrast and consistent theming.
-♿ Accessibility: Improves WCAG text contrast ratios for primary interactive elements, significantly aiding readability for users with low vision.
