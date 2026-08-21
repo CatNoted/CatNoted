@@ -142,7 +142,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="name@domain.com"
-                    className="w-full px-2.5 py-1.5 rounded-lg border border-border bg-card dark:bg-card text-xs text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-accent dark:focus-visible:ring-accent focus:border-transparent transition-all"
+                    className="w-full px-2.5 py-1.5 rounded-lg border border-border bg-card dark:bg-card text-xs text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-border dark:focus-visible:ring-border focus:border-transparent transition-all"
                   />
                 </div>
 
@@ -159,7 +159,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full px-2.5 py-1.5 rounded-lg border border-border bg-card dark:bg-card text-xs text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-accent dark:focus-visible:ring-accent focus:border-transparent transition-all"
+                    className="w-full px-2.5 py-1.5 rounded-lg border border-border bg-card dark:bg-card text-xs text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-border dark:focus-visible:ring-border focus:border-transparent transition-all"
                   />
                 </div>
               </div>

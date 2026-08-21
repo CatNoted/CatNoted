@@ -392,7 +392,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                           onPageSelect(backlink.pageId);
                         }
                       }}
-                      className="w-full text-left p-2.5 rounded-xl border border-border bg-muted/30 hover:bg-muted/80 hover:border-border transition-all duration-200 flex flex-col gap-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent group"
+                      className="w-full text-left p-2.5 rounded-xl border border-border bg-muted/30 hover:bg-muted/80 hover:border-border transition-all duration-200 flex flex-col gap-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-border group"
                     >
                       {/* Referencing Page Info */}
                       <div className="flex items-center gap-2">

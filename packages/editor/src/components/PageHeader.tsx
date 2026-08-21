@@ -253,7 +253,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
                 value={coverInputUrl}
                 aria-label="Custom cover image URL"
                 onChange={(e) => setCoverInputUrl(e.target.value)}
-                className="flex-1 text-[11px] px-2 py-1 border border-border rounded-lg bg-card text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+                className="flex-1 text-[11px] px-2 py-1 border border-border rounded-lg bg-card text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-border"
               />
               <button
                 type="button"

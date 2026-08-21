@@ -222,7 +222,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                             value={openaiKey}
                             onChange={(e) => setOpenaiKey(e.target.value)}
                             placeholder="sk-..."
-                            className="w-full px-3 py-1.5 rounded-lg border border-border dark:border-border bg-muted dark:bg-muted text-xs placeholder:text-muted-foreground dark:placeholder:text-muted-foreground text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-accent dark:focus-visible:ring-accent transition-all"
+                            className="w-full px-3 py-1.5 rounded-lg border border-border dark:border-border bg-muted dark:bg-muted text-xs placeholder:text-muted-foreground dark:placeholder:text-muted-foreground text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-border dark:focus-visible:ring-border transition-all"
                           />
                         </div>
                       </div>
@@ -236,7 +236,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                             value={geminiKey}
                             onChange={(e) => setGeminiKey(e.target.value)}
                             placeholder="AIzaSy..."
-                            className="w-full px-3 py-1.5 rounded-lg border border-border dark:border-border bg-muted dark:bg-muted text-xs placeholder:text-muted-foreground dark:placeholder:text-muted-foreground text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-accent dark:focus-visible:ring-accent transition-all"
+                            className="w-full px-3 py-1.5 rounded-lg border border-border dark:border-border bg-muted dark:bg-muted text-xs placeholder:text-muted-foreground dark:placeholder:text-muted-foreground text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-border dark:focus-visible:ring-border transition-all"
                           />
                         </div>
                       </div>
@@ -250,7 +250,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                             value={anthropicKey}
                             onChange={(e) => setAnthropicKey(e.target.value)}
                             placeholder="sk-ant-..."
-                            className="w-full px-3 py-1.5 rounded-lg border border-border dark:border-border bg-muted dark:bg-muted text-xs placeholder:text-muted-foreground dark:placeholder:text-muted-foreground text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-accent dark:focus-visible:ring-accent transition-all"
+                            className="w-full px-3 py-1.5 rounded-lg border border-border dark:border-border bg-muted dark:bg-muted text-xs placeholder:text-muted-foreground dark:placeholder:text-muted-foreground text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-border dark:focus-visible:ring-border transition-all"
                           />
                         </div>
                       </div>
@@ -264,7 +264,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                             value={ollamaUrl}
                             onChange={(e) => setOllamaUrl(e.target.value)}
                             placeholder="http://localhost:11434"
-                            className="w-full px-3 py-1.5 rounded-lg border border-border dark:border-border bg-muted dark:bg-muted text-xs placeholder:text-muted-foreground dark:placeholder:text-muted-foreground text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-accent dark:focus-visible:ring-accent transition-all"
+                            className="w-full px-3 py-1.5 rounded-lg border border-border dark:border-border bg-muted dark:bg-muted text-xs placeholder:text-muted-foreground dark:placeholder:text-muted-foreground text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-border dark:focus-visible:ring-border transition-all"
                           />
                         </div>
                       </div>
@@ -331,7 +331,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                           value={passphrase}
                           onChange={(e) => onPassphraseChange(e.target.value)}
                           placeholder="Insert secure E2EE passphrase..."
-                          className="w-full px-3 py-1.5 rounded-lg border border-border dark:border-border bg-muted dark:bg-muted text-xs placeholder:text-muted-foreground dark:placeholder:text-muted-foreground text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-accent dark:focus-visible:ring-accent transition-all"
+                          className="w-full px-3 py-1.5 rounded-lg border border-border dark:border-border bg-muted dark:bg-muted text-xs placeholder:text-muted-foreground dark:placeholder:text-muted-foreground text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-border dark:focus-visible:ring-border transition-all"
                         />
                       </div>
                     </div>
