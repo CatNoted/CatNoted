@@ -731,7 +731,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     title={item.label}
                     aria-label={item.label}
                       aria-expanded={isActive}
-                    className={`w-full py-2.5 rounded-lg flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accent ${
+                    className={`w-full py-2.5 rounded-lg flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border dark:focus-visible:ring-border ${
                       isActive 
                         ? 'bg-muted text-foreground font-semibold'
                         : 'text-muted-foreground hover:text-foreground hover:bg-muted'
@@ -800,7 +800,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               onKeyDown={(e) => handleUtilKeyDown(e, 1)}
               onFocus={() => setFocusedUtilIndex(1)}
               tabIndex={focusedUtilIndex === 1 ? 0 : -1}
-              className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-foreground text-[10px] font-semibold hover:bg-card transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accent"
+              className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-foreground text-[10px] font-semibold hover:bg-card transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border"
               aria-label="User Profile"
             >
               US
@@ -832,7 +832,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               <button
                 type="button"
                 onClick={() => setIsSidebarCollapsed(false)}
-                className="mx-auto flex items-center justify-center w-8 h-8 rounded-lg text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                className="mx-auto flex items-center justify-center w-8 h-8 rounded-lg text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border"
                 title="Expand Sidebar"
                 aria-label="Expand Workspace Sidebar"
                 aria-expanded={false}
@@ -846,7 +846,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     type="button"
                     onClick={() => setIsWorkspaceDropdownOpen(!isWorkspaceDropdownOpen)}
                     title={activeWorkspace}
-                    className="font-semibold text-xs text-foreground hover:text-foreground flex items-center justify-between w-full gap-1.5 py-1 px-2 rounded-lg hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                    className="font-semibold text-xs text-foreground hover:text-foreground flex items-center justify-between w-full gap-1.5 py-1 px-2 rounded-lg hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border"
                   >
                     <span className="flex-1 min-w-0 truncate" title={activeWorkspace}>{activeWorkspace}</span>
                     <ChevronDown className="w-3.5 h-3.5 shrink-0" />
@@ -877,7 +877,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsSidebarCollapsed(true)}
-                  className="p-1 rounded-lg text-muted-foreground hover:text-foreground dark:hover:text-muted-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+                  className="p-1 rounded-lg text-muted-foreground hover:text-foreground dark:hover:text-muted-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-border"
                   title="Collapse Sidebar"
                   aria-label="Collapse Workspace Sidebar"
                   aria-expanded={true}
@@ -981,7 +981,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                   type="button"
                   id="tour-new-page"
                   onClick={onCreatePage}
-                  className="w-full flex items-center justify-center gap-1.5 py-2 px-3 mb-3 bg-muted dark:bg-muted text-foreground font-medium hover:bg-muted rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                  className="w-full flex items-center justify-center gap-1.5 py-2 px-3 mb-3 bg-muted dark:bg-muted text-foreground font-medium hover:bg-muted rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border"
                 >
                   <span>+ New Page</span>
                 </button>
@@ -1209,7 +1209,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           <button
             type="button"
             onClick={() => setIsSidebarCollapsed(false)}
-            className="absolute top-4 left-4 z-30 p-1.5 rounded-lg text-muted-foreground hover:text-foreground bg-card/80 dark:bg-card/80 border border-border/60 dark:border-border/60 hover:bg-muted dark:hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent shadow-sm"
+            className="absolute top-4 left-4 z-30 p-1.5 rounded-lg text-muted-foreground hover:text-foreground bg-card/80 dark:bg-card/80 border border-border/60 dark:border-border/60 hover:bg-muted dark:hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-border shadow-sm"
             title="Expand Sidebar"
             aria-label="Expand Workspace Sidebar"
             aria-expanded={false}
@@ -1465,7 +1465,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                           value={chatInput}
                           onChange={(e) => setChatInput(e.target.value)}
                           placeholder="Ask Space Agent docked..."
-                          className="w-full pl-3 pr-8 py-2 rounded-lg border border-border bg-card dark:bg-card text-xs text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+                          className="w-full pl-3 pr-8 py-2 rounded-lg border border-border bg-card dark:bg-card text-xs text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-border"
                         />
                         <button
                           type="submit"
@@ -1581,7 +1581,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                       title={item.label}
                       aria-label={item.label}
                       aria-expanded={isActive}
-                      className={`w-full py-2.5 rounded-lg flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accent ${
+                      className={`w-full py-2.5 rounded-lg flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border dark:focus-visible:ring-border ${
                         isActive
                           ? 'bg-muted text-foreground font-semibold'
                           : 'text-muted-foreground hover:text-foreground hover:bg-muted'
@@ -1598,7 +1598,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               <button
                 type="button"
                 onClick={() => alert("CatNoted Workspace - AFFiNE-style Right Rail")}
-                className="w-full py-2.5 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                className="w-full py-2.5 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border"
                 title="Workspace Help"
                 aria-label="Workspace Help"
               >
@@ -1625,7 +1625,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           {/* Pulsing notification dot */}
           <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-success border-2 border-white dark:border-border animate-pulse" />
           {/* Hover ring glow */}
-          <span className="absolute inset-0 rounded-2xl transition-all duration-300 opacity-0 group-hover:opacity-100 ring-2 ring-accent/50" />
+          <span className="absolute inset-0 rounded-2xl transition-all duration-300 opacity-0 group-hover:opacity-100 ring-2 ring-border/50" />
         </button>
       )}
 
@@ -1786,18 +1786,18 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         <div
                           className={`p-3 rounded-2xl text-xs leading-relaxed ${
                             msg.sender === "user"
-                              ? "bg-primary text-primary-foreground rounded-tr-none shadow-sm shadow-accent/20"
-                              : "bg-muted dark:bg-muted/80 text-foreground rounded-tl-none border border-transparent dark:border-ink-secondary/40"
+                              ? "bg-primary text-primary-foreground rounded-tr-none shadow-sm"
+                              : "bg-muted dark:bg-muted/80 text-foreground rounded-tl-none border border-transparent dark:border-border/60"
                           }`}
                         >
                           {msg.text}
                         </div>
                         {msg.code && (
-                          <div className="w-full mt-1 border border-accent-soft dark:border-accent/30 rounded-xl overflow-hidden shadow-sm bg-card dark:bg-card">
+                          <div className="w-full mt-1 border border-border dark:border-border/50 rounded-xl overflow-hidden shadow-sm bg-card dark:bg-card">
                             <div className="h-[150px] w-full">
                               <SandboxFrame srcDoc={msg.code} theme={isDarkMode ? 'dark' : 'light'} height="150px" />
                             </div>
-                            <div className="p-2 border-t border-accent-soft dark:border-accent/20 bg-muted dark:bg-muted flex justify-end">
+                            <div className="p-2 border-t border-border dark:border-border/50 bg-muted dark:bg-muted flex justify-end">
                               <button
                                 onClick={() => {
                                   const newBlockId = addBlock(null, 'widget', '');
@@ -1851,7 +1851,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         value={chatInput}
                         onChange={(e) => setChatInput(e.target.value)}
                         placeholder="Ask agent to generate a widget..."
-                        className="w-full pl-3 pr-10 py-2.5 rounded-xl border border-border/60 bg-card/80 dark:bg-card/60 text-xs text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:focus-visible:ring-accent/30 focus-visible:border-accent dark:focus-visible:border-accent/50 hover:border-border dark:hover:border-ink-secondary transition-all duration-200"
+                        className="w-full pl-3 pr-10 py-2.5 rounded-xl border border-border/60 bg-card/80 dark:bg-card/60 text-xs text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-border focus-visible:border-border hover:border-border dark:hover:border-border transition-all duration-200"
                       />
                       <button
                         type="submit"

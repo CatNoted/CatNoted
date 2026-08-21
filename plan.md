@@ -1,9 +1,0 @@
-1. **Fix `O(N)` duplicate render bottleneck in `AppLayout.tsx`**: `rootPageMeta` is calculated using `pages?.find(p => p.id === 'root-doc-node')`. This is an `O(N)` scan happening on every render. We will wrap it in `React.useMemo`.
-
-2. **Fix `O(N)` duplicate render bottleneck in `DocumentEditor.tsx`**: The `rootHeading` is currently searched via `allBlocks.find` directly inside a `.map` loop mapping the breadcrumbs (`breadcrumbs.map(sourceId => ...)`). We will hoist this out of the loop and precompute it so it only scans the array once per render.
-
-3. **Fix contrast failure with `bg-warning-soft text-warning`**: The user request and memory indicates: "For active or selected UI states (e.g., active tabs or menu items), avoid using semantic anti-patterns like `bg-accent-soft text-accent` or `bg-warning-soft text-warning-foreground` [or `text-warning`]. Instead, use standardized semantic Tailwind tokens such as `bg-muted text-foreground` to ensure native contrast and visual consistency across light and dark themes." And "For hover affordances across the UI, prefer using standardized semantic Tailwind tokens (e.g., `hover:bg-muted`, `hover:text-foreground`...) rather than semantic anti-patterns like `hover:bg-accent/10`, `hover:bg-accent-soft`...". We will replace instances of `text-warning hover:bg-warning-soft` with `text-foreground hover:bg-muted`, and instances of active tab indicators using `bg-warning-soft text-warning` with `bg-muted text-foreground` in:
-   - `apps/web/src/App.tsx` (the Favorite button in the header)
-   - `apps/web/src/layouts/AppLayout.tsx` (Favorite button in the outline, Dark Mode toggle hover, Favorites count badge)
-
-4. **Complete Pre-Commit Steps**: As instructed, complete pre-commit steps to make sure proper testing, verifications, reviews, and reflections are done.

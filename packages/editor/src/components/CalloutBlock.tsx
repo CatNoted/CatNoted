@@ -39,7 +39,7 @@ const CALLOUT_BG_THEMES: Record<string, { bg: string; border: string; text: stri
   },
   sky: {
     bg: 'bg-muted',
-    border: 'border-accent/30',
+    border: 'border-border/60',
     text: 'text-foreground',
   },
   purple: {
