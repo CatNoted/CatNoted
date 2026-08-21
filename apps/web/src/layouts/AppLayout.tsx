@@ -155,10 +155,15 @@ const WIDGET_TEMPLATES = {
         li.style.alignItems = 'center';
         li.style.borderBottom = '1px solid var(--border)';
         li.style.padding = '2px 0';
-        const sanitizedVal = input.value.replace(/[&<>"']/g, function(m) {
-          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
-        });
-        li.innerHTML = '<span>' + sanitizedVal + '</span><button onclick="this.parentNode.remove()" style="background: none; border: none; color: red; font-size: 9px; cursor: pointer;">✕</button>';
+        // 🛡️ Sentinel: Prevent XSS by using textContent
+        const span = document.createElement('span');
+        span.textContent = input.value;
+        const btn = document.createElement('button');
+        btn.onclick = function() { this.parentNode.remove(); };
+        btn.style.cssText = 'background: none; border: none; color: red; font-size: 9px; cursor: pointer;';
+        btn.textContent = '✕';
+        li.appendChild(span);
+        li.appendChild(btn);
         document.getElementById('todo-list').appendChild(li);
         input.value = '';
       }
