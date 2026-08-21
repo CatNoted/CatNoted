@@ -260,6 +260,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       }));
   }, [widgetBlocks]);
 
+  const rootPageMeta = React.useMemo(() => pages?.find(p => p.id === 'root-doc-node'), [pages]);
+
   const recentDocs = React.useMemo(() => {
     const otherPages = pageNodes
       .filter(n => n.id !== 'root-doc-node')
@@ -267,13 +269,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         return { id: n.id, title: n.rawName || n.label, icon: n.icon };
       });
 
-    const rootPageMeta = pages?.find(p => p.id === 'root-doc-node');
-
     return [
       { id: 'root-doc-node', title: docTitle, icon: rootPageMeta?.icon || '📁' },
       ...otherPages
     ];
-  }, [pageNodes, docTitle, pages]);
+  }, [pageNodes, docTitle, rootPageMeta?.icon]);
 
   // Right Sidebar State
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState<boolean>(false);
@@ -787,7 +787,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               onKeyDown={(e) => handleUtilKeyDown(e, 0)}
               onFocus={() => setFocusedUtilIndex(0)}
               tabIndex={focusedUtilIndex === 0 ? 0 : -1}
-              className="w-full py-2.5 rounded-lg flex items-center justify-center text-muted-foreground hover:text-warning hover:bg-warning-soft transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-warning"
+              className="w-full py-2.5 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-warning"
               title={isDarkMode ? 'Light Mode' : 'Dark Mode'}
               aria-label={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             >
@@ -999,7 +999,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                       <span className="text-xs">⭐</span>
                       <span>Favorites</span>
                     </span>
-                    <span className="text-[9px] bg-warning-soft text-warning px-1.5 py-0.5 rounded-full font-bold">{favoritePages.length}</span>
+                    <span className="text-[9px] bg-muted text-foreground px-1.5 py-0.5 rounded-full font-bold">{favoritePages.length}</span>
                   </button>
                   {sectionsExpanded.favorites && (
                     <ul className="pl-4 mt-1 space-y-0.5 border-l border-warning-soft dark:border-warning-soft/40 ml-3.5">
@@ -1266,13 +1266,13 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                       onClick={() => updatePageMeta({ isFavorite: !pageMeta?.isFavorite })}
                       className={`p-1.5 rounded-lg transition-all ${
                         pageMeta?.isFavorite
-                          ? 'text-warning hover:bg-warning-soft'
-                          : 'text-muted-foreground hover:text-warning hover:bg-muted'
+                          ? 'bg-muted text-foreground'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                       }`}
                       title={pageMeta?.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
                       aria-label={pageMeta?.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
                     >
-                      <Star className={`w-4 h-4 ${pageMeta?.isFavorite ? 'fill-warning text-warning' : ''}`} />
+                      <Star className={`w-4 h-4 ${pageMeta?.isFavorite ? 'fill-foreground text-foreground' : ''}`} />
                     </button>
                   </div>
 

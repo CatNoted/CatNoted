@@ -37,3 +37,6 @@
 ## 2025-02-18 - [Memoize activeHeading and activePageNode lookups]
 **Learning:** Found redundant `O(N)` array `.find()` operations for `activeHeading` and `activePageNode` running directly in the render body of `App.tsx`. In a highly reactive top-level application component, these operations cause unnecessary CPU overhead on every re-render, such as when typing in the document or interacting with UI states.
 **Action:** Always memoize derived state calculations involving collection scans (like `.find()` or `.filter()`) using `React.useMemo` when the source arrays update less frequently than the component's other state, or when the cost of the scan is noticeable on frequent re-renders.
+## 2026-08-20 - [Memoized O(N) scans inside map loops]
+**Learning:** In `DocumentEditor.tsx`, `allBlocks.find` was being called inside a nested render loop on every evaluation to fetch a constant root title, creating an O(N*M) bottleneck during React reconciliation. In `AppLayout.tsx`, `pages?.find` was also being computed directly in the render body.
+**Action:** Always extract invariant scans like `Array.find` out of the loop and evaluate them once. For queries that depend solely on props/state, wrap them in `React.useMemo` to prevent scanning unchanged arrays on every re-render.
