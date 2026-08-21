@@ -230,7 +230,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     // ⚡ Bolt Optimization: Pre-calculate map and common find operations outside the loop
     // to prevent O(N) array scans inside the block iteration.
     const pagesMap = new Map(allPages.map(p => [p.id, p]));
-    let precomputedRootTitle: string | undefined;
+
+    // Evaluate root title once outside the loop instead of lazy-evaluating inside
+    const rootHeading = allBlocks.find(b => b.type === 'heading' && b.properties?.level === 1 && (!b.parentId || b.parentId === 'root-doc-node'));
+    const precomputedRootTitle = rootHeading?.content || 'Root Note';
 
     allBlocks.forEach(block => {
       const sourceId = block.parentId || 'root-doc-node';
@@ -253,10 +256,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             let sourceTitle = sourceMeta?.title;
             if (!sourceTitle) {
               if (sourceId === 'root-doc-node') {
-                if (precomputedRootTitle === undefined) {
-                  const rootHeading = allBlocks.find(b => b.type === 'heading' && b.properties?.level === 1 && (!b.parentId || b.parentId === 'root-doc-node'));
-                  precomputedRootTitle = rootHeading?.content || 'Root Note';
-                }
                 sourceTitle = precomputedRootTitle;
               } else {
                 const rawName = sourceId.startsWith('page-') ? sourceId.slice(5) : sourceId;

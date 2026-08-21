@@ -366,8 +366,8 @@ const App: React.FC = () => {
           onClick={() => updatePageMeta({ isFavorite: !pageMeta?.isFavorite })}
           className={`inline-flex items-center justify-center rounded-lg p-1.5 border transition-colors ${
             pageMeta?.isFavorite
-              ? 'border-transparent bg-warning-soft text-warning'
-              : 'border-transparent text-muted-foreground hover:text-warning hover:bg-secondary'
+              ? 'border-transparent bg-muted text-foreground'
+              : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-muted'
           }`}
           title={pageMeta?.isFavorite ? 'Unstar page' : 'Star page'}
         >

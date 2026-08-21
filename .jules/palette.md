@@ -37,3 +37,6 @@
 ## $(date +%Y-%m-%d) - [UX improvement] Final cleanup of hardcoded semantic combinations
 **Learning:** Found scattered instances of `bg-accent/5`, `bg-accent/10`, and `bg-accent` used as functional indicators (e.g. active dots) or background overlays which failed contrast standards natively and broke structural design semantic mapping compared to robust tokens like `bg-muted` and `bg-primary`.
 **Action:** Always prefer standardized tokens (`bg-muted` for background highlights, `bg-primary` for active state dots or indicators) over hardcoding alpha-modified semantic values like `bg-accent/5`.
+## 2026-08-20 - [Standardized affordances for active UI states]
+**Learning:** Found instances where semantic active state styling (`bg-warning-soft text-warning`) was used for active toggles (like the Star favorite button), causing poor contrast and visual inconsistency in dark mode. The UI should use consistent semantic tokens that inherently support light and dark theme mode adaptation gracefully.
+**Action:** Replace `bg-warning-soft text-warning` and `hover:text-warning hover:bg-warning-soft` combinations on active elements with standard `bg-muted text-foreground` and `text-foreground hover:bg-muted` across both themes to ensure native contrast and uniform hover affordances.
