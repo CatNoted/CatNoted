@@ -43,3 +43,6 @@
 ## 2026-08-21 - O(N*M) bottlenecks during collection sweeps
 **Learning:** Performing `Array.find()` or `Array.filter()` inside an event iteration (like bulk copy/paste logic) generates an $O(N \times M)$ pause. In `InfiniteCanvas.tsx`, looking up `blocks.find()` inside `selectedIds.forEach` creates significant jank for large selections.
 **Action:** Always precompute a lookup map (`new Map(blocks.map(b => [b.id, b]))`) before entering relational loops inside React event handlers, ensuring $O(1)$ lookups.
+## 2024-10-25 - React Re-Render Memoization for find/filter
+**Learning:** React components that render frequently like `EmbedBlock.tsx` often run array search operations (`find` and `filter`) on every render. If the arrays (`targetBlocks`) are moderately sized, running O(N) operations repeatedly can cause notable UI jank or delays in CRDT real-time rendering apps.
+**Action:** Always wrap `.filter()`, `.find()`, and other linear scans of arrays inside `React.useMemo` if they are in the component body (render loop), especially for lists of document blocks.

@@ -138,13 +138,18 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
   }
 
   // Find the target title and content blocks
-  const targetTitle = targetPageMeta?.title || targetBlocks.find(b => b.type === 'heading' && b.properties?.level === 1)?.content || 'Untitled Document';
+  const targetTitle = React.useMemo(() => {
+    return targetPageMeta?.title || targetBlocks.find(b => b.type === 'heading' && b.properties?.level === 1)?.content || 'Untitled Document';
+  }, [targetPageMeta?.title, targetBlocks]);
+
   const targetIcon = targetPageMeta?.icon || '📄';
 
   // Filter out the main H1 block at index 0 from the preview to avoid repeating the page title
-  const filteredBlocksForPreview = targetBlocks.filter(
-    (b, index) => !(index === 0 && b.type === 'heading' && b.properties?.level === 1)
-  ).slice(0, 5);
+  const filteredBlocksForPreview = React.useMemo(() => {
+    return targetBlocks.filter(
+      (b, index) => !(index === 0 && b.type === 'heading' && b.properties?.level === 1)
+    ).slice(0, 5);
+  }, [targetBlocks]);
 
   return (
     <div className="group/embed relative w-full my-4 border border-border/80 bg-muted/30 hover:bg-muted/60 rounded-2xl p-4 transition-all">
