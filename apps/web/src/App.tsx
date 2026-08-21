@@ -302,7 +302,7 @@ const App: React.FC = () => {
             setIsEditingTitle(false);
           }
         }}
-        className="px-2 py-0.5 border border-accent rounded bg-secondary text-xs font-semibold text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-accent w-36 sm:w-48"
+        className="px-2 py-0.5 border border-border rounded bg-secondary text-xs font-semibold text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-border w-36 sm:w-48"
         autoFocus
       />
     ) : (
@@ -317,7 +317,7 @@ const App: React.FC = () => {
         <button
           type="button"
           onClick={() => setIsEditingTitle(true)}
-          className="inline-flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent p-0.5 opacity-0 group-hover/title:opacity-100"
+          className="inline-flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-border p-0.5 opacity-0 group-hover/title:opacity-100"
           title="Edit page title"
         >
           <Edit2 className="w-3 h-3" />

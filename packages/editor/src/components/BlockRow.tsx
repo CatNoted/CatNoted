@@ -132,7 +132,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                   aria-label="Block settings and drag handle"
                   aria-haspopup="menu"
                   aria-expanded={activeMenuId === block.id}
-                  className="p-1 cursor-grab active:cursor-grabbing hover:bg-muted rounded text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                  className="p-1 cursor-grab active:cursor-grabbing hover:bg-muted rounded text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border"
                 >
                   <GripVertical className="w-3.5 h-3.5" />
                 </button>
@@ -446,7 +446,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                         <textarea
                           value={editorCode[block.id] ?? block.properties?.srcDoc ?? ''}
                           onChange={(e) => setEditorCode(prev => ({ ...prev, [block.id]: e.target.value }))}
-                          className="w-full h-40 p-2 font-mono text-xs bg-muted text-foreground rounded-lg border border-border focus:outline-none focus-visible:ring-1 focus-visible:ring-accent resize-y"
+                          className="w-full h-40 p-2 font-mono text-xs bg-muted text-foreground rounded-lg border border-border focus:outline-none focus-visible:ring-1 focus-visible:ring-border resize-y"
                           placeholder="Write widget code here..."
                         />
                         <div className="flex justify-end gap-2">
