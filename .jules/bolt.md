@@ -40,3 +40,6 @@
 ## 2026-08-20 - [Memoized O(N) scans inside map loops]
 **Learning:** In `DocumentEditor.tsx`, `allBlocks.find` was being called inside a nested render loop on every evaluation to fetch a constant root title, creating an O(N*M) bottleneck during React reconciliation. In `AppLayout.tsx`, `pages?.find` was also being computed directly in the render body.
 **Action:** Always extract invariant scans like `Array.find` out of the loop and evaluate them once. For queries that depend solely on props/state, wrap them in `React.useMemo` to prevent scanning unchanged arrays on every re-render.
+## 2026-08-21 - O(N*M) bottlenecks during collection sweeps
+**Learning:** Performing `Array.find()` or `Array.filter()` inside an event iteration (like bulk copy/paste logic) generates an $O(N \times M)$ pause. In `InfiniteCanvas.tsx`, looking up `blocks.find()` inside `selectedIds.forEach` creates significant jank for large selections.
+**Action:** Always precompute a lookup map (`new Map(blocks.map(b => [b.id, b]))`) before entering relational loops inside React event handlers, ensuring $O(1)$ lookups.

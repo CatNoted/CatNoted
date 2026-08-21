@@ -169,14 +169,16 @@ export const InfiniteCanvas: React.FC = () => {
           const elementsToSave: CanvasElement[] = [];
           const blocksToSave: any[] = [];
 
+          const blocksMap = new Map(blocks.map(b => [b.id, b]));
+
           ydoc.transact(() => {
             selectedIds.forEach(id => {
               if (ycanvas.has(id)) {
                 const elem = ycanvas.get(id);
                 if (elem) {
                   elementsToSave.push(elem);
-                  if (elem.type === 'card') {
-                    const blockData = blocks.find(b => b.id === elem.blockId);
+                  if (elem.type === 'card' && elem.blockId) {
+                    const blockData = blocksMap.get(elem.blockId);
                     if (blockData) {
                       blocksToSave.push(blockData);
                     }
