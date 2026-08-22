@@ -60,7 +60,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
     'px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground';
 
   const itemClassName =
-    'flex items-center w-full px-3 py-2 text-[13px] leading-5 text-foreground rounded-lg transition-all select-none gap-x-2.5 hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent font-medium';
+    'flex items-center w-full px-3 py-2 text-[13px] leading-5 text-foreground rounded-lg transition-all select-none gap-x-2.5 hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-border font-medium';
 
   const getItemIconClass = (active: boolean) =>
     `shrink-0 ${active ? 'text-foreground' : 'text-muted-foreground'}`;
@@ -79,7 +79,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
         <button
           type="button"
           onClick={() => setCollapsed(!collapsed)}
-          className={`${sectionClassName} flex items-center justify-between w-full px-3 py-1.5 rounded-lg hover:bg-muted transition-all gap-x-2 group`}
+          className={`${sectionClassName} flex items-center justify-between w-full px-3 py-1.5 rounded-lg hover:bg-muted transition-all gap-x-2 group focus:outline-none focus-visible:ring-2 focus-visible:ring-border`}
           aria-label={collapsed ? `Expand ${label}` : `Collapse ${label}`}
           aria-expanded={!collapsed}
         >
@@ -182,7 +182,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                             deletePage(node.id);
                           }
                         }}
-                        className="p-1 rounded text-muted-foreground hover:text-danger hover:bg-danger-soft transition-colors"
+                        className="p-1 rounded text-muted-foreground hover:text-danger hover:bg-danger-soft transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-danger"
                         aria-label="Delete page"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -239,7 +239,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                             deletePage(node.id);
                           }
                         }}
-                        className="p-1 rounded text-muted-foreground hover:text-danger hover:bg-danger-soft transition-colors"
+                        className="p-1 rounded text-muted-foreground hover:text-danger hover:bg-danger-soft transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-danger"
                         aria-label="Delete page"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -294,11 +294,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
 
         {renderSection('Tags', tagsCollapsed, setTagsCollapsed, Tag, (
           <div className="flex flex-wrap gap-1.5 p-2">
-            <button type="button" onClick={() => onModeChange('doc')} className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md bg-muted text-foreground hover:bg-card dark:hover:bg-muted transition-colors">
+            <button type="button" onClick={() => onModeChange('doc')} className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md bg-muted text-foreground hover:bg-card dark:hover:bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-border">
               <Tag className="w-3 h-3 text-warning" />
               <span>product</span>
             </button>
-            <button type="button" onClick={() => onModeChange('doc')} className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md bg-muted text-foreground hover:bg-card dark:hover:bg-muted transition-colors">
+            <button type="button" onClick={() => onModeChange('doc')} className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md bg-muted text-foreground hover:bg-card dark:hover:bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-border">
               <Tag className="w-3 h-3 text-warning" />
               <span>engineering</span>
             </button>
