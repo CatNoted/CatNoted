@@ -43,3 +43,6 @@
 ## 2026-08-21 - Standardize shadows, focus rings, and eliminate accent anti-patterns
 **Learning:** Hardcoded `--accent` usage across layout and interactive elements (like `ring-accent`, `shadow-accent`, and `border-accent`) breaks semantic design integrity and causes unexpected rendering bugs (like WCAG failures in focus states) when transitioning between themes. Use generic semantic tokens like `border-border`, `shadow-sm`, and `ring-border` to rely on Tailwind's native handling.
 **Action:** Always map focus rings to standard tokens (`ring-border` or `ring-ring`), replace alpha shadows (`shadow-accent/20`) with discrete shadow scales (`shadow-sm`), and drop `border-accent` entirely for general container elements.
+## 2026-08-21 - Fix semantic contrast on static dark backgrounds
+**Learning:** Hardcoding `bg-white` on a semantic `bg-primary` active indicator fails WCAG contrast in light mode when the primary color isn't sufficiently dark.
+**Action:** Always map overlay elements on semantic backgrounds to their corresponding foreground tokens (e.g., `bg-primary-foreground` on `bg-primary`).

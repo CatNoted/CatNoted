@@ -369,7 +369,7 @@ export const JournalsView: React.FC = () => {
                     )}
                     {/* Existing Note Indicator */}
                     {hasJournal && !isConflict && (
-                      <span className={`w-1 h-1 rounded-full ${isSelected ? 'bg-white' : 'bg-primary'}`} />
+                      <span className={`w-1 h-1 rounded-full ${isSelected ? 'bg-primary-foreground' : 'bg-primary'}`} />
                     )}
                   </div>
                 </button>
