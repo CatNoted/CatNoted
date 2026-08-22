@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   DocumentEditor,
   useDocumentStore,
@@ -84,22 +84,51 @@ export const JournalsView: React.FC = () => {
     }
   };
 
+  // ⚡ Bolt Optimization: Memoize the mapping of dates to journal pages to prevent
+  // O(N) array filtering per calendar cell on every render, turning O(N*M) into O(1) lookups.
+  const journalPagesMap = useMemo(() => {
+    const map = new Map<string, any[]>();
+
+    (pages || []).forEach((p: any) => {
+      const keys = new Set<string>();
+
+      if (p.journalDate) keys.add(p.journalDate);
+      if (p.id && p.id.startsWith('journal-')) keys.add(p.id.replace('journal-', ''));
+      if (p.title) {
+        keys.add(p.title);
+      }
+
+      keys.forEach(key => {
+        if (!map.has(key)) map.set(key, []);
+        map.get(key)!.push(p);
+      });
+    });
+
+    return map;
+  }, [pages]);
+
   // Helper to check what journal pages exist for a date
   const getJournalPagesForDate = (dateStr: string) => {
-    // ⚡ Bolt Optimization: Hoist expensive Date allocation and string formatting outside the O(N) loop
+    // Also try to match the formatted date if the dateStr itself didn't match via the map builder
     const date = new Date(dateStr);
-    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
-    const formattedDate = date.toLocaleDateString('en-US', options);
+    let formattedDate = '';
+    if (!isNaN(date.getTime())) {
+      const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+      formattedDate = date.toLocaleDateString('en-US', options);
+    }
 
-    return (pages || []).filter((p: any) => {
-      // Direct match
-      if (p.journalDate === dateStr) return true;
-      if (p.id === `journal-${dateStr}`) return true;
+    const fromDateStr = journalPagesMap.get(dateStr) || [];
+    const fromFormatted = formattedDate ? (journalPagesMap.get(formattedDate) || []) : [];
 
-      // Title exact or formatted match
-      if (p.title === dateStr || p.title === formattedDate) return true;
+    // Deduplicate in case both keys found the same page
+    const combined = [...fromDateStr, ...fromFormatted];
+    if (combined.length === 0) return [];
 
-      return false;
+    const uniqueIds = new Set<string>();
+    return combined.filter(p => {
+      if (uniqueIds.has(p.id)) return false;
+      uniqueIds.add(p.id);
+      return true;
     });
   };
 
