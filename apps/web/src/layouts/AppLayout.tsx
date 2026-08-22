@@ -107,6 +107,35 @@ const WIDGET_TEMPLATES = {
       </div>
     </div>
     <script>
+      function safeMath(expr) {
+        expr = expr.replace(/\\s+/g, '');
+        if (expr.startsWith('-')) expr = '0' + expr;
+        const tokens = expr.match(/(?:\\d*\\.\\d+|\\d+)|[+\\-*/]/g);
+        if (!tokens) return NaN;
+        for(let i=0; i<tokens.length; i++) {
+          if (i % 2 === 0) {
+            if (isNaN(parseFloat(tokens[i]))) return NaN;
+          } else {
+            if (!/^[+\\-*/]$/.test(tokens[i])) return NaN;
+          }
+        }
+        if (tokens.length % 2 === 0) return NaN;
+        for (let i = 1; i < tokens.length; i += 2) {
+          if (tokens[i] === '*' || tokens[i] === '/') {
+            const a = parseFloat(tokens[i-1]);
+            const b = parseFloat(tokens[i+1]);
+            tokens.splice(i-1, 3, tokens[i] === '*' ? a * b : a / b);
+            i -= 2;
+          }
+        }
+        let result = parseFloat(tokens[0]);
+        for (let i = 1; i < tokens.length; i += 2) {
+          const b = parseFloat(tokens[i+1]);
+          if (tokens[i] === '+') result += b;
+          if (tokens[i] === '-') result -= b;
+        }
+        return result;
+      }
       const display = document.getElementById('calc-display');
       window.press = function(val) {
         if (val === 'C') {
@@ -114,7 +143,8 @@ const WIDGET_TEMPLATES = {
         } else if (val === '=') {
           try {
             if (/^[0-9+*/. -]+$/.test(display.value)) {
-              display.value = new Function('return (' + display.value + ')')() || '0';
+              const res = safeMath(display.value);
+              display.value = isNaN(res) ? 'Error' : String(res);
             } else {
               display.value = 'Error';
             }
