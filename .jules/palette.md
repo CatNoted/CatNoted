@@ -46,3 +46,6 @@
 ## 2026-08-21 - Fix semantic contrast on static dark backgrounds
 **Learning:** Hardcoding `bg-white` on a semantic `bg-primary` active indicator fails WCAG contrast in light mode when the primary color isn't sufficiently dark.
 **Action:** Always map overlay elements on semantic backgrounds to their corresponding foreground tokens (e.g., `bg-primary-foreground` on `bg-primary`).
+## $(date +%Y-%m-%d) - [UX improvement] Fix foreground contrast on dark hardcoded background
+**Learning:** Overusing semantic foreground tokens (like `text-destructive-foreground`) directly on components that have a hardcoded dark background (`bg-black/60`) creates a high risk of WCAG contrast failures in light mode. This is because semantic tokens automatically invert, but the hardcoded background does not.
+**Action:** When a background is strictly hardcoded to a dark overlay, ensure the corresponding text utilities (including active and hover states) are strictly tied to static light colors like `text-white` or `hover:text-white` to guarantee high contrast across all themes.
