@@ -318,7 +318,7 @@ export const KanbanBlock: React.FC<KanbanBlockProps> = ({
                 <button
                   type="button"
                   onClick={() => handleDeleteColumn(col.id)}
-                  className="opacity-0 group-hover/col-header:opacity-100 p-1 rounded hover:bg-muted text-muted-foreground hover:text-destructive transition-all cursor-pointer"
+                  className="opacity-0 group-hover/col-header:opacity-100 focus-visible:opacity-100 p-1 rounded hover:bg-muted text-muted-foreground hover:text-destructive transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-destructive"
                   title="Delete column"
                 >
                   <Trash2 className="w-3 h-3" />
@@ -383,7 +383,7 @@ export const KanbanBlock: React.FC<KanbanBlockProps> = ({
                         <button
                           type="button"
                           onClick={() => handleDeleteCard(col.id, card.id)}
-                          className="opacity-0 group-hover/card:opacity-100 p-1 rounded hover:bg-muted text-muted-foreground hover:text-destructive transition-all cursor-pointer flex-shrink-0"
+                          className="opacity-0 group-hover/card:opacity-100 focus-visible:opacity-100 p-1 rounded hover:bg-muted text-muted-foreground hover:text-destructive transition-all cursor-pointer flex-shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-destructive"
                           title="Delete card"
                         >
                           <Trash2 className="w-3 h-3" />
