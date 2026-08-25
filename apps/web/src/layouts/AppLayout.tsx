@@ -1111,7 +1111,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                 <button
                                   type="button"
                                   onClick={(e) => { e.stopPropagation(); handleDeletePage(node.id, displayLabel); }}
-                                  className="opacity-0 group-hover/pageitem:opacity-100 p-1 mr-1 rounded text-muted-foreground hover:text-danger hover:bg-danger-soft transition-all shrink-0"
+                                  className="opacity-0 group-hover/pageitem:opacity-100 focus-visible:opacity-100 p-1 mr-1 rounded text-muted-foreground hover:text-danger hover:bg-danger-soft transition-all shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-danger"
                                   title={`Hapus "${displayLabel}"`}
                                   aria-label={`Hapus "${displayLabel}"`}
                                 >

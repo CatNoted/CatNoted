@@ -49,3 +49,6 @@
 ## $(date +%Y-%m-%d) - [UX improvement] Fix foreground contrast on dark hardcoded background
 **Learning:** Overusing semantic foreground tokens (like `text-destructive-foreground`) directly on components that have a hardcoded dark background (`bg-black/60`) creates a high risk of WCAG contrast failures in light mode. This is because semantic tokens automatically invert, but the hardcoded background does not.
 **Action:** When a background is strictly hardcoded to a dark overlay, ensure the corresponding text utilities (including active and hover states) are strictly tied to static light colors like `text-white` or `hover:text-white` to guarantee high contrast across all themes.
+## 2025-05-15 - Hover-only actions are invisible focus traps
+**Learning:** Hover-only action buttons (`opacity-0 group-hover:opacity-100`) across the workspace become invisible focus traps for keyboard users.
+**Action:** Always pair `opacity-0 group-hover:opacity-100` with `focus-within:opacity-100` on the container (or `focus-visible:opacity-100` on the button) to ensure keyboard navigation reveals the actions.

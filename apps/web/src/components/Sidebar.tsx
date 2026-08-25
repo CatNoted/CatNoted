@@ -172,7 +172,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                     <span className="flex-1 min-w-0 truncate">{node.title || 'Untitled'}</span>
                   </div>
                   {/* Hover Actions */}
-                  <div className="opacity-0 group-hover/sidebar-row:opacity-100 flex items-center gap-1 transition-opacity shrink-0">
+                  <div className="opacity-0 group-hover/sidebar-row:opacity-100 focus-within:opacity-100 flex items-center gap-1 transition-opacity shrink-0">
                     {node.id !== 'root-doc-node' && (
                       <button
                         type="button"
@@ -229,7 +229,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                     <span className="flex-1 min-w-0 truncate">{node.title || 'Untitled'}</span>
                   </div>
                   {/* Hover Actions */}
-                  <div className="opacity-0 group-hover/sidebar-row:opacity-100 flex items-center gap-1 transition-opacity shrink-0">
+                  <div className="opacity-0 group-hover/sidebar-row:opacity-100 focus-within:opacity-100 flex items-center gap-1 transition-opacity shrink-0">
                     {node.id !== 'root-doc-node' && (
                       <button
                         type="button"

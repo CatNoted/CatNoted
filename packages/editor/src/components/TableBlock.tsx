@@ -60,7 +60,7 @@ export const TableBlock: React.FC<TableBlockProps> = ({
             <TableIcon className="w-3.5 h-3.5" />
             Table ({currentRows.length}x{currentRows[0]?.length || 0})
           </span>
-          <div className="flex items-center gap-2 opacity-0 group-hover/table:opacity-100 transition-opacity">
+          <div className="flex items-center gap-2 opacity-0 group-hover/table:opacity-100 focus-within:opacity-100 transition-opacity">
             <button
               type="button"
               onClick={handleAddRow}
@@ -100,7 +100,7 @@ export const TableBlock: React.FC<TableBlockProps> = ({
                         <button
                           type="button"
                           onClick={() => handleRemoveColumn(cIndex)}
-                          className="absolute right-1 top-1 opacity-0 group-hover/th:opacity-100 p-0.5 text-muted-foreground hover:text-destructive transition-colors"
+                          className="absolute right-1 top-1 opacity-0 group-hover/th:opacity-100 focus-visible:opacity-100 p-0.5 text-muted-foreground hover:text-destructive transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-destructive rounded"
                           title="Remove column"
                           aria-label="Remove column"
                         >
@@ -120,7 +120,7 @@ export const TableBlock: React.FC<TableBlockProps> = ({
                       className="group/row border-b border-border last:border-b-0 hover:bg-muted/50 transition-colors"
                     >
                       <td className="w-8 p-0 border-r border-border text-center align-middle">
-                        <div className="flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-opacity text-muted-foreground cursor-grab active:cursor-grabbing">
+                        <div className="flex items-center justify-center opacity-0 group-hover/row:opacity-100 focus-within:opacity-100 transition-opacity text-muted-foreground cursor-grab active:cursor-grabbing">
                           <GripHorizontal className="w-3.5 h-3.5" />
                         </div>
                       </td>
