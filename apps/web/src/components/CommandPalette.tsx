@@ -25,6 +25,8 @@ interface CommandItem {
   id: string;
   title: string;
   subtitle: string;
+  searchTitle?: string;
+  searchSubtitle?: string;
   icon: React.ComponentType<React.ComponentProps<'svg'>>;
   action: () => void;
 }
@@ -104,7 +106,12 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         icon: Settings,
         action: onOpenSettings
       }
-    ],
+    ].map(cmd => ({
+      ...cmd,
+      // ⚡ Bolt Optimization: Precompute lowercase strings for O(1) filter comparisons later
+      searchTitle: cmd.title.toLowerCase(),
+      searchSubtitle: cmd.subtitle.toLowerCase(),
+    })),
     [onModeSelect, onToggleTheme, onToggleZen, onOpenSettings, isDarkMode]
   );
 
@@ -116,8 +123,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
       const items = baseCommands.filter(
         (cmd) =>
           (!normalizedSearch ||
-            cmd.title.toLowerCase().includes(normalizedSearch) ||
-            cmd.subtitle.toLowerCase().includes(normalizedSearch)) &&
+            cmd.searchTitle!.includes(normalizedSearch) ||
+            cmd.searchSubtitle!.includes(normalizedSearch)) &&
           group.filter(cmd)
       );
       if (items.length) {
