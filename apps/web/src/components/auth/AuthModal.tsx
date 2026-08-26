@@ -6,7 +6,7 @@
  */
 
 import React, { useState } from 'react';
-import { LogIn, UserPlus, KeyRound, Sparkles, LogOut } from 'lucide-react';
+import { LogIn, UserPlus, KeyRound, Sparkles, LogOut, Loader2 } from 'lucide-react';
 import { supabase } from '../../utils/supabase.js';
 import { Overlay } from '../primitives/Overlay.js';
 import { Panel } from '../primitives/Panel.js';
@@ -120,7 +120,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               disabled={loading}
               className="w-full py-2 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all disabled:opacity-50"
             >
-              <LogOut className="w-3.5 h-3.5" />
+              {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <LogOut className="w-3.5 h-3.5" />}
               {loading ? 'Logging out...' : 'Log Out'}
             </button>
           </div>
@@ -170,7 +170,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 disabled={loading}
                 className="w-full py-2 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs flex items-center justify-center gap-1.5 shadow-sm hover:shadow transition-all disabled:opacity-50 mt-1"
               >
-                {isSignUp ? <UserPlus className="w-3.5 h-3.5" /> : <LogIn className="w-3.5 h-3.5" />}
+                {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : isSignUp ? <UserPlus className="w-3.5 h-3.5" /> : <LogIn className="w-3.5 h-3.5" />}
                 {loading ? 'Processing...' : isSignUp ? 'Create Account' : 'Sign In'}
               </button>
             </form>
