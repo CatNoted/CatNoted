@@ -96,7 +96,7 @@ const CanvasCardBase: React.FC<CanvasCardProps> = ({
           onStartConnector(e, block.id);
         }}
         className={`absolute right-[-8px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-primary bg-background hover:bg-primary hover:scale-125 transition-all cursor-crosshair z-20 flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
-          isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+          isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 focus-visible:opacity-100'
         }`}
         title="Drag to connect"
         aria-label={`Drag connector from ${block.content || 'this card'}`}
