@@ -109,7 +109,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
             onDrop={(e) => handleDrop(e, block.id)}
           >
             {/* Left Block Controls - fixed width gutter, never overlaps content */}
-            <div className={`w-10 flex-shrink-0 flex items-start justify-end gap-0.5 px-1 opacity-0 group-hover:opacity-100 transition-opacity ${
+            <div className={`w-10 flex-shrink-0 flex items-start justify-end gap-0.5 px-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity ${
               block.type === 'heading'
                 ? block.properties?.level === 1
                   ? 'pt-2'
@@ -419,7 +419,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                   <div className="w-full my-4 border border-border rounded-2xl bg-card overflow-hidden shadow-sm">
                     <div className="h-8 border-b border-border bg-muted/50 px-3 flex items-center justify-between text-[10px] font-mono text-muted-foreground">
                       <span>Widget Render Sandbox</span>
-                      <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center gap-3">
+                      <div className="opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200 flex items-center gap-3">
                         <button
                           onClick={() => handleEditClick(block.id, block.properties?.srcDoc || '')}
                           className="text-muted-foreground hover:text-foreground font-sans flex items-center gap-1 cursor-pointer font-medium"
