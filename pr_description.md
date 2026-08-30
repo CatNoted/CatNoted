@@ -15,6 +15,7 @@ Conducted a full codebase audit across the monorepo to ensure compliance with ar
 
 ## Unfixed Bugs & Reasons
 - `apps/web` build emits a minor minification chunk size warning (>500 kB). Not fixed as this requires a larger structural code-splitting refactor that goes beyond the current scope of this audit block.
+- The codebase contains the word "todo" in `packages/editor/src/components/KanbanBlock.tsx` (e.g. `'col-todo'`), `packages/editor/src/components/SlashCommandMenu.tsx`, and a few test files, but these are part of standard string identifiers for a "To-Do" feature/column and are not actual `TODO` codebase comments.
 
 ## Verification Checklist
 - [x] `pnpm typecheck` passed
