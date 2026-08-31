@@ -52,3 +52,6 @@
 ## 2025-05-15 - Hover-only actions are invisible focus traps
 **Learning:** Hover-only action buttons (`opacity-0 group-hover:opacity-100`) across the workspace become invisible focus traps for keyboard users.
 **Action:** Always pair `opacity-0 group-hover:opacity-100` with `focus-within:opacity-100` on the container (or `focus-visible:opacity-100` on the button) to ensure keyboard navigation reveals the actions.
+## $(date +%Y-%m-%d) - [Invisible Focus Traps on Hover Actions]
+**Learning:** Elements styled with hover-only visibility utilities (e.g., `opacity-0 group-hover:opacity-100`) become invisible focus traps for keyboard users navigating via Tab.
+**Action:** Always pair `opacity-0 group-hover:opacity-100` on the container with `focus-within:opacity-100` (so the container reveals its contents on internal focus) and ensure the actionable child (like a `<button>`) includes `focus-visible:opacity-100` alongside a proper semantic focus ring (e.g., `focus-visible:ring-2 focus-visible:ring-border`).

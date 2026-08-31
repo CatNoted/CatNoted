@@ -159,14 +159,14 @@ export const CalloutBlock: React.FC<CalloutBlockProps> = ({
       </div>
 
       {/* Color Theme Selector Trigger */}
-      <div className="relative opacity-0 group-hover/callout:opacity-100 transition-opacity">
+      <div className="relative opacity-0 group-hover/callout:opacity-100 focus-within:opacity-100 transition-opacity">
         <button
           type="button"
           onClick={() => {
             setShowBgPicker(!showBgPicker);
             setShowIconPicker(false);
           }}
-          className="p-1 text-muted-foreground hover:text-foreground rounded hover:bg-muted transition-colors"
+          className="p-1 text-muted-foreground hover:text-foreground rounded hover:bg-muted transition-colors focus-visible:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-border"
           title="Change highlight color"
           aria-label="Change highlight color"
           aria-haspopup="menu"

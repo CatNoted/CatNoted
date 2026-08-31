@@ -165,11 +165,11 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
           </span>
         </div>
 
-        <div className="flex items-center gap-1 opacity-0 group-hover/embed:opacity-100 transition-opacity ml-2 shrink-0">
+        <div className="flex items-center gap-1 opacity-0 group-hover/embed:opacity-100 focus-within:opacity-100 transition-opacity ml-2 shrink-0">
           <button
             type="button"
             onClick={handleReset}
-            className="p-1 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+            className="p-1 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors focus-visible:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-border"
             title="Change embedded page"
           >
             <RotateCcw className="w-3.5 h-3.5" />
