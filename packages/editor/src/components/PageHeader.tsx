@@ -336,14 +336,14 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
           )}
 
           {/* Cover Actions Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover/header:opacity-100 transition-opacity flex items-end justify-end p-3 gap-2 z-10">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover/header:opacity-100 focus-within:opacity-100 transition-opacity flex items-end justify-end p-3 gap-2 z-10">
             <button
               type="button"
               onClick={() => setShowCoverPicker(!showCoverPicker)}
               aria-expanded={showCoverPicker}
               aria-haspopup="true"
               aria-label="Change cover image"
-              className="px-2.5 py-1.5 bg-black/60 hover:bg-black/80 text-white rounded-lg text-xs font-medium backdrop-blur-md transition-all flex items-center gap-1.5 shadow-sm"
+              className="px-2.5 py-1.5 bg-black/60 hover:bg-black/80 text-white rounded-lg text-xs font-medium backdrop-blur-md transition-all flex items-center gap-1.5 shadow-sm focus-visible:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
             >
               <LucideIcons.Image className="w-3.5 h-3.5" />
               Change cover
@@ -352,7 +352,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
               type="button"
               onClick={() => onCoverChange(undefined)}
               aria-label="Remove cover image"
-              className="px-2.5 py-1.5 bg-black/60 hover:bg-destructive text-white hover:text-white rounded-lg text-xs font-medium backdrop-blur-md transition-all flex items-center gap-1.5 shadow-sm"
+              className="px-2.5 py-1.5 bg-black/60 hover:bg-destructive text-white hover:text-white rounded-lg text-xs font-medium backdrop-blur-md transition-all flex items-center gap-1.5 shadow-sm focus-visible:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-destructive/50"
             >
               <LucideIcons.Trash2 className="w-3.5 h-3.5" />
               Remove cover
