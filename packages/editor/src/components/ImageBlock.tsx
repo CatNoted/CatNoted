@@ -65,7 +65,7 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
             <img src={url} alt={caption || 'Embedded Image'} className="w-full h-auto object-cover" />
 
             {/* Controls Bar */}
-            <div className="absolute top-2 right-2 opacity-0 group-hover/img:opacity-100 transition-opacity bg-card/80 backdrop-blur-md p-1 rounded-xl flex items-center gap-1 text-foreground text-xs">
+            <div className="absolute top-2 right-2 opacity-0 group-hover/img:opacity-100 focus-within:opacity-100 transition-opacity bg-card/80 backdrop-blur-md p-1 rounded-xl flex items-center gap-1 text-foreground text-xs">
               {([25, 50, 75, 100] as const).map((w) => (
                 <button
                   key={w}

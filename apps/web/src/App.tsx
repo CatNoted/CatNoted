@@ -582,16 +582,16 @@ const App: React.FC = () => {
 
       {status === 'conflict' && conflictMsg ? (
         <div className="fixed bottom-4 right-4 max-w-sm w-full bg-destructive border border-destructive-border shadow-lg rounded-2xl p-4 z-50 flex items-start gap-3 backdrop-blur-sm animate-in slide-in-from-bottom-5">
-          <div className="w-8 h-8 rounded-full bg-destructive-accent flex items-center justify-center shrink-0">
-            <span className="text-destructive-foreground font-bold">!</span>
+          <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+            <span className="text-white font-bold">!</span>
           </div>
           <div className="flex-1 min-w-0">
-            <h4 className="text-sm font-semibold text-destructive-foreground">Sync Conflict</h4>
-            <p className="text-xs text-destructive-foreground/80 mt-1 break-words">{conflictMsg}</p>
+            <h4 className="text-sm font-semibold text-white">Sync Conflict</h4>
+            <p className="text-xs text-white/80 mt-1 break-words">{conflictMsg}</p>
           </div>
           <button
             onClick={dismissConflict}
-            className="inline-flex items-center justify-center rounded-lg p-1 text-destructive-foreground/70 hover:text-destructive-foreground hover:bg-destructive-accent"
+            className="inline-flex items-center justify-center rounded-lg p-1 text-white/70 hover:text-white hover:bg-white/20"
           >
             <span className="leading-none">✕</span>
           </button>

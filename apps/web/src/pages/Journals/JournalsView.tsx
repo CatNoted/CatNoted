@@ -260,7 +260,7 @@ export const JournalsView: React.FC = () => {
                   Focus on daily highlights, areas for growth, and gratitude elements.
                 </p>
               </div>
-              <span className="text-[10px] font-semibold text-foreground mt-auto flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <span className="text-[10px] font-semibold text-foreground mt-auto flex items-center gap-1 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity">
                 Select <ArrowRight className="w-3 h-3" />
               </span>
             </button>
@@ -279,7 +279,7 @@ export const JournalsView: React.FC = () => {
                   Start and end your day on a positive note of constructive affirmation.
                 </p>
               </div>
-              <span className="text-[10px] font-semibold text-success mt-auto flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <span className="text-[10px] font-semibold text-success mt-auto flex items-center gap-1 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity">
                 Select <ArrowRight className="w-3 h-3" />
               </span>
             </button>
@@ -298,7 +298,7 @@ export const JournalsView: React.FC = () => {
                   An empty canvas designed for full structural freedom and direct drafting.
                 </p>
               </div>
-              <span className="text-[10px] font-semibold text-foreground mt-auto flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <span className="text-[10px] font-semibold text-foreground mt-auto flex items-center gap-1 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity">
                 Select <ArrowRight className="w-3 h-3" />
               </span>
             </button>
