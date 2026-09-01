@@ -362,7 +362,7 @@ export const KanbanBlock: React.FC<KanbanBlockProps> = ({
                       }`}
                     >
                       <div className="flex items-start gap-1.5">
-                        <span className="cursor-grab active:cursor-grabbing p-0.5 rounded text-muted-foreground hover:bg-muted transition-colors mt-0.5 flex-shrink-0 opacity-0 group-hover/card:opacity-100">
+                        <span className="cursor-grab active:cursor-grabbing p-0.5 rounded text-muted-foreground hover:bg-muted transition-colors mt-0.5 flex-shrink-0 opacity-0 group-hover/card:opacity-100 group-focus-within/card:opacity-100">
                           <GripVertical className="w-3 h-3" />
                         </span>
 

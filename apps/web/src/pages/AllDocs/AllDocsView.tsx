@@ -54,7 +54,7 @@ export const AllDocsView: React.FC = () => {
                     <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
                     <span className="text-sm font-medium text-foreground flex-1 min-w-0 truncate">Getting Started with Affine</span>
                   </div>
-                  <span className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-4">
+                  <span className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 focus-within:opacity-100 group-focus-visible:opacity-100 transition-opacity shrink-0 ml-4">
                     10:45 AM
                   </span>
                 </div>
@@ -64,7 +64,7 @@ export const AllDocsView: React.FC = () => {
                     <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
                     <span className="text-sm font-medium text-foreground flex-1 min-w-0 truncate">Project Roadmap Q3</span>
                   </div>
-                  <span className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-4">
+                  <span className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 focus-within:opacity-100 group-focus-visible:opacity-100 transition-opacity shrink-0 ml-4">
                     09:30 AM
                   </span>
                 </div>
@@ -85,7 +85,7 @@ export const AllDocsView: React.FC = () => {
                     <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
                     <span className="text-sm font-medium text-foreground flex-1 min-w-0 truncate">Untitled Document</span>
                   </div>
-                  <span className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-4">
+                  <span className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 focus-within:opacity-100 group-focus-visible:opacity-100 transition-opacity shrink-0 ml-4">
                     -
                   </span>
                 </div>
