@@ -62,3 +62,7 @@
 ## $(date +%Y-%m-%d) - [Focus Traps with Group Hover & Button Children]
 **Learning:** Hover-only (`opacity-0 group-hover:opacity-100`) utility text within a `<button>` structure creates an invisible focus trap because keyboard users trigger `focus-visible` on the button, not the child span.
 **Action:** When child UI elements should become visible when their parent is focused (like text labels in buttons), use `group-focus-visible:opacity-100` alongside `opacity-0 group-hover:opacity-100` rather than applying `focus-within` directly to the child span.
+
+## 2026-10-31 - Fix invisible focus traps and semantic contrast for destructive buttons
+**Learning:** Hardcoded dark backgrounds (like `bg-destructive`) require static light text (like `text-white`) instead of semantic tokens like `text-destructive-foreground` to ensure WCAG legibility in light mode. Also, `opacity-0 group-hover:opacity-100` patterns create invisible focus traps unless paired with `focus-within:opacity-100` and `group-focus-visible:opacity-100`.
+**Action:** Use static text tokens on hardcoded semantic backgrounds, and always add `focus-within`/`focus-visible` states to hover-only action elements.

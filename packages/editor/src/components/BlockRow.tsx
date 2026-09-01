@@ -486,7 +486,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                           </button>
                           <button
                             onClick={() => handleRerun(block.id)}
-                            className="px-3 py-1 bg-destructive hover:bg-destructive/90 text-destructive-foreground rounded-lg text-[10px] font-semibold transition-colors cursor-pointer"
+                            className="px-3 py-1 bg-destructive hover:bg-destructive/90 text-white rounded-lg text-[10px] font-semibold transition-colors cursor-pointer"
                           >
                             Retry
                           </button>
