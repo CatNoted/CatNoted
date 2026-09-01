@@ -1655,12 +1655,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             animation: "floatFab 3s ease-in-out infinite",
           }}
         >
-          <Bot className="w-6 h-6 transition-all duration-300 group-hover:opacity-0 group-hover:scale-75 absolute" />
-          <MessageSquare className="w-6 h-6 transition-all duration-300 opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100" />
+          <Bot className="w-6 h-6 transition-all duration-300 group-hover:opacity-0 group-focus-visible:opacity-0 group-hover:scale-75 group-focus-visible:scale-75 absolute" />
+          <MessageSquare className="w-6 h-6 transition-all duration-300 opacity-0 scale-75 group-hover:opacity-100 group-focus-visible:opacity-100 group-hover:scale-100 group-focus-visible:scale-100" />
           {/* Pulsing notification dot */}
           <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-success border-2 border-white dark:border-border animate-pulse" />
           {/* Hover ring glow */}
-          <span className="absolute inset-0 rounded-2xl transition-all duration-300 opacity-0 group-hover:opacity-100 ring-2 ring-border/50" />
+          <span className="absolute inset-0 rounded-2xl transition-all duration-300 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 ring-2 ring-border/50" />
         </button>
       )}
 

@@ -55,3 +55,10 @@
 ## $(date +%Y-%m-%d) - [Invisible Focus Traps on Hover Actions]
 **Learning:** Elements styled with hover-only visibility utilities (e.g., `opacity-0 group-hover:opacity-100`) become invisible focus traps for keyboard users navigating via Tab.
 **Action:** Always pair `opacity-0 group-hover:opacity-100` on the container with `focus-within:opacity-100` (so the container reveals its contents on internal focus) and ensure the actionable child (like a `<button>`) includes `focus-visible:opacity-100` alongside a proper semantic focus ring (e.g., `focus-visible:ring-2 focus-visible:ring-border`).
+## $(date +%Y-%m-%d) - [Active States on Hardcoded Dark Backgrounds]
+**Learning:** Found an anti-pattern where a semantic foreground token (`text-destructive-foreground`) and semantic alpha background (`bg-destructive-accent`) was overlaid on a static dark semantic background (`bg-destructive`). This can cause WCAG contrast failure if the theme is strictly light or dark in the active state.
+**Action:** Always map overlay elements on static dark backgrounds directly to standard static white contrasts (`text-white`, `text-white/70`, `hover:bg-white/20`) to guarantee legibility regardless of the semantic theme active.
+
+## $(date +%Y-%m-%d) - [Focus Traps with Group Hover & Button Children]
+**Learning:** Hover-only (`opacity-0 group-hover:opacity-100`) utility text within a `<button>` structure creates an invisible focus trap because keyboard users trigger `focus-visible` on the button, not the child span.
+**Action:** When child UI elements should become visible when their parent is focused (like text labels in buttons), use `group-focus-visible:opacity-100` alongside `opacity-0 group-hover:opacity-100` rather than applying `focus-within` directly to the child span.
