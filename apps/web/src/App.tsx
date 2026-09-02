@@ -433,7 +433,7 @@ const App: React.FC = () => {
                         setShowPageMenu(false);
                       }
                     }}
-                    className="w-full px-3 py-1.5 text-left flex items-center gap-2 hover:bg-destructive/10 hover:dark:bg-destructive/40 text-destructive-foreground font-medium rounded-lg"
+                    className="w-full px-3 py-1.5 text-left flex items-center gap-2 hover:bg-destructive/10 hover:dark:bg-destructive/40 text-destructive font-medium rounded-lg"
                   >
                     Delete Page
                   </button>
@@ -478,8 +478,8 @@ const App: React.FC = () => {
     const syncStatus =
       status === 'saving'
         ? (
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-warning-soft text-warning border border-warning-soft">
-              <span className="w-1.5 h-1.5 rounded-full bg-warning animate-pulse" />
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-muted text-foreground border border-border">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
               <span className="hidden sm:inline">Saving...</span>
             </span>
           )
