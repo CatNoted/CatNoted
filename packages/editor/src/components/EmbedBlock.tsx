@@ -171,14 +171,16 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
             onClick={handleReset}
             className="p-1 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors focus-visible:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-border"
             title="Change embedded page"
+            aria-label="Change embedded page"
           >
             <RotateCcw className="w-3.5 h-3.5" />
           </button>
           <button
             type="button"
             onClick={onDelete}
-            className="p-1 text-muted-foreground hover:text-destructive hover:bg-muted rounded-lg transition-colors"
+            className="p-1 text-muted-foreground hover:text-destructive hover:bg-muted rounded-lg transition-colors focus-visible:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-destructive"
             title="Delete block"
+            aria-label="Delete block"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </button>
