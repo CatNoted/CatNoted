@@ -168,10 +168,10 @@ export const FloatingBubbleMenu: React.FC<FloatingBubbleMenuProps> = ({
           const sel = window.getSelection();
           if (sel && !sel.isCollapsed) {
             const text = sel.toString();
-            const escaped = text.replace(/[&<>"']/g, (m) => {
-              return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m as '&' | '<' | '>' | '"' | "'"] || m;
-            });
-            applyFormat('insertHTML', `<code class="bg-muted px-1 py-0.5 rounded font-mono text-xs text-foreground">${escaped}</code>`);
+            const codeEl = document.createElement('code');
+            codeEl.className = 'bg-muted px-1 py-0.5 rounded font-mono text-xs text-foreground';
+            codeEl.textContent = text;
+            applyFormat('insertHTML', codeEl.outerHTML);
           }
         }}
         className="p-1.5 hover:bg-muted rounded-lg transition-colors text-muted-foreground hover:text-foreground"
