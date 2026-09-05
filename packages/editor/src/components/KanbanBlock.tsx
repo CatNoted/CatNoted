@@ -255,6 +255,7 @@ export const KanbanBlock: React.FC<KanbanBlockProps> = ({
         <input
           type="text"
           value={boardTitle}
+          aria-label="Board title"
           onChange={(e) => handleBoardTitleChange(e.target.value)}
           placeholder="Untitled Kanban Board"
           className="text-sm font-semibold bg-transparent text-foreground border-none outline-none focus-visible:ring-1 focus-visible:ring-border rounded px-1.5 py-0.5 placeholder:text-muted-foreground w-64 transition-all"
@@ -306,6 +307,7 @@ export const KanbanBlock: React.FC<KanbanBlockProps> = ({
                 <input
                   type="text"
                   value={col.title}
+                  aria-label="Column name"
                   onChange={(e) => handleRenameColumn(col.id, e.target.value)}
                   placeholder="Column Name"
                   className="text-xs font-semibold bg-transparent text-foreground border-none outline-none focus-visible:ring-1 focus-visible:ring-border rounded px-1 py-0.5 placeholder:text-muted-foreground flex-1 min-w-0 shrink transition-colors focus-visible:bg-background"
