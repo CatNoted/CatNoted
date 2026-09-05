@@ -40,6 +40,7 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
           <input
             type="text"
             value={urlInput}
+            aria-label="Image URL"
             onChange={(e) => setUrlInput(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === 'Enter') handleSaveUrl();
@@ -118,6 +119,7 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
           <input
             type="text"
             value={caption}
+            aria-label="Image caption"
             onChange={(e) => onUpdateProps({ caption: e.target.value })}
             placeholder="Add image caption..."
             className="w-full max-w-sm text-center text-xs text-muted-foreground bg-transparent border-none outline-none focus:ring-0 mt-1.5"

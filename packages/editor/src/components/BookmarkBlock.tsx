@@ -73,6 +73,7 @@ export const BookmarkBlock: React.FC<BookmarkBlockProps> = ({
           <input
             type="text"
             value={urlInput}
+            aria-label="Web link URL"
             onChange={(e) => setUrlInput(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === 'Enter') handleSave();

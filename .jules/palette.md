@@ -66,3 +66,6 @@
 ## 2026-10-31 - Fix invisible focus traps and semantic contrast for destructive buttons
 **Learning:** Hardcoded dark backgrounds (like `bg-destructive`) require static light text (like `text-white`) instead of semantic tokens like `text-destructive-foreground` to ensure WCAG legibility in light mode. Also, `opacity-0 group-hover:opacity-100` patterns create invisible focus traps unless paired with `focus-within:opacity-100` and `group-focus-visible:opacity-100`.
 **Action:** Use static text tokens on hardcoded semantic backgrounds, and always add `focus-within`/`focus-visible` states to hover-only action elements.
+## 2024-09-05 - Missing labels on inline edit inputs
+**Learning:** Inline edit inputs (like image URLs or Kanban column titles) are often rendered conditionally without `<label>` elements, creating a silent accessibility gap for screen reader users who navigate via form inputs.
+**Action:** Always add `aria-label` to visually apparent form inputs when an explicit `<label>` tag is structurally inappropriate or omitted.
