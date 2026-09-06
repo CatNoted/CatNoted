@@ -69,3 +69,6 @@
 ## 2024-09-05 - Missing labels on inline edit inputs
 **Learning:** Inline edit inputs (like image URLs or Kanban column titles) are often rendered conditionally without `<label>` elements, creating a silent accessibility gap for screen reader users who navigate via form inputs.
 **Action:** Always add `aria-label` to visually apparent form inputs when an explicit `<label>` tag is structurally inappropriate or omitted.
+## $(date +%Y-%m-%d) - [Missing aria-label on stateful toggle buttons]
+**Learning:** Icon-only toggle buttons that change state (e.g., between "Edit" and "Done" states using icons) often lack descriptive `aria-label`s, rendering them inaccessible to screen readers. For instance, the math block editor toggle button relied solely on visual cues.
+**Action:** When creating or modifying stateful icon-only toggle buttons, always provide a dynamic `aria-label` that reflects the current action (e.g., `aria-label={isEditing ? 'Save' : 'Edit'}`) to ensure clear communication of the button's purpose to assistive technologies.
