@@ -28,6 +28,7 @@ export const MathBlock: React.FC<MathBlockProps> = ({
         <button
           type="button"
           onClick={() => setIsEditing(!isEditing)}
+          aria-label={isEditing ? 'Save math formula' : 'Edit math formula'}
           className="px-2 py-0.5 rounded hover:bg-muted text-muted-foreground flex items-center gap-1 transition-colors"
         >
           {isEditing ? (
