@@ -1344,8 +1344,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                       </div>
                       <button
                         type="button"
+                        role="switch"
+                        aria-checked={!!pageMeta?.fullWidth}
+                        aria-label="Toggle Wide Mode"
                         onClick={() => updatePageMeta({ fullWidth: !pageMeta?.fullWidth })}
-                        className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                        className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-border ${
                           pageMeta?.fullWidth ? 'bg-primary' : 'bg-muted dark:bg-muted'
                         }`}
                       >
@@ -1783,17 +1786,21 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     <button
                       onClick={handleExportWidgets}
                       title="Export widget codes"
-                      className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 border border-border/60 hover:bg-muted dark:hover:bg-muted hover:border-border dark:hover:border-border hover:text-foreground dark:hover:text-foreground rounded-lg text-[10px] font-semibold text-muted-foreground transition-all duration-200"
+                      aria-label="Export Catalog"
+                      className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 border border-border/60 hover:bg-muted dark:hover:bg-muted hover:border-border dark:hover:border-border hover:text-foreground dark:hover:text-foreground rounded-lg text-[10px] font-semibold text-muted-foreground transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border"
                     >
                       <Download className="w-3.5 h-3.5" /> Export Catalog
                     </button>
-                    <label className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 border border-border/60 hover:bg-muted dark:hover:bg-muted hover:border-border dark:hover:border-border hover:text-foreground dark:hover:text-foreground rounded-lg text-[10px] font-semibold text-muted-foreground cursor-pointer text-center transition-all duration-200">
+                    <label
+                      className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 border border-border/60 hover:bg-muted dark:hover:bg-muted hover:border-border dark:hover:border-border hover:text-foreground dark:hover:text-foreground rounded-lg text-[10px] font-semibold text-muted-foreground cursor-pointer text-center transition-all duration-200 focus-within:ring-2 focus-within:ring-border focus-within:outline-none"
+                    >
                       <Upload className="w-3.5 h-3.5" /> Import Catalog
                       <input
                         type="file"
                         accept=".json"
                         onChange={handleImportWidgets}
-                        className="hidden"
+                        className="sr-only"
+                        aria-label="Import Catalog"
                       />
                     </label>
                   </div>
@@ -1912,17 +1919,21 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     <button
                       onClick={handleExportWidgets}
                       title="Export widget codes"
-                      className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 border border-border/60 hover:bg-muted dark:hover:bg-muted hover:border-border dark:hover:border-border hover:text-foreground dark:hover:text-foreground rounded-lg text-[10px] font-semibold text-muted-foreground transition-all duration-200"
+                      aria-label="Export Catalog"
+                      className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 border border-border/60 hover:bg-muted dark:hover:bg-muted hover:border-border dark:hover:border-border hover:text-foreground dark:hover:text-foreground rounded-lg text-[10px] font-semibold text-muted-foreground transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border"
                     >
                       <Download className="w-3.5 h-3.5" /> Export Catalog
                     </button>
-                    <label className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 border border-border/60 hover:bg-muted dark:hover:bg-muted hover:border-border dark:hover:border-border hover:text-foreground dark:hover:text-foreground rounded-lg text-[10px] font-semibold text-muted-foreground cursor-pointer text-center transition-all duration-200">
+                    <label
+                      className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 border border-border/60 hover:bg-muted dark:hover:bg-muted hover:border-border dark:hover:border-border hover:text-foreground dark:hover:text-foreground rounded-lg text-[10px] font-semibold text-muted-foreground cursor-pointer text-center transition-all duration-200 focus-within:ring-2 focus-within:ring-border focus-within:outline-none"
+                    >
                       <Upload className="w-3.5 h-3.5" /> Import Catalog
                       <input
                         type="file"
                         accept=".json"
                         onChange={handleImportWidgets}
-                        className="hidden"
+                        className="sr-only"
+                        aria-label="Import Catalog"
                       />
                     </label>
                   </div>

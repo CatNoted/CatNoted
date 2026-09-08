@@ -72,3 +72,6 @@
 ## $(date +%Y-%m-%d) - [Missing aria-label on stateful toggle buttons]
 **Learning:** Icon-only toggle buttons that change state (e.g., between "Edit" and "Done" states using icons) often lack descriptive `aria-label`s, rendering them inaccessible to screen readers. For instance, the math block editor toggle button relied solely on visual cues.
 **Action:** When creating or modifying stateful icon-only toggle buttons, always provide a dynamic `aria-label` that reflects the current action (e.g., `aria-label={isEditing ? 'Save' : 'Edit'}`) to ensure clear communication of the button's purpose to assistive technologies.
+## $(date +%Y-%m-%d) - [File Upload Accessibility]
+**Learning:** Hiding file inputs using CSS `display: none` or Tailwind's `hidden` removes the element from the accessibility tree, making it un-focusable for keyboard users.
+**Action:** When styling custom file upload labels (e.g., `<label><input type="file" className="sr-only"></label>`), use Tailwind's `sr-only` class on the input instead of `hidden`. Apply `focus-within:` styles (e.g. `focus-within:ring-2`) to the parent label to visually indicate keyboard focus when the invisible input is active.
