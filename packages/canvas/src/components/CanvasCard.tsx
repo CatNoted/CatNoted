@@ -108,7 +108,7 @@ const CanvasCardBase: React.FC<CanvasCardProps> = ({
       {/* Connector Handle Port - Left Side (Target node port / helpful visual aid) */}
       <div
         className={`absolute left-[-8px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-primary/30 bg-background z-20 flex items-center justify-center pointer-events-none transition-opacity ${
-          isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+          isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 focus-within:opacity-100'
         }`}
         aria-hidden="true"
       >

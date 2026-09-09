@@ -132,7 +132,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                   aria-label="Block settings and drag handle"
                   aria-haspopup="menu"
                   aria-expanded={activeMenuId === block.id}
-                  className="p-1 cursor-grab active:cursor-grabbing hover:bg-muted rounded text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border"
+                  className="p-1 cursor-grab active:cursor-grabbing hover:bg-muted rounded text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border"
                 >
                   <GripVertical className="w-3.5 h-3.5" />
                 </button>
@@ -422,19 +422,19 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                       <div className="opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200 flex items-center gap-3">
                         <button
                           onClick={() => handleEditClick(block.id, block.properties?.srcDoc || '')}
-                          className="text-muted-foreground hover:text-foreground font-sans flex items-center gap-1 cursor-pointer font-medium"
+                          className="text-muted-foreground hover:text-foreground font-sans flex items-center gap-1 cursor-pointer font-medium focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border rounded"
                         >
                           ✎ Edit
                         </button>
                         <button
                           onClick={() => handleRerun(block.id)}
-                          className="text-muted-foreground hover:text-foreground font-sans flex items-center gap-1 cursor-pointer font-medium"
+                          className="text-muted-foreground hover:text-foreground font-sans flex items-center gap-1 cursor-pointer font-medium focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border rounded"
                         >
                           ↻ Rerun
                         </button>
                         <button
                           onClick={() => deleteBlock(block.id)}
-                          className="text-destructive hover:opacity-80 font-sans cursor-pointer font-medium"
+                          className="text-destructive hover:opacity-80 font-sans cursor-pointer font-medium focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border rounded"
                         >
                           ✕ Delete
                         </button>
