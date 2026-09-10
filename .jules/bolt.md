@@ -49,3 +49,6 @@
 ## 2025-02-18 - [Optimized JournalsView rendering with O(1) map lookup]
 **Learning:** Found an O(N*M) performance bottleneck in `JournalsView.tsx` where `getJournalPagesForDate` was called multiple times per calendar cell (42 cells * 2 calls). The function filtered the entire `pages` array, causing significant CPU overhead on every render, especially when the workspace grows.
 **Action:** Precompute a mapping of dates to journal pages using a `Map` wrapped in `useMemo`. This turns the O(N) array filtering inside the calendar cell loop into an O(1) map lookup, drastically reducing render time and ensuring instantaneous month switching.
+## 2025-02-18 - [Optimized blocks filtering into single pass]
+**Learning:** Found an O(N) performance bottleneck in `AppLayout.tsx` where three separate `React.useMemo` hooks iterated over the entire `blocks` array using `.filter` for different block types (`heading`, `text`, `widget`). In a reactive component with many blocks, this creates O(3N) redundant array allocations on every change to `blocks`.
+**Action:** When deriving multiple filtered sub-arrays from a large, frequently updating source collection, combine them into a single-pass `for` loop inside one `useMemo` block to reduce CPU overhead and temporary array allocations.
