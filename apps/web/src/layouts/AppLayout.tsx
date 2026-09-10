@@ -281,10 +281,19 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   // Optimization: Memoize tagNodes filtering to prevent O(N) filtering on every render
   const tagNodes = React.useMemo(() => graphData.nodes.filter(n => n.type === 'tag'), [graphData.nodes]);
 
-  // ⚡ Bolt Optimization: Memoize filtered block arrays to prevent O(N) scans on every render
-  const headingBlocks = React.useMemo(() => blocks.filter(b => b.type === 'heading'), [blocks]);
-  const textBlocks = React.useMemo(() => blocks.filter(b => b.type === 'text'), [blocks]);
-  const widgetBlocks = React.useMemo(() => blocks.filter(b => b.type === 'widget'), [blocks]);
+  // ⚡ Bolt Optimization: Combine multiple O(N) block filters into a single pass to reduce CPU overhead
+  const { headingBlocks, textBlocks, widgetBlocks } = React.useMemo(() => {
+    const headings = [];
+    const texts = [];
+    const widgets = [];
+    for (let i = 0; i < blocks.length; i++) {
+      const b = blocks[i];
+      if (b.type === 'heading') headings.push(b);
+      else if (b.type === 'text') texts.push(b);
+      else if (b.type === 'widget') widgets.push(b);
+    }
+    return { headingBlocks: headings, textBlocks: texts, widgetBlocks: widgets };
+  }, [blocks]);
 
   const widgetNodes = React.useMemo(() => {
     return widgetBlocks
@@ -641,10 +650,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
   // Export all widgets from the document store as JSON catalog
   const handleExportWidgets = () => {
-    const widgets = blocks.filter((b) => b.type === "widget");
     const dataStr =
       "data:text/json;charset=utf-8," +
-      encodeURIComponent(JSON.stringify(widgets, null, 2));
+      encodeURIComponent(JSON.stringify(widgetBlocks, null, 2));
     const downloadAnchor = document.createElement("a");
     downloadAnchor.setAttribute("href", dataStr);
     downloadAnchor.setAttribute("download", "catnoted-widgets.json");
