@@ -80,16 +80,18 @@ export const FloatingBubbleMenu: React.FC<FloatingBubbleMenuProps> = ({
       sanitizedUrl = 'https://' + sanitizedUrl;
     }
 
-    // Validate URL to prevent XSS (javascript:, data:, vbscript:)
+    // Validate URL to prevent XSS using an allowlist
     try {
       const parsedUrl = new URL(sanitizedUrl, window.location.origin);
-      if (['javascript:', 'data:', 'vbscript:'].includes(parsedUrl.protocol.toLowerCase())) {
+      const safeSchemes = ['http:', 'https:', 'mailto:', 'tel:'];
+      if (!safeSchemes.includes(parsedUrl.protocol.toLowerCase())) {
         console.error('Invalid URL scheme');
         return;
       }
     } catch (e) {
-      // If parsing fails completely, it's likely malformed; we still let the browser handle it
-      // if it somehow got past regexes, but it won't be a recognized protocol.
+      // If parsing fails completely, it's malformed and potentially dangerous.
+      console.error('Invalid URL format');
+      return;
     }
 
     applyFormat('createLink', sanitizedUrl);
