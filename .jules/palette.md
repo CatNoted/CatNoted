@@ -75,3 +75,6 @@
 ## $(date +%Y-%m-%d) - [File Upload Accessibility]
 **Learning:** Hiding file inputs using CSS `display: none` or Tailwind's `hidden` removes the element from the accessibility tree, making it un-focusable for keyboard users.
 **Action:** When styling custom file upload labels (e.g., `<label><input type="file" className="sr-only"></label>`), use Tailwind's `sr-only` class on the input instead of `hidden`. Apply `focus-within:` styles (e.g. `focus-within:ring-2`) to the parent label to visually indicate keyboard focus when the invisible input is active.
+## 2026-09-11 - Audit Clean Run Verification
+**Learning:** Monorepo UI components adhere strongly to Tailwind CSS conventions, dynamic dark/light mode token replacements (`text-foreground`, `bg-card`, etc.), and structural guidelines without severe anti-patterns breaking UX layout flow. Hard-coded classes like `bg-black/60` and `text-white` were specifically verified as intentional contrast layers against variable background images, ensuring WCAG contrast compliance.
+**Action:** Always cross-reference static overlay classes against their contextual background content to rule out WCAG contrast regressions instead of arbitrarily flagging them as token violations.

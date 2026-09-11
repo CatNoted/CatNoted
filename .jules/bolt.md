@@ -52,3 +52,6 @@
 ## 2025-02-18 - [Optimized blocks filtering into single pass]
 **Learning:** Found an O(N) performance bottleneck in `AppLayout.tsx` where three separate `React.useMemo` hooks iterated over the entire `blocks` array using `.filter` for different block types (`heading`, `text`, `widget`). In a reactive component with many blocks, this creates O(3N) redundant array allocations on every change to `blocks`.
 **Action:** When deriving multiple filtered sub-arrays from a large, frequently updating source collection, combine them into a single-pass `for` loop inside one `useMemo` block to reduce CPU overhead and temporary array allocations.
+## 2026-09-11 - Monorepo Build Audit
+**Learning:** `apps/web` Vite build triggers a size warning for chunks > 500kB due to the monolithic import of robust engines (`D3`, `Yjs`, `BlockSuite`, React ecosystems). The build passes securely, but a structural dynamic `import()` refactor should be slated for `apps/web` routers.
+**Action:** Plan an architectural code-splitting epic mapping heavy components (`DocumentEditor`, `InfiniteCanvas`, `GraphView`) to `React.lazy` wrapped in `Suspense` boundaries for future performance milestones.
