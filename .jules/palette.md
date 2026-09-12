@@ -85,3 +85,6 @@
 ## $(date +%Y-%m-%d) - [UX improvement] Fix invisible focus traps for keyboard users on resize handles
 **Learning:** An interactive resize handle styled with hover-only visibility utilities (`opacity-0 hover:opacity-100`) without being natively focusable (`tabIndex`) or having keyboard states becomes an invisible focus trap, or is completely inaccessible via keyboard.
 **Action:** Always make interactive UI elements focusable (`tabIndex={0}`) and pair `opacity-0 hover:opacity-100` with `focus-visible:opacity-100` to reveal interactive elements on keyboard navigation.
+## $(date +%Y-%m-%d) - [UX improvement] Fix invisible focus traps for keyboard users on SVG ConnectorLine
+**Learning:** SVG paths styled with hover-only visibility utilities on their adjacent `<text>` labels (`opacity-0 group-hover:opacity-100` where the `<svg>` is the `.group`) act as invisible focus traps if the path isn't natively focusable or doesn't trigger the group's focus state.
+**Action:** Make interactive SVG elements focusable (`tabIndex={0}`) and add keyboard handlers (`onKeyDown`), while applying `group-focus-within:opacity-100` to the adjacent `<text>` label to ensure it becomes visible on keyboard focus.
