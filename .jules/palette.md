@@ -78,3 +78,10 @@
 ## 2026-09-11 - Audit Clean Run Verification
 **Learning:** Monorepo UI components adhere strongly to Tailwind CSS conventions, dynamic dark/light mode token replacements (`text-foreground`, `bg-card`, etc.), and structural guidelines without severe anti-patterns breaking UX layout flow. Hard-coded classes like `bg-black/60` and `text-white` were specifically verified as intentional contrast layers against variable background images, ensuring WCAG contrast compliance.
 **Action:** Always cross-reference static overlay classes against their contextual background content to rule out WCAG contrast regressions instead of arbitrarily flagging them as token violations.
+## $(date +%Y-%m-%d) - [UX improvement] Replace hardcoded semantic tokens for native scaling
+**Learning:** Hardcoded combinations of semantic utility classes (like `bg-danger-soft text-danger`, `hover:bg-danger-soft`, `bg-warning-soft text-warning`, and `bg-success-soft`) break automatic theme resolution logic natively provided by the Tailwind token system (like `bg-muted text-destructive` or `text-success`) and create subtle contrast regressions.
+**Action:** Always prefer standard semantic tokens natively resolving in light and dark mode, such as `bg-muted text-foreground`, `hover:bg-muted text-destructive`, and mapping borders to `border-border`, rather than raw `*-soft` tokens on interactive states.
+
+## $(date +%Y-%m-%d) - [UX improvement] Fix invisible focus traps for keyboard users on resize handles
+**Learning:** An interactive resize handle styled with hover-only visibility utilities (`opacity-0 hover:opacity-100`) without being natively focusable (`tabIndex`) or having keyboard states becomes an invisible focus trap, or is completely inaccessible via keyboard.
+**Action:** Always make interactive UI elements focusable (`tabIndex={0}`) and pair `opacity-0 hover:opacity-100` with `focus-visible:opacity-100` to reveal interactive elements on keyboard navigation.

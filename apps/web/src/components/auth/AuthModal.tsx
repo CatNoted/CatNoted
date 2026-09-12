@@ -102,7 +102,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         </div>
 
         {errorMsg && (
-          <div role="alert" id="auth-error" aria-live="assertive" className="mb-3.5 p-2 bg-danger-soft text-danger text-[11px] font-medium rounded-lg border border-border/20 text-center">
+          <div role="alert" id="auth-error" aria-live="assertive" className="mb-3.5 p-2 bg-muted text-destructive text-[11px] font-medium rounded-lg border border-border/20 text-center">
             {errorMsg}
           </div>
         )}

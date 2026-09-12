@@ -182,7 +182,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                             deletePage(node.id);
                           }
                         }}
-                        className="p-1 rounded text-muted-foreground hover:text-danger hover:bg-danger-soft transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-danger"
+                        className="p-1 rounded text-muted-foreground hover:text-destructive hover:bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-destructive"
                         aria-label="Delete page"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -239,7 +239,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
                             deletePage(node.id);
                           }
                         }}
-                        className="p-1 rounded text-muted-foreground hover:text-danger hover:bg-danger-soft transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-danger"
+                        className="p-1 rounded text-muted-foreground hover:text-destructive hover:bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-destructive"
                         aria-label="Delete page"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
