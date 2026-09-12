@@ -700,7 +700,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         <div className="fixed inset-0 bg-black/40 dark:bg-background/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4" data-testid="conflict-resolution-modal">
           <div className="bg-card  border border-border rounded-3xl p-6 max-w-md w-full shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
             <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-2xl bg-danger-soft text-danger flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-2xl bg-muted text-destructive flex items-center justify-center shrink-0">
                 <AlertTriangle className="w-5 h-5 animate-pulse" />
               </div>
               <div className="flex-1 min-w-0">
@@ -810,12 +810,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 </div>
               )}
               {syncStatus === 'conflict' && (
-                <div className="text-danger hover:text-danger/80 transition-colors p-1" title="Sync Version Conflict" data-testid="sync-status-conflict">
+                <div className="text-destructive hover:text-destructive/80 transition-colors p-1" title="Sync Version Conflict" data-testid="sync-status-conflict">
                   <AlertTriangle className="w-4 h-4 animate-pulse" />
                 </div>
               )}
               {syncStatus === 'error' && (
-                <div className="text-danger hover:text-danger/80 transition-colors p-1" title="Sync Error" data-testid="sync-status-error">
+                <div className="text-destructive hover:text-destructive/80 transition-colors p-1" title="Sync Error" data-testid="sync-status-error">
                   <AlertCircle className="w-4 h-4" />
                 </div>
               )}
@@ -1024,7 +1024,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                   type="button"
                   id="tour-new-page"
                   onClick={onCreatePage}
-                  className="w-full flex items-center justify-center gap-1.5 py-2 px-3 mb-3 bg-muted dark:bg-muted text-foreground font-medium hover:bg-muted rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border"
+                  className="w-full flex items-center justify-center gap-1.5 py-2 px-3 mb-3 bg-muted text-foreground font-medium hover:bg-muted rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border"
                 >
                   <span>+ New Page</span>
                 </button>
@@ -1119,7 +1119,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                 <button
                                   type="button"
                                   onClick={(e) => { e.stopPropagation(); handleDeletePage(node.id, displayLabel); }}
-                                  className="opacity-0 group-hover/pageitem:opacity-100 focus-visible:opacity-100 p-1 mr-1 rounded text-muted-foreground hover:text-danger hover:bg-danger-soft transition-all shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-danger"
+                                  className="opacity-0 group-hover/pageitem:opacity-100 focus-visible:opacity-100 p-1 mr-1 rounded text-muted-foreground hover:text-destructive hover:bg-muted transition-all shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-destructive"
                                   title={`Hapus "${displayLabel}"`}
                                   aria-label={`Hapus "${displayLabel}"`}
                                 >
@@ -1216,7 +1216,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                 }}
                                 className={`w-full text-left px-2 py-1 rounded-md min-w-0 flex items-center gap-2 transition-colors ${
                                   isActive
-                                    ? 'bg-muted dark:bg-muted text-foreground font-medium'
+                                    ? 'bg-muted text-foreground font-medium'
                                     : 'text-foreground hover:bg-muted dark:hover:bg-muted/30 hover:text-foreground dark:hover:text-foreground'
                                 }`}
                               >
@@ -1299,7 +1299,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               {activeRightSidebarTab === 'info' && (
                 <div className="space-y-6">
                   {/* Title & Star Toggler */}
-                  <div className="flex items-center justify-between p-3 bg-muted dark:bg-muted/40 border border-border dark:border-border/60 rounded-xl">
+                  <div className="flex items-center justify-between p-3 bg-muted/40 border border-border dark:border-border/60 rounded-xl">
                     <div className="flex items-center gap-2 flex-1 min-w-0">
                       <span className="text-xl shrink-0">{pageMeta?.icon || '📄'}</span>
                       <span className="font-semibold flex-1 min-w-0 truncate text-foreground" title={pageMeta?.title || docTitle}>{pageMeta?.title || docTitle}</span>
@@ -1357,7 +1357,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         aria-label="Toggle Wide Mode"
                         onClick={() => updatePageMeta({ fullWidth: !pageMeta?.fullWidth })}
                         className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-border ${
-                          pageMeta?.fullWidth ? 'bg-primary' : 'bg-muted dark:bg-muted'
+                          pageMeta?.fullWidth ? 'bg-primary' : 'bg-muted'
                         }`}
                       >
                         <span
@@ -1373,19 +1373,19 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                   <div className="space-y-2">
                     <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Document Statistics</h4>
                     <div className="grid grid-cols-2 gap-2 text-xs">
-                      <div className="p-2.5 rounded-lg bg-muted dark:bg-muted border border-muted dark:border-border/40">
+                      <div className="p-2.5 rounded-lg bg-muted border border-muted dark:border-border/40">
                         <div className="text-[10px] text-muted-foreground">Total Blocks</div>
                         <div className="text-base font-bold text-foreground mt-0.5">{blocks.length}</div>
                       </div>
-                      <div className="p-2.5 rounded-lg bg-muted dark:bg-muted border border-muted dark:border-border/40">
+                      <div className="p-2.5 rounded-lg bg-muted border border-muted dark:border-border/40">
                         <div className="text-[10px] text-muted-foreground">Heading Nodes</div>
                         <div className="text-base font-bold text-foreground mt-0.5">{headingBlocks.length}</div>
                       </div>
-                      <div className="p-2.5 rounded-lg bg-muted dark:bg-muted border border-muted dark:border-border/40">
+                      <div className="p-2.5 rounded-lg bg-muted border border-muted dark:border-border/40">
                         <div className="text-[10px] text-muted-foreground">Text Nodes</div>
                         <div className="text-base font-bold text-foreground mt-0.5">{textBlocks.length}</div>
                       </div>
-                      <div className="p-2.5 rounded-lg bg-muted dark:bg-muted border border-muted dark:border-border/40">
+                      <div className="p-2.5 rounded-lg bg-muted border border-muted dark:border-border/40">
                         <div className="text-[10px] text-muted-foreground">Custom Widgets</div>
                         <div className="text-base font-bold text-foreground mt-0.5">{widgetBlocks.length}</div>
                       </div>
@@ -1495,7 +1495,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                               className={`p-2.5 rounded-xl text-xs leading-relaxed ${
                                 msg.sender === "user"
                                   ? "bg-primary text-primary-foreground rounded-tr-none shadow-sm"
-                                  : "bg-muted dark:bg-muted text-foreground rounded-tl-none border border-transparent dark:border-ink-secondary"
+                                  : "bg-muted text-foreground rounded-tl-none border border-transparent dark:border-ink-secondary"
                               }`}
                             >
                               {msg.text}
@@ -1530,7 +1530,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                           { title: 'Mini Calculator', desc: 'Grid based calculator widget', template: WIDGET_TEMPLATES.calculator, id: 'calc' },
                           { title: 'Quick Tasks Todo', desc: 'Interactive task tracker', template: WIDGET_TEMPLATES.todo, id: 'todo' }
                         ].map((item) => (
-                          <div key={item.id} className="p-2 rounded-lg bg-muted dark:bg-muted/30 border border-border dark:border-border/60 flex items-center justify-between text-xs">
+                          <div key={item.id} className="p-2 rounded-lg bg-muted/30 border border-border dark:border-border/60 flex items-center justify-between text-xs">
                             <div className="flex flex-col min-w-0 pr-1">
                               <span className="font-semibold text-foreground dark:text-foreground truncate">{item.title}</span>
                               <span className="text-[10px] text-muted-foreground truncate">{item.desc}</span>
@@ -1742,7 +1742,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                   setIsAgentOpen(false);
                   setIsMinimized(false);
                 }}
-                className="w-7 h-7 rounded-lg flex items-center justify-center text-muted-foreground hover:text-danger hover:bg-danger-soft transition-all duration-200 hover:scale-110"
+                className="w-7 h-7 rounded-lg flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-muted transition-all duration-200 hover:scale-110"
                 title="Close"
                 aria-label="Close"
               >
@@ -1823,8 +1823,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         <div
                           className={`w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0 ${
                             msg.sender === "user"
-                              ? "bg-muted dark:bg-muted text-foreground"
-                              : "bg-muted dark:bg-muted/40 text-foreground"
+                              ? "bg-muted text-foreground"
+                              : "bg-muted/40 text-foreground"
                           }`}
                         >
                           {msg.sender === "user" ? (
@@ -1837,7 +1837,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                           className={`p-3 rounded-2xl text-xs leading-relaxed ${
                             msg.sender === "user"
                               ? "bg-primary text-primary-foreground rounded-tr-none shadow-sm"
-                              : "bg-muted dark:bg-muted/80 text-foreground rounded-tl-none border border-transparent dark:border-border/60"
+                              : "bg-muted/80 text-foreground rounded-tl-none border border-transparent dark:border-border/60"
                           }`}
                         >
                           {msg.text}
@@ -1847,7 +1847,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                             <div className="h-[150px] w-full">
                               <SandboxFrame srcDoc={msg.code} theme={isDarkMode ? 'dark' : 'light'} height="150px" />
                             </div>
-                            <div className="p-2 border-t border-border dark:border-border/50 bg-muted dark:bg-muted flex justify-end">
+                            <div className="p-2 border-t border-border dark:border-border/50 bg-muted flex justify-end">
                               <button
                                 onClick={() => {
                                   const newBlockId = addBlock(null, 'widget', '');
@@ -1864,11 +1864,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                           </div>
                         )}
                         {msg.editProposal && (
-                          <div className="w-full mt-1 border border-success-soft dark:border-success/30 rounded-xl overflow-hidden shadow-sm bg-success-soft/50 dark:bg-success-soft/10">
+                          <div className="w-full mt-1 border border-border dark:border-success/30 rounded-xl overflow-hidden shadow-sm bg-muted/50 dark:bg-muted/10">
                             <div className="p-3 text-xs text-foreground whitespace-pre-wrap font-mono">
                               {msg.editProposal}
                             </div>
-                            <div className="p-2 border-t border-success-soft dark:border-success/20 flex justify-end">
+                            <div className="p-2 border-t border-border dark:border-success/20 flex justify-end">
                               <button
                                 onClick={() => {
                                   // Just append the proposed edit as a text block
@@ -2063,7 +2063,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                                     }}
                                     title="Delete Widget"
                                     aria-label="Delete Widget"
-                                    className="p-1 hover:bg-muted dark:hover:bg-muted rounded text-danger cursor-pointer"
+                                    className="p-1 hover:bg-muted dark:hover:bg-muted rounded text-destructive cursor-pointer"
                                   >
                                     <Trash2 className="w-3.5 h-3.5" />
                                   </button>
@@ -2080,7 +2080,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
               {/* ── Resize handle (bottom-left corner) ────────────────── */}
               <div
-                className="absolute bottom-0 left-0 w-5 h-5 cursor-nesw-resize opacity-0 hover:opacity-100 transition-opacity"
+                className="absolute bottom-0 left-0 w-5 h-5 cursor-nesw-resize opacity-0 hover:opacity-100 focus-visible:opacity-100 transition-opacity" tabIndex={0}
                 onMouseDown={handleResizeStart}
                 style={{
                   background:

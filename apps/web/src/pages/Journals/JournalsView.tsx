@@ -249,7 +249,7 @@ export const JournalsView: React.FC = () => {
             {/* Daily Reflection */}
             <button
               onClick={() => handleCompleteOnboarding('reflection')}
-              className="group p-5 rounded-2xl border border-border dark:border-border bg-muted dark:bg-muted text-left hover:border-border hover:bg-card dark:hover:bg-card shadow-lg hover:shadow-foreground/5 transition-all flex flex-col gap-3"
+              className="group p-5 rounded-2xl border border-border dark:border-border bg-muted text-left hover:border-border hover:bg-card dark:hover:bg-card shadow-lg hover:shadow-foreground/5 transition-all flex flex-col gap-3"
             >
               <div className="w-9 h-9 rounded-xl bg-muted text-foreground flex items-center justify-center">
                 <Sparkles className="w-4.5 h-4.5" />
@@ -268,9 +268,9 @@ export const JournalsView: React.FC = () => {
             {/* Gratitude Journal */}
             <button
               onClick={() => handleCompleteOnboarding('gratitude')}
-              className="group p-5 rounded-2xl border border-border dark:border-border bg-muted dark:bg-muted text-left hover:border-border hover:bg-card dark:hover:bg-card shadow-lg hover:shadow-foreground/5 transition-all flex flex-col gap-3"
+              className="group p-5 rounded-2xl border border-border dark:border-border bg-muted text-left hover:border-border hover:bg-card dark:hover:bg-card shadow-lg hover:shadow-foreground/5 transition-all flex flex-col gap-3"
             >
-              <div className="w-9 h-9 rounded-xl bg-success-soft text-success flex items-center justify-center">
+              <div className="w-9 h-9 rounded-xl bg-muted text-success flex items-center justify-center">
                 <BookOpen className="w-4.5 h-4.5" />
               </div>
               <div>
@@ -287,7 +287,7 @@ export const JournalsView: React.FC = () => {
             {/* Empty Note */}
             <button
               onClick={() => handleCompleteOnboarding('empty')}
-              className="group p-5 rounded-2xl border border-border dark:border-border bg-muted dark:bg-muted text-left hover:border-border hover:bg-card dark:hover:bg-card shadow-lg hover:shadow-foreground/5 transition-all flex flex-col gap-3"
+              className="group p-5 rounded-2xl border border-border dark:border-border bg-muted text-left hover:border-border hover:bg-card dark:hover:bg-card shadow-lg hover:shadow-foreground/5 transition-all flex flex-col gap-3"
             >
               <div className="w-9 h-9 rounded-xl bg-muted text-foreground flex items-center justify-center">
                 <CheckCircle className="w-4.5 h-4.5" />
@@ -408,7 +408,7 @@ export const JournalsView: React.FC = () => {
         </div>
 
         {/* Template Quick Settings */}
-        <div className="p-4 mt-auto border-t border-border dark:border-border bg-muted dark:bg-muted">
+        <div className="p-4 mt-auto border-t border-border dark:border-border bg-muted">
           <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2.5">
             <Settings className="w-3.5 h-3.5" />
             <span>Template Settings</span>
@@ -446,7 +446,7 @@ export const JournalsView: React.FC = () => {
         <div className="flex-1 min-w-0 overflow-auto p-6 md:p-8">
           {/* Duplication Warning Banner */}
           {activeConflict && (
-            <div className="mb-6 p-4 bg-warning-soft dark:bg-warning-soft/20 border border-warning-soft dark:border-warning-soft/50 shadow-sm rounded-2xl flex items-start gap-3 animate-in slide-in-from-top-3">
+            <div className="mb-6 p-4 bg-muted/20 border border-border dark:border-border/50 shadow-sm rounded-2xl flex items-start gap-3 animate-in slide-in-from-top-3">
               <AlertTriangle className="w-5 h-5 text-warning shrink-0 mt-0.5" />
               <div>
                 <h5 className="text-xs font-bold text-warning-foreground">Journal Duplication Conflict</h5>

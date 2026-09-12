@@ -135,7 +135,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       <Panel className="w-full max-w-[760px] h-[580px] shadow-2xl flex flex-col md:flex-row overflow-hidden">
 
         {/* Left Sidebar */}
-        <div className="w-full md:w-[220px] border-b md:border-b-0 md:border-r border-muted dark:border-border bg-muted dark:bg-muted p-5 flex flex-col justify-between shrink-0">
+        <div className="w-full md:w-[220px] border-b md:border-b-0 md:border-r border-muted dark:border-border bg-muted p-5 flex flex-col justify-between shrink-0">
           <div>
             {/* Sidebar Header */}
             <div className="flex items-center gap-2 mb-6 px-1">
@@ -200,7 +200,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             {activeTab === 'byok' && (
               <form onSubmit={handleSaveKeys} className="flex flex-col h-full justify-between gap-6">
                 <div className="space-y-5">
-                  <div className="p-3.5 rounded-xl border border-muted dark:border-border/60 bg-muted dark:bg-muted">
+                  <div className="p-3.5 rounded-xl border border-muted dark:border-border/60 bg-muted">
                     <p className="text-xs leading-relaxed text-muted-foreground">
                       Use your own LLM API keys. Keys are stored encrypted in session storage and never touch CatNoted servers.
                     </p>
@@ -222,7 +222,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                             value={openaiKey}
                             onChange={(e) => setOpenaiKey(e.target.value)}
                             placeholder="sk-..."
-                            className="w-full px-3 py-1.5 rounded-lg border border-border dark:border-border bg-muted dark:bg-muted text-xs placeholder:text-muted-foreground dark:placeholder:text-muted-foreground text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-border dark:focus-visible:ring-border transition-all"
+                            className="w-full px-3 py-1.5 rounded-lg border border-border dark:border-border bg-muted text-xs placeholder:text-muted-foreground dark:placeholder:text-muted-foreground text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-border dark:focus-visible:ring-border transition-all"
                           />
                         </div>
                       </div>
@@ -236,7 +236,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                             value={geminiKey}
                             onChange={(e) => setGeminiKey(e.target.value)}
                             placeholder="AIzaSy..."
-                            className="w-full px-3 py-1.5 rounded-lg border border-border dark:border-border bg-muted dark:bg-muted text-xs placeholder:text-muted-foreground dark:placeholder:text-muted-foreground text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-border dark:focus-visible:ring-border transition-all"
+                            className="w-full px-3 py-1.5 rounded-lg border border-border dark:border-border bg-muted text-xs placeholder:text-muted-foreground dark:placeholder:text-muted-foreground text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-border dark:focus-visible:ring-border transition-all"
                           />
                         </div>
                       </div>
@@ -250,7 +250,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                             value={anthropicKey}
                             onChange={(e) => setAnthropicKey(e.target.value)}
                             placeholder="sk-ant-..."
-                            className="w-full px-3 py-1.5 rounded-lg border border-border dark:border-border bg-muted dark:bg-muted text-xs placeholder:text-muted-foreground dark:placeholder:text-muted-foreground text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-border dark:focus-visible:ring-border transition-all"
+                            className="w-full px-3 py-1.5 rounded-lg border border-border dark:border-border bg-muted text-xs placeholder:text-muted-foreground dark:placeholder:text-muted-foreground text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-border dark:focus-visible:ring-border transition-all"
                           />
                         </div>
                       </div>
@@ -264,7 +264,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                             value={ollamaUrl}
                             onChange={(e) => setOllamaUrl(e.target.value)}
                             placeholder="http://localhost:11434"
-                            className="w-full px-3 py-1.5 rounded-lg border border-border dark:border-border bg-muted dark:bg-muted text-xs placeholder:text-muted-foreground dark:placeholder:text-muted-foreground text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-border dark:focus-visible:ring-border transition-all"
+                            className="w-full px-3 py-1.5 rounded-lg border border-border dark:border-border bg-muted text-xs placeholder:text-muted-foreground dark:placeholder:text-muted-foreground text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-border dark:focus-visible:ring-border transition-all"
                           />
                         </div>
                       </div>
@@ -272,7 +272,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   </div>
 
                   <div className="pt-2">
-                    <label htmlFor="rememberChoice" className="flex items-center gap-2.5 rounded-xl border border-muted dark:border-border/60 bg-muted dark:bg-muted px-3.5 py-2.5 cursor-pointer select-none transition-colors hover:bg-muted dark:hover:bg-muted">
+                    <label htmlFor="rememberChoice" className="flex items-center gap-2.5 rounded-xl border border-muted dark:border-border/60 bg-muted px-3.5 py-2.5 cursor-pointer select-none transition-colors hover:bg-muted dark:hover:bg-muted">
                       <input
                         id="rememberChoice"
                         type="checkbox"
@@ -307,7 +307,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             {activeTab === 'sync' && (
               <form onSubmit={handleSaveSyncSettings} className="flex flex-col h-full justify-between gap-6">
                 <div className="space-y-5">
-                  <div className="flex items-start gap-3 rounded-xl border border-warning-soft dark:border-warning-soft/20 bg-warning-soft dark:bg-warning-soft p-3.5">
+                  <div className="flex items-start gap-3 rounded-xl border border-border dark:border-border/20 bg-muted p-3.5">
                     <ShieldAlert className="w-4 h-4 text-warning shrink-0 mt-0.5" />
                     <div>
                       <h4 className="text-xs font-semibold text-warning-foreground">Zero-knowledge storage</h4>
@@ -331,7 +331,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                           value={passphrase}
                           onChange={(e) => onPassphraseChange(e.target.value)}
                           placeholder="Insert secure E2EE passphrase..."
-                          className="w-full px-3 py-1.5 rounded-lg border border-border dark:border-border bg-muted dark:bg-muted text-xs placeholder:text-muted-foreground dark:placeholder:text-muted-foreground text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-border dark:focus-visible:ring-border transition-all"
+                          className="w-full px-3 py-1.5 rounded-lg border border-border dark:border-border bg-muted text-xs placeholder:text-muted-foreground dark:placeholder:text-muted-foreground text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-border dark:focus-visible:ring-border transition-all"
                         />
                       </div>
                     </div>
@@ -342,7 +342,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       Connection Status
                     </h3>
 
-                    <div className="rounded-xl border border-muted dark:border-border/60 bg-muted dark:bg-muted p-4 space-y-2.5">
+                    <div className="rounded-xl border border-muted dark:border-border/60 bg-muted p-4 space-y-2.5">
                       <div className="flex justify-between items-center text-xs">
                         <span className="text-muted-foreground">Local-First Storage (VFS)</span>
                         <span className="font-semibold text-success flex items-center gap-1.5">

@@ -485,7 +485,7 @@ const App: React.FC = () => {
           )
         : status === 'saved'
           ? (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-success-soft text-success border border-success-soft">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-muted text-success border border-border">
                 <span className="w-1.5 h-1.5 rounded-full bg-success" />
                 <span className="hidden sm:inline">Saved</span>
               </span>
