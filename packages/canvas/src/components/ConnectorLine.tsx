@@ -112,7 +112,15 @@ export const ConnectorLine: React.FC<ConnectorLineProps> = ({
         fill="none"
         stroke="transparent"
         strokeWidth="16"
-        className="pointer-events-auto cursor-pointer"
+        className="pointer-events-auto cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            e.stopPropagation();
+            if (onClick) onClick(e as any);
+          }
+        }}
         onMouseDown={(e) => {
           e.stopPropagation();
           if (onClick) onClick(e);
@@ -144,7 +152,7 @@ export const ConnectorLine: React.FC<ConnectorLineProps> = ({
           className={isBroken
             ? `fill-destructive font-semibold text-[10px] tracking-wide pointer-events-none opacity-100`
             : `fill-primary font-medium text-[10px] tracking-wide transition-opacity duration-200 pointer-events-none ${
-                forceShowLabel ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                forceShowLabel ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 group-focus-within:opacity-100'
               }`
           }
           textAnchor="middle"
