@@ -23,19 +23,19 @@ const CALLOUT_BG_THEMES: Record<string, { bg: string; border: string; text: stri
     text: 'text-foreground',
   },
   emerald: {
-    bg: 'bg-success-soft',
-    border: 'border-success-soft',
+    bg: 'bg-muted',
+    border: 'border-success/30',
     text: 'text-success',
   },
   amber: {
-    bg: 'bg-warning-soft',
-    border: 'border-warning-soft',
+    bg: 'bg-muted',
+    border: 'border-warning/30',
     text: 'text-warning',
   },
   rose: {
-    bg: 'bg-danger-soft',
-    border: 'border-danger-soft',
-    text: 'text-danger',
+    bg: 'bg-muted',
+    border: 'border-destructive/30',
+    text: 'text-destructive',
   },
   sky: {
     bg: 'bg-muted',

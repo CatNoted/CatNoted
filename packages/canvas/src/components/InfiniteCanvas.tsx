@@ -669,22 +669,24 @@ export const InfiniteCanvas: React.FC = () => {
     });
   };
 
-  // ⚡ Bolt Optimization: Memoize connector filtering to prevent O(N) scans on every frame/render
-  const customConnectors = useMemo(() =>
-    Object.values(elements).filter(el => el.type === 'connector' && el.connector),
-    [elements]
-  );
+  // ⚡ Bolt Optimization: Memoize connector and non-block filtering into a single O(N) pass
+  const { customConnectors, nonBlockElements } = useMemo(() => {
+    const connectors: CanvasElement[] = [];
+    const nonBlocks: CanvasElement[] = [];
+    for (const el of Object.values(elements)) {
+      if (el.type === 'connector' && el.connector) {
+        connectors.push(el);
+      } else if (el.type !== 'card' && el.type !== 'connector') {
+        nonBlocks.push(el);
+      }
+    }
+    return { customConnectors: connectors, nonBlockElements: nonBlocks };
+  }, [elements]);
 
   // ⚡ Bolt Optimization: Memoize selected element resolution
   const selectedElements = useMemo(() =>
     selectedIds.map(id => elements[id]).filter(Boolean),
     [selectedIds, elements]
-  );
-
-  // ⚡ Bolt Optimization: Memoize non-block element filtering
-  const nonBlockElements = useMemo(() =>
-    Object.values(elements).filter(el => el.type !== 'card' && el.type !== 'connector'),
-    [elements]
   );
 
   const hasContent = blocks.length > 0 || nonBlockElements.length > 0 || customConnectors.length > 0;

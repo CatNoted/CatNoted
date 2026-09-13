@@ -103,22 +103,22 @@ export const Toast: React.FC<ToastProps> = ({ item, onClose }) => {
       case 'success':
         return {
           container:
-            'bg-success-soft border-border text-success',
+            'bg-muted border-success/30 text-success',
           iconColor: 'text-success',
           Icon: CheckCircle2,
         };
       case 'warning':
         return {
           container:
-            'bg-warning-soft border-border text-warning',
+            'bg-muted border-warning/30 text-warning',
           iconColor: 'text-warning',
           Icon: AlertTriangle,
         };
       case 'danger':
         return {
           container:
-            'bg-danger-soft border-border text-danger',
-          iconColor: 'text-danger',
+            'bg-muted border-destructive/30 text-destructive',
+          iconColor: 'text-destructive',
           Icon: AlertCircle,
         };
       default:
