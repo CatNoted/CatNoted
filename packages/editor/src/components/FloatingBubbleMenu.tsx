@@ -98,10 +98,10 @@ export const FloatingBubbleMenu: React.FC<FloatingBubbleMenuProps> = ({
   };
 
   const colors = [
-    { name: 'Yellow', bg: 'bg-warning-soft' },
-    { name: 'Green', bg: 'bg-success-soft' },
+    { name: 'Yellow', bg: 'bg-warning/20' },
+    { name: 'Green', bg: 'bg-success/20' },
     { name: 'Blue', bg: 'bg-muted' },
-    { name: 'Pink', bg: 'bg-danger-soft' },
+    { name: 'Pink', bg: 'bg-destructive/20' },
     { name: 'Purple', bg: 'bg-muted' },
   ];
 

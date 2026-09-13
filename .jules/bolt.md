@@ -55,3 +55,7 @@
 ## 2026-09-11 - Monorepo Build Audit
 **Learning:** `apps/web` Vite build triggers a size warning for chunks > 500kB due to the monolithic import of robust engines (`D3`, `Yjs`, `BlockSuite`, React ecosystems). The build passes securely, but a structural dynamic `import()` refactor should be slated for `apps/web` routers.
 **Action:** Plan an architectural code-splitting epic mapping heavy components (`DocumentEditor`, `InfiniteCanvas`, `GraphView`) to `React.lazy` wrapped in `Suspense` boundaries for future performance milestones.
+
+## 2026-09-12 - Consolidate O(N) canvas filtering
+**Learning:** Found multiple separate `useMemo` blocks in `InfiniteCanvas.tsx` iterating over `Object.values(elements)` sequentially for different filters (`customConnectors` and `nonBlockElements`), causing duplicate O(N) overhead during render cycles.
+**Action:** When filtering the same large collection multiple times for different subsets in a highly reactive component, combine them into a single pass loop within one `useMemo` block that returns all subset arrays.

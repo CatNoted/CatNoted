@@ -88,3 +88,7 @@
 ## $(date +%Y-%m-%d) - [UX improvement] Fix invisible focus traps for keyboard users on SVG ConnectorLine
 **Learning:** SVG paths styled with hover-only visibility utilities on their adjacent `<text>` labels (`opacity-0 group-hover:opacity-100` where the `<svg>` is the `.group`) act as invisible focus traps if the path isn't natively focusable or doesn't trigger the group's focus state.
 **Action:** Make interactive SVG elements focusable (`tabIndex={0}`) and add keyboard handlers (`onKeyDown`), while applying `group-focus-within:opacity-100` to the adjacent `<text>` label to ensure it becomes visible on keyboard focus.
+
+## 2026-09-12 - Fix flex-1 min-w-0 on flex-col text nodes and *-soft backgrounds
+**Learning:** Found an instance in DocumentEditor where `flex-1 min-w-0` was used on a text node inside a `flex-col` container, which prevents horizontal truncation and forces vertical stretching. Also identified remaining hardcoded `-soft` backgrounds (like `bg-warning-soft`) used directly on interactive/foreground UI like Toasts and CalloutBlocks.
+**Action:** Always omit `flex-1 min-w-0` on children of `flex-col` containers when text truncation is desired, applying only `truncate`. Replace specific `*-soft` tokens in standard components with `bg-muted` and tinted borders to rely on Tailwind's native handling.
