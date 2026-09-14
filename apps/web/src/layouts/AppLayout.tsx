@@ -1045,7 +1045,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     <span className="text-[9px] bg-muted text-foreground px-1.5 py-0.5 rounded-full font-bold">{favoritePages.length}</span>
                   </button>
                   {sectionsExpanded.favorites && (
-                    <ul className="pl-4 mt-1 space-y-0.5 border-l border-warning-soft dark:border-warning-soft/40 ml-3.5">
+                    <ul className="pl-4 mt-1 space-y-0.5 border-l border-warning dark:border-warning/40 ml-3.5">
                       {favoritePages.length === 0 ? (
                         <div className="px-2 py-3 flex flex-col items-center justify-center text-center gap-1.5 opacity-60">
                           <Star className="w-4 h-4 text-muted-foreground" />

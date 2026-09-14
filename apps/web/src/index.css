@@ -71,10 +71,6 @@
 .text-warning { color: hsl(var(--warning)); }
 
 .bg-accent { background-color: hsl(var(--accent)); }
-.bg-accent-soft { background-color: hsl(var(--accent-soft)); }
-.bg-danger-soft { background-color: hsl(var(--danger-soft)); }
-.bg-success-soft { background-color: hsl(var(--success-soft)); }
-.bg-warning-soft { background-color: hsl(var(--warning-soft)); }
 
 /* Overlays */
 .overlay-backdrop {

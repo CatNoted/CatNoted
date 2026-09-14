@@ -92,3 +92,10 @@
 ## 2026-09-12 - Fix flex-1 min-w-0 on flex-col text nodes and *-soft backgrounds
 **Learning:** Found an instance in DocumentEditor where `flex-1 min-w-0` was used on a text node inside a `flex-col` container, which prevents horizontal truncation and forces vertical stretching. Also identified remaining hardcoded `-soft` backgrounds (like `bg-warning-soft`) used directly on interactive/foreground UI like Toasts and CalloutBlocks.
 **Action:** Always omit `flex-1 min-w-0` on children of `flex-col` containers when text truncation is desired, applying only `truncate`. Replace specific `*-soft` tokens in standard components with `bg-muted` and tinted borders to rely on Tailwind's native handling.
+## $(date +%Y-%m-%d) - [UX improvement] Replace hardcoded semantic tokens for native scaling
+**Learning:** Hardcoded combinations of semantic utility classes (like `bg-danger-soft text-danger`, `hover:bg-danger-soft`, `bg-warning-soft text-warning`, and `bg-success-soft`) break automatic theme resolution logic natively provided by the Tailwind token system (like `bg-muted text-destructive` or `text-success`) and create subtle contrast regressions.
+**Action:** Always prefer standard semantic tokens natively resolving in light and dark mode, such as `bg-muted text-foreground`, `hover:bg-muted text-destructive`, and mapping borders to `border-border`, rather than raw `*-soft` tokens on interactive states.
+
+## $(date +%Y-%m-%d) - [UX improvement] Fix flex-1 min-w-0 on flex-col text nodes and *-soft backgrounds
+**Learning:** Found an instance in DocumentEditor where `flex-1 min-w-0` was used on a text node inside a `flex-col` container, which prevents horizontal truncation and forces vertical stretching. Also identified remaining hardcoded `-soft` backgrounds (like `bg-warning-soft`) used directly on interactive/foreground UI like Toasts and CalloutBlocks.
+**Action:** Always omit `flex-1 min-w-0` on children of `flex-col` containers when text truncation is desired, applying only `truncate`. Replace specific `*-soft` tokens in standard components with `bg-muted` and tinted borders to rely on Tailwind's native handling.
