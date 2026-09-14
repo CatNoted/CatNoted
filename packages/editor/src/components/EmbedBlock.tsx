@@ -246,7 +246,7 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
                 );
               case 'code':
                 return (
-                  <div key={block.id} className="p-2 bg-muted border border-border rounded-lg font-mono text-[10px] text-muted-foreground flex-1 min-w-0 truncate">
+                  <div key={block.id} className="p-2 bg-muted border border-border rounded-lg font-mono text-[10px] text-muted-foreground truncate">
                     {block.content || <span className="opacity-30 italic">Code snippet</span>}
                   </div>
                 );
