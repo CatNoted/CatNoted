@@ -48,17 +48,18 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
   useEffect(() => {
     const updateBlocks = () => {
       deduplicateYBlocks();
+      // ⚡ Bolt Optimization: Single-pass iteration to filter by pageId and deduplicate
       const allBlocks = yblocks.toArray();
-      const pageBlocks = allBlocks.filter(b => (b.parentId || 'root-doc-node') === pageId);
-
-      // Deduplicate blocks by id to avoid duplicate rendering from Yjs observer noise
       const seen = new Set<string>();
-      const deduped = pageBlocks.filter(b => {
-        if (!b || !b.id) return false;
-        if (seen.has(b.id)) return false;
-        seen.add(b.id);
-        return true;
-      });
+      const deduped: BlockNode[] = [];
+
+      for (let i = 0; i < allBlocks.length; i++) {
+        const b = allBlocks[i];
+        if (b && b.id && (b.parentId || 'root-doc-node') === pageId && !seen.has(b.id)) {
+          seen.add(b.id);
+          deduped.push(b);
+        }
+      }
 
       const isTest = typeof process !== 'undefined' && (process.env.NODE_ENV === 'test' || process.env.VITEST);
 
@@ -246,9 +247,20 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
           isDeleted: false
         });
       }
+      // ⚡ Bolt Optimization: Single-pass loop to categorize pages and deleted pages
       const allPages = ypages.toJSON() ? Object.values(ypages.toJSON()) : [];
-      setPages(allPages.filter((p: any) => !p?.isDeleted));
-      setDeletedPages(allPages.filter((p: any) => !!p?.isDeleted));
+      const activePages: any[] = [];
+      const delPages: any[] = [];
+      for (let i = 0; i < allPages.length; i++) {
+        const p = allPages[i];
+        if (p?.isDeleted) {
+          delPages.push(p);
+        } else {
+          activePages.push(p);
+        }
+      }
+      setPages(activePages);
+      setDeletedPages(delPages);
     };
 
     updateBlocks();
@@ -267,18 +279,18 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
 
     const handleSync = () => {
       deduplicateYBlocks();
-      // Filter by current pageId to avoid cross-page duplicates
+      // ⚡ Bolt Optimization: Single-pass iteration to filter by pageId and deduplicate
       const allBlocks = yblocks.toArray();
-      const pageBlocks = allBlocks.filter(b => (b.parentId || 'root-doc-node') === pageId);
-
-      // Deduplicate blocks by id to avoid duplicate rendering from Yjs observer noise
       const seen = new Set<string>();
-      const deduped = pageBlocks.filter(b => {
-        if (!b || !b.id) return false;
-        if (seen.has(b.id)) return false;
-        seen.add(b.id);
-        return true;
-      });
+      const deduped: BlockNode[] = [];
+
+      for (let i = 0; i < allBlocks.length; i++) {
+        const b = allBlocks[i];
+        if (b && b.id && (b.parentId || 'root-doc-node') === pageId && !seen.has(b.id)) {
+          seen.add(b.id);
+          deduped.push(b);
+        }
+      }
 
       setBlocks(deduped);
       updatePageMetadata();

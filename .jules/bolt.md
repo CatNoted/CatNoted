@@ -59,3 +59,6 @@
 ## 2026-09-12 - Consolidate O(N) canvas filtering
 **Learning:** Found multiple separate `useMemo` blocks in `InfiniteCanvas.tsx` iterating over `Object.values(elements)` sequentially for different filters (`customConnectors` and `nonBlockElements`), causing duplicate O(N) overhead during render cycles.
 **Action:** When filtering the same large collection multiple times for different subsets in a highly reactive component, combine them into a single pass loop within one `useMemo` block that returns all subset arrays.
+## 2025-02-18 - [Optimized array filtering inside Yjs observers]
+**Learning:** Found multiple sequential `.filter()` operations on `yblocks.toArray()` and `ypages.toJSON()` inside `updateBlocks`, `updatePageMetadata`, and `handleSync` in `store.ts`. Since these functions act as Yjs observers and are triggered frequently on every block change, the intermediate array allocations cause redundant O(N) memory overhead and CPU cycles.
+**Action:** Always combine multiple sequential array filters on the hot path into a single-pass `for` loop iteration that builds the resulting arrays directly, avoiding intermediate array creation and duplicate O(N) sweeps.
