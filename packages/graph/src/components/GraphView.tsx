@@ -72,18 +72,24 @@ export const GraphView: React.FC<GraphViewProps> = ({ onNavigateToNode, activePa
             <button
               onClick={() => setFilterType('all')}
               className={`px-2 py-1 rounded-lg transition-colors ${filterType === 'all' ? 'bg-muted font-medium' : 'hover:bg-muted/50 text-muted-foreground'}`}
+              aria-label="Filter all nodes"
+              aria-pressed={filterType === 'all'}
             >
               All
             </button>
             <button
               onClick={() => setFilterType('page')}
               className={`px-2 py-1 rounded-lg transition-colors ${filterType === 'page' ? 'bg-muted font-medium' : 'hover:bg-muted/50 text-muted-foreground'}`}
+              aria-label="Filter page nodes"
+              aria-pressed={filterType === 'page'}
             >
               Pages
             </button>
             <button
               onClick={() => setFilterType('tag')}
               className={`px-2 py-1 rounded-lg transition-colors ${filterType === 'tag' ? 'bg-muted font-medium' : 'hover:bg-muted/50 text-muted-foreground'}`}
+              aria-label="Filter tag nodes"
+              aria-pressed={filterType === 'tag'}
             >
               Tags
             </button>
@@ -108,6 +114,7 @@ export const GraphView: React.FC<GraphViewProps> = ({ onNavigateToNode, activePa
               onClick={handleExportPNG}
               className="flex items-center gap-1 px-2 py-1 hover:bg-muted rounded-lg text-muted-foreground transition-colors"
               title="Export as PNG"
+              aria-label="Export graph as PNG"
             >
               <Download className="w-3.5 h-3.5" />
               PNG
@@ -117,6 +124,7 @@ export const GraphView: React.FC<GraphViewProps> = ({ onNavigateToNode, activePa
               onClick={handleExportSVG}
               className="flex items-center gap-1 px-2 py-1 hover:bg-muted rounded-lg text-muted-foreground transition-colors"
               title="Export as SVG"
+              aria-label="Export graph as SVG"
             >
               <Download className="w-3.5 h-3.5" />
               SVG
