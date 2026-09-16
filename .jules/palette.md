@@ -99,3 +99,7 @@
 ## $(date +%Y-%m-%d) - [UX improvement] Fix flex-1 min-w-0 on flex-col text nodes and *-soft backgrounds
 **Learning:** Found an instance in DocumentEditor where `flex-1 min-w-0` was used on a text node inside a `flex-col` container, which prevents horizontal truncation and forces vertical stretching. Also identified remaining hardcoded `-soft` backgrounds (like `bg-warning-soft`) used directly on interactive/foreground UI like Toasts and CalloutBlocks.
 **Action:** Always omit `flex-1 min-w-0` on children of `flex-col` containers when text truncation is desired, applying only `truncate`. Replace specific `*-soft` tokens in standard components with `bg-muted` and tinted borders to rely on Tailwind's native handling.
+
+## 2024-05-18 - Improve Screen Reader Accessibility of Graph Filter and Export Buttons
+**Learning:** Found a recurring accessibility issue where interactive icon-only or text-only buttons in the Graph visualizer control bar lacked descriptive text and ARIA pressed states. Screen reader users would just hear "PNG" or "All" without understanding context like "Export graph as PNG" or that it functions as a toggle state.
+**Action:** Always include explicit `aria-label` attributes on icon-only or ambiguous text buttons, and use `aria-pressed` for toggleable filter states.
