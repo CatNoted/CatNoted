@@ -357,7 +357,7 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
                         checked: e.target.checked,
                       })
                     }
-                    className="mt-1 w-3.5 h-3.5 rounded border-border bg-transparent accent-accent flex-shrink-0 cursor-pointer"
+                    className="mt-1 w-3.5 h-3.5 rounded border-border bg-transparent accent-primary flex-shrink-0 cursor-pointer"
                   />
                   <TextBlock
                     id={block.id}

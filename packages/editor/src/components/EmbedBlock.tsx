@@ -223,7 +223,7 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
                       type="checkbox"
                       checked={!!block.properties?.checked}
                       disabled
-                      className="w-3 h-3 rounded border-border mt-1 accent-accent shrink-0"
+                      className="w-3 h-3 rounded border-border mt-1 accent-primary shrink-0"
                     />
                     <span className={block.properties?.checked ? 'line-through text-muted-foreground' : ''}>
                       {block.content || <span className="opacity-30 italic">Empty Task</span>}

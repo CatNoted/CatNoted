@@ -103,3 +103,6 @@
 ## 2024-05-18 - Improve Screen Reader Accessibility of Graph Filter and Export Buttons
 **Learning:** Found a recurring accessibility issue where interactive icon-only or text-only buttons in the Graph visualizer control bar lacked descriptive text and ARIA pressed states. Screen reader users would just hear "PNG" or "All" without understanding context like "Export graph as PNG" or that it functions as a toggle state.
 **Action:** Always include explicit `aria-label` attributes on icon-only or ambiguous text buttons, and use `aria-pressed` for toggleable filter states.
+## 2026-11-17 - Fix accent contrast issues on checkboxes
+**Learning:** `accent-accent` is an invalid semantic anti-pattern for checkboxes, as the `accent` token is reserved for subtle hover states and maps to a light gray hue in light mode, causing contrast failures.
+**Action:** Replace `accent-accent` with standard `accent-primary` for semantic brand color checkboxes without contrast issues.
