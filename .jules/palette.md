@@ -106,3 +106,6 @@
 ## 2026-11-17 - Fix accent contrast issues on checkboxes
 **Learning:** `accent-accent` is an invalid semantic anti-pattern for checkboxes, as the `accent` token is reserved for subtle hover states and maps to a light gray hue in light mode, causing contrast failures.
 **Action:** Replace `accent-accent` with standard `accent-primary` for semantic brand color checkboxes without contrast issues.
+## $(date +%Y-%m-%d) - Fix invisible focus traps on hover-only elements
+**Learning:** Elements that use hover-only visibility utilities (e.g., `opacity-0 group-hover:opacity-100` or `hover:opacity-100`) become invisible focus traps when navigated to via keyboard.
+**Action:** Always pair hover-only utilities with their corresponding focus utilities (e.g., `group-focus-visible:opacity-100`, `focus-visible:opacity-100`, or `group-focus-within:opacity-100`) to ensure they remain visible and accessible during keyboard navigation.

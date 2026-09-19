@@ -86,7 +86,7 @@ export const ToggleBlock: React.FC<ToggleBlockProps> = ({
       {/* Thin vertical guide line separator when expanded */}
       {expanded && (
         <div className="pl-6 ml-[10px] border-l border-border mt-1 min-h-[1.5rem] flex flex-col justify-center text-xs text-muted-foreground select-none">
-          <div className="opacity-0 group-hover/toggle:opacity-60 transition-opacity duration-200 font-normal italic">
+          <div className="opacity-0 group-hover/toggle:opacity-60 group-focus-within/toggle:opacity-60 transition-opacity duration-200 font-normal italic">
             Empty toggle container. Drag blocks here or type below.
           </div>
         </div>
