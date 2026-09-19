@@ -87,7 +87,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
             {SectionIcon && <SectionIcon className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />}
             <span>{label}</span>
           </span>
-          <Icon className="w-3.5 h-3.5 shrink-0 text-muted-foreground opacity-60 group-hover:opacity-100 transition-opacity" />
+          <Icon className="w-3.5 h-3.5 shrink-0 text-muted-foreground opacity-60 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity" />
         </button>
         {!collapsed && <div className="mt-1 space-y-0.5 px-1">{children}</div>}
       </div>
