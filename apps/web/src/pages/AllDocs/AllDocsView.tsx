@@ -20,16 +20,16 @@ export const AllDocsView: React.FC = () => {
             </h1>
           </div>
           <div className="flex items-center gap-2">
-            <button aria-label="Filter documents" className="p-1.5 text-muted-foreground hover:bg-muted rounded-md transition-colors">
+            <button aria-label="Filter documents" className="p-1.5 text-muted-foreground hover:bg-muted rounded-md transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-border">
               <Filter className="w-4 h-4" />
             </button>
-            <button aria-label="Sort documents" className="p-1.5 text-muted-foreground hover:bg-muted rounded-md transition-colors">
+            <button aria-label="Sort documents" className="p-1.5 text-muted-foreground hover:bg-muted rounded-md transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-border">
               <ListFilter className="w-4 h-4" />
             </button>
-            <button aria-label="Document settings" className="p-1.5 text-muted-foreground hover:bg-muted rounded-md transition-colors">
+            <button aria-label="Document settings" className="p-1.5 text-muted-foreground hover:bg-muted rounded-md transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-border">
               <Settings className="w-4 h-4" />
             </button>
-            <button aria-label="Create new document" className="p-1.5 text-muted-foreground hover:bg-muted rounded-md transition-colors">
+            <button aria-label="Create new document" className="p-1.5 text-muted-foreground hover:bg-muted rounded-md transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-border">
               <Plus className="w-4 h-4" />
             </button>
           </div>
@@ -101,7 +101,7 @@ export const AllDocsView: React.FC = () => {
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-sm font-medium text-foreground">Calendar</h3>
             <div className="flex gap-1">
-               <button aria-label="Calendar settings" className="p-1.5 text-muted-foreground hover:bg-muted rounded-md transition-colors"><Settings className="w-4 h-4" /></button>
+               <button aria-label="Calendar settings" className="p-1.5 text-muted-foreground hover:bg-muted rounded-md transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-border"><Settings className="w-4 h-4" /></button>
             </div>
           </div>
           {/* Mock Calendar */}
@@ -136,7 +136,7 @@ export const AllDocsView: React.FC = () => {
              <p className="text-xs text-muted-foreground mb-4">
                Create a standard layout for your daily journals.
              </p>
-             <button className="w-full py-1.5 bg-background border border-border rounded-lg text-xs font-medium hover:bg-muted transition-colors text-foreground">
+             <button className="w-full py-1.5 bg-background border border-border rounded-lg text-xs font-medium hover:bg-muted transition-colors text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-border">
                Choose Template
              </button>
           </div>

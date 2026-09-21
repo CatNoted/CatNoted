@@ -249,7 +249,7 @@ export const JournalsView: React.FC = () => {
             {/* Daily Reflection */}
             <button
               onClick={() => handleCompleteOnboarding('reflection')}
-              className="group p-5 rounded-2xl border border-border dark:border-border bg-muted text-left hover:border-border hover:bg-card dark:hover:bg-card shadow-lg hover:shadow-foreground/5 transition-all flex flex-col gap-3"
+              className="group p-5 rounded-2xl border border-border dark:border-border bg-muted text-left hover:border-border hover:bg-card dark:hover:bg-card shadow-lg hover:shadow-foreground/5 transition-all flex flex-col gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-border"
             >
               <div className="w-9 h-9 rounded-xl bg-muted text-foreground flex items-center justify-center">
                 <Sparkles className="w-4.5 h-4.5" />
@@ -268,7 +268,7 @@ export const JournalsView: React.FC = () => {
             {/* Gratitude Journal */}
             <button
               onClick={() => handleCompleteOnboarding('gratitude')}
-              className="group p-5 rounded-2xl border border-border dark:border-border bg-muted text-left hover:border-border hover:bg-card dark:hover:bg-card shadow-lg hover:shadow-foreground/5 transition-all flex flex-col gap-3"
+              className="group p-5 rounded-2xl border border-border dark:border-border bg-muted text-left hover:border-border hover:bg-card dark:hover:bg-card shadow-lg hover:shadow-foreground/5 transition-all flex flex-col gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-border"
             >
               <div className="w-9 h-9 rounded-xl bg-muted text-success flex items-center justify-center">
                 <BookOpen className="w-4.5 h-4.5" />
@@ -287,7 +287,7 @@ export const JournalsView: React.FC = () => {
             {/* Empty Note */}
             <button
               onClick={() => handleCompleteOnboarding('empty')}
-              className="group p-5 rounded-2xl border border-border dark:border-border bg-muted text-left hover:border-border hover:bg-card dark:hover:bg-card shadow-lg hover:shadow-foreground/5 transition-all flex flex-col gap-3"
+              className="group p-5 rounded-2xl border border-border dark:border-border bg-muted text-left hover:border-border hover:bg-card dark:hover:bg-card shadow-lg hover:shadow-foreground/5 transition-all flex flex-col gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-border"
             >
               <div className="w-9 h-9 rounded-xl bg-muted text-foreground flex items-center justify-center">
                 <CheckCircle className="w-4.5 h-4.5" />
@@ -323,7 +323,7 @@ export const JournalsView: React.FC = () => {
           </span>
           <button
             onClick={handleGoToToday}
-            className="px-2.5 py-1 text-[10px] font-bold bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-sm transition-colors cursor-pointer"
+            className="px-2.5 py-1 text-[10px] font-bold bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-sm transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-border focus-visible:ring-offset-1 focus-visible:ring-offset-card"
             aria-label="Go to Today"
           >
             Today
@@ -339,7 +339,7 @@ export const JournalsView: React.FC = () => {
             <div className="flex items-center gap-1">
               <button
                 onClick={handlePrevMonth}
-                className="p-1 rounded-lg hover:bg-muted dark:hover:bg-muted text-muted-foreground"
+                className="p-1 rounded-lg hover:bg-muted dark:hover:bg-muted text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-border"
                 title="Previous Month"
                 aria-label="Previous Month"
               >
@@ -347,7 +347,7 @@ export const JournalsView: React.FC = () => {
               </button>
               <button
                 onClick={handleNextMonth}
-                className="p-1 rounded-lg hover:bg-muted dark:hover:bg-muted text-muted-foreground"
+                className="p-1 rounded-lg hover:bg-muted dark:hover:bg-muted text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-border"
                 title="Next Month"
                 aria-label="Next Month"
               >
@@ -376,7 +376,7 @@ export const JournalsView: React.FC = () => {
                 <button
                   key={cell.key}
                   onClick={() => handleDateClick(cell.key)}
-                  className={`relative w-8 h-8 rounded-full flex flex-col items-center justify-center text-xs font-medium transition-all ${
+                  className={`relative w-8 h-8 rounded-full flex flex-col items-center justify-center text-xs font-medium transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-border focus-visible:ring-offset-1 focus-visible:ring-offset-card ${
                     !cell.isCurrentMonth
                       ? 'text-muted-foreground hover:bg-muted dark:hover:bg-card/40'
                       : 'text-foreground'
@@ -425,7 +425,7 @@ export const JournalsView: React.FC = () => {
                 <button
                   key={tmpl.id}
                   onClick={() => handleSelectTemplateSetting(tmpl.id)}
-                  className={`w-full px-3 py-2 text-left rounded-lg flex items-center justify-between transition-colors ${
+                  className={`w-full px-3 py-2 text-left rounded-lg flex items-center justify-between transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-border ${
                     isSelected
                       ? 'bg-muted text-foreground font-semibold'
                       : 'text-foreground hover:bg-muted hover:text-foreground'
