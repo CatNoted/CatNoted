@@ -49,7 +49,7 @@ export const AllDocsView: React.FC = () => {
 
               <div className="space-y-1">
                 {/* Doc Item */}
-                <div className="flex items-center justify-between py-2.5 px-3 hover:bg-muted rounded-lg group cursor-pointer border border-transparent hover:border-border transition-colors min-w-0">
+                <div className="flex items-center justify-between py-2.5 px-3 hover:bg-muted rounded-lg group cursor-pointer border border-transparent hover:border-border transition-colors min-w-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-border" tabIndex={0}>
                   <div className="flex items-center gap-3 flex-1 min-w-0">
                     <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
                     <span className="text-sm font-medium text-foreground flex-1 min-w-0 truncate">Getting Started with Affine</span>
@@ -59,7 +59,7 @@ export const AllDocsView: React.FC = () => {
                   </span>
                 </div>
                 {/* Doc Item */}
-                <div className="flex items-center justify-between py-2.5 px-3 hover:bg-muted rounded-lg group cursor-pointer border border-transparent hover:border-border transition-colors min-w-0">
+                <div className="flex items-center justify-between py-2.5 px-3 hover:bg-muted rounded-lg group cursor-pointer border border-transparent hover:border-border transition-colors min-w-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-border" tabIndex={0}>
                   <div className="flex items-center gap-3 flex-1 min-w-0">
                     <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
                     <span className="text-sm font-medium text-foreground flex-1 min-w-0 truncate">Project Roadmap Q3</span>
@@ -80,7 +80,7 @@ export const AllDocsView: React.FC = () => {
 
               <div className="space-y-1">
                 {/* Doc Item */}
-                <div className="flex items-center justify-between py-2.5 px-3 hover:bg-muted rounded-lg group cursor-pointer border border-transparent hover:border-border transition-colors min-w-0">
+                <div className="flex items-center justify-between py-2.5 px-3 hover:bg-muted rounded-lg group cursor-pointer border border-transparent hover:border-border transition-colors min-w-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-border" tabIndex={0}>
                   <div className="flex items-center gap-3 flex-1 min-w-0">
                     <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
                     <span className="text-sm font-medium text-foreground flex-1 min-w-0 truncate">Untitled Document</span>
