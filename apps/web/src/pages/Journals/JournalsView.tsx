@@ -449,8 +449,8 @@ export const JournalsView: React.FC = () => {
             <div className="mb-6 p-4 bg-muted/20 border border-border dark:border-border/50 shadow-sm rounded-2xl flex items-start gap-3 animate-in slide-in-from-top-3">
               <AlertTriangle className="w-5 h-5 text-warning shrink-0 mt-0.5" />
               <div>
-                <h5 className="text-xs font-bold text-warning-foreground">Journal Duplication Conflict</h5>
-                <p className="text-[11px] text-warning-foreground/80 mt-1">
+                <h5 className="text-xs font-bold text-warning">Journal Duplication Conflict</h5>
+                <p className="text-[11px] text-warning/80 mt-1">
                   Multiple journal notes exist for {selectedDate}. Changes might sync or display inconsistently across lists.
                 </p>
               </div>

@@ -120,7 +120,7 @@ export const TableBlock: React.FC<TableBlockProps> = ({
                       className="group/row border-b border-border last:border-b-0 hover:bg-muted/50 transition-colors"
                     >
                       <td className="w-8 p-0 border-r border-border text-center align-middle">
-                        <div className="flex items-center justify-center opacity-0 group-hover/row:opacity-100 focus-within:opacity-100 transition-opacity text-muted-foreground cursor-grab active:cursor-grabbing">
+                        <div className="flex items-center justify-center opacity-0 group-hover/row:opacity-100 focus-within:opacity-100 focus-visible:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-border transition-opacity text-muted-foreground cursor-grab active:cursor-grabbing" tabIndex={0}>
                           <GripHorizontal className="w-3.5 h-3.5" />
                         </div>
                       </td>
