@@ -112,3 +112,6 @@
 ## $(date +%Y-%m-%d) - [Focus Traps with opacity-0 group-hover]
 **Learning:** Found several places (e.g. `AllDocsView.tsx` document items, `TableBlock.tsx` drag handle) using `opacity-0 group-hover:opacity-100` that were completely invisible and inaccessible to keyboard users because the underlying container lacked `tabIndex={0}` and corresponding `focus-visible` styles.
 **Action:** When creating hover-only interactive or informational elements via `opacity-0`, ensure the element itself (or its parent container) has `tabIndex={0}` and a visible focus ring (e.g. `focus-visible:ring-2 focus-visible:opacity-100 focus:outline-none`) to avoid breaking keyboard accessibility.
+## $(date +%Y-%m-%d) - [UX improvement] Fix WCAG contrast on SettingsModal
+**Learning:** Using `text-warning-foreground` on a neutral background like `bg-muted` causes a WCAG contrast failure in light mode because foreground tokens expect to be placed on their respective solid backgrounds (e.g. `bg-warning`).
+**Action:** When applying text colors on neutral or transparent backgrounds (`bg-muted`), use the base token (e.g. `text-warning`) rather than the `-foreground` token.

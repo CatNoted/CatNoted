@@ -310,8 +310,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   <div className="flex items-start gap-3 rounded-xl border border-border dark:border-border/20 bg-muted p-3.5">
                     <ShieldAlert className="w-4 h-4 text-warning shrink-0 mt-0.5" />
                     <div>
-                      <h4 className="text-xs font-semibold text-warning-foreground">Zero-knowledge storage</h4>
-                      <p className="text-[11px] leading-relaxed text-warning-foreground/80 mt-1">
+                      <h4 className="text-xs font-semibold text-warning">Zero-knowledge storage</h4>
+                      <p className="text-[11px] leading-relaxed text-warning/80 mt-1">
                         Your passphrase derives a local 256-bit AES-GCM encryption key. Without this passphrase, data cannot be decrypted.
                       </p>
                     </div>
