@@ -23,9 +23,23 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
   const [urlInput, setUrlInput] = useState(url);
   const [isEditing, setIsEditing] = useState(!url);
 
+  const isSafeUrl = (url: string) => {
+    try {
+      const parsed = new URL(url, window.location.origin);
+      return ['http:', 'https:', 'data:', 'blob:'].includes(parsed.protocol);
+    } catch {
+      return false;
+    }
+  };
+
   const handleSaveUrl = () => {
     if (!urlInput.trim()) return;
-    onUpdateProps({ url: urlInput.trim() });
+    const sanitized = urlInput.trim();
+    if (!isSafeUrl(sanitized)) {
+      alert("Invalid URL format");
+      return;
+    }
+    onUpdateProps({ url: sanitized });
     setIsEditing(false);
   };
 

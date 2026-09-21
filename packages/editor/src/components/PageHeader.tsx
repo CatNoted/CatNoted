@@ -183,6 +183,15 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
     </div>
   );
 
+  const isSafeUrl = (url: string) => {
+    try {
+      const parsed = new URL(url, window.location.origin);
+      return ['http:', 'https:', 'data:', 'blob:'].includes(parsed.protocol);
+    } catch {
+      return false;
+    }
+  };
+
   const renderCoverPickerDropdown = () => (
     <div
       ref={coverMenuRef}
@@ -259,7 +268,12 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
                 type="button"
                 onClick={() => {
                   if (coverInputUrl.trim()) {
-                    onCoverChange(coverInputUrl.trim());
+                    const sanitized = coverInputUrl.trim();
+                    if (!isSafeUrl(sanitized)) {
+                      alert("Invalid URL format");
+                      return;
+                    }
+                    onCoverChange(sanitized);
                     setCoverInputUrl('');
                     setShowCoverPicker(false);
                   }
