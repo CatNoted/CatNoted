@@ -231,9 +231,19 @@ export const InfiniteCanvas: React.FC = () => {
       } else if (e.key === '[' || e.key === ']') {
         if (selectedIds.length > 0) {
           ydoc.transact(() => {
-            const allZ = Array.from(ycanvas.values()).map(el => el.zIndex || 0);
-            const minZ = allZ.length ? Math.min(...allZ) : 0;
-            const maxZ = allZ.length ? Math.max(...allZ) : 0;
+            let minZ = Infinity;
+            let maxZ = -Infinity;
+            let hasElements = false;
+            for (const el of ycanvas.values()) {
+              hasElements = true;
+              const z = el.zIndex || 0;
+              if (z < minZ) minZ = z;
+              if (z > maxZ) maxZ = z;
+            }
+            if (!hasElements) {
+              minZ = 0;
+              maxZ = 0;
+            }
 
             selectedIds.forEach(id => {
               const elem = ycanvas.get(id);
@@ -252,11 +262,11 @@ export const InfiniteCanvas: React.FC = () => {
   const bringToFront = (ids: string[]) => {
     ydoc.transact(() => {
       let maxZ = 10;
-      Array.from(ycanvas.values()).forEach(el => {
+      for (const el of ycanvas.values()) {
         if (el.zIndex && el.zIndex > maxZ) {
           maxZ = el.zIndex;
         }
-      });
+      }
 
       const nextZ = maxZ + 1;
       ids.forEach(id => {

@@ -62,3 +62,6 @@
 ## 2025-02-18 - [Optimized array filtering inside Yjs observers]
 **Learning:** Found multiple sequential `.filter()` operations on `yblocks.toArray()` and `ypages.toJSON()` inside `updateBlocks`, `updatePageMetadata`, and `handleSync` in `store.ts`. Since these functions act as Yjs observers and are triggered frequently on every block change, the intermediate array allocations cause redundant O(N) memory overhead and CPU cycles.
 **Action:** Always combine multiple sequential array filters on the hot path into a single-pass `for` loop iteration that builds the resulting arrays directly, avoiding intermediate array creation and duplicate O(N) sweeps.
+## 2025-03-01 - [Optimized zIndex computation replacing array iterations with single-pass loops]
+**Learning:** Found redundant array creations like `Array.from(ycanvas.values()).map(...)` and `Object.values(elements).map(...)` when determining the min and max `zIndex` in `InfiniteCanvas.tsx` and `CanvasProperties.tsx`. Spreading these arrays into `Math.min(...allZ)` also creates stack size risks for large canvases and adds O(N) GC overhead on hot paths like keyboard events.
+**Action:** Replace map/spread patterns for finding min/max values in a collection with single-pass `for` loops (e.g. `for (const val of ycanvas.values())`) to eliminate intermediate array allocations and avoid call stack limits.
