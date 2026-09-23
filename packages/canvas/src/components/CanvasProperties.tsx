@@ -40,14 +40,26 @@ export const CanvasProperties: React.FC<CanvasPropertiesProps> = ({ selectedElem
   };
 
   const handleBringToFront = () => {
-    const allZ = Object.values(elements).map(el => el.zIndex || 0);
-    const maxZ = allZ.length ? Math.max(...allZ) : 0;
+    let maxZ = -Infinity;
+    let hasElements = false;
+    for (const key in elements) {
+      hasElements = true;
+      const z = elements[key].zIndex || 0;
+      if (z > maxZ) maxZ = z;
+    }
+    if (!hasElements) maxZ = 0;
     handleUpdate({ zIndex: maxZ + 1 });
   };
 
   const handleSendToBack = () => {
-    const allZ = Object.values(elements).map(el => el.zIndex || 0);
-    const minZ = allZ.length ? Math.min(...allZ) : 0;
+    let minZ = Infinity;
+    let hasElements = false;
+    for (const key in elements) {
+      hasElements = true;
+      const z = elements[key].zIndex || 0;
+      if (z < minZ) minZ = z;
+    }
+    if (!hasElements) minZ = 0;
     handleUpdate({ zIndex: minZ - 1 });
   };
 
