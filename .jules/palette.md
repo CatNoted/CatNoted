@@ -115,3 +115,7 @@
 ## $(date +%Y-%m-%d) - [UX improvement] Fix WCAG contrast on SettingsModal
 **Learning:** Using `text-warning-foreground` on a neutral background like `bg-muted` causes a WCAG contrast failure in light mode because foreground tokens expect to be placed on their respective solid backgrounds (e.g. `bg-warning`).
 **Action:** When applying text colors on neutral or transparent backgrounds (`bg-muted`), use the base token (e.g. `text-warning`) rather than the `-foreground` token.
+
+## $(date +%Y-%m-%d) - [Combobox Focus Anti-pattern]
+**Learning:** Moving DOM focus via `target.focus()` directly to option items inside a combobox causes the main `<input>` to lose focus, which breaks the user's ability to type continuously and filter options. Furthermore, placing `aria-activedescendant` on the `<div role="listbox">` rather than the `<input role="combobox">` means screen readers do not announce the actively navigated option when focus remains in the input.
+**Action:** For accessible comboboxes, always keep true DOM focus on the `<input>` element. Manage selection visually and apply `aria-activedescendant={activeOptionId}` to the `<input>` element itself (not the listbox), and ensure option buttons have `tabIndex={-1}` so they don't break keyboard tab order.

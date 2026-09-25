@@ -195,7 +195,6 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     const target = buttons[selectedIndex];
     if (target) {
       target.scrollIntoView({ block: 'nearest' });
-      target.focus({ preventScroll: true });
     }
   }, [isOpen, selectedIndex]);
 
@@ -230,6 +229,11 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
             aria-autocomplete="list"
             aria-controls={`${paletteId}-list`}
             aria-expanded={isOpen}
+            aria-activedescendant={
+              selectedCommand
+                ? `${paletteId}-item-${selectedCommand.id}`
+                : undefined
+            }
             className="w-full bg-transparent text-[14px] text-foreground outline-none placeholder:text-muted-foreground dark:text-foreground"
           />
           <kbd className="hidden rounded bg-muted dark:bg-muted px-1.5 py-0.5 font-sans text-[10px] border border-border/60 dark:border-border text-muted-foreground sm:block">
@@ -241,11 +245,6 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
           id={`${paletteId}-list`}
           ref={listRef}
           role="listbox"
-          aria-activedescendant={
-            selectedCommand
-              ? `${paletteId}-item-${selectedCommand.id}`
-              : undefined
-          }
           tabIndex={-1}
           className="flex max-h-[min(320px,60vh)] flex-1 flex-col overflow-y-auto px-2 py-2"
         >
@@ -269,6 +268,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                     id={`${paletteId}-item-${cmd.id}`}
                     role="option"
                     aria-selected={isSelected}
+                    tabIndex={-1}
                     data-command-item
                     onClick={() => {
                       cmd.action();
