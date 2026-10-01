@@ -303,7 +303,17 @@ const BlockRowBase: React.FC<BlockRowProps> = ({
               {block.type === 'bullet' && (
                 <div className="flex items-start gap-2">
                   <div className="flex flex-col flex-shrink-0">
-                    {block.content.split('\n').map((_: any, i: number) => (
+                    {Array.from({
+                      // ⚡ Bolt Optimization: Calculate line count via single-pass loop instead of split('\n')
+                      // to prevent temporary string array allocations during rapid typing.
+                      length: (() => {
+                        let count = 1;
+                        for (let i = 0; i < block.content.length; i++) {
+                          if (block.content[i] === '\n') count++;
+                        }
+                        return count;
+                      })()
+                    }).map((_, i) => (
                       <div key={i} className="h-7 w-1.5 flex items-center justify-center">
                         <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground" />
                       </div>
