@@ -41,6 +41,16 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
     setTimeout(() => setCopied(false), 2000);
   };
 
+  // ⚡ Bolt Optimization: Use a single-pass loop to count newlines instead of content.split('\n').length
+  // which prevents unnecessary string array allocations and GC overhead on every render keystroke.
+  const lineCount = React.useMemo(() => {
+    let count = 1;
+    for (let i = 0; i < content.length; i++) {
+      if (content[i] === '\n') count++;
+    }
+    return count;
+  }, [content]);
+
   return (
     <div className="w-full my-2 rounded-xl bg-card border border-border overflow-hidden shadow-md group/code">
       {/* Code Header Bar */}
@@ -88,7 +98,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
           value={content}
           onChange={(e) => onChange(e.target.value)}
           placeholder="// Type or paste code here..."
-          rows={Math.max(3, content.split('\n').length)}
+          rows={Math.max(3, lineCount)}
           className="w-full bg-transparent resize-y border-none outline-none focus:ring-0 p-0 text-xs font-mono text-foreground placeholder-muted-foreground leading-relaxed font-medium"
           style={{ tabSize: 2 }}
         />

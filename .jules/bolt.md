@@ -65,3 +65,7 @@
 ## 2025-03-01 - [Optimized zIndex computation replacing array iterations with single-pass loops]
 **Learning:** Found redundant array creations like `Array.from(ycanvas.values()).map(...)` and `Object.values(elements).map(...)` when determining the min and max `zIndex` in `InfiniteCanvas.tsx` and `CanvasProperties.tsx`. Spreading these arrays into `Math.min(...allZ)` also creates stack size risks for large canvases and adds O(N) GC overhead on hot paths like keyboard events.
 **Action:** Replace map/spread patterns for finding min/max values in a collection with single-pass `for` loops (e.g. `for (const val of ycanvas.values())`) to eliminate intermediate array allocations and avoid call stack limits.
+
+## 2024-05-18 - String Array Allocations in React Render Hot Paths
+**Learning:** Using `String.prototype.split('\n')` solely to count newlines inside a React component render function creates significant garbage collection overhead. Since it triggers on every keystroke in components like `BlockRow` and `CodeBlock`, the O(N) memory allocation of temporary substring arrays quickly degrades typing responsiveness on large documents.
+**Action:** Always prefer a single-pass `for` loop to count characters (like `\n`) when only the count is needed, completely bypassing unnecessary array and string allocations.
