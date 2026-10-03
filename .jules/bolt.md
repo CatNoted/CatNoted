@@ -69,3 +69,6 @@
 ## 2024-05-18 - String Array Allocations in React Render Hot Paths
 **Learning:** Using `String.prototype.split('\n')` solely to count newlines inside a React component render function creates significant garbage collection overhead. Since it triggers on every keystroke in components like `BlockRow` and `CodeBlock`, the O(N) memory allocation of temporary substring arrays quickly degrades typing responsiveness on large documents.
 **Action:** Always prefer a single-pass `for` loop to count characters (like `\n`) when only the count is needed, completely bypassing unnecessary array and string allocations.
+## 2024-10-25 - Avoid filter().slice() on large collections
+**Learning:** Found an O(N) performance bottleneck in `EmbedBlock.tsx` where `targetBlocks.filter(...).slice(0, 5)` was used to generate a preview. This pattern forces a full iteration over the entire `targetBlocks` array (which could be large) and creates an intermediate array in memory just to return 5 items.
+**Action:** Replace chained `.filter(...).slice(0, n)` operations with a `for` loop that performs an early `break` once `n` items are collected. This turns the O(N) full array scan into an O(1) operation.
