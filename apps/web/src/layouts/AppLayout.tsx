@@ -1010,7 +1010,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                   <span>Page Tree</span>
                 </div>
-                <button onClick={() => {
+                <button aria-label="Add new page" onClick={() => {
                     const title = prompt('Enter page title', 'Untitled');
                     if (title && createPage) {
                         const newId = createPage(title);
@@ -1023,6 +1023,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 <button
                   type="button"
                   id="tour-new-page"
+                  aria-label="New Page"
                   onClick={onCreatePage}
                   className="w-full flex items-center justify-center gap-1.5 py-2 px-3 mb-3 bg-muted text-foreground font-medium hover:bg-muted rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border"
                 >
