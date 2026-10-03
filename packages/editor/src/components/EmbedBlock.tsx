@@ -145,10 +145,17 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
   const targetIcon = targetPageMeta?.icon || '📄';
 
   // Filter out the main H1 block at index 0 from the preview to avoid repeating the page title
+  // ⚡ Bolt Optimization: Use a single-pass loop with early break instead of O(N) filter().slice()
   const filteredBlocksForPreview = React.useMemo(() => {
-    return targetBlocks.filter(
-      (b, index) => !(index === 0 && b.type === 'heading' && b.properties?.level === 1)
-    ).slice(0, 5);
+    const result = [];
+    for (let i = 0; i < targetBlocks.length; i++) {
+      const b = targetBlocks[i];
+      if (!(i === 0 && b.type === 'heading' && b.properties?.level === 1)) {
+        result.push(b);
+        if (result.length === 5) break;
+      }
+    }
+    return result;
   }, [targetBlocks]);
 
   return (
