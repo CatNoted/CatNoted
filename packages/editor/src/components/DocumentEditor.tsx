@@ -320,6 +320,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           <button
             onClick={() => handleCreateBlock('root')}
             className="mt-4 px-4 py-1.5 hover:bg-muted text-foreground rounded-md text-xs font-semibold transition-colors"
+            aria-label="Create first block"
           >
             Create first block
           </button>
@@ -393,6 +394,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                         }
                       }}
                       className="w-full text-left p-2.5 rounded-xl border border-border bg-muted/30 hover:bg-muted/80 hover:border-border transition-all duration-200 flex flex-col gap-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-border group"
+                      aria-label={`Go to referencing page: ${backlink.pageTitle}`}
                     >
                       {/* Referencing Page Info */}
                       <div className="flex items-center gap-2">
