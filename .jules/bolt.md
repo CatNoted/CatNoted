@@ -72,3 +72,6 @@
 ## 2024-10-25 - Avoid filter().slice() on large collections
 **Learning:** Found an O(N) performance bottleneck in `EmbedBlock.tsx` where `targetBlocks.filter(...).slice(0, 5)` was used to generate a preview. This pattern forces a full iteration over the entire `targetBlocks` array (which could be large) and creates an intermediate array in memory just to return 5 items.
 **Action:** Replace chained `.filter(...).slice(0, n)` operations with a `for` loop that performs an early `break` once `n` items are collected. This turns the O(N) full array scan into an O(1) operation.
+## 2024-06-25 - Combine O(N) filter passes into a single loop
+**Learning:** Found multiple sequential `.filter()` calls on `graphData.nodes` (e.g., separating pages and tags). In React render hot paths, this causes multiple passes over potentially large collections and redundant O(N) memory allocation.
+**Action:** Always combine multiple `.filter()` calls on the same collection into a single-pass `for` loop inside `React.useMemo` to prevent redundant O(N) overhead during frequent syncs.

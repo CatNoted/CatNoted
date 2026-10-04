@@ -275,11 +275,17 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   // Removed unnecessary useMemo for simple logical OR assignment
   const docTitle = mainHeading?.content || 'Untitled Document';
 
-  // Optimization: Memoize pageNodes filtering to prevent recreating the array reference on every render,
-  // which previously broke the memoization of recentDocs
-  const pageNodes = React.useMemo(() => graphData.nodes.filter(n => n.type === 'page'), [graphData.nodes]);
-  // Optimization: Memoize tagNodes filtering to prevent O(N) filtering on every render
-  const tagNodes = React.useMemo(() => graphData.nodes.filter(n => n.type === 'tag'), [graphData.nodes]);
+  // ⚡ Bolt Optimization: Combine O(N) filter passes into a single loop
+  const { pageNodes, tagNodes } = React.useMemo(() => {
+    const pages = [];
+    const tags = [];
+    for (let i = 0; i < graphData.nodes.length; i++) {
+      const node = graphData.nodes[i];
+      if (node.type === 'page') pages.push(node);
+      else if (node.type === 'tag') tags.push(node);
+    }
+    return { pageNodes: pages, tagNodes: tags };
+  }, [graphData.nodes]);
 
   // ⚡ Bolt Optimization: Combine multiple O(N) block filters into a single pass to reduce CPU overhead
   const { headingBlocks, textBlocks, widgetBlocks } = React.useMemo(() => {
