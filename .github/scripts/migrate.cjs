@@ -21,15 +21,14 @@ const sql = fs.readFileSync(path.resolve(process.cwd(), sqlPath), 'utf8');
 (async () => {
   let client;
   try {
-    let targetHost = 'db.vhuchnycqhprthmdsont.supabase.co';
-    let poolerIp = '52.77.146.31';
-    
+    let targetHost = '';
     try {
       const parsedRaw = new URL(rawDbUrl);
-      if (parsedRaw.hostname.startsWith('db.')) {
-        targetHost = parsedRaw.hostname;
-      }
+      targetHost = parsedRaw.hostname;
     } catch (_) {}
+    let poolerIp = targetHost; // Fallback to hostname for dns resolution if pooler IP is unknown
+
+
 
     let normalisedUrl = rawDbUrl;
     // Delete query params that interfere
