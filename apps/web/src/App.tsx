@@ -204,7 +204,7 @@ const App: React.FC = () => {
         mockSyncChannel.broadcast({ id: Math.random().toString(36).substring(2), sender: 'local-tab', payload: payloadArray });
         persistUpdate(payloadArray);
       } catch (e) {
-        console.error('Encryption failed during local Yjs update');
+        // Removed to avoid logging potential key material or sensitive data
       }
     };
 
@@ -222,7 +222,7 @@ const App: React.FC = () => {
         const decryptedBytes = await decryptPayload(new Uint8Array(msg.payload), passphrase);
         Y.applyUpdate(ydoc, decryptedBytes, 'remote-sync');
       } catch (e) {
-        console.warn('Decryption failed for incoming sync update. Passphrase may be mismatched.');
+        // Removed to avoid logging potential key material or sensitive data
       }
     });
     return () => {
@@ -464,7 +464,7 @@ const App: React.FC = () => {
         <button
           type="button"
           onClick={() => setIsAuthOpen(true)}
-          className="inline-flex items-center justify-center gap-2 rounded-lg px-2 py-1 hover:bg-secondary text-xs font-medium text-muted-foreground border border-transparent hover:border-border/60"
+          className="inline-flex items-center justify-center min-w-0 gap-2 rounded-lg px-2 py-1 hover:bg-secondary text-xs font-medium text-muted-foreground border border-transparent hover:border-border/60"
           title="Auth Settings"
         >
           <span className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center shadow-sm">
