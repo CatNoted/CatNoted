@@ -39,16 +39,20 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
 
 
 
-  const favoritePages = useMemo(
-    () => (pages || []).filter((p: any) => p?.isFavorite),
-    [pages]
-  );
-
-  // ⚡ Bolt Optimization: Memoize non-favorite pages to prevent O(N) double filtering on every render
-  const nonFavoritePages = useMemo(
-    () => (pages || []).filter((p: any) => !p?.isFavorite),
-    [pages]
-  );
+  // ⚡ Bolt Optimization: Combine O(N) filter passes into a single loop to prevent redundant iterations
+  const { favoritePages, nonFavoritePages } = useMemo(() => {
+    const favs: any[] = [];
+    const nonFavs: any[] = [];
+    for (let i = 0; i < (pages || []).length; i++) {
+      const p = pages[i];
+      if (p?.isFavorite) {
+        favs.push(p);
+      } else {
+        nonFavs.push(p);
+      }
+    }
+    return { favoritePages: favs, nonFavoritePages: nonFavs };
+  }, [pages]);
 
   const [favoritesCollapsed, setFavoritesCollapsed] = useState(true);
   const [organizeCollapsed, setOrganizeCollapsed] = useState(true);

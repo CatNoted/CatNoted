@@ -75,3 +75,6 @@
 ## 2024-06-25 - Combine O(N) filter passes into a single loop
 **Learning:** Found multiple sequential `.filter()` calls on `graphData.nodes` (e.g., separating pages and tags). In React render hot paths, this causes multiple passes over potentially large collections and redundant O(N) memory allocation.
 **Action:** Always combine multiple `.filter()` calls on the same collection into a single-pass `for` loop inside `React.useMemo` to prevent redundant O(N) overhead during frequent syncs.
+## 2025-02-18 - [Combined multiple filter passes on same collection]
+**Learning:** Found multiple separate `useMemo` blocks in `Sidebar.tsx` iterating over the same `pages` array using `.filter` for different boolean subsets (`isFavorite` and `!isFavorite`). This causes redundant O(N) overhead during render cycles.
+**Action:** When filtering the same collection multiple times for different mutually exclusive or overlapping subsets in a reactive component, combine them into a single-pass `for` loop within one `useMemo` block that returns all subset arrays at once.
