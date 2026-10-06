@@ -1042,6 +1042,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 <div>
                   <button
                     onClick={() => toggleSection('favorites')}
+                    aria-expanded={sectionsExpanded.favorites}
                     className="w-full flex items-center justify-between px-2 py-1.5 hover:bg-muted/60 dark:hover:bg-muted/30 rounded-lg text-xs font-semibold text-muted-foreground"
                   >
                     <span className="flex items-center gap-1.5">
@@ -1091,6 +1092,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                   <button
                     onClick={() => toggleSection('pages')}
                     id="tour-command-palette"
+                    aria-expanded={sectionsExpanded.pages}
             className="w-full flex items-center justify-between px-2 py-1.5 hover:bg-muted/60 dark:hover:bg-muted/30 rounded-lg text-xs font-semibold text-muted-foreground"
                   >
                     <span className="flex items-center gap-1.5">
@@ -1145,6 +1147,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 <div>
                   <button
                     onClick={() => toggleSection('tags')}
+                    aria-expanded={sectionsExpanded.tags}
                     className="w-full flex items-center justify-between px-2 py-1.5 hover:bg-muted/60 dark:hover:bg-muted/30 rounded-lg text-xs font-semibold text-muted-foreground"
                   >
                     <span className="flex items-center gap-1.5">
@@ -1195,6 +1198,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 <div>
                   <button
                     onClick={() => toggleSection('widgets')}
+                    aria-expanded={sectionsExpanded.widgets}
                     className="w-full flex items-center justify-between px-2 py-1.5 hover:bg-muted/60 dark:hover:bg-muted/30 rounded-lg text-xs font-semibold text-muted-foreground"
                   >
                     <span className="flex items-center gap-1.5">
