@@ -222,31 +222,28 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
             <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">
               Upload Cover File
             </label>
-            <input
-              type="file"
-              accept="image/*"
-              aria-label="Upload custom cover image file"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  const reader = new FileReader();
-                  reader.onload = (event) => {
-                    if (event.target?.result) {
-                      onCoverChange(event.target.result as string);
-                      setShowCoverPicker(false);
-                    }
-                  };
-                  reader.readAsDataURL(file);
-                }
-              }}
-              className="block w-full text-[10px] text-muted-foreground
-                file:mr-2 file:py-1 file:px-2.5
-                file:rounded-md file:border-0
-                file:text-[10px] file:font-semibold
-                file:bg-muted file:text-foreground
-                hover:file:bg-muted/80
-                cursor-pointer"
-            />
+            <label className="flex items-center justify-center gap-1 py-1.5 px-2 border border-border/60 hover:bg-muted dark:hover:bg-muted hover:border-border dark:hover:border-border hover:text-foreground dark:hover:text-foreground rounded-lg text-[10px] font-semibold text-muted-foreground cursor-pointer text-center transition-all duration-200 focus-within:ring-2 focus-within:ring-border focus-within:outline-none">
+              <LucideIcons.Upload className="w-3.5 h-3.5" /> Choose File...
+              <input
+                type="file"
+                accept="image/*"
+                aria-label="Upload custom cover image file"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                      if (event.target?.result) {
+                        onCoverChange(event.target.result as string);
+                        setShowCoverPicker(false);
+                      }
+                    };
+                    reader.readAsDataURL(file);
+                  }
+                }}
+                className="sr-only"
+              />
+            </label>
           </div>
 
           <div className="border-t border-border my-1"></div>
