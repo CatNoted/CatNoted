@@ -64,7 +64,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onModeChange, activeMode = 'do
     'px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground';
 
   const itemClassName =
-    'flex items-center w-full px-3 py-2 text-[13px] leading-5 text-foreground rounded-lg transition-all select-none gap-x-2.5 hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-border font-medium';
+    'flex items-center min-w-0 w-full px-3 py-2 text-[13px] leading-5 text-foreground rounded-lg transition-all select-none gap-x-2.5 hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-border font-medium';
 
   const getItemIconClass = (active: boolean) =>
     `shrink-0 ${active ? 'text-foreground' : 'text-muted-foreground'}`;
