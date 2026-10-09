@@ -276,7 +276,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                     }}
                     onMouseEnter={() => setSelectedIndex(idx)}
                     className={[
-                      'group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left',
+                      'group flex min-w-0 w-full items-center gap-3 rounded-lg px-3 py-2 text-left',
                       'transition-all duration-75',
                       isSelected
                         ? 'bg-muted text-foreground'
