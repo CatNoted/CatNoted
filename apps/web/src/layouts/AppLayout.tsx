@@ -1690,7 +1690,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       {isAgentOpen && (
         <div
           ref={panelRef}
-          className={`fixed z-40 flex flex-col transition-shadow duration-300 ${isMinimized ? "" : ""}`}
+          className={`fixed z-40 flex flex-col transition-shadow duration-300 group/panel ${isMinimized ? "" : ""}`}
           style={{
             left: panelPos.x,
             top: panelPos.y,
@@ -2091,7 +2091,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
               {/* ── Resize handle (bottom-left corner) ────────────────── */}
               <div
-                className="absolute bottom-0 left-0 w-5 h-5 cursor-nesw-resize opacity-0 hover:opacity-100 focus-visible:opacity-100 transition-opacity" tabIndex={0}
+                className="absolute bottom-0 left-0 w-5 h-5 cursor-nesw-resize opacity-0 group-hover/panel:opacity-100 focus-visible:opacity-100 transition-opacity" tabIndex={0}
                 onMouseDown={handleResizeStart}
                 style={{
                   background:
