@@ -397,7 +397,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                       aria-label={`Go to referencing page: ${backlink.pageTitle}`}
                     >
                       {/* Referencing Page Info */}
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
                         <span className="text-sm shrink-0">{backlink.pageIcon}</span>
                         <span className="flex-1 min-w-0 text-xs font-semibold text-foreground group-hover:text-foreground transition-colors truncate">
                           {backlink.pageTitle}
