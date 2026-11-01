@@ -228,7 +228,13 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
         }
       }
 
-      setBlocks(deduped);
+      setBlocks(prev => {
+        if (prev.length !== deduped.length) return deduped;
+        for (let i = 0; i < prev.length; i++) {
+          if (prev[i] !== deduped[i]) return deduped;
+        }
+        return prev;
+      });
     };
 
     const updatePageMetadata = () => {
@@ -292,7 +298,13 @@ export function useDocumentStore(pageId: string = 'root-doc-node') {
         }
       }
 
-      setBlocks(deduped);
+      setBlocks(prev => {
+        if (prev.length !== deduped.length) return deduped;
+        for (let i = 0; i < prev.length; i++) {
+          if (prev[i] !== deduped[i]) return deduped;
+        }
+        return prev;
+      });
       updatePageMetadata();
     };
     if (provider && typeof provider.on === 'function') {

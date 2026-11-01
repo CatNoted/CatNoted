@@ -1542,7 +1542,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                           { title: 'Quick Tasks Todo', desc: 'Interactive task tracker', template: WIDGET_TEMPLATES.todo, id: 'todo' }
                         ].map((item) => (
                           <div key={item.id} className="p-2 rounded-lg bg-muted/30 border border-border dark:border-border/60 flex items-center justify-between text-xs">
-                            <div className="flex flex-col min-w-0 pr-1">
+                            <div className="flex-1 flex flex-col min-w-0 pr-1">
                               <span className="font-semibold text-foreground dark:text-foreground truncate">{item.title}</span>
                               <span className="text-[10px] text-muted-foreground truncate">{item.desc}</span>
                             </div>
@@ -2038,7 +2038,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                             const widgetId = block.properties?.widgetId || 'unassigned';
                             return (
                               <div key={block.id} className="p-3 rounded-xl bg-muted dark:bg-card/40 border border-border dark:border-border/60 flex items-center justify-between text-xs">
-                                <div className="flex flex-col min-w-0 pr-2">
+                                <div className="flex-1 flex flex-col min-w-0 pr-2">
                                   <span className="font-semibold truncate text-foreground dark:text-foreground">ID: {widgetId}</span>
                                   <span className="text-[9px] text-muted-foreground truncate">Block ID: {block.id}</span>
                                 </div>
