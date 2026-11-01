@@ -61,8 +61,15 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         }
       }
 
-      setAllBlocks(dedupedAll);
-      setAllPages(ypages.toJSON() ? Object.values(ypages.toJSON()) : []);
+      setAllBlocks(prev => {
+        if (prev.length === dedupedAll.length && JSON.stringify(prev) === JSON.stringify(dedupedAll)) return prev;
+        return dedupedAll;
+      });
+      const newPages = ypages.toJSON() ? Object.values(ypages.toJSON()) : [];
+      setAllPages(prev => {
+        if (prev.length === newPages.length && JSON.stringify(prev) === JSON.stringify(newPages)) return prev;
+        return newPages as any[];
+      });
     };
     update();
     yblocks.observe(update);
